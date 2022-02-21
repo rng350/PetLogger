@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">GuineaPigLog</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="add_pet">Add Pet</string>
+    <string name="add_event">Add Event</string>
+    <string name="pet_name_field">Write pet name here</string>
+    <string name="pet_species_field">Write pet species here</string>
+    <string name="pet_breed_field">Write pet breed here</string>
+    <string name="submit">Submit</string>
+    <string name="back">Back</string>
+    <string name="pet_sex_field">Put pet sex here</string>
+    <string name="pet_additional_notes">Additional notes</string>
+    <string name="input_pet_dob">Input pet birthdate</string>
+</resources>
