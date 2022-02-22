@@ -16,16 +16,16 @@ data class Pet(
     var petName : String = "",
 
     @ColumnInfo(name="pet_species")
-    var petSpecies : String = "",
+    var petSpecies : String = "N/A",
 
     @ColumnInfo(name="pet_breed")
-    var petBreed : String = "",
+    var petBreed : String = "N/A",
 
     @ColumnInfo(name="pet_sex")
-    var petSex : String = "",
+    var petSex : String = "N/A",
 
     @ColumnInfo(name="pet_dob")
-    var petDOB : OffsetDateTime = OffsetDateTime.now(),
+    var petDOB : OffsetDateTime = OffsetDateTime.MIN,
 
     @ColumnInfo(name="has_dob")
     var hasDOB : Boolean = false

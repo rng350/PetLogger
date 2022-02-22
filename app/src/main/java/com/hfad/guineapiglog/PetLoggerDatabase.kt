@@ -1,6 +1,7 @@
 package com.hfad.guineapiglog
 
 import android.content.Context
+import android.util.Log
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -26,7 +27,9 @@ abstract class PetLoggerDatabase: RoomDatabase() {
                         "pet_logger_database"
                     ).build()
                     INSTANCE = instance
+                    Log.i("DB", "DATABASE CREATED!!")
                 }
+                Log.i("DB", "database already created... retrieving")
                 return instance
             }
         }

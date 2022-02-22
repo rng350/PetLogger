@@ -34,15 +34,13 @@ class NewPetFragment : Fragment() {
         val datePicker = MaterialDatePicker.Builder.datePicker()
                         .setTitleText("Select pet's date of birth")
                         .build()
-
         binding.inputDOBButton.setOnClickListener {
-            datePicker.show(getParentFragmentManager(), "DATE_PICKER")
+            datePicker.show(parentFragmentManager, "DATE_PICKER")
         }
-
         datePicker.addOnPositiveButtonClickListener {
             viewModel.petDOB = OffsetDateTime.ofInstant(Instant.ofEpochMilli(it), ZoneId.systemDefault())
         }
-
+6
         binding.back.setOnClickListener {
             this.findNavController().navigate(R.id.action_newPetFragment_to_homeFragment)
         }
@@ -50,4 +48,8 @@ class NewPetFragment : Fragment() {
         return view
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

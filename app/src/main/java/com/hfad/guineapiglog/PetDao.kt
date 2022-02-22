@@ -6,13 +6,13 @@ import androidx.room.*
 @Dao
 interface PetDao {
     @Insert
-    fun insert(pet: Pet)
+    suspend fun insert(pet: Pet)
 
     @Delete
-    fun delete(pet: Pet)
+    suspend fun delete(pet: Pet)
 
     @Update
-    fun update(pet: Pet)
+    suspend fun update(pet: Pet)
 
     @Query("SELECT * FROM pet_table WHERE pet_id=:petId")
     fun get(petId: Long): LiveData<Pet>
