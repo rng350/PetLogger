@@ -11,11 +11,11 @@ class NewPetViewModel(val dao: PetDao) : ViewModel() {
     var petSpecies : String = ""
     var petBreed : String = ""
     var petSex : String = ""
-    private var DOBInitialized : Boolean = false
+    private var petDOBInitialized : Boolean = false
     var petDOB : OffsetDateTime = OffsetDateTime.MIN
-        set(givenDOB : OffsetDateTime) {
-            petDOB = givenDOB
-            DOBInitialized = true
+        set(value : OffsetDateTime) {
+            field = value
+            petDOBInitialized = true
         }
 
     fun addPet() {
@@ -26,16 +26,12 @@ class NewPetViewModel(val dao: PetDao) : ViewModel() {
             pet.petBreed = petBreed
             pet.petSex = petSex
             pet.petDOB = petDOB
-            pet.hasDOB = DOBInitialized
+            pet.hasDOB = petDOBInitialized
         }
     }
 
     fun unsetDOB() {
         petDOB = OffsetDateTime.MIN
-        DOBInitialized = false
-    }
-
-    fun showDatePickerDialog() {
-
+        petDOBInitialized = false
     }
 }

@@ -9,6 +9,9 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.hfad.guineapiglog.databinding.FragmentNewPetBinding
+import java.time.Instant
+import java.time.OffsetDateTime
+import java.time.ZoneId
 
 class NewPetFragment : Fragment() {
     private var _binding: FragmentNewPetBinding? = null
@@ -28,20 +31,20 @@ class NewPetFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        binding.submit.setOnClickListener {
-            // petDao.insert()
-        }
-
-        binding.back.setOnClickListener {
-            this.findNavController().navigate(R.id.action_newPetFragment_to_homeFragment)
-        }
-
         val datePicker = MaterialDatePicker.Builder.datePicker()
                         .setTitleText("Select pet's date of birth")
                         .build()
 
         binding.inputDOBButton.setOnClickListener {
             datePicker.show(getParentFragmentManager(), "DATE_PICKER")
+        }
+
+        datePicker.addOnPositiveButtonClickListener {
+            viewModel.petDOB = OffsetDateTime.ofInstant(Instant.ofEpochMilli(it), ZoneId.systemDefault())
+        }
+
+        binding.back.setOnClickListener {
+            this.findNavController().navigate(R.id.action_newPetFragment_to_homeFragment)
         }
 
         return view

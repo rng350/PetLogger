@@ -9,7 +9,7 @@ object Converter {
 
     @TypeConverter
     @JvmStatic
-    fun fromOffsetDateTime(value: String?): OffsetDateTime? {
+    fun toOffsetDateTime(value: String?): OffsetDateTime? {
         return value?.let {
             return formatter.parse(value, OffsetDateTime::from)
         }
