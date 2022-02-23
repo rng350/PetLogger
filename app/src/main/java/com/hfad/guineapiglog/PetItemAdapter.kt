@@ -3,16 +3,22 @@ package com.hfad.guineapiglog
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.hfad.guineapiglog.databinding.PetItemBinding
 
-class PetItemAdapter : RecyclerView.Adapter<PetItemAdapter.PetItemViewHolder>() {
-    var data = listOf<Pet>()
-    set(value) {
-        field = value
-        notifyDataSetChanged()
-        Log.i("data_size", ""+ data.size)
-    }
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+
+import androidx.lifecycle.viewModelScope
+
+class PetItemAdapter(dao : PetDao) : RecyclerView.Adapter<PetItemAdapter.PetItemViewHolder>() {
+    val petDao = dao
+    var data = mutableListOf<Pet>()
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+            Log.i("data_size", ""+ data.size)
+        }
 
     override fun getItemCount() = data.size
 
@@ -22,19 +28,30 @@ class PetItemAdapter : RecyclerView.Adapter<PetItemAdapter.PetItemViewHolder>() 
     override fun onBindViewHolder(holder: PetItemViewHolder, position: Int) {
         val item = data[position]
         holder.bind(item)
+
+        holder.binding.deletePet.setOnClickListener {
+            GlobalScope.launch {
+                Log.i("REMOVE", "removed at " + position + " length:" + data.size)
+                data.removeAt(position)
+                // TODO: remove GlobalScope eventually... just testing
+                petDao.delete(data[position])
+                notifyItemRemoved(position)
+                notifyItemRangeChanged(position, data.size)
+            }
+        }
     }
 
-    class PetItemViewHolder(val rootView : TextView)
-        : RecyclerView.ViewHolder(rootView) {
+    class PetItemViewHolder(val binding : PetItemBinding)
+        : RecyclerView.ViewHolder(binding.root) {
         companion object {
             fun inflateFrom(parent: ViewGroup): PetItemViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val view = layoutInflater.inflate(R.layout.pet_item, parent, false) as TextView
-                return PetItemViewHolder(view)
+                val binding = PetItemBinding.inflate(layoutInflater, parent, false)
+                return PetItemViewHolder(binding)
             }
         }
         fun bind(item: Pet) {
-            rootView.text = item.petName
+            binding.pet = item
         }
     }
 }

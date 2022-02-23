@@ -12,4 +12,8 @@
     <string name="pet_sex_field">Put pet sex here</string>
     <string name="pet_additional_notes">Additional notes</string>
     <string name="input_pet_dob">Input pet birthdate</string>
+    <string name="pet_name_header">Name</string>
+    <string name="pet_age_header">Age</string>
+    <string name="pet_species_header">Species</string>
+    <string name="pet_breed_header">Breed</string>
 </resources>

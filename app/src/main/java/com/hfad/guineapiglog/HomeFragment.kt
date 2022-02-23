@@ -29,7 +29,7 @@ class HomeFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        val adapter = PetItemAdapter()
+        val adapter = PetItemAdapter(petDao)
         binding.petsList.adapter = adapter
 
         binding.addPetButton.setOnClickListener {

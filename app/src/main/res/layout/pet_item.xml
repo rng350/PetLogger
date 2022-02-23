@@ -1,7 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView
+<layout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:textSize="16sp"
-    android:padding="8dp"/>
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="pet"
+            type="com.hfad.guineapiglog.Pet" />
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:cardElevation="4dp"
+        app:cardCornerRadius="4dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/pet_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:padding="8dp"
+                android:text="@{pet.petName}"/>
+
+            <Button
+                android:id="@+id/delete_pet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="DELETE!!"/>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</layout>
