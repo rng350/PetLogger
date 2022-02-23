@@ -6,13 +6,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.hfad.guineapiglog.databinding.PetItemBinding
 
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+class PetItemAdapter(val deletePet: (pet: Pet) -> Unit) : RecyclerView.Adapter<PetItemAdapter.PetItemViewHolder>() {
 
-import androidx.lifecycle.viewModelScope
-
-class PetItemAdapter(dao : PetDao) : RecyclerView.Adapter<PetItemAdapter.PetItemViewHolder>() {
-    val petDao = dao
     var data = mutableListOf<Pet>()
         set(value) {
             field = value
@@ -27,18 +22,7 @@ class PetItemAdapter(dao : PetDao) : RecyclerView.Adapter<PetItemAdapter.PetItem
 
     override fun onBindViewHolder(holder: PetItemViewHolder, position: Int) {
         val item = data[position]
-        holder.bind(item)
-
-        holder.binding.deletePet.setOnClickListener {
-            GlobalScope.launch {
-                Log.i("REMOVE", "removed at " + position + " length:" + data.size)
-                data.removeAt(position)
-                // TODO: remove GlobalScope eventually... just testing
-                petDao.delete(data[position])
-                notifyItemRemoved(position)
-                notifyItemRangeChanged(position, data.size)
-            }
-        }
+        holder.bind(item, this, deletePet)
     }
 
     class PetItemViewHolder(val binding : PetItemBinding)
@@ -50,8 +34,14 @@ class PetItemAdapter(dao : PetDao) : RecyclerView.Adapter<PetItemAdapter.PetItem
                 return PetItemViewHolder(binding)
             }
         }
-        fun bind(item: Pet) {
+        fun bind(item: Pet, adapter: PetItemAdapter, deletePet: (pet: Pet) -> Unit) {
             binding.pet = item
+
+            binding.deletePetButton.setOnClickListener {
+                deletePet(item)
+                adapter.notifyItemRemoved(bindingAdapterPosition)
+                adapter.notifyItemRangeChanged(bindingAdapterPosition, adapter.data.size)
+            }
         }
     }
 }

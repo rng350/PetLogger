@@ -29,7 +29,9 @@ class HomeFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        val adapter = PetItemAdapter(petDao)
+        val adapter = PetItemAdapter {
+            pet -> viewModel.deletePet(pet)
+        }
         binding.petsList.adapter = adapter
 
         binding.addPetButton.setOnClickListener {
