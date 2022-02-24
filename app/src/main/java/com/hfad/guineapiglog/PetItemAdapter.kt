@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.hfad.guineapiglog.databinding.PetItemBinding
 
-class PetItemAdapter(val deletePet: (pet: Pet) -> Unit) : RecyclerView.Adapter<PetItemAdapter.PetItemViewHolder>() {
+class PetItemAdapter(val setViewPet: (petId: Long) -> Unit, val deletePet: (pet: Pet) -> Unit) : RecyclerView.Adapter<PetItemAdapter.PetItemViewHolder>() {
 
     var data = mutableListOf<Pet>()
         set(value) {
@@ -22,7 +22,7 @@ class PetItemAdapter(val deletePet: (pet: Pet) -> Unit) : RecyclerView.Adapter<P
 
     override fun onBindViewHolder(holder: PetItemViewHolder, position: Int) {
         val item = data[position]
-        holder.bind(item, this, deletePet)
+        holder.bind(item, this, setViewPet, deletePet)
     }
 
     class PetItemViewHolder(val binding : PetItemBinding)
@@ -34,13 +34,17 @@ class PetItemAdapter(val deletePet: (pet: Pet) -> Unit) : RecyclerView.Adapter<P
                 return PetItemViewHolder(binding)
             }
         }
-        fun bind(item: Pet, adapter: PetItemAdapter, deletePet: (pet: Pet) -> Unit) {
+        fun bind(item: Pet, adapter: PetItemAdapter, setViewPet: (petId: Long) -> Unit, deletePet: (pet: Pet) -> Unit) {
             binding.pet = item
 
             binding.deletePetButton.setOnClickListener {
                 deletePet(item)
                 adapter.notifyItemRemoved(bindingAdapterPosition)
                 adapter.notifyItemRangeChanged(bindingAdapterPosition, adapter.data.size)
+            }
+
+            binding.viewPetButton.setOnClickListener {
+                setViewPet(item.petID)
             }
         }
     }

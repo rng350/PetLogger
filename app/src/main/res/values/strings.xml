@@ -16,4 +16,7 @@
     <string name="pet_age_header">Age</string>
     <string name="pet_species_header">Species</string>
     <string name="pet_breed_header">Breed</string>
+    <string name="edit_pet_button">Edit Pet</string>
+    <string name="pet_sex_header">Sex</string>
+    <string name="pet_dob_header">Birthdate</string>
 </resources>

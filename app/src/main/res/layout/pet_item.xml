@@ -28,12 +28,24 @@
                 android:textSize="16sp"
                 android:padding="8dp"
                 android:text="@{pet.petName}"/>
-
-            <Button
-                android:id="@+id/delete_pet_button"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="DELETE!!"/>
+                android:orientation="horizontal"
+                android:gravity="center">
+                <Button
+                    android:id="@+id/view_pet_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="View"
+                    android:layout_marginEnd="5dp"/>
+                <Button
+                    android:id="@+id/delete_pet_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Delete"
+                    android:layout_marginStart="5dp"/>
+            </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 </layout>

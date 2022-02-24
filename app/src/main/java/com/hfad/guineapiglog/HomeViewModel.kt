@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.fragment.findNavController
 import kotlinx.coroutines.launch
 
 class HomeViewModel(val petDao: PetDao, val eventDao: EventDao) : ViewModel() {
@@ -22,6 +21,14 @@ class HomeViewModel(val petDao: PetDao, val eventDao: EventDao) : ViewModel() {
         viewModelScope.launch {
             petDao.delete(pet)
         }
+    }
+
+    fun navigateToPet(petID: Long) {
+        _navigateToPet.value = petID
+    }
+
+    fun onPetNavigated() {
+        _navigateToPet.value = null
     }
 
     fun deleteEvent() {

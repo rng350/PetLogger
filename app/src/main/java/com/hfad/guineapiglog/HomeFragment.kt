@@ -29,9 +29,10 @@ class HomeFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        val adapter = PetItemAdapter {
-            pet -> viewModel.deletePet(pet)
-        }
+        val adapter = PetItemAdapter(
+            setViewPet = {petID -> viewModel.navigateToPet(petID)},
+            deletePet = {pet -> viewModel.deletePet(pet)}
+        )
         binding.petsList.adapter = adapter
 
         binding.addPetButton.setOnClickListener {
@@ -45,6 +46,14 @@ class HomeFragment : Fragment() {
         viewModel.pets.observe(viewLifecycleOwner, Observer {
             it?.let {
                 adapter.data = it
+            }
+        })
+
+        viewModel.navigateToPet.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                val action = HomeFragmentDirections.actionHomeFragmentToViewPetFragment(it)
+                this.findNavController().navigate(action)
+                viewModel.onPetNavigated()
             }
         })
 
