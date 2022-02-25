@@ -30,7 +30,7 @@ class NewPetViewModel(val dao: PetDao) : ViewModel() {
                 pet.petSex = petSex
                 pet.petDOB = if (petDOBInitialized) petDOB else OffsetDateTime.MIN
                 pet.hasDOB = petDOBInitialized
-                Log.i("PET_ADDING", "trying to add pet... name:" + pet.petName + ", id:" + pet.petID + ",hasDob: " + pet.hasDOB)
+                Log.i("PET_ADDING", "trying to add pet... name: ${pet.petName}, id: ${pet.petID},hasDob: ${pet.hasDOB}, dob: ${pet.petDOB.toString()}")
                 dao.insert(pet)
                 Log.i("PET_ADDING", "Pet has been ADDED!")
             }
