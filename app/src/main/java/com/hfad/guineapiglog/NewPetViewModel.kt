@@ -37,6 +37,8 @@ class NewPetViewModel(val dao: PetDao) : ViewModel() {
         }
     }
 
+
+
     fun unsetDOB() {
         petDOB = OffsetDateTime.MIN
         petDOBInitialized = false

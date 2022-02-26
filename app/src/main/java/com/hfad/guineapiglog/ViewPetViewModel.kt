@@ -22,7 +22,7 @@ class ViewPetViewModel (val petDao: PetDao, val petID: Long): ViewModel() {
             if (it.hasDOB) {
                 // return DateFormat.getDateInstance(DateFormat.MEDIUM).parse(it.petDOB.toString()).toString()
                 val day = it.petDOB.dayOfMonth
-                val month = it.petDOB.month
+                val month = it.petDOB.monthValue
                 val year = it.petDOB.year
                 return "${day}/${month}/${year}"
             }
