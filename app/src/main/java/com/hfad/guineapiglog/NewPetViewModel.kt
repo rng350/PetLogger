@@ -1,6 +1,7 @@
 package com.hfad.guineapiglog
 
 import android.app.DatePickerDialog
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,6 +13,7 @@ class NewPetViewModel(val dao: PetDao) : ViewModel() {
     var petSpecies : String = ""
     var petBreed : String = ""
     var petSex : String = ""
+    var petProfilePicURI : Uri? = null
     private var petDOBInitialized : Boolean = false
     var petDOB : OffsetDateTime = OffsetDateTime.MIN
         set(value : OffsetDateTime) {
@@ -23,7 +25,7 @@ class NewPetViewModel(val dao: PetDao) : ViewModel() {
         Log.i("PET_ADDING", "trying to add pet...")
         if (petName.isNotEmpty()) {
             viewModelScope.launch {
-                val pet = Pet()
+                val pet = Pet(petProfilePic = petProfilePicURI)
                 pet.petName = petName
                 pet.petSpecies = petSpecies
                 pet.petBreed = petBreed

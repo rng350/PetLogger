@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.hfad.guineapiglog.databinding.FragmentNewPetBinding
@@ -43,8 +44,16 @@ class NewPetFragment : Fragment() {
 
         petPhoto = binding.petPhoto
         binding.petPhoto.setOnClickListener {
-            val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+            val gallery = Intent(Intent.ACTION_OPEN_DOCUMENT, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
             startActivityForResult(gallery, pickImage)
+        }
+
+        val getPicture = registerForActivityResult(ActivityResultContracts.OpenDocument()) {
+            binding.viewModel?.petProfilePicURI = it
+        }
+
+        binding.addPicButton.setOnClickListener {
+            getPicture.launch(arrayOf("image/*"))
         }
 
         val datePicker = MaterialDatePicker.Builder.datePicker()
@@ -70,6 +79,7 @@ class NewPetFragment : Fragment() {
         if (resultCode == Activity.RESULT_OK && requestCode == pickImage) {
             imageUri = data?.data
             petPhoto.setImageURI(imageUri)
+            binding.viewModel?.petProfilePicURI = imageUri
         }
     }
 

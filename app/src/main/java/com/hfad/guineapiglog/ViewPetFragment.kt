@@ -1,6 +1,7 @@
 package com.hfad.guineapiglog
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -31,10 +32,14 @@ class ViewPetFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        viewModel.pet.observe(viewLifecycleOwner, Observer {
+        viewModel.pet.observe(viewLifecycleOwner, Observer { it ->
             it?.let {
                 viewModel.petDOB.value = viewModel.getBirthDateDisplay()
                 viewModel.petAge.value = viewModel.getPetAgeDisplay()
+                viewModel.pet?.value?.petProfilePic?.let {
+                    Log.i("VIEWPETFRAGMENT", "petprofilepic not null")
+                    binding.petPhoto.setImageURI(viewModel.pet?.value?.petProfilePic)
+                }
             }
         })
 

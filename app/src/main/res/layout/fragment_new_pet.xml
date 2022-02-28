@@ -26,8 +26,13 @@
                 android:adjustViewBounds="true"
                 android:maxWidth="200dp"
                 android:scaleType="fitCenter"
-                android:layout_marginLeft="3dp"
                 app:srcCompat="@drawable/placeholder" />
+
+            <Button
+                android:id="@+id/addPicButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ADD PIC TEMP"/>
 
             <EditText
                 android:id="@+id/petName"

@@ -1,5 +1,6 @@
 package com.hfad.guineapiglog
 
+import android.net.Uri
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -28,5 +29,8 @@ data class Pet(
     var petDOB : OffsetDateTime = OffsetDateTime.MIN,
 
     @ColumnInfo(name="has_dob")
-    var hasDOB : Boolean = false
+    var hasDOB : Boolean = false,
+
+    @ColumnInfo(name="pet_profile_pic")
+    var petProfilePic : Uri?
 )
