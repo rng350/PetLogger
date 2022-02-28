@@ -32,7 +32,13 @@
                 android:id="@+id/addPicButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="ADD PIC TEMP"/>
+                android:text="ADD PIC TEMP 1"/>
+
+            <Button
+                android:id="@+id/addPicButton2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ADD PIC TEMP 2"/>
 
             <EditText
                 android:id="@+id/petName"

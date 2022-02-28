@@ -24,10 +24,6 @@ class NewPetFragment : Fragment() {
     private var _binding: FragmentNewPetBinding? = null
     private val binding get() = _binding!!
 
-    private val pickImage = 100
-    private var imageUri: Uri? = null
-    lateinit var petPhoto: ImageView
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -42,17 +38,12 @@ class NewPetFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        petPhoto = binding.petPhoto
-        binding.petPhoto.setOnClickListener {
-            val gallery = Intent(Intent.ACTION_OPEN_DOCUMENT, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
-            startActivityForResult(gallery, pickImage)
-        }
-
         val getPicture = registerForActivityResult(ActivityResultContracts.OpenDocument()) {
+            binding.petPhoto.setImageURI(it)
             binding.viewModel?.petProfilePicURI = it
         }
 
-        binding.addPicButton.setOnClickListener {
+        binding.petPhoto.setOnClickListener {
             getPicture.launch(arrayOf("image/*"))
         }
 
@@ -72,15 +63,6 @@ class NewPetFragment : Fragment() {
         }
 
         return view
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK && requestCode == pickImage) {
-            imageUri = data?.data
-            petPhoto.setImageURI(imageUri)
-            binding.viewModel?.petProfilePicURI = imageUri
-        }
     }
 
     override fun onDestroyView() {
