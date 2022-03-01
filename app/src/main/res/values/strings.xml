@@ -19,4 +19,7 @@
     <string name="edit_pet_button">Edit Pet</string>
     <string name="pet_sex_header">Sex</string>
     <string name="pet_dob_header">Birthdate</string>
+    <string name="input_event_date">+Event Date</string>
+    <string name="input_event_time">+Event Time</string>
+    <string name="pet_birthdate">Pet birthdate</string>
 </resources>

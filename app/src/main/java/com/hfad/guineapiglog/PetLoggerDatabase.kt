@@ -12,6 +12,7 @@ import androidx.room.TypeConverters
 abstract class PetLoggerDatabase: RoomDatabase() {
     abstract val petDao: PetDao
     abstract val eventDao: EventDao
+    abstract val eventPetDao: EventPetDao
     abstract val weightDao: WeightDao
 
     companion object {

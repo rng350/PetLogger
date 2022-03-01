@@ -64,6 +64,12 @@
                 android:text="@={viewModel.petSex}"
                 android:hint="@string/pet_sex_field"/>
 
+            <TextView
+                android:id="@+id/petBirthDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:text="@string/pet_birthdate"/>
 
             <Button
                 android:id="@+id/inputDOBButton"

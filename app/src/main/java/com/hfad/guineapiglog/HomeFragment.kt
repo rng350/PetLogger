@@ -29,31 +29,45 @@ class HomeFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        val adapter = PetItemAdapter(
+        val petAdapter = PetItemAdapter(
             setViewPet = {petID -> viewModel.navigateToPet(petID)},
             deletePet = {pet -> viewModel.deletePet(pet)}
         )
-        binding.petsList.adapter = adapter
-
+        binding.petsList.adapter = petAdapter
         binding.addPetButton.setOnClickListener {
             this.findNavController().navigate(R.id.action_homeFragment_to_newPetFragment)
         }
-
-        binding.addEventButton.setOnClickListener {
-            this.findNavController().navigate(R.id.action_homeFragment_to_newEventFragment)
-        }
-
         viewModel.pets.observe(viewLifecycleOwner, Observer {
             it?.let {
-                adapter.data = it
+                petAdapter.data = it
             }
         })
-
         viewModel.navigateToPet.observe(viewLifecycleOwner, Observer {
             it?.let {
                 val action = HomeFragmentDirections.actionHomeFragmentToViewPetFragment(it)
                 this.findNavController().navigate(action)
                 viewModel.onPetNavigated()
+            }
+        })
+
+        val eventAdapter = EventItemAdapter(
+            setViewEvent = {eventID -> viewModel.navigateToEvent(eventID)},
+            deleteEvent = {event -> viewModel.deleteEvent(event)}
+        )
+        binding.eventsList.adapter = eventAdapter
+        binding.addEventButton.setOnClickListener {
+            this.findNavController().navigate(R.id.action_homeFragment_to_newEventFragment)
+        }
+        viewModel.events.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                eventAdapter.data = it
+            }
+        })
+        viewModel.navigateToEvent.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                val action = HomeFragmentDirections.actionHomeFragmentToViewEventFragment(it)
+                this.findNavController().navigate(action)
+                viewModel.onEventNavigated()
             }
         })
 

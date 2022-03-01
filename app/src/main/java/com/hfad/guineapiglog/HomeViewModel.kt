@@ -31,7 +31,17 @@ class HomeViewModel(val petDao: PetDao, val eventDao: EventDao) : ViewModel() {
         _navigateToPet.value = null
     }
 
-    fun deleteEvent() {
-        // TODO: implement
+    fun navigateToEvent(eventID: Long) {
+        _navigateToEvent.value = eventID
+    }
+
+    fun onEventNavigated() {
+        _navigateToEvent.value = null
+    }
+
+    fun deleteEvent(event: Event) {
+        viewModelScope.launch {
+            eventDao.delete(event)
+        }
     }
 }

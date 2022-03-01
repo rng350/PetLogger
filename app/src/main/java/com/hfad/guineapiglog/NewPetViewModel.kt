@@ -22,7 +22,7 @@ class NewPetViewModel(val dao: PetDao) : ViewModel() {
         }
 
     fun addPet() {
-        Log.i("PET_ADDING", "trying to add pet...")
+        Log.i("PET_ADDING", "trying to add pet... name:${petName}")
         if (petName.isNotEmpty()) {
             viewModelScope.launch {
                 val pet = Pet(petProfilePic = petProfilePicURI)

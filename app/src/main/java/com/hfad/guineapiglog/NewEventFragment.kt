@@ -1,59 +1,76 @@
 package com.hfad.guineapiglog
 
 import android.os.Bundle
+import android.text.format.DateFormat.is24HourFormat
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
+import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.MaterialTimePicker.INPUT_MODE_KEYBOARD
+import com.google.android.material.timepicker.TimeFormat
+import com.hfad.guineapiglog.databinding.FragmentNewEventBinding
+import java.time.Instant
+import java.time.OffsetDateTime
+import java.time.ZoneId
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [NewEventFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class NewEventFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private var _binding: FragmentNewEventBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_new_event, container, false)
-    }
+        _binding = FragmentNewEventBinding.inflate(inflater, container, false)
+        val view = binding.root
+        val application = requireNotNull(this.activity).application
+        val eventDao = PetLoggerDatabase.getInstance(application).eventDao
+        val eventPetDao = PetLoggerDatabase.getInstance(application).eventPetDao
+        val viewModelFactory = NewEventViewModelFactory(eventDao, eventPetDao)
+        val viewModel = ViewModelProvider(this, viewModelFactory).get(NewEventViewModel::class.java)
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment NewEventFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            NewEventFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = viewLifecycleOwner
+
+        val datePicker = MaterialDatePicker.Builder.datePicker()
+            .setTitleText("Select date of event")
+            .build()
+        binding.inputEventDateButton.setOnClickListener {
+            datePicker.show(parentFragmentManager, "DATE_PICKER")
+        }
+        datePicker.addOnPositiveButtonClickListener {
+            viewModel.eventDateTime = OffsetDateTime.ofInstant(Instant.ofEpochMilli(it), ZoneId.systemDefault())
+            viewModel.eventDateDisplay = viewModel.eventDateTime.toString()
+            Log.i("TIME", "added date ${viewModel.eventDateDisplay}")
+        }
+
+        val timePicker = MaterialTimePicker.Builder()
+            .setTimeFormat(if (is24HourFormat(context)) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H)
+            .setTitleText("Select time of event")
+            .setInputMode(INPUT_MODE_KEYBOARD)
+            .build()
+        binding.inputEventTimeButton.setOnClickListener {
+            timePicker.show(parentFragmentManager, "TIME_PICKER")
+        }
+        timePicker.addOnPositiveButtonClickListener {
+            viewModel.eventTimeDisplay = "${timePicker.hour}:${timePicker.minute}"
+            binding.eventTime.text = "${timePicker.hour}:${timePicker.minute}"
+            Log.i("TIME", "added time, val ${viewModel.eventTimeDisplay}")
+        }
+
+        binding.submitEventButton.setOnClickListener {
+            viewModel.addEvent()
+        }
+
+        binding.backButton.setOnClickListener {
+            this.findNavController().navigate(R.id.action_newEventFragment_to_homeFragment)
+        }
+
+        return view
     }
 }

@@ -16,8 +16,8 @@ data class Event(
     var title : String = "",
 
     @ColumnInfo(name="event_details")
-    var details : String?,
+    var details : String = "",
 
     @ColumnInfo(name="event_date")
-    val date: OffsetDateTime?
+    val date: OffsetDateTime = OffsetDateTime.now()
 )
