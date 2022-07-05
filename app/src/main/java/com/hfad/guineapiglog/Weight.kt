@@ -9,17 +9,17 @@ import java.time.OffsetDateTime
 data class Weight(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name="weight_id")
-    var weightId: Long = 0L,
+    override var id: Long = 0L,
 
     @ColumnInfo(name="weight_pet_id")
     var petId: Long = 0L,
 
     @ColumnInfo(name="weight_grams")
-    var weightGrams: Long = 0L/*,
+    var weightGrams: Int = 0,
 
     @ColumnInfo(name="weight_datetime")
-    val weightDateTime : OffsetDateTime = OffsetDateTime.MIN,
+    var weightDateTime : OffsetDateTime = OffsetDateTime.now(),
 
     @ColumnInfo(name="weight_notes")
-    val weightNotes : String = ""*/
-)
+    var weightNotes : String = ""
+): WithId

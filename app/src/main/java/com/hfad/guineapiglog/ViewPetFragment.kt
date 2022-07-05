@@ -43,6 +43,43 @@ class ViewPetFragment : Fragment() {
             }
         })
 
+
+
+        val eventAdapter = EventItemAdapter(
+            setViewEvent = {eventID -> viewModel.eventNavigator.navigateTo(eventID)},
+            deleteEvent = { TODO("Disassociate event from pet") }
+        )
+        binding.eventsList.adapter = eventAdapter
+        viewModel.eventsAssociated.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                eventAdapter.data = it
+            }
+        })
+
+        viewModel.eventNavigator.navigateTo.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                val action = ViewPetFragmentDirections.actionViewPetFragmentToViewEventFragment(it)
+                this.findNavController().navigate(action)
+                viewModel.eventNavigator.onNavigated()
+            }
+        })
+
+        val weightAdapter = WeightItemAdapter(
+            setViewWeight = {weightID -> viewModel.weightNavigator.navigateTo(weightID)},
+            deleteWeight = { TODO("Delete the weight") }
+        )
+        binding.weightsList.adapter = weightAdapter
+        viewModel.weightsAssociated.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                weightAdapter.data = it.map {WeightWithPetName(it, petDao, viewModel)}.toMutableList()
+            }
+        })
+        viewModel.weightNavigator.navigateTo.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                TODO("implement ViewWeightFragment")
+            }
+        })
+
         binding.editPetButton.setOnClickListener {
             this.findNavController().navigate(R.id.action_viewPetFragment_to_editPetFragment)
         }

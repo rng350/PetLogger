@@ -6,37 +6,22 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 
-class HomeViewModel(val petDao: PetDao, val eventDao: EventDao) : ViewModel() {
-    val pets = petDao.getAll()
-    private val _navigateToPet = MutableLiveData<Long?>()
-    val navigateToPet: LiveData<Long?>
-        get() = _navigateToPet
+class HomeViewModel(val petDao: PetDao, val eventDao: EventDao, val weightDao: WeightDao) : ViewModel() {
+    var pets = petDao.getAll()
+    var events = eventDao.getAll()
+    var weights: MutableLiveData<MutableList<Weight>> = MutableLiveData(mutableListOf<Weight>())
+    val petNavigator = Navigator()
+    val eventNavigator = Navigator()
+    val weightNavigator = Navigator()
 
-    val events = eventDao.getAll()
-    private val _navigateToEvent = MutableLiveData<Long?>()
-    val navigateToEvent: LiveData<Long?>
-        get() = _navigateToEvent
+    init {
+        Fetcher.fetchWeights(viewModel=this, weightsList=weights, weightDao=weightDao)
+    }
 
     fun deletePet(pet: Pet) {
         viewModelScope.launch {
             petDao.delete(pet)
         }
-    }
-
-    fun navigateToPet(petID: Long) {
-        _navigateToPet.value = petID
-    }
-
-    fun onPetNavigated() {
-        _navigateToPet.value = null
-    }
-
-    fun navigateToEvent(eventID: Long) {
-        _navigateToEvent.value = eventID
-    }
-
-    fun onEventNavigated() {
-        _navigateToEvent.value = null
     }
 
     fun deleteEvent(event: Event) {

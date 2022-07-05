@@ -6,21 +6,24 @@ import androidx.room.*
 @Dao
 interface WeightDao {
     @Insert
-    fun insert(weight: Weight)
+    suspend fun insert(weight: Weight)
 
     @Update
-    fun update(weight: Weight)
+    suspend fun update(weight: Weight)
 
     @Delete
-    fun delete(weight: Weight)
+    suspend fun delete(weight: Weight)
 
     @Query("SELECT * FROM weight_table WHERE weight_id=:weightId")
-    fun get(weightId: Long): LiveData<Weight>
+    suspend fun get(weightId: Long): Weight
 
-    /*//TODO: add "ORDER BY weight_date DESCENDING"
+    //TODO: add "ORDER BY weight_date DESCENDING"
     @Query("SELECT * FROM weight_table WHERE weight_pet_id=:petId ORDER BY weight_datetime")
-    fun getPetWeights(petId: Long): LiveData<List<Weight>>
+    suspend fun getPetWeights(petId: Long): MutableList<Weight>
 
-    @Query("SELECT MAX(weight_datetime) FROM weight_table WHERE weight_pet_id=:petId")
-    fun getMostRecentWeight(petId: Long): LiveData<Weight>*/
+    @Query("SELECT * FROM weight_table INNER JOIN (SELECT MAX(weight_datetime) FROM weight_table AS w2 WHERE weight_pet_id=:petId) WHERE weight_pet_id=:petId")
+    suspend fun getMostRecentWeight(petId: Long): Weight?
+
+    @Query("SELECT * FROM weight_table")
+    suspend fun getAll(): MutableList<Weight>
 }

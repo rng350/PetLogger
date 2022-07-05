@@ -55,7 +55,7 @@ class NewPetFragment : Fragment() {
         }
         datePicker.addOnPositiveButtonClickListener {
             viewModel.petDOB = OffsetDateTime.ofInstant(Instant.ofEpochMilli(it), ZoneId.systemDefault())
-            binding.petBirthDate.text = viewModel.petDOB.toString()
+            binding.petBirthDate.text = viewModel.petDOB.toLocalDate().toString()
         }
 
 

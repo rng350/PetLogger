@@ -23,6 +23,9 @@
         <action
             android:id="@+id/action_homeFragment_to_viewEventFragment"
             app:destination="@id/viewEventFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_newWeightFragment"
+            app:destination="@id/newWeightFragment" />
     </fragment>
     <fragment
         android:id="@+id/editEventFragment"
@@ -85,6 +88,9 @@
         <action
             android:id="@+id/action_viewPetFragment_to_newEventFragment"
             app:destination="@id/newEventFragment" />
+        <action
+            android:id="@+id/action_viewPetFragment_to_newWeightFragment"
+            app:destination="@id/newWeightFragment" />
     </fragment>
     <fragment
         android:id="@+id/viewEventFragment"
@@ -116,5 +122,24 @@
             app:destination="@id/homeFragment"
             app:popUpTo="@id/homeFragment"
             app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/newWeightFragment"
+        android:name="com.hfad.guineapiglog.NewWeightFragment"
+        android:label="fragment_new_weight"
+        tools:layout="@layout/fragment_new_weight" >
+        <action
+            android:id="@+id/action_newWeightFragment_to_viewPetFragment"
+            app:destination="@id/viewPetFragment"
+            app:popUpTo="@id/viewPetFragment" />
+        <action
+            android:id="@+id/action_newWeightFragment_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/homeFragment" />
+        <argument
+            android:name="petId"
+            app:argType="string"
+            android:defaultValue="@null"
+            app:nullable="true" />
     </fragment>
 </navigation>

@@ -3,11 +3,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".NewEventFragment">
+    tools:context=".NewWeightFragment">
     <data>
+        <import
+            type="com.hfad.guineapiglog.DataBindingConverter" />
         <variable
             name="viewModel"
-            type="com.hfad.guineapiglog.NewEventViewModel" />
+            type="com.hfad.guineapiglog.NewWeightViewModel" />
     </data>
 
     <ScrollView
@@ -21,47 +23,55 @@
             android:orientation="vertical">
 
             <EditText
-                android:id="@+id/eventTitle"
+                android:id="@+id/weightQty"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Event title"
-                android:text="@={viewModel.eventTitle}"/>
+                android:ems="10"
+                android:inputType="number"
+                android:text="@={DataBindingConverter.intToString(weightQty, viewModel.weightGrams)}"
+                android:hint="@string/input_weight_qty"/>
 
             <TextView
-                android:id="@+id/eventDate"
+                android:id="@+id/weightDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@{viewModel.eventDateDisplay}" />
+                android:text="@{viewModel.dateDisplay}" />
 
             <Button
-                android:id="@+id/inputEventDateButton"
+                android:id="@+id/inputWeightDateButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/input_event_date" />
+                android:text="@string/input_weight_date" />
 
             <TextView
-                android:id="@+id/eventTime"
+                android:id="@+id/weightTime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@{viewModel.eventTimeDisplay}" />
+                android:text="@{viewModel.timeDisplay}" />
 
             <Button
-                android:id="@+id/inputEventTimeButton"
+                android:id="@+id/inputWeightTimeButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/input_event_time" />
+                android:text="@string/input_weight_time" />
 
             <Button
-                android:id="@+id/inputAddPetsButton"
+                android:id="@+id/curSelectedPet"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/pets_involved_button" />
+                android:text="@{viewModel.petNameDisplay}" />
+
+            <Button
+                android:id="@+id/inputAddPetButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/pet_involved_button" />
 
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Add details here"
-                android:text="@={viewModel.eventDetails}"
+                android:text="@={viewModel.details}"
                 android:minHeight="48dp" />
 
             <LinearLayout
@@ -70,7 +80,7 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/submitEventButton"
+                    android:id="@+id/submitWeightButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:inputType="textPersonName"

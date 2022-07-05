@@ -8,11 +8,11 @@ import androidx.room.Update
 @Dao
 interface EventPetDao {
     @Insert
-    fun insert(eventPet : EventPet)
+    suspend fun insert(eventPet : EventPet)
 
     @Delete
-    fun delete(eventPet : EventPet)
+    suspend fun delete(eventPet : EventPet)
 
     @Update
-    fun update(eventPet : EventPet)
+    suspend fun update(eventPet : EventPet)
 }

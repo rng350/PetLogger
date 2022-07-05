@@ -1,10 +1,7 @@
 package com.hfad.guineapiglog
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -13,9 +10,17 @@ import java.time.OffsetDateTime
 import java.time.Period
 
 class ViewPetViewModel (val petDao: PetDao, val petID: Long): ViewModel() {
-    val pet : LiveData<Pet> = petDao.get(petID)
-    var petDOB : MutableLiveData<String> = MutableLiveData<String>(getPetAgeDisplay())
-    var petAge : MutableLiveData<String> = MutableLiveData<String>(getPetAgeDisplay())
+    var pet : MutableLiveData<Pet> = MutableLiveData<Pet>()
+    var petDOB : MutableLiveData<String> = MutableLiveData<String>("N/A")
+    var petAge : MutableLiveData<String> = MutableLiveData<String>("N/A")
+    var eventsAssociated: MutableLiveData<MutableList<Event>> = MutableLiveData(mutableListOf<Event>())
+    var weightsAssociated: MutableLiveData<MutableList<Weight>> = MutableLiveData(mutableListOf<Weight>())
+    val eventNavigator = Navigator()
+    val weightNavigator = Navigator()
+
+    init {
+        fetchPet()
+    }
 
     fun getBirthDateDisplay(): String {
         pet.value?.let {
@@ -47,15 +52,25 @@ class ViewPetViewModel (val petDao: PetDao, val petID: Long): ViewModel() {
         return "N/A"
     }
 
+    private fun fetchPet() {
+        viewModelScope.launch {
+            var fetchedPet = async { petDao.getAsync(petID) }
+            pet.value = fetchedPet.await()
+
+            var eventsFetched = async { petDao.getEventsOfPet(petID) }
+
+            petDOB.value = getBirthDateDisplay()
+            petAge.value = getPetAgeDisplay()
+            val fetchedEvents = mutableListOf<Event>()
+
+            for (event in eventsFetched.await()) {
+                fetchedEvents.add(event)
+            }
+            eventsAssociated.value = fetchedEvents
+        }
+    }
+
     fun editPet() {
-    }
-
-    fun viewEvent() {
-
-    }
-
-    fun viewWeight() {
-
     }
 
     // 1. click on pencil
@@ -67,14 +82,15 @@ class ViewPetViewModel (val petDao: PetDao, val petID: Long): ViewModel() {
     }
 
     fun addEvent() {
+        TODO("new event screen, with this pet checked as associated pet")
     }
 
     fun addWeight() {
     }
 
-    fun removeEvent() {
+    fun removeEvent(eventID: Long) {
     }
 
-    fun removeWeight() {
+    fun removeWeight(weightID: Long) {
     }
 }

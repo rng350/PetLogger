@@ -1,7 +1,5 @@
 <resources>
     <string name="app_name">GuineaPigLog</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="add_pet">Add Pet</string>
     <string name="add_event">Add Event</string>
     <string name="pet_name_field">Write pet name here</string>
@@ -22,4 +20,22 @@
     <string name="input_event_date">+Event Date</string>
     <string name="input_event_time">+Event Time</string>
     <string name="pet_birthdate">Pet birthdate</string>
+    <string name="pets_involved_button">+Pet(s)</string>
+    <string name="add_pets">Add Pets</string>
+    <string name="cancel">Cancel</string>
+    <string name="select_pets">Select Pets</string>
+    <string name="edit_event_button">Edit Event</string>
+    <string name="event_title_header">Title</string>
+    <string name="event_date_header">Date</string>
+    <string name="event_details_header">Details</string>
+    <string name="event_pets_involved_header">Pets Involved</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="time_header">Time</string>
+    <string name="input_weight_date">+Weight Date</string>
+    <string name="input_weight_time">+Weight Time</string>
+    <string name="pet_involved_button">+Pet Involved</string>
+    <string name="add_weight">Add Weight</string>
+    <string name="weight_unit">g</string>
+    <string name="input_weight_qty">Input weight quantity</string>
 </resources>
