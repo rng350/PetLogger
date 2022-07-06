@@ -16,10 +16,8 @@ object TimePicker {
 
         timePicker.addOnPositiveButtonClickListener {
             viewModel.dateTime.value?.let {
-                var newOffsetDateTime = it.plusHours(timePicker.hour.toLong() - it.hour)
-                newOffsetDateTime = newOffsetDateTime.plusMinutes(timePicker.minute.toLong() - it.minute)
-                viewModel.dateTime.value = newOffsetDateTime
-                viewModel.timeDisplay.value = newOffsetDateTime.toLocalTime().toString()
+                viewModel.dateTime.value = it.withHour(timePicker.hour).withMinute(timePicker.minute)
+                viewModel.timeDisplay.value = "${if (timePicker.hour<10) "0" else ""}${timePicker.hour}:${if (timePicker.minute<10) "0" else ""}${timePicker.minute}"
             }
         }
 

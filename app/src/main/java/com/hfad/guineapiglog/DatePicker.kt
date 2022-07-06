@@ -1,7 +1,9 @@
 package com.hfad.guineapiglog
 
+import android.util.Log
 import com.google.android.material.datepicker.MaterialDatePicker
 import java.time.Instant
+import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.ZoneId
 
@@ -13,13 +15,14 @@ object DatePicker {
 
         datePicker.addOnPositiveButtonClickListener {
             val oldOffsetDateTime = requireNotNull(viewModel.dateTime.value)
-            var newOffsetDateTime = OffsetDateTime.ofInstant(Instant.ofEpochMilli(it), ZoneId.systemDefault())
-            newOffsetDateTime = newOffsetDateTime.plusHours(oldOffsetDateTime.hour - newOffsetDateTime.hour.toLong())
-            newOffsetDateTime = newOffsetDateTime.plusMinutes(oldOffsetDateTime.minute - newOffsetDateTime.minute.toLong())
-            viewModel.dateTime.value = newOffsetDateTime
-
-            viewModel.dateDisplay.value = viewModel.dateTime.value?.toString()
-            // Log.i("TIME", "added date ${viewModel.eventDateDisplay}")
+            val pickedDate = OffsetDateTime.ofInstant(Instant.ofEpochMilli(it), ZoneId.systemDefault())
+                .atZoneSameInstant(ZoneId.of("UTC"))
+                .toLocalDate()
+            viewModel.dateTime.value = oldOffsetDateTime
+                .withYear(pickedDate.year)
+                .withMonth(pickedDate.monthValue)
+                .withDayOfMonth(pickedDate.dayOfMonth)
+            viewModel.dateDisplay.value = pickedDate.toString()
         }
 
         return datePicker
