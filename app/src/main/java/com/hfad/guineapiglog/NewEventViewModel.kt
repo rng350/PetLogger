@@ -49,7 +49,7 @@ class NewEventViewModel(val eventDao: EventDao, val eventPetDao: EventPetDao, va
     private fun fetchPets() {
         viewModelScope.launch {
             var fetchedPets = async {
-                petDao.getAllAsync()
+                petDao.getAll()
             }
             pets = fetchedPets.await()
             petsPicked = MutableLiveData(BooleanArray(pets?.size ?: 0))

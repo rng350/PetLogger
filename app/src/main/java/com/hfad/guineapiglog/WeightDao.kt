@@ -21,9 +21,6 @@ interface WeightDao {
     @Query("SELECT * FROM weight_table WHERE weight_pet_id=:petId ORDER BY weight_datetime")
     suspend fun getPetWeights(petId: Long): MutableList<Weight>
 
-    @Query("SELECT * FROM weight_table INNER JOIN (SELECT MAX(weight_datetime) FROM weight_table AS w2 WHERE weight_pet_id=:petId) WHERE weight_pet_id=:petId")
-    suspend fun getMostRecentWeight(petId: Long): Weight?
-
     @Query("SELECT * FROM weight_table")
     suspend fun getAll(): MutableList<Weight>
 }

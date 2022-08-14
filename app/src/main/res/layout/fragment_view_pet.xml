@@ -47,7 +47,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="15sp"
-            android:text="@{viewModel.petDOB}" />
+            android:text='@{viewModel.pet.hasDOB? viewModel.pet.petDOB.toLocalDate().toString() : @string/not_available}' />
 
         <TextView
             android:layout_width="match_parent"
@@ -96,6 +96,30 @@
             android:layout_height="wrap_content"
             android:textSize="15sp"
             android:text="@{viewModel.pet.petBreed}" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:text="@string/pet_latest_weight_header" />
+        <TextView
+            android:id="@+id/pet_latest_weight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:text='@{@string/not_available + " g"}' />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:text="@string/pet_weighing_date_header" />
+        <TextView
+            android:id="@+id/pet_latest_weight_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:text='@{ @string/not_available }' />
 
 
 

@@ -24,18 +24,19 @@ class ViewPetFragment : Fragment() {
         val view = binding.root
         val application = requireNotNull(this.activity).application
         val petDao = PetLoggerDatabase.getInstance(application).petDao
+        val weightDao = PetLoggerDatabase.getInstance(application).weightDao
 
         val petId = ViewPetFragmentArgs.fromBundle(requireArguments()).petId
 
-        val viewModelFactory = ViewPetViewModelFactory(petDao, petId)
+        val viewModelFactory = ViewPetViewModelFactory(petDao, weightDao, petId)
         val viewModel = ViewModelProvider(this, viewModelFactory).get(ViewPetViewModel::class.java)
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
         viewModel.pet.observe(viewLifecycleOwner, Observer { it ->
             it?.let {
-                viewModel.petDOB.value = viewModel.getBirthDateDisplay()
-                viewModel.petAge.value = viewModel.getPetAgeDisplay()
+/*                viewModel.petDOB.value = viewModel.getBirthDateDisplay()
+                viewModel.petAge.value = viewModel.getPetAgeDisplay()*/
                 viewModel.pet?.value?.petProfilePic?.let {
                     Log.i("VIEWPETFRAGMENT", "petprofilepic not null")
                     binding.petPhoto.setImageURI(viewModel.pet?.value?.petProfilePic)
@@ -71,7 +72,7 @@ class ViewPetFragment : Fragment() {
         binding.weightsList.adapter = weightAdapter
         viewModel.weightsAssociated.observe(viewLifecycleOwner, Observer {
             it?.let {
-                weightAdapter.data = it.map {WeightWithPetName(it, petDao, viewModel)}.toMutableList()
+                weightAdapter.data = it.map {WeightWithPetName(it, "CHANGE THIS")}.toMutableList()
             }
         })
         viewModel.weightNavigator.navigateTo.observe(viewLifecycleOwner, Observer {

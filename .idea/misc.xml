@@ -8,6 +8,7 @@
         <entry key="..\:/AndroidStudioProjects/GuineaPigLog/app/src/main/res/layout/fragment_edit_event.xml" value="0.33695652173913043" />
         <entry key="..\:/AndroidStudioProjects/GuineaPigLog/app/src/main/res/layout/fragment_edit_pet.xml" value="0.33695652173913043" />
         <entry key="..\:/AndroidStudioProjects/GuineaPigLog/app/src/main/res/layout/fragment_home.xml" value="0.33695652173913043" />
+        <entry key="..\:/AndroidStudioProjects/GuineaPigLog/app/src/main/res/layout/fragment_media_selector.xml" value="0.15348439504061565" />
         <entry key="..\:/AndroidStudioProjects/GuineaPigLog/app/src/main/res/layout/fragment_new_event.xml" value="0.33695652173913043" />
         <entry key="..\:/AndroidStudioProjects/GuineaPigLog/app/src/main/res/layout/fragment_new_pet.xml" value="0.33695652173913043" />
         <entry key="..\:/AndroidStudioProjects/GuineaPigLog/app/src/main/res/layout/fragment_new_weight.xml" value="0.18697916666666667" />
@@ -20,7 +21,7 @@
         <entry key="..\:/AndroidStudioProjects/GuineaPigLog/app/src/main/res/layout/fragment_view_weight.xml" value="0.19583333333333333" />
         <entry key="..\:/AndroidStudioProjects/GuineaPigLog/app/src/main/res/layout/new_weight_fragment.xml" value="0.20104166666666667" />
         <entry key="..\:/AndroidStudioProjects/GuineaPigLog/app/src/main/res/layout/pet_item.xml" value="0.1984375" />
-        <entry key="..\:/AndroidStudioProjects/GuineaPigLog/app/src/main/res/layout/weight_item.xml" value="0.1984375" />
+        <entry key="..\:/AndroidStudioProjects/GuineaPigLog/app/src/main/res/layout/weight_item.xml" value="0.67" />
       </map>
     </option>
   </component>

@@ -15,8 +15,9 @@ object DatePicker {
 
         datePicker.addOnPositiveButtonClickListener {
             val oldOffsetDateTime = requireNotNull(viewModel.dateTime.value)
-            val pickedDate = OffsetDateTime.ofInstant(Instant.ofEpochMilli(it), ZoneId.systemDefault())
-                .atZoneSameInstant(ZoneId.of("UTC"))
+            // ZoneId set at UTC to prevent offset errors
+            val pickedDate = OffsetDateTime
+                .ofInstant(Instant.ofEpochMilli(it), ZoneId.of("UTC"))
                 .toLocalDate()
             viewModel.dateTime.value = oldOffsetDateTime
                 .withYear(pickedDate.year)

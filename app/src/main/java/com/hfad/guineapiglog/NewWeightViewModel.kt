@@ -23,7 +23,7 @@ class NewWeightViewModel(val weightDao: WeightDao, val petDao: PetDao, petId: Lo
 
     init {
         petId?.let {
-            petAssociated.value = Fetcher.fetchPet(this, petDao, it)
+            Fetcher.fetchPet(this, petAssociated, petDao, it)
             petNameDisplay.value = petAssociated.value?.petName
         }
         Fetcher.fetchAllPets(this, pets, petDao)

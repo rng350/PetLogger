@@ -21,7 +21,7 @@ class ViewEventViewModel(val eventDao: EventDao, private val eventID: Long): Vie
 
     private fun fetchEvent() {
         viewModelScope.launch {
-            val eventFetching = async { eventDao.getAsync(eventID) }
+            val eventFetching = async { eventDao.get(eventID) }
             eventFetching.await().let {
                 event.value = it
                 val petsFetching = async { eventDao.getPetsOfEvent(eventID) }

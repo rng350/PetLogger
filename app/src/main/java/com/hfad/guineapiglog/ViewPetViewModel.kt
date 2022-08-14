@@ -9,20 +9,22 @@ import java.text.DateFormat
 import java.time.OffsetDateTime
 import java.time.Period
 
-class ViewPetViewModel (val petDao: PetDao, val petID: Long): ViewModel() {
+class ViewPetViewModel (val petDao: PetDao, val weightDao: WeightDao, val petID: Long): ViewModel() {
     var pet : MutableLiveData<Pet> = MutableLiveData<Pet>()
-    var petDOB : MutableLiveData<String> = MutableLiveData<String>("N/A")
-    var petAge : MutableLiveData<String> = MutableLiveData<String>("N/A")
-    var eventsAssociated: MutableLiveData<MutableList<Event>> = MutableLiveData(mutableListOf<Event>())
-    var weightsAssociated: MutableLiveData<MutableList<Weight>> = MutableLiveData(mutableListOf<Weight>())
+    /*var petDOB : MutableLiveData<String> = MutableLiveData<String>("N/A")*/
+    val petAge : MutableLiveData<String> = MutableLiveData<String>("N/A")
+    val eventsAssociated: MutableLiveData<MutableList<Event>> = MutableLiveData(mutableListOf<Event>())
+    val weightsAssociated: MutableLiveData<MutableList<Weight>> = MutableLiveData(mutableListOf<Weight>())
     val eventNavigator = Navigator()
     val weightNavigator = Navigator()
 
     init {
-        fetchPet()
+        Fetcher.fetchPet(this, pet, petDao, petID)
+        Fetcher.fetchWeightsOfPet(this, weightsAssociated, weightDao, petID)
+        Fetcher.fetchEventsOfPet(this, eventsAssociated, petDao, petID)
     }
 
-    fun getBirthDateDisplay(): String {
+/*    fun getBirthDateDisplay(): String {
         pet.value?.let {
             if (it.hasDOB) {
                 // return DateFormat.getDateInstance(DateFormat.MEDIUM).parse(it.petDOB.toString()).toString()
@@ -36,7 +38,7 @@ class ViewPetViewModel (val petDao: PetDao, val petID: Long): ViewModel() {
         if (pet.value == null)
             Log.i("VIEWPET", "pet is null???")
         return "N/A"
-    }
+    }*/
 
     fun getPetAgeDisplay(): String {
         pet.value?.let {
@@ -55,18 +57,10 @@ class ViewPetViewModel (val petDao: PetDao, val petID: Long): ViewModel() {
     private fun fetchPet() {
         viewModelScope.launch {
             var fetchedPet = async { petDao.getAsync(petID) }
+
             pet.value = fetchedPet.await()
-
-            var eventsFetched = async { petDao.getEventsOfPet(petID) }
-
-            petDOB.value = getBirthDateDisplay()
+            /*petDOB.value = getBirthDateDisplay()*/
             petAge.value = getPetAgeDisplay()
-            val fetchedEvents = mutableListOf<Event>()
-
-            for (event in eventsFetched.await()) {
-                fetchedEvents.add(event)
-            }
-            eventsAssociated.value = fetchedEvents
         }
     }
 

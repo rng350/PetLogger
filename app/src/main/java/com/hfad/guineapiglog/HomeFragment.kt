@@ -83,7 +83,7 @@ class HomeFragment : Fragment() {
         )
         viewModel.weights.observe(viewLifecycleOwner, Observer {
             it?.let {
-                weightAdapter.submitList(it.map{ WeightWithPetName(it, petDao, viewModel) }.toMutableList())
+                weightAdapter.submitList(it)
             }
         })
         binding.weightsList.adapter = weightAdapter
@@ -145,7 +145,7 @@ class HomeFragment : Fragment() {
         ) {
             binder.weight = item
             binder.viewWeightButton.setOnClickListener {
-                setViewData(item.weightId)
+                setViewData(item.weight.id)
             }
             binder.deleteWeightButton.setOnClickListener {
                 deleteData(item)

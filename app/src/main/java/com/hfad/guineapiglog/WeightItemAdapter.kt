@@ -37,7 +37,7 @@ class WeightItemAdapter(val setViewWeight: (weightID: Long) -> Unit, val deleteW
             binding.weight = item
 
             binding.viewWeightButton.setOnClickListener {
-                setViewWeight(item.weightId)
+                setViewWeight(item.weight.id)
             }
 
             binding.deleteWeightButton.setOnClickListener {
