@@ -17,7 +17,8 @@ object TimePicker {
         timePicker.addOnPositiveButtonClickListener {
             oldDateTime.set(oldDateTime.dateTime
                 .withHour(timePicker.hour)
-                .withMinute(timePicker.minute))
+                .withMinute(timePicker.minute)
+                .withSecond(0))
         }
 
         return timePicker
