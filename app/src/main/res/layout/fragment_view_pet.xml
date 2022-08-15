@@ -107,7 +107,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="15sp"
-            android:text='@{@string/not_available + " g"}' />
+            android:text="@{viewModel.mostRecentWeightAmtDisplay}" />
 
         <TextView
             android:layout_width="match_parent"
@@ -119,7 +119,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="15sp"
-            android:text='@{ @string/not_available }' />
+            android:text="@{viewModel.mostRecentWeightDateDisplay}" />
 
 
 

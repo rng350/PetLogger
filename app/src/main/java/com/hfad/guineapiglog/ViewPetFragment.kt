@@ -35,9 +35,7 @@ class ViewPetFragment : Fragment() {
 
         viewModel.pet.observe(viewLifecycleOwner, Observer { it ->
             it?.let {
-/*                viewModel.petDOB.value = viewModel.getBirthDateDisplay()
-                viewModel.petAge.value = viewModel.getPetAgeDisplay()*/
-                viewModel.pet?.value?.petProfilePic?.let {
+                viewModel.pet.value?.petProfilePic?.let {
                     Log.i("VIEWPETFRAGMENT", "petprofilepic not null")
                     binding.petPhoto.setImageURI(viewModel.pet?.value?.petProfilePic)
                 }

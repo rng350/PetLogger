@@ -15,12 +15,14 @@ class ViewPetViewModel (val petDao: PetDao, val weightDao: WeightDao, val petID:
     val petAge : MutableLiveData<String> = MutableLiveData<String>("N/A")
     val eventsAssociated: MutableLiveData<MutableList<Event>> = MutableLiveData(mutableListOf<Event>())
     val weightsAssociated: MutableLiveData<MutableList<Weight>> = MutableLiveData(mutableListOf<Weight>())
+    val mostRecentWeightAmtDisplay: MutableLiveData<String> = MutableLiveData<String>("N/A")
+    val mostRecentWeightDateDisplay: MutableLiveData<String> = MutableLiveData<String>("N/A")
     val eventNavigator = Navigator()
     val weightNavigator = Navigator()
 
     init {
         fetchPet()
-        Fetcher.fetchWeightsOfPet(this, weightsAssociated, weightDao, petID)
+        fetchWeights()
         Fetcher.fetchEventsOfPet(this, eventsAssociated, petDao, petID)
     }
 
@@ -40,7 +42,7 @@ class ViewPetViewModel (val petDao: PetDao, val weightDao: WeightDao, val petID:
         return "N/A"
     }*/
 
-    fun getPetAgeDisplay(): String {
+    private fun getPetAgeDisplay(): String {
         pet.value?.let {
             if (it.hasDOB) {
                 val period = Period.between(it.petDOB.toLocalDate(), OffsetDateTime.now().toLocalDate())
@@ -56,11 +58,25 @@ class ViewPetViewModel (val petDao: PetDao, val weightDao: WeightDao, val petID:
 
     private fun fetchPet() {
         viewModelScope.launch {
-            var fetchedPet = async { petDao.getAsync(petID) }
-
+            val fetchedPet = async { petDao.getAsync(petID) }
             pet.value = fetchedPet.await()
             /*petDOB.value = getBirthDateDisplay()*/
             petAge.value = getPetAgeDisplay()
+        }
+    }
+
+    private fun fetchWeights() {
+        viewModelScope.launch {
+            val fetchedWeights = async {weightDao.getPetWeights(petID)}
+            weightsAssociated.value = fetchedWeights.await()
+                .sortedByDescending { it.weightDateTime }
+                .toMutableList()
+            weightsAssociated.value?.let {
+                if (it.size > 0) {
+                    mostRecentWeightAmtDisplay.value = "${it[0].weightGrams} grams"
+                    mostRecentWeightDateDisplay.value = it[0].weightDateTime.toLocalDate().toString()
+                }
+            }
         }
     }
 

@@ -52,7 +52,7 @@ object Fetcher {
             }
             weightsList.value =
                 fetchedWeights.await()
-                    .sortedBy { it.weightDateTime }
+                    .sortedByDescending { it.weightDateTime }
                     .toMutableList()
         }
     }
