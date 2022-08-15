@@ -19,7 +19,7 @@ class ViewPetViewModel (val petDao: PetDao, val weightDao: WeightDao, val petID:
     val weightNavigator = Navigator()
 
     init {
-        Fetcher.fetchPet(this, pet, petDao, petID)
+        fetchPet()
         Fetcher.fetchWeightsOfPet(this, weightsAssociated, weightDao, petID)
         Fetcher.fetchEventsOfPet(this, eventsAssociated, petDao, petID)
     }

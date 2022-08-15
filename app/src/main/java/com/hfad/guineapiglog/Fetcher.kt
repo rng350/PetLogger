@@ -50,7 +50,10 @@ object Fetcher {
             val fetchedWeights = async {
                 weightDao.getAll()
             }
-            weightsList.value = fetchedWeights.await()
+            weightsList.value =
+                fetchedWeights.await()
+                    .sortedBy { it.weightDateTime }
+                    .toMutableList()
         }
     }
 
@@ -68,8 +71,11 @@ object Fetcher {
                 petIDNameMap[pet.petID] = pet.petName
             }
             weightsList.value =
-                fetchedWeights.await().map { WeightWithPetName(it, petIDNameMap[it.petId] ?: "N/A") }
+                fetchedWeights.await()
+                    .map { WeightWithPetName(it, petIDNameMap[it.petId] ?: "N/A") }
+                    .sortedByDescending {it.weight.weightDateTime}
                     .toMutableList()
+
         }
     }
 
@@ -78,7 +84,10 @@ object Fetcher {
             val fetchedWeights = async {
                 weightDao.getPetWeights(petID)
             }
-            weightsList.value = fetchedWeights.await()
+            weightsList.value =
+                fetchedWeights.await()
+                    .sortedByDescending { it.weightDateTime }
+                    .toMutableList()
         }
     }
 
@@ -96,7 +105,10 @@ object Fetcher {
             val fetchedEvents = async {
                 eventDao.getAll()
             }
-            eventsList.value = fetchedEvents.await()
+            eventsList.value =
+                fetchedEvents.await()
+                    .sortedByDescending { it.date }
+                    .toMutableList()
         }
     }
 
@@ -105,7 +117,10 @@ object Fetcher {
             val fetchedEvents = async {
                 petDao.getEventsOfPet(petID)
             }
-            eventsList.value = fetchedEvents.await()
+            eventsList.value =
+                fetchedEvents.await()
+                    .sortedByDescending { it.date }
+                    .toMutableList()
         }
     }
 }

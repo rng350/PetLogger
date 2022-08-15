@@ -34,6 +34,7 @@ class NewPetFragment : Fragment() {
         val petDao = PetLoggerDatabase.getInstance(application).petDao
         val viewModelFactory = NewPetViewModelFactory(petDao)
         val viewModel = ViewModelProvider(this, viewModelFactory).get(NewPetViewModel::class.java)
+        val datePicker = DatePicker.generate(viewModel.petDOB)
 
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
@@ -47,17 +48,9 @@ class NewPetFragment : Fragment() {
             getPicture.launch(arrayOf("image/*"))
         }
 
-        val datePicker = MaterialDatePicker.Builder.datePicker()
-                        .setTitleText("Select pet's date of birth")
-                        .build()
         binding.inputDOBButton.setOnClickListener {
             datePicker.show(parentFragmentManager, "DATE_PICKER")
         }
-        datePicker.addOnPositiveButtonClickListener {
-            viewModel.petDOB = OffsetDateTime.ofInstant(Instant.ofEpochMilli(it), ZoneId.systemDefault())
-            binding.petBirthDate.text = viewModel.petDOB.toLocalDate().toString()
-        }
-
 
         binding.back.setOnClickListener {
             this.findNavController().navigate(R.id.action_newPetFragment_to_homeFragment)

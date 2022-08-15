@@ -7,7 +7,7 @@ import com.google.android.material.timepicker.TimeFormat
 import com.google.android.material.timepicker.MaterialTimePicker.INPUT_MODE_KEYBOARD
 
 object TimePicker {
-    fun generate(viewModel: WithDateTime, context: Context): MaterialTimePicker {
+    fun generate(oldDateTime: SelectableDateTime, context: Context): MaterialTimePicker {
         val timePicker = MaterialTimePicker.Builder()
             .setTimeFormat(if (is24HourFormat(context)) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H)
             .setTitleText("Select time")
@@ -15,10 +15,9 @@ object TimePicker {
             .build()
 
         timePicker.addOnPositiveButtonClickListener {
-            viewModel.dateTime.value?.let {
-                viewModel.dateTime.value = it.withHour(timePicker.hour).withMinute(timePicker.minute)
-                viewModel.timeDisplay.value = "${if (timePicker.hour<10) "0" else ""}${timePicker.hour}:${if (timePicker.minute<10) "0" else ""}${timePicker.minute}"
-            }
+            oldDateTime.set(oldDateTime.dateTime
+                .withHour(timePicker.hour)
+                .withMinute(timePicker.minute))
         }
 
         return timePicker

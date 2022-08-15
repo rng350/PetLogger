@@ -35,43 +35,18 @@ class NewEventFragment : Fragment() {
         val viewModelFactory = NewEventViewModelFactory(eventDao, eventPetDao, petDao)
         val viewModel = ViewModelProvider(this, viewModelFactory).get(NewEventViewModel::class.java)
         val petSelectorDialog by lazy { PetMultiSelectorDialogFragment(viewModel) }
+        val datePicker = DatePicker.generate(viewModel.eventDateTime)
+        val timePicker = TimePicker.generate(viewModel.eventDateTime, requireContext())
 
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        val datePicker = MaterialDatePicker.Builder.datePicker()
-            .setTitleText("Select date of event")
-            .build()
         binding.inputEventDateButton.setOnClickListener {
             datePicker.show(parentFragmentManager, "DATE_PICKER")
         }
-        datePicker.addOnPositiveButtonClickListener {
-            var newOffsetDateTime = OffsetDateTime.ofInstant(Instant.ofEpochMilli(it), ZoneId.systemDefault())
-            newOffsetDateTime = newOffsetDateTime.plusHours(viewModel.eventDateTime.hour - newOffsetDateTime.hour.toLong())
-            newOffsetDateTime = newOffsetDateTime.plusMinutes(viewModel.eventDateTime.minute - newOffsetDateTime.minute.toLong())
-            viewModel.eventDateTime = newOffsetDateTime
 
-            viewModel.eventDateDisplay = viewModel.eventDateTime.toString()
-            Log.i("TIME", "added date ${viewModel.eventDateDisplay}")
-        }
-
-        val timePicker = MaterialTimePicker.Builder()
-            .setTimeFormat(if (is24HourFormat(context)) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H)
-            .setTitleText("Select time of event")
-            .setInputMode(INPUT_MODE_KEYBOARD)
-            .build()
         binding.inputEventTimeButton.setOnClickListener {
             timePicker.show(parentFragmentManager, "TIME_PICKER")
-        }
-
-        timePicker.addOnPositiveButtonClickListener {
-            var newOffsetDateTime = viewModel.eventDateTime.plusHours(timePicker.hour.toLong() - viewModel.eventDateTime.hour)
-            newOffsetDateTime = newOffsetDateTime.plusMinutes(timePicker.minute.toLong() - viewModel.eventDateTime.minute)
-            viewModel.eventDateTime = newOffsetDateTime
-
-            viewModel.eventTimeDisplay = "${timePicker.hour}:${timePicker.minute}"
-            binding.eventTime.text = "${timePicker.hour}:${timePicker.minute}"
-            Log.i("TIME", "added time, val ${viewModel.eventTimeDisplay}")
         }
 
         binding.inputAddPetsButton.setOnClickListener {

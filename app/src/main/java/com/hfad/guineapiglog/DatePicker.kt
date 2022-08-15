@@ -8,22 +8,21 @@ import java.time.OffsetDateTime
 import java.time.ZoneId
 
 object DatePicker {
-    fun generate(viewModel: WithDateTime): MaterialDatePicker<Long> {
+    fun generate(oldDateTime: SelectableDate): MaterialDatePicker<Long> {
         val datePicker = MaterialDatePicker.Builder.datePicker()
             .setTitleText("Select date")
             .build()
 
         datePicker.addOnPositiveButtonClickListener {
-            val oldOffsetDateTime = requireNotNull(viewModel.dateTime.value)
             // ZoneId set at UTC to prevent offset errors
-            val pickedDate = OffsetDateTime
+            /*val pickedDate = OffsetDateTime
                 .ofInstant(Instant.ofEpochMilli(it), ZoneId.of("UTC"))
                 .toLocalDate()
-            viewModel.dateTime.value = oldOffsetDateTime
+            oldDateTime.set(oldDateTime.dateTime
                 .withYear(pickedDate.year)
                 .withMonth(pickedDate.monthValue)
-                .withDayOfMonth(pickedDate.dayOfMonth)
-            viewModel.dateDisplay.value = pickedDate.toString()
+                .withDayOfMonth(pickedDate.dayOfMonth))*/
+            oldDateTime.set(Instant.ofEpochMilli(it))
         }
 
         return datePicker

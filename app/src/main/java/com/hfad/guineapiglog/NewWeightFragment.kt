@@ -29,8 +29,8 @@ class NewWeightFragment : Fragment() {
         val viewModelFactory = NewWeightViewModelFactory(weightDao, petDao, petIdArg?.toLong())
         val viewModel = ViewModelProvider(this, viewModelFactory).get(NewWeightViewModel::class.java)
         val petSelectorDialog = PetSingleSelectorDialogFragment(viewModel = viewModel)
-        val datePicker = DatePicker.generate(viewModel)
-        val timePicker = TimePicker.generate(viewModel, requireContext())
+        val datePicker = DatePicker.generate(viewModel.wDateTime)
+        val timePicker = TimePicker.generate(viewModel.wDateTime, requireContext())
 
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner

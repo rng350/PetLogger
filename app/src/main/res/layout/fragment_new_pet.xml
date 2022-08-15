@@ -73,9 +73,9 @@
 
             <Button
                 android:id="@+id/inputDOBButton"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/input_pet_dob" />
+                android:text="@{@string/input_pet_dob(viewModel.petDOB.dateDisplay)}" />
 
             <EditText
                 android:id="@+id/additionalNotes"

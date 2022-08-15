@@ -35,7 +35,7 @@
                 android:id="@+id/weightDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@{viewModel.dateDisplay}" />
+                android:text="@{viewModel.wDateTime.dateDisplay}" />
 
             <Button
                 android:id="@+id/inputWeightDateButton"
@@ -47,7 +47,7 @@
                 android:id="@+id/weightTime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@{viewModel.timeDisplay}" />
+                android:text="@{viewModel.wDateTime.timeDisplay}" />
 
             <Button
                 android:id="@+id/inputWeightTimeButton"

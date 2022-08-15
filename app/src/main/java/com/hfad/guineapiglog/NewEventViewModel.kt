@@ -11,9 +11,7 @@ import kotlinx.coroutines.launch
 class NewEventViewModel(val eventDao: EventDao, val eventPetDao: EventPetDao, val petDao: PetDao): ViewModel(), WithMultiPetSelection {
     var eventTitle: String = "N/A"
     var eventDetails: String = "N/A"
-    var eventDateTime: OffsetDateTime = OffsetDateTime.now()
-    var eventDateDisplay: String = "Event date"
-    var eventTimeDisplay: String = "Event time"
+    var eventDateTime = SelectableDateTime()
     override var pets : MutableList<Pet>? = null
     override var petsAssociated: MutableLiveData<MutableList<Pet>> = MutableLiveData(mutableListOf<Pet>())
     override lateinit var petsPicked: MutableLiveData<BooleanArray>
@@ -24,10 +22,10 @@ class NewEventViewModel(val eventDao: EventDao, val eventPetDao: EventPetDao, va
 
     fun addEvent() {
         viewModelScope.launch {
-            var event = Event(date = eventDateTime)
+            var event = Event(date = eventDateTime.dateTime)
             event.title = eventTitle
             event.details = eventDetails
-            event.date = eventDateTime
+            event.date = eventDateTime.dateTime
             var eventID: Long? = null
             val eventInsert = async {
                 eventID = eventDao.insert(event)
