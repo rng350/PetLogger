@@ -14,14 +14,6 @@ object DatePicker {
             .build()
 
         datePicker.addOnPositiveButtonClickListener {
-            // ZoneId set at UTC to prevent offset errors
-            /*val pickedDate = OffsetDateTime
-                .ofInstant(Instant.ofEpochMilli(it), ZoneId.of("UTC"))
-                .toLocalDate()
-            oldDateTime.set(oldDateTime.dateTime
-                .withYear(pickedDate.year)
-                .withMonth(pickedDate.monthValue)
-                .withDayOfMonth(pickedDate.dayOfMonth))*/
             oldDateTime.set(Instant.ofEpochMilli(it))
         }
 
