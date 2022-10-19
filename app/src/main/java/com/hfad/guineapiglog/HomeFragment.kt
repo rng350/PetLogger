@@ -78,6 +78,7 @@ class HomeFragment : Fragment() {
         val weightAdapter = DataItemAdapter<WeightWithPetName, WeightItemBinding>(
             layoutId = R.layout.weight_item,
             bindingInterface = createWeightItemBindingInterface(),
+            listItems = viewModel.weights.value!!,
             setViewData = {weightID -> viewModel.weightNavigator.navigateTo(weightID)},
             deleteData = { /** TODO **/ }
         )

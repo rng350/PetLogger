@@ -21,6 +21,8 @@ import java.time.ZoneId
 class NewEventFragment : Fragment() {
     private var _binding: FragmentNewEventBinding? = null
     private val binding get() = _binding!!
+    private var _galleryPicker: GalleryPicker? = null
+    private val galleryPicker get() = _galleryPicker!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,13 +34,21 @@ class NewEventFragment : Fragment() {
         val petDao = PetLoggerDatabase.getInstance(application).petDao
         val eventDao = PetLoggerDatabase.getInstance(application).eventDao
         val eventPetDao = PetLoggerDatabase.getInstance(application).eventPetDao
-        val viewModelFactory = NewEventViewModelFactory(eventDao, eventPetDao, petDao)
-        val viewModel = ViewModelProvider(this, viewModelFactory).get(NewEventViewModel::class.java)
-        val petSelectorDialog by lazy { PetMultiSelectorDialogFragment(viewModel) }
-        val datePicker = DatePicker.generate(viewModel.eventDateTime)
-        val timePicker = TimePicker.generate(viewModel.eventDateTime, requireContext())
 
-        binding.viewModel = viewModel
+        val newEventViewModelFactory = NewEventViewModelFactory(eventDao, eventPetDao, petDao)
+        val galleryViewModelFactory = GalleryViewModelFactory(associatedIDType = AssociatedType.Event, choiceLimit = 10)
+        val newEventViewModel = ViewModelProvider(this, newEventViewModelFactory).get(NewEventViewModel::class.java)
+        val galleryViewModel = ViewModelProvider(this, galleryViewModelFactory).get(GalleryViewModel::class.java)
+
+        val petSelectorDialog by lazy { PetMultiSelectorDialogFragment(newEventViewModel) }
+        val datePicker = DatePicker.generate(newEventViewModel.eventDateTime)
+        val timePicker = TimePicker.generate(newEventViewModel.eventDateTime, requireContext())
+
+        _galleryPicker = GalleryPicker(this, binding.galleryPicker, galleryViewModel)
+        galleryPicker.onCreate(savedInstanceState)
+
+        binding.viewModel = newEventViewModel
+        binding.galleryViewModel = galleryViewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
         binding.inputEventDateButton.setOnClickListener {
@@ -55,7 +65,7 @@ class NewEventFragment : Fragment() {
         }
 
         binding.submitEventButton.setOnClickListener {
-            viewModel.addEvent()
+            newEventViewModel.addEvent()
         }
 
         binding.backButton.setOnClickListener {
@@ -63,5 +73,10 @@ class NewEventFragment : Fragment() {
         }
 
         return view
+    }
+
+    override fun onResume() {
+        super.onResume()
+        galleryPicker.onResume()
     }
 }

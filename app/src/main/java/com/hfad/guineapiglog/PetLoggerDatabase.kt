@@ -7,8 +7,17 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
-@Database(entities = [Pet::class, Event::class, EventPet::class, Weight::class], version = 1, exportSchema = false)
-@TypeConverters(Converter::class, URIConverter::class)
+@Database(entities = [
+    Pet::class,
+    Event::class,
+    EventPet::class,
+    Weight::class,
+    Photo::class,
+    PhotoEvent::class],
+    version = 1, exportSchema = false)
+@TypeConverters(
+    Converter::class,
+    URIConverter::class)
 abstract class PetLoggerDatabase: RoomDatabase() {
     abstract val petDao: PetDao
     abstract val eventDao: EventDao

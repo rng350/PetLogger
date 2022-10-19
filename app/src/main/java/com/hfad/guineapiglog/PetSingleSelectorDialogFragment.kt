@@ -16,7 +16,7 @@ class PetSingleSelectorDialogFragment<T>(var viewModel: T, var curSelectedPet: P
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
             val pets = requireNotNull(viewModel.pets.value)
-            val petNames = pets.map{ it.petName }?.toTypedArray()
+            val petNames = pets.map{ it.petName }.toTypedArray()
 
             val builder = AlertDialog.Builder(it)
             builder
