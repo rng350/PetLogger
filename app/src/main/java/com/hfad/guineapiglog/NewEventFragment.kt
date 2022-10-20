@@ -75,6 +75,11 @@ class NewEventFragment : Fragment() {
         return view
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        galleryPicker.onSaveInstanceState(outState)
+    }
+
     override fun onResume() {
         super.onResume()
         galleryPicker.onResume()

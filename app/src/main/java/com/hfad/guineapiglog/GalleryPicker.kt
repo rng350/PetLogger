@@ -16,6 +16,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.viewModelScope
+import androidx.recyclerview.selection.DefaultSelectionTracker
 import androidx.recyclerview.selection.SelectionPredicates
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
@@ -32,6 +33,8 @@ class GalleryPicker(private val fragment: Fragment, private val binding: Fragmen
     private lateinit var permissionsLauncher: ActivityResultLauncher<String>
     private lateinit var contentObserver: ContentObserver
     private lateinit var adapter: DataItemAdapter<Photo, GalleryPickerItemBinding>
+    private lateinit var selectionTracker: SelectionTracker<Photo>
+    private lateinit var storage: StorageStrategy<Photo>
 
     fun onCreate(savedInstanceState: Bundle?) {
         updateExternalReadPermission()
@@ -70,12 +73,14 @@ class GalleryPicker(private val fragment: Fragment, private val binding: Fragmen
             toggleGalleryPicker()
         }
 
-        val selectionTracker = SelectionTracker.Builder(
+        storage = StorageStrategy.createParcelableStorage(Photo::class.java)
+
+        selectionTracker = SelectionTracker.Builder(
             "photo",
             binding.mediaList,
             GenericItemKeyProvider(adapter),
             GenericItemLookUp<Photo>(binding.mediaList),
-            StorageStrategy.createParcelableStorage(Photo::class.java)
+            storage
         ).withSelectionPredicate(
             if (viewModel.choiceLimit == 1)
                 SelectionPredicates.createSelectSingleAnything()
@@ -105,6 +110,12 @@ class GalleryPicker(private val fragment: Fragment, private val binding: Fragmen
                 }
             }
         )
+
+        selectionTracker.onRestoreInstanceState(savedInstanceState)
+    }
+
+    fun onSaveInstanceState(outState: Bundle) {
+        selectionTracker.onSaveInstanceState(outState)
     }
 
     fun onResume() {
