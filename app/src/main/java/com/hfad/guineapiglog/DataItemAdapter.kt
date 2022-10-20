@@ -62,6 +62,9 @@ class DataItemAdapter<T, U: ViewDataBinding>(
             ItemDetailsLookup.ItemDetails<T>() {
             override fun getPosition() = bindingAdapterPosition
             override fun getSelectionKey(): T = listItems[position]
+            // removes need for long-press for first selection to enable multi-selection
+            // with selectiontracker
+            override fun inSelectionHotspot(e: MotionEvent): Boolean = true
         }
     }
 
