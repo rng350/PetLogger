@@ -16,13 +16,12 @@
             android:id="@+id/gallery_picker_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{@string/photos_selected(viewModel.photosSelected.size(), String.valueOf(viewModel.choiceLimit))}"/>
+            android:text="@{@string/photos_selected(viewModel.photosSelectedAmt, String.valueOf(viewModel.choiceLimit))}"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/media_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="top"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:spanCount="3"
             app:layout_constraintBottom_toBottomOf="parent" />

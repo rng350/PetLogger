@@ -3,6 +3,7 @@ package com.hfad.guineapiglog
 import android.Manifest
 import android.content.ContentUris
 import android.content.pm.PackageManager
+import android.content.res.ColorStateList
 import android.database.ContentObserver
 import android.os.Build
 import android.os.Bundle
@@ -14,6 +15,8 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toDrawable
+import androidx.core.view.get
 import androidx.lifecycle.Observer
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.selection.DefaultSelectionTracker
@@ -73,6 +76,10 @@ class GalleryPicker(private val fragment: Fragment, private val binding: Fragmen
             toggleGalleryPicker()
         }
 
+        setupSelectionTracker(savedInstanceState)
+    }
+
+    private fun setupSelectionTracker(savedInstanceState: Bundle?) {
         storage = StorageStrategy.createParcelableStorage(Photo::class.java)
 
         selectionTracker = SelectionTracker.Builder(
@@ -104,9 +111,15 @@ class GalleryPicker(private val fragment: Fragment, private val binding: Fragmen
 
         selectionTracker.addObserver(
             object : SelectionTracker.SelectionObserver<Photo>() {
-                override fun onSelectionChanged() {
-                    super.onSelectionChanged()
-                    viewModel.photosSelected.value = selectionTracker.selection.toMutableList()
+                override fun onItemStateChanged(key: Photo, selected: Boolean) {
+                    super.onItemStateChanged(key, selected)
+                    if (selected) {
+                        viewModel.selectPhoto(key)
+                        Log.e("photo_added", "list: ${viewModel.photosSelected.value}")
+                    } else {
+                        viewModel.deselectPhoto(key)
+                        Log.e("photo_removed", "list: ${viewModel.photosSelected.value}")
+                    }
                 }
             }
         )
@@ -218,6 +231,7 @@ class GalleryPicker(private val fragment: Fragment, private val binding: Fragmen
         }
     }
 
+    // TODO: Implement
     private fun saveToLocalStorage() {
 
     }
@@ -231,10 +245,26 @@ class GalleryPicker(private val fragment: Fragment, private val binding: Fragmen
             deleteData: (toDelete: Photo) -> Unit
         ) {
             binder.photo = item
+
             Glide.with(fragment.requireContext())
                 .load(item.contentUri)
                 .apply(RequestOptions().placeholder(R.drawable.placeholder))
-                .into(binder.imageView)
+                .into(binder.galleryImage)
+
+            binder.galleryCard.isChecked = selectionTracker.isSelected(item)
+
+            // I know this is awful, but I'll stick with it for now until I get rid of selectiontracker & recyclerviews
+            // TODO: get rid of recyclerviews altogether and replace with LazyColumns (compose)
+            selectionTracker.addObserver(
+                object : SelectionTracker.SelectionObserver<Photo>() {
+                    override fun onItemStateChanged(key: Photo, selected: Boolean) {
+                        super.onItemStateChanged(key, selected)
+                        if (item == key) {
+                            binder.galleryCard.isChecked = selected
+                        }
+                    }
+                }
+            )
         }
     }
 }

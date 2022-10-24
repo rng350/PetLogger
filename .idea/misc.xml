@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/AndroidStudioProjects/GuineaPigLog/app/src/main/res/drawable/ic_mtrl_checked_circle.xml" value="0.2085" />
         <entry key="..\:/AndroidStudioProjects/GuineaPigLog/app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="..\:/AndroidStudioProjects/GuineaPigLog/app/src/main/res/layout/event_item.xml" value="0.19583333333333333" />
         <entry key="..\:/AndroidStudioProjects/GuineaPigLog/app/src/main/res/layout/fragment_edit_event.xml" value="0.33695652173913043" />

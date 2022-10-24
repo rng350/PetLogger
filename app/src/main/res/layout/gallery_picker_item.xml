@@ -9,13 +9,15 @@
     </data>
 
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/card"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:checkable="true">
+        android:id="@+id/gallery_card"
+        android:layout_width="125dp"
+        android:layout_height="125dp"
+        android:clickable="true"
+        android:checkable="true"
+        android:focusable="true">
 
         <ImageView
-            android:id="@+id/imageView"
+            android:id="@+id/gallery_image"
             android:layout_width="125dp"
             android:layout_height="125dp"
             android:scaleType="centerCrop"
