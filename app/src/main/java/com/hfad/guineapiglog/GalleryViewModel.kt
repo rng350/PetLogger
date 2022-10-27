@@ -1,15 +1,7 @@
 package com.hfad.guineapiglog
 
-import android.content.ContentUris
-import android.content.Context
-import android.os.Build
-import android.provider.MediaStore
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
-import com.hfad.guineapiglog.databinding.GalleryPickerItemBinding
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 class GalleryViewModel(val associatedIDType: AssociatedType, val choiceLimit: Int) : ViewModel() {
     val allExternalPhotos = MutableLiveData(listOf<CheckableItem<Photo>>())
