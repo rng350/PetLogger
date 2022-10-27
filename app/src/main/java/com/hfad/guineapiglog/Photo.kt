@@ -8,7 +8,6 @@ import kotlinx.parcelize.Parcelize
 
 @Entity(tableName = "photo_table",
         primaryKeys = ["photo_id"])
-@Parcelize
 data class Photo (
     @ColumnInfo(name="photo_id")
     val id: Long,
@@ -27,4 +26,4 @@ data class Photo (
 
     @ColumnInfo(name="photo_notes")
     val notes: String
-): Parcelable
+)

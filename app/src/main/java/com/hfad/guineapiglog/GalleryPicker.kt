@@ -35,14 +35,14 @@ import kotlinx.coroutines.withContext
 class GalleryPicker(private val fragment: Fragment, private val binding: FragmentGalleryPickerBinding, private val viewModel: GalleryViewModel) {
     private lateinit var permissionsLauncher: ActivityResultLauncher<String>
     private lateinit var contentObserver: ContentObserver
-    private lateinit var adapter: DataItemAdapter<Photo, GalleryPickerItemBinding>
-    private lateinit var selectionTracker: SelectionTracker<Photo>
-    private lateinit var storage: StorageStrategy<Photo>
+    private lateinit var adapter: DataItemAdapter<CheckableItem<Photo>, GalleryPickerItemBinding>
+    /*private lateinit var selectionTracker: SelectionTracker<Photo>
+    private lateinit var storage: StorageStrategy<Photo>*/
 
     fun onCreate(savedInstanceState: Bundle?) {
         updateExternalReadPermission()
 
-        adapter = DataItemAdapter<Photo, GalleryPickerItemBinding> (
+        adapter = DataItemAdapter<CheckableItem<Photo>, GalleryPickerItemBinding> (
             layoutId = R.layout.gallery_picker_item,
             bindingInterface = createMediaItemBindingInterface(),
             listItems = viewModel.allExternalPhotos.value!!.toMutableList(),
@@ -59,7 +59,7 @@ class GalleryPicker(private val fragment: Fragment, private val binding: Fragmen
         // remove photo list if permission revoked
         viewModel.hasExternalReadPermission.observe(fragment.viewLifecycleOwner, Observer {
             if (!it) {
-                viewModel.allExternalPhotos.value = mutableListOf<Photo>()
+                viewModel.allExternalPhotos.value = mutableListOf<CheckableItem<Photo>>()
             }
         })
 
@@ -76,10 +76,10 @@ class GalleryPicker(private val fragment: Fragment, private val binding: Fragmen
             toggleGalleryPicker()
         }
 
-        setupSelectionTracker(savedInstanceState)
+        //setupSelectionTracker(savedInstanceState)
     }
 
-    private fun setupSelectionTracker(savedInstanceState: Bundle?) {
+    /*private fun setupSelectionTracker(savedInstanceState: Bundle?) {
         storage = StorageStrategy.createParcelableStorage(Photo::class.java)
 
         selectionTracker = SelectionTracker.Builder(
@@ -116,19 +116,21 @@ class GalleryPicker(private val fragment: Fragment, private val binding: Fragmen
                     if (selected) {
                         viewModel.selectPhoto(key)
                         Log.e("photo_added", "list: ${viewModel.photosSelected.value}")
+                        Log.e("added_photo", "${key.contentUri}")
                     } else {
                         viewModel.deselectPhoto(key)
                         Log.e("photo_removed", "list: ${viewModel.photosSelected.value}")
+                        Log.e("removed_photo", "${key.contentUri}")
                     }
                 }
             }
         )
 
         selectionTracker.onRestoreInstanceState(savedInstanceState)
-    }
+    }*/
 
     fun onSaveInstanceState(outState: Bundle) {
-        selectionTracker.onSaveInstanceState(outState)
+        /*selectionTracker.onSaveInstanceState(outState)*/
     }
 
     fun onResume() {
@@ -186,7 +188,7 @@ class GalleryPicker(private val fragment: Fragment, private val binding: Fragmen
         }
     }
 
-    private suspend fun loadPhotosFromExternalStorage(): List<Photo> {
+    private suspend fun loadPhotosFromExternalStorage(): List<CheckableItem<Photo>> {
         return withContext(Dispatchers.IO) {
             val collection =
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -200,7 +202,7 @@ class GalleryPicker(private val fragment: Fragment, private val binding: Fragmen
                 MediaStore.Images.Media.HEIGHT,
             )
 
-            val photos = mutableListOf<Photo>()
+            val photos = mutableListOf<CheckableItem<Photo>>()
             fragment.requireContext().contentResolver.query(
                 collection,
                 projection,
@@ -222,12 +224,12 @@ class GalleryPicker(private val fragment: Fragment, private val binding: Fragmen
                         MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                         id
                     )
-                    photos.add(Photo(id, displayName, contentUri, width, height, notes=""))
+                    photos.add(CheckableItem<Photo>(Photo(id, displayName, contentUri, width, height, notes="")))
                 }
                 Log.i("load", "photo list size: ${photos.size}")
                 photos.toList()
             }
-                ?: listOf<Photo>()
+                ?: listOf<CheckableItem<Photo>>()
         }
     }
 
@@ -237,34 +239,44 @@ class GalleryPicker(private val fragment: Fragment, private val binding: Fragmen
     }
 
     private fun createMediaItemBindingInterface()
-            = object : DataItemBindingInterface<Photo, GalleryPickerItemBinding> {
+            = object : DataItemBindingInterface<CheckableItem<Photo>, GalleryPickerItemBinding> {
         override fun bind(
-            item: Photo,
+            item: CheckableItem<Photo>,
             binder: GalleryPickerItemBinding,
             setViewData: (id: Long) -> Unit,
-            deleteData: (toDelete: Photo) -> Unit
+            deleteData: (toDelete: CheckableItem<Photo>) -> Unit
         ) {
             binder.photo = item
 
             Glide.with(fragment.requireContext())
-                .load(item.contentUri)
+                .load(item.item.contentUri)
                 .apply(RequestOptions().placeholder(R.drawable.placeholder))
                 .into(binder.galleryImage)
 
-            binder.galleryCard.isChecked = selectionTracker.isSelected(item)
+            binder.galleryCard.setOnClickListener { null }
+
+            binder.galleryCard.isChecked = item.isChecked
+
+            binder.galleryCard.setOnClickListener {
+                if (viewModel.canSelectMore() || binder.galleryCard.isChecked)
+                    binder.galleryCard.toggle()
+                viewModel.toggle(item)
+            }
+            /*binder.galleryCard.isChecked = selectionTracker.isSelected(item)*/
 
             // I know this is awful, but I'll stick with it for now until I get rid of selectiontracker & recyclerviews
             // TODO: get rid of recyclerviews altogether and replace with LazyColumns (compose)
-            selectionTracker.addObserver(
+            /*selectionTracker.addObserver(
                 object : SelectionTracker.SelectionObserver<Photo>() {
                     override fun onItemStateChanged(key: Photo, selected: Boolean) {
                         super.onItemStateChanged(key, selected)
                         if (item == key) {
                             binder.galleryCard.isChecked = selected
+                            Log.e("pic_toggled", "uri: ${item.contentUri}")
                         }
                     }
                 }
-            )
+            )*/
         }
     }
 }
