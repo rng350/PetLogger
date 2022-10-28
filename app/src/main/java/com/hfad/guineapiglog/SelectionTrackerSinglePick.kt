@@ -10,15 +10,15 @@ class SelectionTrackerSinglePick<T: CheckableItem<U>, U>(): SelectionTracker<T, 
         for (old in selection.value!!) {
             old.isChecked = false
         }
-        selection.value = mutableListOf<T>(item)
         item.isChecked = true
+        selection.value = mutableListOf<T>(item)
         return true
     }
 
     override fun remove(item: T): Boolean {
-        if (selection.value == item) {
-            selection.value = mutableListOf<T>()
+        if (selection.value!!.contains(item)) {
             item.isChecked = false
+            selection.value = mutableListOf<T>()
             return true
         }
         return false
@@ -28,6 +28,7 @@ class SelectionTrackerSinglePick<T: CheckableItem<U>, U>(): SelectionTracker<T, 
         for (item in selection.value!!) {
             item.isChecked = false
         }
-        selection.value = mutableListOf<T>()
+        selection.value!!.clear()
+        selection.value = selection.value
     }
 }

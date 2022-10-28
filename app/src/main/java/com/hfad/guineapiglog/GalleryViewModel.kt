@@ -1,7 +1,10 @@
 package com.hfad.guineapiglog
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.hfad.guineapiglog.databinding.GalleryPickerItemBinding
+import androidx.lifecycle.Observer
 
 class GalleryViewModel(val associatedIDType: AssociatedType, val choiceLimit: Int) : ViewModel() {
     val allExternalPhotos = MutableLiveData(listOf<CheckableItem<Photo>>())
@@ -13,6 +16,7 @@ class GalleryViewModel(val associatedIDType: AssociatedType, val choiceLimit: In
     val isExpanded = MutableLiveData<Boolean>(false)
     val photosSelectedAmt = MutableLiveData<Int>(0)
 
+    val selected = HashMap<GalleryPickerItemBinding, Observer<MutableList<CheckableItem<Photo>>>>()
 
     init {
         check(choiceLimit > 0)
@@ -21,12 +25,15 @@ class GalleryViewModel(val associatedIDType: AssociatedType, val choiceLimit: In
     fun toggle(photo: CheckableItem<Photo>) {
         if (photosSelected.selection.value!!.contains(photo)) {
             // deselect photo
-            if (photosSelected.remove(photo))
+            if (photosSelected.remove(photo)) {
                 photosSelectedAmt.value = photosSelectedAmt.value!! - 1
+            }
         } else {
             // select photo
             if (photosSelected.add(photo)) {
-                photosSelectedAmt.value = photosSelectedAmt.value!! + 1
+                if (choiceLimit > 1)
+                    photosSelectedAmt.value = photosSelectedAmt.value!! + 1
+                else photosSelectedAmt.value = 1
             }
         }
     }

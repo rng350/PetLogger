@@ -87,17 +87,21 @@ class GalleryPicker(private val fragment: Fragment, private val binding: Fragmen
     }
 
     private fun toggleGalleryPicker() {
-        Log.i("photos", "list size: ${viewModel.allExternalPhotos.value?.size ?: "0"}")
-        if (binding.mediaList.visibility == View.VISIBLE)
+        //Log.d("t_photos", "list size: ${viewModel.allExternalPhotos.value?.size ?: "0"}")
+        if (binding.mediaList.visibility == View.VISIBLE) {
             binding.mediaList.visibility = View.GONE
+        }
         else {
             if (viewModel.hasExternalReadPermission.value == true) {
                 binding.mediaList.visibility = View.VISIBLE
                 // if is granted but gallery hasn't been loaded...
-                if (viewModel.allExternalPhotos.value?.size == 0)
+                if (viewModel.allExternalPhotos.value?.size == 0) {
                     loadPhotosFromExternalStorageToViewModel()
+                }
             }
-            else requestExternalReadPermission()
+            else {
+                requestExternalReadPermission()
+            }
         }
     }
 
@@ -161,7 +165,7 @@ class GalleryPicker(private val fragment: Fragment, private val binding: Fragmen
                     )
                     photos.add(CheckableItem<Photo>(Photo(id, displayName, contentUri, width, height, notes="")))
                 }
-                Log.i("load", "photo list size: ${photos.size}")
+                //Log.d("load", "photo list size: ${photos.size}")
                 photos.toList()
             }
                 ?: listOf<CheckableItem<Photo>>()
@@ -188,7 +192,15 @@ class GalleryPicker(private val fragment: Fragment, private val binding: Fragmen
                 .apply(RequestOptions().placeholder(R.drawable.placeholder))
                 .into(binder.galleryImage)
 
+            // recyclerview-related cleanup to multiple checks
             binder.galleryCard.setOnClickListener { null }
+            // cleanup for single choice selection only
+            if (viewModel.choiceLimit == 1) {
+                val prevBindingObserver = viewModel.selected[binder]
+                prevBindingObserver?.let {
+                    viewModel.photosSelected.selection.removeObserver(it)
+                }
+            }
 
             binder.galleryCard.isChecked = item.isChecked
 
@@ -196,6 +208,17 @@ class GalleryPicker(private val fragment: Fragment, private val binding: Fragmen
                 if (viewModel.canSelectMore() || binder.galleryCard.isChecked)
                     binder.galleryCard.toggle()
                 viewModel.toggle(item)
+            }
+
+            if (viewModel.choiceLimit == 1) {
+                // observer into variable for reuse
+                val observer = Observer<MutableList<CheckableItem<Photo>>> {
+                    if (!it.contains(item)) {
+                        binder.galleryCard.isChecked = false
+                    }
+                }
+                viewModel.photosSelected.selection.observe(fragment.viewLifecycleOwner, observer)
+                viewModel.selected[binder] = observer
             }
             // TODO: get rid of recyclerviews altogether and replace with LazyColumns (compose)
         }

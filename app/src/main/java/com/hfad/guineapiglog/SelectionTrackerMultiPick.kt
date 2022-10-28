@@ -32,5 +32,6 @@ class SelectionTrackerMultiPick<T: CheckableItem<U>, U>(val choiceLimit: Int): S
             item.isChecked = false
         }
         selection.value!!.clear()
+        selection.value = selection.value
     }
 }

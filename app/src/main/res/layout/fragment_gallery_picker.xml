@@ -22,6 +22,7 @@
             android:id="@+id/media_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:visibility="gone"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:spanCount="3"
             app:layout_constraintBottom_toBottomOf="parent" />
