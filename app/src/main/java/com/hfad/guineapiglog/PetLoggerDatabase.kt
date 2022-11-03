@@ -23,6 +23,7 @@ abstract class PetLoggerDatabase: RoomDatabase() {
     abstract val eventDao: EventDao
     abstract val eventPetDao: EventPetDao
     abstract val weightDao: WeightDao
+    abstract val photoDao: PhotoDao
 
     companion object {
         @Volatile

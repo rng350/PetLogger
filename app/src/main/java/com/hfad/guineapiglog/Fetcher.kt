@@ -123,4 +123,15 @@ object Fetcher {
                     .toMutableList()
         }
     }
+
+    fun fetchPhotosOfEvent(viewModel: ViewModel, photosList: MutableLiveData<List<Photo>>, eventDao: EventDao, eventID: Long) {
+        viewModel.viewModelScope.launch {
+            val fetchedPhotos = async {
+                eventDao.fetchPhotosOfEvent(eventID)
+            }
+            photosList.value =
+                fetchedPhotos.await()
+                    .sortedByDescending { it.date }
+        }
+    }
 }

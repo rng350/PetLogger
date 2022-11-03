@@ -1,12 +1,17 @@
 package com.hfad.guineapiglog
 
 import android.Manifest
+import android.content.ContentProvider
 import android.content.ContentUris
+import android.content.Context
 import android.content.pm.PackageManager
 import android.database.ContentObserver
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.provider.MediaStore.Audio.Media
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
@@ -14,6 +19,8 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.viewModelScope
 import com.bumptech.glide.Glide
@@ -23,9 +30,18 @@ import com.hfad.guineapiglog.databinding.GalleryPickerItemBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
+import java.net.URI
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.util.UUID
 
 // displays photos for picking
-class GalleryPicker(private val fragment: Fragment, private val binding: FragmentGalleryPickerBinding, private val viewModel: GalleryViewModel) {
+class GalleryPicker(private val fragment: Fragment,
+                    private val binding: FragmentGalleryPickerBinding,
+                    private val viewModel: GalleryViewModel,
+                    private val associatedID: LiveData<Long>) {
     private lateinit var permissionsLauncher: ActivityResultLauncher<String>
     private lateinit var contentObserver: ContentObserver
     private lateinit var adapter: DataItemAdapter<CheckableItem<Photo>, GalleryPickerItemBinding>
@@ -66,10 +82,24 @@ class GalleryPicker(private val fragment: Fragment, private val binding: Fragmen
         binding.galleryPickerButton.setOnClickListener {
             toggleGalleryPicker()
         }
+
+        Log.e("associatedID", "address from GalleryPicker: ${associatedID}")
+
+        viewModel.associatedID.addSource(associatedID) {
+            Log.d("assoc_id_changed!", "event id: ${associatedID.value ?: "nil"}")
+            viewModel.associatedID.value = it
+            viewModel.associatePhotos()
+        }
+
+        viewModel.associatedID.observe(fragment.viewLifecycleOwner, Observer {})
     }
 
     fun onResume() {
         updateExternalReadPermission()
+    }
+
+    fun onDestroy() {
+        fragment.requireContext().contentResolver.unregisterContentObserver(contentObserver)
     }
 
     private fun updateExternalReadPermission() {
@@ -139,6 +169,9 @@ class GalleryPicker(private val fragment: Fragment, private val binding: Fragmen
                 MediaStore.Images.Media.DISPLAY_NAME,
                 MediaStore.Images.Media.WIDTH,
                 MediaStore.Images.Media.HEIGHT,
+                MediaStore.Images.Media.SIZE,
+                MediaStore.Images.Media.DATE_TAKEN,
+                MediaStore.Images.Media.DATE_ADDED
             )
 
             val photos = mutableListOf<CheckableItem<Photo>>()
@@ -153,6 +186,9 @@ class GalleryPicker(private val fragment: Fragment, private val binding: Fragmen
                 val displayNameColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
                 val widthColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.WIDTH)
                 val heightColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.HEIGHT)
+                val fileSizeColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)
+                val dateTakenColumn = cursor.getColumnIndex(MediaStore.Images.Media.DATE_TAKEN)
+                val dateAddedColumn = cursor.getColumnIndex(MediaStore.Images.Media.DATE_ADDED)
 
                 while(cursor.moveToNext()) {
                     val id = cursor.getLong(idColumn)
@@ -163,7 +199,15 @@ class GalleryPicker(private val fragment: Fragment, private val binding: Fragmen
                         MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                         id
                     )
-                    photos.add(CheckableItem<Photo>(Photo(id, displayName, contentUri, width, height, notes="")))
+                    val size = cursor.getDouble(fileSizeColumn)
+                    // TODO: check if every picture has a date taken / date added
+                    val date: LocalDateTime? =
+                        if (dateTakenColumn != -1) {
+                            LocalDateTime.ofInstant(Instant.ofEpochMilli(cursor.getLong(dateTakenColumn)), ZoneOffset.UTC)
+                        } else if (dateAddedColumn != -1) {
+                            LocalDateTime.ofInstant(Instant.ofEpochMilli(cursor.getLong(dateAddedColumn)), ZoneOffset.UTC)
+                        } else null
+                    photos.add(CheckableItem<Photo>(Photo(id, displayName, contentUri, width, height, size, date)))
                 }
                 //Log.d("load", "photo list size: ${photos.size}")
                 photos.toList()
@@ -173,8 +217,84 @@ class GalleryPicker(private val fragment: Fragment, private val binding: Fragmen
     }
 
     // TODO: Implement
-    private fun saveToLocalStorage() {
+    // 1. check that there's enough space
+    // 2a. if so, try to save files
+    // 2b. if not, create a toaster saying there's not enough space
+    // TODO: maybe convert to webp...
+    fun saveToLocalStorage() {
+        val savedPhotos = mutableListOf<Photo>()
+        viewModel.photosSelected.selection.value?.map { photo ->
+            val item = photo.item
+            val fileName = generateFilename(item.date)
 
+            var height = 0
+            var width = 0
+
+            fragment.requireContext().contentResolver.openInputStream(item.contentUri).use { input ->
+                fragment.context!!.openFileOutput(fileName, Context.MODE_PRIVATE).use { output ->
+                    val options = BitmapFactory.Options()
+                    BitmapFactory.decodeStream(input, null, options)!!.compress(Bitmap.CompressFormat.WEBP, 95, output)
+                    height = options.outHeight
+                    width = options.outWidth
+                }
+            }
+            val createdFile = File(fragment.context!!.filesDir, fileName)
+            if (createdFile.exists()) {
+                val fileSize = createdFile.size
+                savedPhotos.add(Photo(item.id, item.name, createdFile.toUri(), width, height, fileSize, item.date))
+                Log.d("photo_added", "uri: ${createdFile.toUri()}")
+                createdFile.delete() // TODO: comment this out when ready
+            }
+        }
+        viewModel.finalPhotoSelection.value = savedPhotos.toList()
+        Log.d("photo_final_selection", "${viewModel.finalPhotoSelection.value}")
+        viewModel.onFinalPhotoSelectionUploaded()
+    }
+
+    // filename format
+    // year-month-day-hour-minute-second-uuid
+    // i.e.
+    // 20220614_18h22m_[random UUID]
+    // 00000000_00h00m_[random UUID]
+    fun generateFilename(date: LocalDateTime?): String {
+        var prefix = "00000000_00h00m"
+
+        date?.let {
+            val yTho = it.year / 1000
+            val yHun = (it.year % 1000) / 100
+            val yTen = (it.year % 100) / 10
+            val yOne = it.year % 10
+
+            val monTen = it.month.value / 10
+            val monOne = it.month.value % 10
+
+            val dTen = it.dayOfMonth / 10
+            val dOne = it.dayOfMonth % 10
+
+            val hTen = it.hour / 10
+            val hOne = it.hour % 10
+
+            val minTen = it.minute / 10
+            val minOne = it.minute % 10
+            prefix = "${yTho}${yHun}${yTen}${yOne}${monTen}${monOne}${dTen}${dOne}_${hTen}${hOne}h${minTen}${minOne}"
+        }
+
+        var fileName = "${prefix}_${UUID.randomUUID()}"
+        var hasUnusedFilename = false
+
+        // check if filename is unused
+        do {
+            if (fileAlreadyExists(fileName))
+                fileName = "${prefix}_${UUID.randomUUID()}"
+            else hasUnusedFilename = true
+        } while (!hasUnusedFilename)
+
+        return fileName
+    }
+
+    fun fileAlreadyExists(fileName: String): Boolean {
+        Log.d("fileExists", "file: ${fragment.context!!.filesDir}/${fileName}, true/false?? ans: ${File("${fragment.context!!.filesDir}/${fileName}").exists()}")
+        return File("${fragment.context!!.filesDir}/${fileName}").exists()
     }
 
     private fun createMediaItemBindingInterface()
@@ -194,6 +314,7 @@ class GalleryPicker(private val fragment: Fragment, private val binding: Fragmen
 
             // recyclerview-related cleanup to multiple checks
             binder.galleryCard.setOnClickListener { null }
+
             // cleanup for single choice selection only
             if (viewModel.choiceLimit == 1) {
                 val prevBindingObserver = viewModel.selected[binder]

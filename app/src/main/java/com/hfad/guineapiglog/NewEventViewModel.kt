@@ -1,10 +1,8 @@
 package com.hfad.guineapiglog
 
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import java.time.OffsetDateTime
-import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
@@ -15,9 +13,13 @@ class NewEventViewModel(val eventDao: EventDao, val eventPetDao: EventPetDao, va
     override var pets : MutableList<Pet>? = null
     override var petsAssociated: MutableLiveData<MutableList<Pet>> = MutableLiveData(mutableListOf<Pet>())
     override lateinit var petsPicked: MutableLiveData<BooleanArray>
+    private val _eventID = MutableLiveData<Long>(null)
+    val eventID: LiveData<Long>
+        get() = _eventID
 
     init {
         fetchPets()
+        Log.e("associatedID", "address from NewEventViewModel: ${eventID}")
     }
 
     fun addEvent() {
@@ -26,12 +28,14 @@ class NewEventViewModel(val eventDao: EventDao, val eventPetDao: EventPetDao, va
             event.title = eventTitle
             event.details = eventDetails
             event.date = eventDateTime.dateTime
-            var eventID: Long? = null
             val eventInsert = async {
-                eventID = eventDao.insert(event)
+                _eventID.value = eventDao.insert(event)
+                Log.d("associated_id", "event id out! id: ${eventID.value ?: "nil"}")
+                Log.d("associated_id", "has observers: ${eventID.hasObservers()}")
+                Log.d("associated_id", "has active observers: ${eventID.hasActiveObservers()}")
             }
             eventInsert.await().let {
-                eventID?.let {
+                eventID.value?.let {
                     if ((petsAssociated.value?.size ?: 0) > 0) {
                         for (pet in petsAssociated.value!!) {
                             Log.e("PET EVENT INSERT", "pet being added: ${pet.toString()}")

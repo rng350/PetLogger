@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 
+// TODO: remove selectiontracker crap
 class DataItemAdapter<T, U: ViewDataBinding>(
     @LayoutRes val layoutId: Int,
     private val bindingInterface: DataItemBindingInterface<T, U>,

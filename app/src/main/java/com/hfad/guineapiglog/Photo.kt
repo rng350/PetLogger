@@ -1,15 +1,15 @@
 package com.hfad.guineapiglog
 
 import android.net.Uri
-import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import kotlinx.parcelize.Parcelize
+import androidx.room.PrimaryKey
+import java.time.LocalDateTime
 
-@Entity(tableName = "photo_table",
-        primaryKeys = ["photo_id"])
+@Entity(tableName = "photo_table")
 data class Photo (
     @ColumnInfo(name="photo_id")
+    @PrimaryKey
     val id: Long,
 
     @ColumnInfo(name="photo_name")
@@ -24,6 +24,9 @@ data class Photo (
     @ColumnInfo(name="photo_height")
     val height: Int,
 
-    @ColumnInfo(name="photo_notes")
-    val notes: String
+    @ColumnInfo(name="photo_filesize")
+    val size: Double,
+
+    @ColumnInfo(name="photo_date")
+    val date: LocalDateTime?
 )

@@ -34,17 +34,18 @@ class NewEventFragment : Fragment() {
         val petDao = PetLoggerDatabase.getInstance(application).petDao
         val eventDao = PetLoggerDatabase.getInstance(application).eventDao
         val eventPetDao = PetLoggerDatabase.getInstance(application).eventPetDao
+        val photoDao = PetLoggerDatabase.getInstance(application).photoDao
 
         val newEventViewModelFactory = NewEventViewModelFactory(eventDao, eventPetDao, petDao)
-        val galleryViewModelFactory = GalleryViewModelFactory(associatedIDType = AssociatedType.Event, choiceLimit = 10)
         val newEventViewModel = ViewModelProvider(this, newEventViewModelFactory).get(NewEventViewModel::class.java)
+        val galleryViewModelFactory = GalleryViewModelFactory(entityLinker = PhotoToEventLinker(photoDao), choiceLimit = 10, photoDao = photoDao)
         val galleryViewModel = ViewModelProvider(this, galleryViewModelFactory).get(GalleryViewModel::class.java)
 
         val petSelectorDialog by lazy { PetMultiSelectorDialogFragment(newEventViewModel) }
         val datePicker = DatePicker.generate(newEventViewModel.eventDateTime)
         val timePicker = TimePicker.generate(newEventViewModel.eventDateTime, requireContext())
 
-        _galleryPicker = GalleryPicker(this, binding.galleryPicker, galleryViewModel)
+        _galleryPicker = GalleryPicker(this, binding.galleryPicker, galleryViewModel, newEventViewModel.eventID)
         galleryPicker.onCreate(savedInstanceState)
 
         binding.viewModel = newEventViewModel
@@ -66,6 +67,7 @@ class NewEventFragment : Fragment() {
 
         binding.submitEventButton.setOnClickListener {
             newEventViewModel.addEvent()
+            galleryPicker.saveToLocalStorage()
         }
 
         binding.backButton.setOnClickListener {
@@ -78,5 +80,10 @@ class NewEventFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         galleryPicker.onResume()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        galleryPicker.onDestroy()
     }
 }

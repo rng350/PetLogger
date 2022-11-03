@@ -1,12 +1,11 @@
 package com.hfad.guineapiglog
 
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import com.hfad.guineapiglog.databinding.GalleryPickerItemBinding
-import androidx.lifecycle.Observer
+import kotlinx.coroutines.launch
 
-class GalleryViewModel(val associatedIDType: AssociatedType, val choiceLimit: Int) : ViewModel() {
+class GalleryViewModel(val entityLinker: EntityLinker, val choiceLimit: Int, val photoDao: PhotoDao) : ViewModel() {
     val allExternalPhotos = MutableLiveData(listOf<CheckableItem<Photo>>())
     val photosSelected: SelectionTracker<CheckableItem<Photo>, Photo> =
         if (choiceLimit == 1) SelectionTrackerSinglePick<CheckableItem<Photo>, Photo>()
@@ -15,6 +14,11 @@ class GalleryViewModel(val associatedIDType: AssociatedType, val choiceLimit: In
     var hasExternalReadPermission = MutableLiveData<Boolean>(false)
     val isExpanded = MutableLiveData<Boolean>(false)
     val photosSelectedAmt = MutableLiveData<Int>(0)
+    val curSelectionFileSize = MutableLiveData<Double>(0.0)
+    val freeSpace = MutableLiveData<Int>(0)
+    val finalPhotoSelection = MutableLiveData<List<Photo>>(null)
+    val associatedID = MediatorLiveData<Long>()
+    private var photosInsertedToDB = false
 
     val selected = HashMap<GalleryPickerItemBinding, Observer<MutableList<CheckableItem<Photo>>>>()
 
@@ -27,13 +31,19 @@ class GalleryViewModel(val associatedIDType: AssociatedType, val choiceLimit: In
             // deselect photo
             if (photosSelected.remove(photo)) {
                 photosSelectedAmt.value = photosSelectedAmt.value!! - 1
+                curSelectionFileSize.value = curSelectionFileSize.value!! - photo.item.size
             }
         } else {
             // select photo
             if (photosSelected.add(photo)) {
-                if (choiceLimit > 1)
+                if (choiceLimit > 1) {
                     photosSelectedAmt.value = photosSelectedAmt.value!! + 1
-                else photosSelectedAmt.value = 1
+                    curSelectionFileSize.value = curSelectionFileSize.value!! + photo.item.size
+                }
+                else {
+                    photosSelectedAmt.value = 1
+                    curSelectionFileSize.value = photo.item.size
+                }
             }
         }
     }
@@ -42,10 +52,29 @@ class GalleryViewModel(val associatedIDType: AssociatedType, val choiceLimit: In
         return (choiceLimit == 1) || (photosSelected.selection.value!!.size < choiceLimit)
     }
 
-    // TODO: Implement
-    fun submitSelection() {
-        // 1. save to internal storage
-        // 2. save URIs to database
-        // 3. save photo & ID association
+    fun onFinalPhotoSelectionUploaded() {
+        for (photo in finalPhotoSelection.value!!) {
+            viewModelScope.launch { photoDao.insert(photo) }
+        }
+        photosInsertedToDB = true
+        associatePhotos()
+    }
+
+    fun associatePhotos() {
+        Log.d("associating_photos", "got associated id? ${associatedID.value != null}, photos inserted? ${finalPhotoSelection.value != null}")
+        // if other entity has already been inserted to database
+        associatedID.value?.let { assocID ->
+            if (photosInsertedToDB) {
+                finalPhotoSelection.value?.let { photoList ->
+                    for (photo in photoList) {
+                        viewModelScope.launch {
+                            entityLinker.associateWith(photo.id, assocID)
+                        }
+                    }
+                }
+                associatedID.value = null
+                finalPhotoSelection.value = null
+            }
+        }
     }
 }
