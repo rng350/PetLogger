@@ -90,8 +90,14 @@ class GalleryPicker(private val fragment: Fragment,
             viewModel.associatedID.value = it
             viewModel.associatePhotos()
         }
-
+        // because mediatorlivedata needs at least one active observer to do anything
         viewModel.associatedID.observe(fragment.viewLifecycleOwner, Observer {})
+
+        viewModel.allPhotosInsertedToDB.observe(fragment.viewLifecycleOwner, Observer {
+            if (it) {
+                viewModel.associatePhotos()
+            }
+        })
     }
 
     fun onResume() {
@@ -243,7 +249,7 @@ class GalleryPicker(private val fragment: Fragment,
                 val fileSize = createdFile.size
                 savedPhotos.add(Photo(item.id, item.name, createdFile.toUri(), width, height, fileSize, item.date))
                 Log.d("photo_added", "uri: ${createdFile.toUri()}")
-                createdFile.delete() // TODO: comment this out when ready
+                //createdFile.delete() // TODO: comment this out when ready
             }
         }
         viewModel.finalPhotoSelection.value = savedPhotos.toList()

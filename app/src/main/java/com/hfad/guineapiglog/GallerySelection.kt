@@ -8,8 +8,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 
-// displays photos that have been picked
-class GallerySelectionDisplayFragment : Fragment() {
+// displays photos that have been picked, for use in conjunction with gallery picker
+class GallerySelection : Fragment() {
     private val viewModel: GalleryViewModel by viewModels({ requireParentFragment() })
 
     override fun onCreateView(
@@ -18,7 +18,7 @@ class GallerySelectionDisplayFragment : Fragment() {
     ): View? {
         viewModel.hasExternalReadPermission.observe(viewLifecycleOwner, Observer {
             if (it == false) {
-
+                // TODO: implement
             }
         })
         return inflater.inflate(R.layout.fragment_gallery_selection, container, false)

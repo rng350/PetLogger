@@ -3,7 +3,9 @@ package com.hfad.guineapiglog
 import android.util.Log
 import androidx.lifecycle.*
 import com.hfad.guineapiglog.databinding.GalleryPickerItemBinding
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import java.util.concurrent.atomic.AtomicInteger
 
 class GalleryViewModel(val entityLinker: EntityLinker, val choiceLimit: Int, val photoDao: PhotoDao) : ViewModel() {
     val allExternalPhotos = MutableLiveData(listOf<CheckableItem<Photo>>())
@@ -18,7 +20,8 @@ class GalleryViewModel(val entityLinker: EntityLinker, val choiceLimit: Int, val
     val freeSpace = MutableLiveData<Int>(0)
     val finalPhotoSelection = MutableLiveData<List<Photo>>(null)
     val associatedID = MediatorLiveData<Long>()
-    private var photosInsertedToDB = false
+    val allPhotosInsertedToDB = MutableLiveData<Boolean>(false)
+    private val photosInsertedAmt = AtomicInteger(0)
 
     val selected = HashMap<GalleryPickerItemBinding, Observer<MutableList<CheckableItem<Photo>>>>()
 
@@ -54,17 +57,24 @@ class GalleryViewModel(val entityLinker: EntityLinker, val choiceLimit: Int, val
 
     fun onFinalPhotoSelectionUploaded() {
         for (photo in finalPhotoSelection.value!!) {
-            viewModelScope.launch { photoDao.insert(photo) }
+            viewModelScope.launch {
+                val inserted = async {
+                    photoDao.insert(photo)
+                    Log.d("photo_inserted_db", "${photo}")
+                }
+                inserted.await()
+                if (photosInsertedAmt.incrementAndGet() == finalPhotoSelection.value!!.size) {
+                    allPhotosInsertedToDB.value = true
+                }
+            }
         }
-        photosInsertedToDB = true
-        associatePhotos()
     }
 
     fun associatePhotos() {
         Log.d("associating_photos", "got associated id? ${associatedID.value != null}, photos inserted? ${finalPhotoSelection.value != null}")
         // if other entity has already been inserted to database
         associatedID.value?.let { assocID ->
-            if (photosInsertedToDB) {
+            if (allPhotosInsertedToDB.value == true) {
                 finalPhotoSelection.value?.let { photoList ->
                     for (photo in photoList) {
                         viewModelScope.launch {

@@ -1,6 +1,7 @@
 package com.hfad.guineapiglog
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +14,9 @@ import com.hfad.guineapiglog.databinding.FragmentViewEventBinding
 class ViewEventFragment : Fragment() {
     private var _binding: FragmentViewEventBinding? = null
     private val binding get() = _binding!!
+
+    private var _galleryDisplay: GalleryDisplay? = null
+    private val galleryDisplay get() = _galleryDisplay!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,7 +35,17 @@ class ViewEventFragment : Fragment() {
 
         val viewModelFactory = ViewEventViewModelFactory(eventDao, eventId)
         val viewModel = ViewModelProvider(this, viewModelFactory).get(ViewEventViewModel::class.java)
+
+        Log.e("newEventFrag", "before gallery display viewmodel")
+        val galleryDisplayViewModelFactory = GalleryDisplayViewModelFactory(eventId, PhotosOfEventFetcher(eventDao))
+        val galleryDisplayViewModel = ViewModelProvider(this, galleryDisplayViewModelFactory).get(GalleryDisplayViewModel::class.java)
+        Log.e("newEventFrag", "after gallery display viewmodel")
+
+        _galleryDisplay = GalleryDisplay(this, binding.galleryDisplay, galleryDisplayViewModel)
+        galleryDisplay.onCreate(savedInstanceState)
+
         binding.viewModel = viewModel
+        binding.galleryDisplayViewModel = galleryDisplayViewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
         val petAdapter = PetItemAdapter(

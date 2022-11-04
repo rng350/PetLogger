@@ -4,7 +4,7 @@ import androidx.room.*
 
 @Dao
 interface PhotoDao {
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(photo: Photo)
 
     @Update
@@ -14,9 +14,9 @@ interface PhotoDao {
     suspend fun delete(photo: Photo)
 
     @Query("SELECT * FROM photo_table")
-    suspend fun getAllPhotos()
+    suspend fun getAllPhotos(): List<Photo>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(photoEvent: PhotoEvent)
 
     @Update

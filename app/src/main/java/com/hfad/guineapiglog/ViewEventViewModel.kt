@@ -16,7 +16,12 @@ class ViewEventViewModel(val eventDao: EventDao, private val eventID: Long): Vie
     var eventTime: MutableLiveData<LocalTime> = MutableLiveData<LocalTime>()
 
     init {
+        fetch()
+    }
+
+    private fun fetch() {
         fetchEvent()
+        fetchEventPets()
     }
 
     private fun fetchEvent() {
@@ -24,19 +29,24 @@ class ViewEventViewModel(val eventDao: EventDao, private val eventID: Long): Vie
             val eventFetching = async { eventDao.get(eventID) }
             eventFetching.await().let {
                 event.value = it
-                val petsFetching = async { eventDao.getPetsOfEvent(eventID) }
                 val eventLocalDate = event.value?.date?.toLocalDateTime()
                 eventDate.value = eventLocalDate?.toLocalDate()
                 eventTime.value = eventLocalDate?.toLocalTime()
                 // TODO: add nicer-looking local date & time display
-                val fetchedPets = mutableListOf<Pet>()
-                for (pet in petsFetching.await()) {
-                    fetchedPets.add(pet)
-                    //Log.e("eventPets 1/2", "added pet $pet")
-                }
-                petsAssociated.value = fetchedPets
-                //Log.e("eventPets 2/2", "current pet list ${petsAssociated.value?.toString()}")
             }
+        }
+    }
+
+    private fun fetchEventPets() {
+        viewModelScope.launch {
+            val petsFetching = async { eventDao.getPetsOfEvent(eventID) }
+            val fetchedPets = mutableListOf<Pet>()
+            for (pet in petsFetching.await()) {
+                fetchedPets.add(pet)
+                //Log.e("eventPets 1/2", "added pet $pet")
+            }
+            petsAssociated.value = fetchedPets
+            //Log.e("eventPets 2/2", "current pet list ${petsAssociated.value?.toString()}")
         }
     }
 }

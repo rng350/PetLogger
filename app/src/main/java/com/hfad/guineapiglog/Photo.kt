@@ -9,24 +9,24 @@ import java.time.LocalDateTime
 @Entity(tableName = "photo_table")
 data class Photo (
     @ColumnInfo(name="photo_id")
-    @PrimaryKey
-    val id: Long,
+    @PrimaryKey(autoGenerate = false)
+    var id: Long = 0L,
 
     @ColumnInfo(name="photo_name")
-    val name: String,
+    var name: String = "",
 
     @ColumnInfo(name="photo_uri")
-    val contentUri: Uri,
+    var contentUri: Uri = Uri.EMPTY,
 
     @ColumnInfo(name="photo_width")
-    val width: Int,
+    var width: Int = 0,
 
     @ColumnInfo(name="photo_height")
-    val height: Int,
+    var height: Int = 0,
 
     @ColumnInfo(name="photo_filesize")
-    val size: Double,
+    var size: Double = 0.0,
 
     @ColumnInfo(name="photo_date")
-    val date: LocalDateTime?
+    var date: LocalDateTime?
 )
