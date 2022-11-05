@@ -10,6 +10,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.hfad.guineapiglog.databinding.FragmentViewEventBinding
+import com.hfad.guineapiglog.databinding.PetItemBinding
 
 class ViewEventFragment : Fragment() {
     private var _binding: FragmentViewEventBinding? = null
@@ -48,14 +49,11 @@ class ViewEventFragment : Fragment() {
         binding.galleryDisplayViewModel = galleryDisplayViewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        val petAdapter = PetItemAdapter(
-            setViewPet = {petID -> viewModel.petNavigator.navigateTo(petID)},
-            deletePet = { TODO("Disassociate pet from event") }
-        )
+        val petAdapter = BindingInterfaceCreator.setupNavigatablePetAdapter(viewModel.petNavigator)
         binding.petsList.adapter = petAdapter
         viewModel.petsAssociated.observe(viewLifecycleOwner, Observer {
             it?.let {
-                petAdapter.data = it
+                petAdapter.submitList(it)
             }
         })
 

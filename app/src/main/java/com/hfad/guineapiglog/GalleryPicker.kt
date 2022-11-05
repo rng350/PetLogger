@@ -51,9 +51,7 @@ class GalleryPicker(private val fragment: Fragment,
 
         adapter = DataItemAdapter<CheckableItem<Photo>, GalleryPickerItemBinding> (
             layoutId = R.layout.gallery_picker_item,
-            bindingInterface = createMediaItemBindingInterface(),
-            setViewData = {  },
-            deleteData = {  }
+            bindingInterface = createMediaItemBindingInterface()
         )
         viewModel.allExternalPhotos.observe(fragment.viewLifecycleOwner, Observer {
             adapter.submitList(it.toMutableList())
@@ -306,9 +304,7 @@ class GalleryPicker(private val fragment: Fragment,
             = object : DataItemBindingInterface<CheckableItem<Photo>, GalleryPickerItemBinding> {
         override fun bind(
             item: CheckableItem<Photo>,
-            binder: GalleryPickerItemBinding,
-            setViewData: (id: Long) -> Unit,
-            deleteData: (toDelete: CheckableItem<Photo>) -> Unit
+            binder: GalleryPickerItemBinding
         ) {
             binder.photo = item
 

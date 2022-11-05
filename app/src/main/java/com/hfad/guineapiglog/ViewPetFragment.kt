@@ -44,14 +44,11 @@ class ViewPetFragment : Fragment() {
 
 
 
-        val eventAdapter = EventItemAdapter(
-            setViewEvent = {eventID -> viewModel.eventNavigator.navigateTo(eventID)},
-            deleteEvent = { TODO("Disassociate event from pet") }
-        )
+        val eventAdapter = BindingInterfaceCreator.setupNavigatableEventAdapter(viewModel.eventNavigator)
         binding.eventsList.adapter = eventAdapter
         viewModel.eventsAssociated.observe(viewLifecycleOwner, Observer {
             it?.let {
-                eventAdapter.data = it
+                eventAdapter.submitList(it)
             }
         })
 
@@ -63,14 +60,11 @@ class ViewPetFragment : Fragment() {
             }
         })
 
-        val weightAdapter = WeightItemAdapter(
-            setViewWeight = {weightID -> viewModel.weightNavigator.navigateTo(weightID)},
-            deleteWeight = { TODO("Delete the weight") }
-        )
+        val weightAdapter = BindingInterfaceCreator.setupNavigatableWeightAdapter(viewModel.weightNavigator)
         binding.weightsList.adapter = weightAdapter
         viewModel.weightsAssociated.observe(viewLifecycleOwner, Observer {
             it?.let {
-                weightAdapter.data = it.map {WeightWithPetName(it, "CHANGE THIS")}.toMutableList()
+                weightAdapter.submitList(it)
             }
         })
         viewModel.weightNavigator.navigateTo.observe(viewLifecycleOwner, Observer {

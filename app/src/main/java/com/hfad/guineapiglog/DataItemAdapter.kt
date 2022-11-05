@@ -13,9 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 class DataItemAdapter<T, U: ViewDataBinding>(
     @LayoutRes val layoutId: Int,
-    private val bindingInterface: DataItemBindingInterface<T, U>,
-    private val setViewData: (dataID: Long) -> Unit,
-    private val deleteData: (data: T) -> Unit)
+    private val bindingInterface: DataItemBindingInterface<T, U>)
     : ListAdapter<T, DataItemAdapter.DataItemViewHolder>(DataItemDiffUtilCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) : DataItemViewHolder {
@@ -24,7 +22,7 @@ class DataItemAdapter<T, U: ViewDataBinding>(
 
     override fun onBindViewHolder(holder: DataItemViewHolder, position: Int) {
         val item = getItem(position)
-        holder.bind(item, bindingInterface, setViewData, deleteData)
+        holder.bind(item, bindingInterface)
     }
 
     class DataItemViewHolder(val binding : ViewDataBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -39,16 +37,14 @@ class DataItemAdapter<T, U: ViewDataBinding>(
         fun <T, U: ViewDataBinding>
                 bind(
             item: T,
-            bindingInterface: DataItemBindingInterface<T, U>,
-            setViewData: (id: Long) -> Unit,
-            deleteData: (toDelete: T) -> Unit) {
-            bindingInterface.bind(item, binding as U, setViewData, deleteData)
+            bindingInterface: DataItemBindingInterface<T, U>) {
+            bindingInterface.bind(item, binding as U)
         }
     }
 }
 
 interface DataItemBindingInterface<T, U: ViewDataBinding> {
-    fun bind(item: T, binder: U, setViewData: (id: Long) -> Unit, deleteData: (toDelete: T) -> Unit)
+    fun bind(item: T, binder: U)
 }
 
 class DataItemDiffUtilCallback<T> : DiffUtil.ItemCallback<T>() {

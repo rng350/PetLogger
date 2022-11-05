@@ -19,9 +19,7 @@ class GalleryDisplay(private val fragment: Fragment,
         Log.e("gallery_display", "oncreate a")
         adapter = DataItemAdapter<Photo, GalleryDisplayItemBinding>(
             layoutId = R.layout.gallery_display_item,
-            bindingInterface = createMediaItemBindingInterface(),
-            setViewData = {  },
-            deleteData = {  }
+            bindingInterface = createMediaItemBindingInterface()
         )
         Log.e("gallery_display", "oncreate b")
         viewModel.photos.observe(fragment.viewLifecycleOwner, Observer {
@@ -37,9 +35,7 @@ class GalleryDisplay(private val fragment: Fragment,
             = object : DataItemBindingInterface<Photo, GalleryDisplayItemBinding> {
         override fun bind(
             item: Photo,
-            binder: GalleryDisplayItemBinding,
-            setViewData: (id: Long) -> Unit,
-            deleteData: (toDelete: Photo) -> Unit
+            binder: GalleryDisplayItemBinding
         ) {
             binder.photo = item
 
