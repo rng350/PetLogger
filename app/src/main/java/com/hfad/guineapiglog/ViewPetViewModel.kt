@@ -26,34 +26,34 @@ class ViewPetViewModel (val petDao: PetDao, val weightDao: WeightDao, val petID:
         Fetcher.fetchEventsOfPet(this, eventsAssociated, petDao, petID)
     }
 
-/*    fun getBirthDateDisplay(): String {
-        pet.value?.let {
-            if (it.hasDOB) {
-                // return DateFormat.getDateInstance(DateFormat.MEDIUM).parse(it.petDOB.toString()).toString()
-                val day = it.petDOB.dayOfMonth
-                val month = it.petDOB.monthValue
-                val year = it.petDOB.year
-                return "${day}/${month}/${year}"
-            }
-        }
-        Log.i("VIEWPET", "no dob detected")
-        if (pet.value == null)
-            Log.i("VIEWPET", "pet is null???")
-        return "N/A"
-    }*/
-
     private fun getPetAgeDisplay(): String {
         pet.value?.let {
             if (it.hasDOB) {
                 val period = Period.between(it.petDOB.toLocalDate(), OffsetDateTime.now().toLocalDate())
-                Log.i("VIEWPET", "pet has age... ${period.years} years, ${period.months} months, ${period.days} days")
-                return ("${period.years} years, ${period.months} months, ${period.days} days")
+                if (period.years > 0)
+                    return "${period.years} ${getYearsLabel(period.years)}, " +
+                            "${period.months} ${getMonthsLabel(period.months)}, " +
+                            "${period.days} ${getDaysLabel(period.days)}"
+                else if (period.months > 0)
+                    return "${period.months} ${getMonthsLabel(period.months)}, " +
+                            "${period.days} ${getDaysLabel(period.days)}"
+                else return "${period.days} ${getDaysLabel(period.days)}"
             }
         }
         Log.i("VIEWPET", "no age detected")
         if (pet.value == null)
             Log.i("VIEWPET", "pet is null???")
         return "N/A"
+    }
+
+    private fun getYearsLabel(years: Int): String {
+        return if (years == 1) "year" else "years"
+    }
+    private fun getMonthsLabel(months: Int): String {
+        return if (months == 1) "month" else "months"
+    }
+    private fun getDaysLabel(days: Int): String {
+        return if (days == 1) "day" else "days"
     }
 
     private fun fetchPet() {
