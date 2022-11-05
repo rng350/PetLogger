@@ -20,7 +20,6 @@ class GalleryDisplay(private val fragment: Fragment,
         adapter = DataItemAdapter<Photo, GalleryDisplayItemBinding>(
             layoutId = R.layout.gallery_display_item,
             bindingInterface = createMediaItemBindingInterface(),
-            listItems = viewModel.photos.value!!.toMutableList(),
             setViewData = {  },
             deleteData = {  }
         )

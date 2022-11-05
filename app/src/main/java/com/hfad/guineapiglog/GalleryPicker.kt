@@ -52,7 +52,6 @@ class GalleryPicker(private val fragment: Fragment,
         adapter = DataItemAdapter<CheckableItem<Photo>, GalleryPickerItemBinding> (
             layoutId = R.layout.gallery_picker_item,
             bindingInterface = createMediaItemBindingInterface(),
-            listItems = viewModel.allExternalPhotos.value!!.toMutableList(),
             setViewData = {  },
             deleteData = {  }
         )
