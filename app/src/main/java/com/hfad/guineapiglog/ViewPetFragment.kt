@@ -1,5 +1,6 @@
 package com.hfad.guineapiglog
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -37,7 +38,12 @@ class ViewPetFragment : Fragment() {
             it?.let {
                 viewModel.pet.value?.petProfilePic?.let {
                     Log.i("VIEWPETFRAGMENT", "petprofilepic not null")
-                    binding.petPhoto.setImageURI(viewModel.pet?.value?.petProfilePic)
+                    try {
+                        binding.petPhoto.setImageURI(viewModel.pet?.value?.petProfilePic)
+                    } catch (e: SecurityException) {
+                        Log.e("securityexception", "Can't read image! Trying again!")
+                        // TODO: update so as to call for a photo reupload
+                    }
                 }
             }
         })

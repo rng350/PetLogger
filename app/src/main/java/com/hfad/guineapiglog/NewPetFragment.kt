@@ -40,6 +40,9 @@ class NewPetFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
 
         val getPicture = registerForActivityResult(ActivityResultContracts.OpenDocument()) {
+            // keeps app from crashing from read permission revoking on OS reboot
+            context?.contentResolver?.takePersistableUriPermission(it!!, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
             binding.petPhoto.setImageURI(it)
             binding.viewModel?.petProfilePicURI = it
         }
