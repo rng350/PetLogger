@@ -70,7 +70,9 @@ class GalleryPicker(private val fragment: Fragment,
         permissionsLauncher = fragment.registerForActivityResult(ActivityResultContracts.RequestPermission()) {
                 isGranted: Boolean ->
             if (isGranted) {
-                loadPhotosFromExternalStorageToViewModel()
+                viewModel.hasExternalReadPermission.value = true
+                // loadPhotosFromExternalStorageToViewModel()
+                toggleGalleryPicker() // should be ok here since the activity result is only launched when trying to open the gallery picker
             } else {
                 Toast.makeText(fragment.requireContext(), "Can't read files without permission.", Toast.LENGTH_LONG).show()
             }
@@ -112,11 +114,10 @@ class GalleryPicker(private val fragment: Fragment,
         ) == PackageManager.PERMISSION_GRANTED
     }
 
-    private fun requestExternalReadPermission(): Boolean {
+    private fun requestExternalReadPermission() {
         if (viewModel.hasExternalReadPermission.value != true) {
             permissionsLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
-            return (viewModel.hasExternalReadPermission.value == true)
-        } else return true
+        }
     }
 
     private fun toggleGalleryPicker() {
@@ -138,7 +139,7 @@ class GalleryPicker(private val fragment: Fragment,
         }
     }
 
-    // for when external media has been updated
+    // reaload for when external media has been updated
     private fun initContentObserver() {
         contentObserver = object : ContentObserver(null) {
             override fun onChange(selfChange: Boolean) {
@@ -219,11 +220,10 @@ class GalleryPicker(private val fragment: Fragment,
         }
     }
 
-    // TODO: Implement
+    // TODO: Implement the following check
     // 1. check that there's enough space
     // 2a. if so, try to save files
     // 2b. if not, create a toaster saying there's not enough space
-    // TODO: maybe convert to webp...
     fun saveToLocalStorage() {
         val savedPhotos = mutableListOf<Photo>()
         viewModel.photosSelected.selection.value?.map { photo ->
