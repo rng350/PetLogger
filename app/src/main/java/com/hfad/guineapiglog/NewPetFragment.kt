@@ -34,7 +34,7 @@ class NewPetFragment : Fragment() {
         val petDao = PetLoggerDatabase.getInstance(application).petDao
         val viewModelFactory = NewPetViewModelFactory(petDao)
         val viewModel = ViewModelProvider(this, viewModelFactory).get(NewPetViewModel::class.java)
-        val datePicker = DatePicker.generate(viewModel.petDOB)
+        //val datePicker = DatePicker.generate(viewModel.petDOB)
 
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
@@ -52,7 +52,8 @@ class NewPetFragment : Fragment() {
         }
 
         binding.inputDOBButton.setOnClickListener {
-            datePicker.show(parentFragmentManager, "DATE_PICKER")
+            //datePicker.show(parentFragmentManager, "DATE_PICKER")
+            DatePicker.generate(viewModel.petDOB).show(parentFragmentManager, "DATE_PICKER")
         }
 
         binding.back.setOnClickListener {

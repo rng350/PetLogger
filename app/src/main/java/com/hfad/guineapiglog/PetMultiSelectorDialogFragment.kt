@@ -12,6 +12,12 @@ class PetMultiSelectorDialogFragment<T>(private val viewModel: T): DialogFragmen
     // could be NewEventViewModel, NewNoteViewModel, NewPhotoViewModel
     //private val viewModel: T by viewModels({requireParentFragment()})
 
+    companion object {
+        fun <T> newInstance(viewModel: T): PetMultiSelectorDialogFragment<T> where T: ViewModel, T: WithMultiPetSelection {
+            return PetMultiSelectorDialogFragment(viewModel)
+        }
+    }
+
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
             val selectedItems = ArrayList<Int>() // Where we track the selected items

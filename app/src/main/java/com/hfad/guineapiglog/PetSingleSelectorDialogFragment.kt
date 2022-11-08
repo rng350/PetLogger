@@ -13,6 +13,14 @@ class PetSingleSelectorDialogFragment<T>(var viewModel: T, var curSelectedPet: P
     // could be NewWeightViewModel
     //private val viewModel: T by viewModels({requireParentFragment()})
 
+    companion object {
+        fun <T> newInstance(vm: T, selectedPet: Pet? = null, selectedIndex: Int = -1): PetSingleSelectorDialogFragment<T>
+                where T: ViewModel, T: WithSinglePetSelection {
+            Log.e("pet_selector", "created new instance!")
+            return PetSingleSelectorDialogFragment(vm, selectedPet, selectedIndex)
+        }
+    }
+
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
             val pets = requireNotNull(viewModel.pets.value)

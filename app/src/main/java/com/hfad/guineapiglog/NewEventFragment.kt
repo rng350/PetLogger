@@ -41,9 +41,9 @@ class NewEventFragment : Fragment() {
         val galleryViewModelFactory = GalleryViewModelFactory(entityLinker = PhotoToEventLinker(photoDao), choiceLimit = 10, photoDao = photoDao)
         val galleryViewModel = ViewModelProvider(this, galleryViewModelFactory).get(GalleryViewModel::class.java)
 
-        val petSelectorDialog by lazy { PetMultiSelectorDialogFragment(newEventViewModel) }
-        val datePicker = DatePicker.generate(newEventViewModel.eventDateTime)
-        val timePicker = TimePicker.generate(newEventViewModel.eventDateTime, requireContext())
+        //val petSelectorDialog by lazy { PetMultiSelectorDialogFragment(newEventViewModel) }
+        //val datePicker = DatePicker.generate(newEventViewModel.eventDateTime)
+        //val timePicker = TimePicker.generate(newEventViewModel.eventDateTime, requireContext())
 
         _galleryPicker = GalleryPicker(this, binding.galleryPicker, galleryViewModel, newEventViewModel.eventID)
         galleryPicker.onCreate(savedInstanceState)
@@ -53,16 +53,19 @@ class NewEventFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
 
         binding.inputEventDateButton.setOnClickListener {
-            datePicker.show(parentFragmentManager, "DATE_PICKER")
+            //datePicker.show(parentFragmentManager, "DATE_PICKER")
+            DatePicker.generate(newEventViewModel.eventDateTime).show(parentFragmentManager, "DATE_PICKER")
         }
 
         binding.inputEventTimeButton.setOnClickListener {
-            timePicker.show(parentFragmentManager, "TIME_PICKER")
+            //timePicker.show(parentFragmentManager, "TIME_PICKER")
+            TimePicker.generate(newEventViewModel.eventDateTime, requireContext()).show(parentFragmentManager, "TIME_PICKER")
         }
 
         binding.inputAddPetsButton.setOnClickListener {
             //multiChoiceList(view, viewModel.pets)
-            petSelectorDialog.show(childFragmentManager, null)
+            //petSelectorDialog.show(childFragmentManager, null)
+            PetMultiSelectorDialogFragment.newInstance(newEventViewModel).show(childFragmentManager, "PET_SELECTOR")
         }
 
         binding.submitEventButton.setOnClickListener {

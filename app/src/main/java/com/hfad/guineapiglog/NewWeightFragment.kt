@@ -2,6 +2,7 @@ package com.hfad.guineapiglog
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -28,15 +29,22 @@ class NewWeightFragment : Fragment() {
 
         val viewModelFactory = NewWeightViewModelFactory(weightDao, petDao, petIdArg?.toLong())
         val viewModel = ViewModelProvider(this, viewModelFactory).get(NewWeightViewModel::class.java)
-        val petSelectorDialog = PetSingleSelectorDialogFragment(viewModel = viewModel)
         val datePicker = DatePicker.generate(viewModel.wDateTime)
-        val timePicker = TimePicker.generate(viewModel.wDateTime, requireContext())
+        //val timePicker = TimePicker.generate(viewModel.wDateTime, requireContext())
 
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
         binding.inputAddPetButton.setOnClickListener {
-            petSelectorDialog.show(childFragmentManager, "PET_SELECTOR")
+            PetSingleSelectorDialogFragment.newInstance(viewModel).show(childFragmentManager, "PET_SELECTOR")
+
+            /*if (petSelectorDialog.isVisible) {
+                Log.e("dialog_visible", "gonna dismiss")
+                petSelectorDialog.dismiss()
+            } else {
+                Log.e("dialog_not_visible", "gonna remake")
+                petSelectorDialog.show(childFragmentManager, "PET_SELECTOR")
+            }*/
         }
 
         binding.inputWeightDateButton.setOnClickListener {
@@ -44,7 +52,8 @@ class NewWeightFragment : Fragment() {
         }
 
         binding.inputWeightTimeButton.setOnClickListener {
-            timePicker.show(parentFragmentManager, "TIME_PICKER")
+            //timePicker.show(parentFragmentManager, "TIME_PICKER")
+            TimePicker.generate(viewModel.wDateTime, requireContext()).show(parentFragmentManager, "TIME_PICKER")
         }
 
         binding.submitWeightButton.setOnClickListener {
