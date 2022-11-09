@@ -29,8 +29,5 @@ data class Pet(
     var petDOB : OffsetDateTime = OffsetDateTime.MIN,
 
     @ColumnInfo(name="has_dob")
-    var hasDOB : Boolean = false,
-
-    @ColumnInfo(name="pet_profile_pic")
-    var petProfilePic : Uri?
+    var hasDOB : Boolean = false
 )

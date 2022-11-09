@@ -44,4 +44,8 @@
     <string name="pet_weighing_date_header">Weighing Date</string>
     <string name="photos_selected">%s/%s photo(s) selected</string>
     <string name="submit_changes">Submit Changes</string>
+    <string name="no_pet_name_given">Pet needs a name!</string>
+    <string name="pet_sex_male">Male</string>
+    <string name="pet_sex_female">Female</string>
+    <string name="pet_sex_other">Other</string>
 </resources>

@@ -11,6 +11,7 @@ import java.time.Period
 
 class ViewPetViewModel (val petDao: PetDao, val weightDao: WeightDao, val petID: Long): ViewModel() {
     var pet : MutableLiveData<Pet> = MutableLiveData<Pet>()
+    val petProfilePhoto = MutableLiveData<Photo>()
     /*var petDOB : MutableLiveData<String> = MutableLiveData<String>("N/A")*/
     val petAge : MutableLiveData<String> = MutableLiveData<String>("N/A")
     val eventsAssociated: MutableLiveData<MutableList<Event>> = MutableLiveData(mutableListOf<Event>())
@@ -24,6 +25,7 @@ class ViewPetViewModel (val petDao: PetDao, val weightDao: WeightDao, val petID:
         fetchPet()
         fetchWeights()
         Fetcher.fetchEventsOfPet(this, eventsAssociated, petDao, petID)
+        Fetcher.fetchPetProfilePhoto(viewModelScope, petProfilePhoto, petDao, petID)
     }
 
     private fun getPetAgeDisplay(): String {

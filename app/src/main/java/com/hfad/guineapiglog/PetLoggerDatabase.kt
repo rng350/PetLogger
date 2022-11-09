@@ -9,6 +9,7 @@ import androidx.room.TypeConverters
 
 @Database(entities = [
     Pet::class,
+    PetProfilePhoto::class,
     Event::class,
     EventPet::class,
     Weight::class,

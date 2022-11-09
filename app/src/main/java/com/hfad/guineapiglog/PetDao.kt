@@ -29,4 +29,11 @@ interface PetDao {
             "AND event_table.event_id=event_pet_table.event_id " +
             "ORDER BY event_date")
     suspend fun getEventsOfPet(petId: Long): MutableList<Event>
+
+    @Query("SELECT photo_table.photo_id, photo_date, photo_filesize, photo_width, photo_height, photo_uri, photo_name " +
+            "FROM photo_table LEFT JOIN pet_profile_photo_table " +
+            "ON photo_table.photo_id = pet_profile_photo_table.photo_id " +
+            "WHERE pet_profile_photo_table.pet_id=:petID " +
+            "LIMIT 1")
+    suspend fun getPetProfilePhoto(petID: Long): Photo?
 }

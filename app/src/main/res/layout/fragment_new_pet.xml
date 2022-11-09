@@ -8,6 +8,9 @@
         <variable
             name="viewModel"
             type="com.hfad.guineapiglog.NewPetViewModel" />
+        <variable
+            name="galleryViewModel"
+            type="com.hfad.guineapiglog.GalleryViewModel" />
     </data>
 
     <ScrollView
@@ -16,74 +19,103 @@
         android:fillViewport="true">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/petPhoto"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:maxWidth="200dp"
-                android:scaleType="fitCenter"
-                app:srcCompat="@drawable/placeholder" />
-
-            <EditText
-                android:id="@+id/petName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="text"
-                android:text="@={viewModel.petName}"
-                android:hint="@string/pet_name_field"/>
-
-            <EditText
-                android:id="@+id/petSpecies"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="text"
-                android:text="@={viewModel.petSpecies}"
-                android:hint="@string/pet_species_field"/>
-
-            <EditText
-                android:id="@+id/petBreed"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="text"
-                android:text="@={viewModel.petBreed}"
-                android:hint="@string/pet_breed_field"/>
-
-            <EditText
-                android:id="@+id/petSex"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="text"
-                android:text="@={viewModel.petSex}"
-                android:hint="@string/pet_sex_field"/>
-
-            <TextView
-                android:id="@+id/petBirthDate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="20dp"
-                android:text="@string/pet_birthdate"/>
-
-            <Button
-                android:id="@+id/inputDOBButton"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@{@string/input_pet_dob(viewModel.petDOB.dateDisplay)}" />
+                android:orientation="vertical">
+                <ImageView
+                    android:id="@+id/petPhoto"
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
+                    android:adjustViewBounds="false"
+                    android:scaleType="centerCrop" />
 
-            <EditText
-                android:id="@+id/additionalNotes"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="text"
-                android:hint="@string/pet_additional_notes"/>
+                <EditText
+                    android:id="@+id/petName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="text"
+                    android:text="@={viewModel.petName}"
+                    android:hint="@string/pet_name_field"/>
+
+                <EditText
+                    android:id="@+id/petSpecies"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="text"
+                    android:text="@={viewModel.petSpecies}"
+                    android:hint="@string/pet_species_field"/>
+
+                <EditText
+                    android:id="@+id/petBreed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="text"
+                    android:text="@={viewModel.petBreed}"
+                    android:hint="@string/pet_breed_field"/>
+
+                <!--<EditText
+                    android:id="@+id/petSex"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="text"
+                    android:text="@={viewModel.petSex}"
+                    android:hint="@string/pet_sex_field"/>-->
+                <RadioGroup
+                    android:id="@+id/petSexSelection"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <RadioButton
+                        android:id="@+id/petSexMale"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/pet_sex_male"/>
+                    <RadioButton
+                        android:id="@+id/petSexFemale"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/pet_sex_female"/>
+                    <RadioButton
+                        android:id="@+id/petSexOther"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/pet_sex_other"/>
+                </RadioGroup>
+
+                <TextView
+                    android:id="@+id/petBirthDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:text="@string/pet_birthdate"/>
+
+                <Button
+                    android:id="@+id/inputDOBButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{@string/input_pet_dob(viewModel.petDOB.dateDisplay)}" />
+
+                <!--<EditText
+                    android:id="@+id/additionalNotes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="text"
+                    android:hint="@string/pet_additional_notes"/>-->
+            </LinearLayout>
+
+            <include
+                android:id="@+id/galleryPicker"
+                layout="@layout/fragment_gallery_picker"
+                app:viewModel="@{galleryViewModel}"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -94,8 +126,7 @@
                     android:id="@+id/submit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/submit"
-                    android:onClick="@{() -> viewModel.addPet()}"/>
+                    android:text="@string/submit"/>
 
                 <Button
                     android:id="@+id/back"

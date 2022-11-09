@@ -11,6 +11,8 @@ import androidx.lifecycle.Observer
 import com.hfad.guineapiglog.databinding.FragmentViewPetBinding
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 
 class ViewPetFragment : Fragment() {
 
@@ -34,21 +36,12 @@ class ViewPetFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        viewModel.pet.observe(viewLifecycleOwner, Observer { it ->
-            it?.let {
-                viewModel.pet.value?.petProfilePic?.let {
-                    Log.i("VIEWPETFRAGMENT", "petprofilepic not null")
-                    try {
-                        binding.petPhoto.setImageURI(viewModel.pet?.value?.petProfilePic)
-                    } catch (e: SecurityException) {
-                        Log.e("securityexception", "Can't read image! Trying again!")
-                        // TODO: update so as to call for a photo reupload
-                    }
-                }
-            }
+        viewModel.petProfilePhoto.observe(viewLifecycleOwner, Observer { it ->
+            Glide.with(requireContext())
+                .load(it.contentUri)
+                .apply(RequestOptions().placeholder(R.drawable.placeholder))
+                .into(binding.petPhoto)
         })
-
-
 
         val eventAdapter = BindingInterfaceCreator.setupNavigatableEventAdapter(viewModel.eventNavigator)
         binding.eventsList.adapter = eventAdapter

@@ -5,6 +5,7 @@ import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
@@ -132,6 +133,17 @@ object Fetcher {
             photosList.value =
                 fetchedPhotos.await()
                     .sortedByDescending { it.date }
+        }
+    }
+
+    fun fetchPetProfilePhoto(coroutineScope: CoroutineScope, profilePhoto: MutableLiveData<Photo>, petDao: PetDao, petID: Long) {
+        coroutineScope.launch {
+            val fetchedPhoto = async {
+                petDao.getPetProfilePhoto(petID)
+            }
+            fetchedPhoto.await()?.let {
+                profilePhoto.value = it
+            }
         }
     }
 }

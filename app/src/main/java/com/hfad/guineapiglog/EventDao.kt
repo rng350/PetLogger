@@ -20,7 +20,7 @@ interface EventDao {
     @Query("SELECT * FROM event_table ORDER BY event_date")
     suspend fun getAll(): MutableList<Event>
 
-    @Query("SELECT pet_table.pet_id AS pet_id, pet_name, pet_species, pet_breed, pet_sex, pet_dob, has_dob, pet_profile_pic " +
+    @Query("SELECT pet_table.pet_id AS pet_id, pet_name, pet_species, pet_breed, pet_sex, pet_dob, has_dob " +
             "FROM pet_table LEFT JOIN event_pet_table " +
             "WHERE event_id = :eventId AND pet_table.pet_id = event_pet_table.pet_id")
     suspend fun getPetsOfEvent(eventId: Long): MutableList<Pet>

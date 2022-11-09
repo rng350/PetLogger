@@ -27,6 +27,7 @@ class GalleryViewModel(val entityLinker: EntityLinker, val choiceLimit: Int, val
 
     init {
         check(choiceLimit > 0)
+        Log.d("galleryVM", "choice limit: $choiceLimit")
     }
 
     fun toggle(photo: CheckableItem<Photo>) {
