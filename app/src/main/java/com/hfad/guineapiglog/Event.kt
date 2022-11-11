@@ -2,10 +2,16 @@ package com.hfad.guineapiglog
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import java.time.OffsetDateTime
 
-@Entity(tableName="event_table")
+@Entity(
+    tableName="event_table",
+    indices = [
+        Index("event_date")
+    ]
+)
 data class Event(
 
     @PrimaryKey(autoGenerate = true)

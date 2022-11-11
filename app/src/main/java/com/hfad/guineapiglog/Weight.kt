@@ -2,10 +2,17 @@ package com.hfad.guineapiglog
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import java.time.OffsetDateTime
 
-@Entity(tableName = "weight_table")
+@Entity(
+    tableName = "weight_table",
+    indices = [
+        Index(value = ["weight_pet_id", "weight_datetime"]),
+        Index(value = ["weight_datetime"])
+    ]
+)
 data class Weight(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name="weight_id")
