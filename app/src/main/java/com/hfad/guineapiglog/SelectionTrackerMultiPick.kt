@@ -3,15 +3,19 @@ package com.hfad.guineapiglog
 import androidx.lifecycle.MutableLiveData
 
 // put in viewmodel
-class SelectionTrackerMultiPick<T: CheckableItem<U>, U>(val choiceLimit: Int): SelectionTracker<T, U> {
+// choiceLimit being null means no choice limits, aka infinite picks
+class SelectionTrackerMultiPick<T: CheckableItem<U>, U>(val choiceLimit: Int?): SelectionTrackerInterface<T, U> {
     override var selection = MutableLiveData(mutableListOf<T>())
 
     init {
-        check (choiceLimit > 0)
+        choiceLimit?.let {
+            check (it > 0)
+        }
     }
 
     override fun add(item: T): Boolean {
-        if (selection.value!!.size < choiceLimit) {
+        // choiceLimit ?: Int.MAX_VALUE is to account for infinite choices option
+        if (selection.value!!.size < (choiceLimit ?: Int.MAX_VALUE)) {
             selection.value!!.add(item)
             item.isChecked = true
             selection.value = selection.value
@@ -33,5 +37,13 @@ class SelectionTrackerMultiPick<T: CheckableItem<U>, U>(val choiceLimit: Int): S
         }
         selection.value!!.clear()
         selection.value = selection.value
+    }
+
+    override fun canSelectMore(): Boolean {
+        choiceLimit?.let {
+            return (selection.value!!.size < it)
+        }
+        // no limits
+        return true
     }
 }

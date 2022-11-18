@@ -9,7 +9,7 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 
 class ViewEventViewModel(val eventDao: EventDao, private val eventID: Long): ViewModel() {
-    var event: MutableLiveData<Event?> = MutableLiveData<Event?>()
+    var event: MutableLiveData<Event> = MutableLiveData<Event>()
     val petNavigator: Navigator = Navigator()
     var petsAssociated: MutableLiveData<MutableList<Pet>> = MutableLiveData(mutableListOf<Pet>())
     var eventDate: MutableLiveData<LocalDate> = MutableLiveData<LocalDate>()

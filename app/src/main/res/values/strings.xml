@@ -2,7 +2,6 @@
     <string name="app_name">GuineaPigLog</string>
     <string name="add_pet">Add Pet</string>
     <string name="add_event">Add Event</string>
-    <string name="pet_name_field">Write pet name here</string>
     <string name="pet_species_field">Write pet species here</string>
     <string name="pet_breed_field">Write pet breed here</string>
     <string name="submit">Submit</string>
@@ -48,4 +47,7 @@
     <string name="pet_sex_male">Male</string>
     <string name="pet_sex_female">Female</string>
     <string name="pet_sex_other">Other</string>
+    <string name="delete">Delete</string>
+    <string name="pet_events_header">Events</string>
+    <string name="pet_weights_header">Weights</string>
 </resources>

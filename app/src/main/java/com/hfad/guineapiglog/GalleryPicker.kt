@@ -89,7 +89,7 @@ class GalleryPicker(private val fragment: Fragment,
             viewModel.associatedID.value = it
             viewModel.associatePhotos()
         }
-        // because mediatorlivedata needs at least one active observer to do anything
+        // this basically just there because mediatorlivedata needs at least one active observer to do anything
         viewModel.associatedID.observe(fragment.viewLifecycleOwner, Observer {})
 
         viewModel.allPhotosInsertedToDB.observe(fragment.viewLifecycleOwner, Observer {
@@ -104,6 +104,7 @@ class GalleryPicker(private val fragment: Fragment,
     }
 
     fun onDestroy() {
+        viewModel.associatedID.removeSource(associatedID)
         fragment.requireContext().contentResolver.unregisterContentObserver(contentObserver)
     }
 
@@ -279,7 +280,7 @@ class GalleryPicker(private val fragment: Fragment,
 
             val minTen = it.minute / 10
             val minOne = it.minute % 10
-            prefix = "${yTho}${yHun}${yTen}${yOne}${monTen}${monOne}${dTen}${dOne}_${hTen}${hOne}h${minTen}${minOne}"
+            prefix = "${yTho}${yHun}${yTen}${yOne}${monTen}${monOne}${dTen}${dOne}_${hTen}${hOne}h${minTen}${minOne}m"
         }
 
         var fileName = "${prefix}_${UUID.randomUUID()}"

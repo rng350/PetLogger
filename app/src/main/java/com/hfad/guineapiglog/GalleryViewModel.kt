@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger
 
 class GalleryViewModel(val entityLinker: EntityLinker, val choiceLimit: Int, val photoDao: PhotoDao) : ViewModel() {
     val allExternalPhotos = MutableLiveData(listOf<CheckableItem<Photo>>())
-    val photosSelected: SelectionTracker<CheckableItem<Photo>, Photo> =
+    val photosSelected: SelectionTrackerInterface<CheckableItem<Photo>, Photo> =
         if (choiceLimit == 1) SelectionTrackerSinglePick<CheckableItem<Photo>, Photo>()
         else SelectionTrackerMultiPick<CheckableItem<Photo>, Photo>(choiceLimit)
     // val videosSelected = MutableLiveData<MutableListOf<Video>()
@@ -30,6 +30,7 @@ class GalleryViewModel(val entityLinker: EntityLinker, val choiceLimit: Int, val
         Log.d("galleryVM", "choice limit: $choiceLimit")
     }
 
+    // TODO: delete this when can, function moved to selectiontracker
     fun toggle(photo: CheckableItem<Photo>) {
         if (photosSelected.selection.value!!.contains(photo)) {
             // deselect photo
@@ -52,6 +53,7 @@ class GalleryViewModel(val entityLinker: EntityLinker, val choiceLimit: Int, val
         }
     }
 
+    // TODO: delete this when can, function moved to selectiontracker
     fun canSelectMore(): Boolean {
         return (choiceLimit == 1) || (photosSelected.selection.value!!.size < choiceLimit)
     }

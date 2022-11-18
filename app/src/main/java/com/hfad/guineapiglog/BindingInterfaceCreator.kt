@@ -1,9 +1,8 @@
 package com.hfad.guineapiglog
 
-import com.hfad.guineapiglog.databinding.EventItemBinding
-import com.hfad.guineapiglog.databinding.PetItemBinding
-import com.hfad.guineapiglog.databinding.PetWeightItemBinding
-import com.hfad.guineapiglog.databinding.WeightItemBinding
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.hfad.guineapiglog.databinding.*
 
 object BindingInterfaceCreator {
     fun setupNavigatablePetAdapter(petNavigator: Navigator): DataItemAdapter<Pet, PetItemBinding> {

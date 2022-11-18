@@ -26,7 +26,7 @@ interface PhotoDao {
     suspend fun delete(photoEvent: PhotoEvent)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(petProfilePhoto: PetProfilePhoto)
+    suspend fun insert(petProfilePhoto: PetProfilePhoto): Long
 
     @Update
     suspend fun update(petProfilePhoto: PetProfilePhoto)

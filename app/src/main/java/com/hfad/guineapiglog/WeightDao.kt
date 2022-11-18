@@ -17,10 +17,6 @@ interface WeightDao {
     @Query("SELECT * FROM weight_table WHERE weight_id=:weightId")
     suspend fun get(weightId: Long): Weight
 
-    //TODO: add "ORDER BY weight_date DESCENDING"
-    @Query("SELECT * FROM weight_table WHERE weight_pet_id=:petId ORDER BY weight_datetime")
-    suspend fun getPetWeights(petId: Long): MutableList<Weight>
-
     @Query("SELECT * FROM weight_table")
     suspend fun getAll(): MutableList<Weight>
 }

@@ -36,4 +36,8 @@ interface PetDao {
             "WHERE pet_profile_photo_table.pet_id=:petID " +
             "LIMIT 1")
     suspend fun getPetProfilePhoto(petID: Long): Photo?
+
+    //TODO: add "ORDER BY weight_date DESCENDING"
+    @Query("SELECT * FROM weight_table WHERE weight_pet_id=:petId ORDER BY weight_datetime")
+    suspend fun getWeightsOfPet(petId: Long): MutableList<Weight>
 }

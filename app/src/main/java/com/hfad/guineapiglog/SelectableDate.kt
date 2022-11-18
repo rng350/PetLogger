@@ -5,6 +5,8 @@ import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.ZoneId
 
+// meant to be used as variable in viewmodels so we can get
+// OffsetDateTimes from Instants given by DatePickers & TimePickers
 open class SelectableDate(initDateTime: OffsetDateTime = OffsetDateTime.now()) {
     var dateTime: OffsetDateTime = initDateTime
     open val dateDisplay: MutableLiveData<String> = MutableLiveData<String>(dateTime.toLocalDate().toString())

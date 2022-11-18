@@ -54,6 +54,11 @@
         <argument
             android:name="petId"
             app:argType="long" />
+        <action
+            android:id="@+id/action_editPetFragment_to_viewPetFragment"
+            app:destination="@id/viewPetFragment"
+            app:popUpTo="@id/viewPetFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/newEventFragment"

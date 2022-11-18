@@ -1,27 +1,154 @@
 package com.hfad.guineapiglog
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.ViewDataBinding
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.hfad.guineapiglog.databinding.FragmentEditPetBinding
+import java.io.File
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [EditPetFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class EditPetFragment : Fragment() {
+    private var _binding: FragmentEditPetBinding? = null
+    private val binding get() = _binding!!
+    private var _galleryPicker: GalleryPicker? = null
+    private val galleryPicker get() = _galleryPicker!!
+    lateinit var editPetViewModel: EditPetViewModel
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_edit_pet, container, false)
+        _binding = FragmentEditPetBinding.inflate(inflater, container, false)
+        val view = binding.root
+        val application = requireNotNull(this.activity).application
+
+        val petID = ViewPetFragmentArgs.fromBundle(requireArguments()).petId
+
+        val petDao = PetLoggerDatabase.getInstance(application).petDao
+        val photoDao = PetLoggerDatabase.getInstance(application).photoDao
+        val eventDao = PetLoggerDatabase.getInstance(application).eventDao
+        val weightDao = PetLoggerDatabase.getInstance(application).weightDao
+
+        val editPetViewModelFactory = EditPetViewModelFactory(petID, petDao, photoDao, eventDao, weightDao)
+        editPetViewModel = ViewModelProvider(this, editPetViewModelFactory).get(EditPetViewModel::class.java)
+        binding.viewModel = editPetViewModel
+
+        val galleryViewModelFactory = GalleryViewModelFactory(entityLinker = PetProfilePhotoLinker(photoDao), choiceLimit = 1, photoDao = photoDao)
+        val galleryViewModel = ViewModelProvider(this, galleryViewModelFactory).get(GalleryViewModel::class.java)
+        binding.galleryViewModel = galleryViewModel
+
+        _galleryPicker = GalleryPicker(this, binding.galleryPicker, galleryViewModel, associatedID = editPetViewModel._petID)
+        galleryPicker.onCreate(savedInstanceState)
+
+        binding.lifecycleOwner = viewLifecycleOwner
+
+        ItemPickers.setupEventPicker(editPetViewModel.events, editPetViewModel.eventsToRemove, binding.eventsList, viewLifecycleOwner)
+        ItemPickers.setupWeightPicker(editPetViewModel.weights, editPetViewModel.weightsToRemove, binding.weightsList, viewLifecycleOwner)
+
+        editPetViewModel.petProfilePic.observe(viewLifecycleOwner, Observer {
+            if (editPetViewModel.newPetProfilePic.value == null) {
+                Glide.with(requireContext())
+                    .load(it.contentUri)
+                    .apply(RequestOptions().placeholder(R.drawable.placeholder))
+                    .into(binding.petPhoto)
+            }
+        })
+
+        galleryViewModel.photosSelected.selection.observe(viewLifecycleOwner, Observer {
+            if (it.size > 0) {
+                Glide.with(requireContext())
+                    .load(it[0].item.contentUri)
+                    .apply(RequestOptions().placeholder(R.drawable.placeholder))
+                    .into(binding.petPhoto)
+            } else {
+                editPetViewModel.petProfilePic.value?.let {
+                    Glide.with(requireContext())
+                        .load(it.contentUri)
+                        .apply(RequestOptions().placeholder(R.drawable.placeholder))
+                        .into(binding.petPhoto)
+                }
+            }
+        })
+
+        // initialize sex pick
+        editPetViewModel.pet.observeOnce(viewLifecycleOwner, Observer {
+            when(it.petSex) {
+                "Male" -> {
+                    binding.petSexMale.isChecked = true
+                }
+                "Female" -> {
+                    binding.petSexFemale.isChecked = true
+                }
+                "Other" -> {
+                    binding.petSexOther.isChecked = true
+                }
+            }
+            editPetViewModel.onPetFetched()
+        })
+
+        binding.petSexSelection.setOnCheckedChangeListener { radioGroup, i ->
+            when(binding.petSexSelection.checkedRadioButtonId) {
+                binding.petSexMale.id -> editPetViewModel.setPetSex("Male")
+                binding.petSexFemale.id -> editPetViewModel.setPetSex("Female")
+                binding.petSexOther.id -> editPetViewModel.setPetSex("Other")
+                -1 -> editPetViewModel.setPetSex("")
+            }
+        }
+
+        binding.submit.setOnClickListener {
+            // do all the stuff
+            if (galleryViewModel.photosSelected.selection.value!!.size > 0) {
+                Log.e("saving new pfp", "ssss")
+                galleryPicker.saveToLocalStorage()
+                // deleteProfilePicFromLocalStorage()
+            }
+            editPetViewModel.updatePet()
+
+            // TODO: make it so that background tasks are done on a different scope/context so as to be able to continue after you return to the viewpetfrag
+            // return to viewpet
+            // this.findNavController().navigate(EditPetFragmentDirections.actionEditPetFragmentToViewPetFragment(petID))
+        }
+
+        binding.cancel.setOnClickListener {
+            // return to viewpet
+            this.findNavController().navigate(EditPetFragmentDirections.actionEditPetFragmentToViewPetFragment(petID))
+        }
+
+        binding.delete.setOnClickListener {
+            // dialogfragment asking for confirmation
+            // if yes, delete
+            deleteProfilePicFromLocalStorage()
+            // go back to home
+            this.findNavController().navigate(R.id.action_editPetFragment_to_homeFragment)
+        }
+
+        return view
+    }
+
+    private fun deleteProfilePicFromLocalStorage() {
+        editPetViewModel.petProfilePic.value?.let { photo ->
+            photo.contentUri.path?.let { path ->
+                File(path).delete()
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        galleryPicker.onResume()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        galleryPicker.onDestroy()
+        _binding = null
     }
 }

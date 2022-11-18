@@ -3,7 +3,7 @@ package com.hfad.guineapiglog
 import androidx.lifecycle.MutableLiveData
 
 // put in viewmodel
-class SelectionTrackerSinglePick<T: CheckableItem<U>, U>(): SelectionTracker<T, U> {
+class SelectionTrackerSinglePick<T: CheckableItem<U>, U>(): SelectionTrackerInterface<T, U> {
     override var selection = MutableLiveData(mutableListOf<T>())
 
     override fun add(item: T): Boolean {
@@ -30,5 +30,9 @@ class SelectionTrackerSinglePick<T: CheckableItem<U>, U>(): SelectionTracker<T, 
         }
         selection.value!!.clear()
         selection.value = selection.value
+    }
+
+    override fun canSelectMore(): Boolean {
+        return true
     }
 }

@@ -10,7 +10,7 @@ import java.time.OffsetDateTime
 import java.time.Period
 
 class ViewPetViewModel (val petDao: PetDao, val weightDao: WeightDao, val petID: Long): ViewModel() {
-    var pet : MutableLiveData<Pet> = MutableLiveData<Pet>()
+    val pet : MutableLiveData<Pet> = MutableLiveData<Pet>()
     val petProfilePhoto = MutableLiveData<Photo>()
     /*var petDOB : MutableLiveData<String> = MutableLiveData<String>("N/A")*/
     val petAge : MutableLiveData<String> = MutableLiveData<String>("N/A")
@@ -26,6 +26,7 @@ class ViewPetViewModel (val petDao: PetDao, val weightDao: WeightDao, val petID:
         fetchWeights()
         Fetcher.fetchEventsOfPet(this, eventsAssociated, petDao, petID)
         Fetcher.fetchPetProfilePhoto(viewModelScope, petProfilePhoto, petDao, petID)
+        //Fetcher.fetchWeightsOfPet(viewModelScope, weightsAssociated, petDao, petID)
     }
 
     private fun getPetAgeDisplay(): String {
@@ -69,7 +70,7 @@ class ViewPetViewModel (val petDao: PetDao, val weightDao: WeightDao, val petID:
 
     private fun fetchWeights() {
         viewModelScope.launch {
-            val fetchedWeights = async {weightDao.getPetWeights(petID)}
+            val fetchedWeights = async {petDao.getWeightsOfPet(petID)}
             weightsAssociated.value = fetchedWeights.await()
                 .sortedByDescending { it.weightDateTime }
                 .toMutableList()

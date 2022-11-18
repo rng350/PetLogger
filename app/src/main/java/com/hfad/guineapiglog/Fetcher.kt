@@ -80,15 +80,35 @@ object Fetcher {
         }
     }
 
-    fun fetchWeightsOfPet(viewModel: ViewModel, weightsList: MutableLiveData<MutableList<Weight>>, weightDao: WeightDao, petID: Long) {
-        viewModel.viewModelScope.launch {
+    fun fetchWeightsOfPet(coroutineScope: CoroutineScope, weightsList: MutableLiveData<MutableList<Weight>>, petDao: PetDao, petID: Long) {
+        coroutineScope.launch {
             val fetchedWeights = async {
-                weightDao.getPetWeights(petID)
+                petDao.getWeightsOfPet(petID)
             }
             weightsList.value =
                 fetchedWeights.await()
                     .sortedByDescending { it.weightDateTime }
                     .toMutableList()
+        }
+    }
+
+    fun fetchCheckableWeightsOfPet(coroutineScope: CoroutineScope, weightsList: MutableLiveData<MutableList<CheckableItem<Weight>>>, petDao: PetDao, petID: Long) {
+        coroutineScope.launch {
+            val fetchedWeights = async {
+                petDao.getWeightsOfPet(petID)
+            }
+            val weights =
+                fetchedWeights.await()
+                    .sortedByDescending { it.weightDateTime }
+                    .toMutableList()
+
+            //put into new list
+            val newList = mutableListOf<CheckableItem<Weight>>()
+            weights.map{
+                newList.add(CheckableItem(it))
+            }
+
+            weightsList.value = newList
         }
     }
 
@@ -123,6 +143,29 @@ object Fetcher {
                     .sortedByDescending { it.date }
                     .toMutableList()
         }
+    }
+
+    fun fetchCheckableEventsOfPet(coroutineScope: CoroutineScope, eventsList: MutableLiveData<MutableList<CheckableItem<Event>>>, petDao: PetDao, petID: Long) {
+        coroutineScope.launch {
+            // fill up blank list
+            val fetchedEvents = async {
+                petDao.getEventsOfPet(petID)
+            }
+            val regList =
+                fetchedEvents.await()
+                    .sortedByDescending { it.date }
+                    .toMutableList()
+
+            //put into new list
+            val newList = mutableListOf<CheckableItem<Event>>()
+            regList.map {
+                newList.add(CheckableItem(it))
+            }
+
+            Log.e("fetch", "fetched checkable events of pet: ${newList}")
+            eventsList.value = newList
+        }
+
     }
 
     fun fetchPhotosOfEvent(viewModel: ViewModel, photosList: MutableLiveData<List<Photo>>, eventDao: EventDao, eventID: Long) {

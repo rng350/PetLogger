@@ -73,7 +73,7 @@ class ViewPetFragment : Fragment() {
         })
 
         binding.editPetButton.setOnClickListener {
-            this.findNavController().navigate(R.id.action_viewPetFragment_to_editPetFragment)
+            this.findNavController().navigate(ViewPetFragmentDirections.actionViewPetFragmentToEditPetFragment(petId))
         }
         binding.backButton.setOnClickListener {
             this.findNavController().navigate(R.id.action_viewPetFragment_to_homeFragment)
