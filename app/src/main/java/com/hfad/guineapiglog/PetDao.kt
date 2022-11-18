@@ -40,4 +40,10 @@ interface PetDao {
     //TODO: add "ORDER BY weight_date DESCENDING"
     @Query("SELECT * FROM weight_table WHERE weight_pet_id=:petId ORDER BY weight_datetime")
     suspend fun getWeightsOfPet(petId: Long): MutableList<Weight>
+
+    @Delete
+    suspend fun delete(petEvent: EventPet)
+
+    @Delete
+    suspend fun delete(petEvents: MutableList<EventPet>)
 }

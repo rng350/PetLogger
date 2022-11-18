@@ -55,6 +55,16 @@ class EditPetViewModel(val petID: Long, val petDao: PetDao, val photoDao: PhotoD
         viewModelScope.launch {
             petDao.update(editedPet)
         }
+        for (event in eventsToRemove.selection.value!!) {
+            viewModelScope.launch {
+                petDao.delete(EventPet(event.item.eventId, petID))
+            }
+        }
+        for (weight in weightsToRemove.selection.value!!) {
+            viewModelScope.launch {
+                weightDao.delete(weight.item)
+            }
+        }
     }
 
     fun removeDOB() {

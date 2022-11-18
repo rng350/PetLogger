@@ -14,6 +14,9 @@ interface WeightDao {
     @Delete
     suspend fun delete(weight: Weight)
 
+    @Delete
+    suspend fun delete(weights: MutableList<Weight>)
+
     @Query("SELECT * FROM weight_table WHERE weight_id=:weightId")
     suspend fun get(weightId: Long): Weight
 
