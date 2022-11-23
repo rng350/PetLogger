@@ -11,17 +11,19 @@ import java.time.LocalTime
 class ViewEventViewModel(val eventDao: EventDao, private val eventID: Long): ViewModel() {
     var event: MutableLiveData<Event> = MutableLiveData<Event>()
     val petNavigator: Navigator = Navigator()
-    var petsAssociated: MutableLiveData<MutableList<Pet>> = MutableLiveData(mutableListOf<Pet>())
+    //var petsAssociated: MutableLiveData<MutableList<Pet>> = MutableLiveData(mutableListOf<Pet>())
+    val petsAssociated = MutableLiveData<List<PetWithProfilePic>>()
     var eventDate: MutableLiveData<LocalDate> = MutableLiveData<LocalDate>()
     var eventTime: MutableLiveData<LocalTime> = MutableLiveData<LocalTime>()
 
     init {
-        fetch()
+        fetchEvent()
+        Fetcher.fetchPetsOfEventWithProfilePhotos(viewModelScope, petsAssociated, eventDao, eventID)
     }
 
     private fun fetch() {
         fetchEvent()
-        fetchEventPets()
+        //fetchEventPets()
     }
 
     private fun fetchEvent() {
@@ -37,7 +39,7 @@ class ViewEventViewModel(val eventDao: EventDao, private val eventID: Long): Vie
         }
     }
 
-    private fun fetchEventPets() {
+    /*private fun fetchEventPets() {
         viewModelScope.launch {
             val petsFetching = async { eventDao.getPetsOfEvent(eventID) }
             val fetchedPets = mutableListOf<Pet>()
@@ -48,5 +50,5 @@ class ViewEventViewModel(val eventDao: EventDao, private val eventID: Long): Vie
             petsAssociated.value = fetchedPets
             //Log.e("eventPets 2/2", "current pet list ${petsAssociated.value?.toString()}")
         }
-    }
+    }*/
 }

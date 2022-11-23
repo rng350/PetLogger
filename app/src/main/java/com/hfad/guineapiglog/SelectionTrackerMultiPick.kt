@@ -4,7 +4,7 @@ import androidx.lifecycle.MutableLiveData
 
 // put in viewmodel
 // choiceLimit being null means no choice limits, aka infinite picks
-class SelectionTrackerMultiPick<T: CheckableItem<U>, U>(val choiceLimit: Int?): SelectionTrackerInterface<T, U> {
+class SelectionTrackerMultiPick<T: CheckableItem<U>, U>(val choiceLimit: Int? = null): SelectionTrackerInterface<T, U> {
     override var selection = MutableLiveData(mutableListOf<T>())
 
     init {

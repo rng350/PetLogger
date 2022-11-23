@@ -30,7 +30,7 @@ class EditPetFragment : Fragment() {
         val view = binding.root
         val application = requireNotNull(this.activity).application
 
-        val petID = ViewPetFragmentArgs.fromBundle(requireArguments()).petId
+        val petID = EditPetFragmentArgs.fromBundle(requireArguments()).petId
 
         val petDao = PetLoggerDatabase.getInstance(application).petDao
         val photoDao = PetLoggerDatabase.getInstance(application).photoDao
@@ -54,6 +54,7 @@ class EditPetFragment : Fragment() {
         ItemPickers.setupWeightPicker(editPetViewModel.weights, editPetViewModel.weightsToRemove, binding.weightsList, viewLifecycleOwner)
 
         editPetViewModel.petProfilePic.observe(viewLifecycleOwner, Observer {
+            // if new pfp hasn't been picked yet
             if (editPetViewModel.newPetProfilePic.value == null) {
                 Glide.with(requireContext())
                     .load(it.contentUri)
@@ -101,6 +102,10 @@ class EditPetFragment : Fragment() {
                 binding.petSexOther.id -> editPetViewModel.setPetSex("Other")
                 -1 -> editPetViewModel.setPetSex("")
             }
+        }
+
+        binding.inputDOBButton.setOnClickListener {
+            DatePicker.generate(editPetViewModel.newPetDOB).show(parentFragmentManager, "DATE_PICKER")
         }
 
         binding.submit.setOnClickListener {

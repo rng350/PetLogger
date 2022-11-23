@@ -46,6 +46,7 @@ class NewPetFragment : Fragment() {
 
         val galleryViewModelFactory = GalleryViewModelFactory(entityLinker = PetProfilePhotoLinker(photoDao), choiceLimit = 1, photoDao = photoDao)
         val galleryViewModel = ViewModelProvider(this, galleryViewModelFactory).get(GalleryViewModel::class.java)
+        binding.galleryViewModel = galleryViewModel
 
         _galleryPicker = GalleryPicker(this, binding.galleryPicker, galleryViewModel, associatedID = viewModel.petID)
         galleryPicker.onCreate(savedInstanceState)

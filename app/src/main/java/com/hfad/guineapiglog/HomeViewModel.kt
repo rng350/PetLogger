@@ -8,7 +8,8 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 
 class HomeViewModel(val petDao: PetDao, val eventDao: EventDao, val weightDao: WeightDao) : ViewModel() {
-    var pets: MutableLiveData<MutableList<Pet>> = MutableLiveData(mutableListOf<Pet>())
+    //var pets: MutableLiveData<MutableList<Pet>> = MutableLiveData(mutableListOf<Pet>())
+    val pets = MutableLiveData<List<PetWithProfilePic>>()
     var events: MutableLiveData<MutableList<Event>> = MutableLiveData(mutableListOf<Event>())
     var weights: MutableLiveData<MutableList<WeightWithPetName>> = MutableLiveData(mutableListOf<WeightWithPetName>())
     val petNavigator = Navigator()
@@ -16,7 +17,8 @@ class HomeViewModel(val petDao: PetDao, val eventDao: EventDao, val weightDao: W
     val weightNavigator = Navigator()
 
     init {
-        Fetcher.fetchAllPets(this, pets, petDao)
+        //Fetcher.fetchAllPets(this, pets, petDao)
+        Fetcher.fetchPetsWithProfilePhotos(viewModelScope, pets, petDao)
         Fetcher.fetchAllEvents(this, events, eventDao)
         Fetcher.fetchAllWeightsWithPetNames(this, weights, weightDao, petDao)
     }

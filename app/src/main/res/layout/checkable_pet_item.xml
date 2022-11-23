@@ -1,6 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-</LinearLayout>
+    <data>
+        <variable
+            name="checkablePet"
+            type="com.hfad.guineapiglog.CheckableItem" />
+        <variable
+            name="pet"
+            type="com.hfad.guineapiglog.PetWithProfilePic" />
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/pet_card"
+        android:layout_width="125dp"
+        android:layout_height="150dp"
+        android:layout_margin="8dp"
+        android:background="@color/white"
+        app:cardElevation="4dp"
+        app:cardCornerRadius="4dp"
+        android:clickable="true"
+        android:checkable="true"
+        android:focusable="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/pet_profile_image"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp"
+                android:scaleType="centerCrop"
+                android:layout_gravity="center"
+                app:srcCompat="@drawable/placeholder"/>
+
+            <TextView
+                android:id="@+id/pet_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="16sp"
+                android:text="@{pet.pet.petName}"/>
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+</layout>

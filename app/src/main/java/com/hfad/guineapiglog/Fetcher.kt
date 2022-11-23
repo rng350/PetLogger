@@ -189,4 +189,23 @@ object Fetcher {
             }
         }
     }
+
+    fun fetchPetsWithProfilePhotos(coroutineScope: CoroutineScope, petsWithProfilePhotos: MutableLiveData<List<PetWithProfilePic>>, petDao: PetDao) {
+        coroutineScope.launch {
+            val fetchedPets = async { petDao.getAllPetsWithProfilePhotos() }
+            fetchedPets.await().let {
+                Log.e("pets with pfp", "${it}")
+                petsWithProfilePhotos.value = it
+            }
+        }
+    }
+
+    fun fetchPetsOfEventWithProfilePhotos(coroutineScope: CoroutineScope, petsWithProfilePhotos: MutableLiveData<List<PetWithProfilePic>>, eventDao: EventDao, eventID: Long) {
+        coroutineScope.launch {
+            val fetchedPets = async { eventDao.getPetsOfEventWithProfilePhotos(eventID) }
+            fetchedPets.await().let {
+                petsWithProfilePhotos.value = it
+            }
+        }
+    }
 }

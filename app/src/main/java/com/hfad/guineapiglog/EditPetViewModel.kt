@@ -73,6 +73,7 @@ class EditPetViewModel(val petID: Long, val petDao: PetDao, val photoDao: PhotoD
 
     // call after "yes" on "are you sure?"
     fun deletePet() {
+        // TODO: implement
         // delete pet
         // delete pet photo
         deleteProfilePhoto()

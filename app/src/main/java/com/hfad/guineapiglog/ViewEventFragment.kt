@@ -49,13 +49,19 @@ class ViewEventFragment : Fragment() {
         binding.galleryDisplayViewModel = galleryDisplayViewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        val petAdapter = BindingInterfaceCreator.setupNavigatablePetAdapter(viewModel.petNavigator)
+        /*val petAdapter = BindingInterfaceCreator.setupNavigatablePetAdapter(viewModel.petNavigator)
         binding.petsList.adapter = petAdapter
         viewModel.petsAssociated.observe(viewLifecycleOwner, Observer {
             it?.let {
                 petAdapter.submitList(it)
             }
-        })
+        })*/
+        BindingInterfaceCreator.setupPetWithProfilePhotoAdapter(
+            viewModel.petsAssociated,
+            binding.petsList,
+            viewLifecycleOwner,
+            requireContext(),
+            viewModel.petNavigator)
 
         viewModel.petNavigator.navigateTo.observe(viewLifecycleOwner, Observer {
             it?.let {
@@ -65,6 +71,9 @@ class ViewEventFragment : Fragment() {
             }
         })
 
+        binding.editEventButton.setOnClickListener {
+            this.findNavController().navigate(ViewEventFragmentDirections.actionViewEventFragmentToEditEventFragment(eventId))
+        }
 
         binding.backButton.setOnClickListener {
             this.findNavController().navigate(R.id.action_viewEventFragment_to_homeFragment)

@@ -333,7 +333,7 @@ class GalleryPicker(private val fragment: Fragment,
                 viewModel.toggle(item)
             }
 
-            // needed because single selection tracking automatically unchecks previous choice once a now one's made
+            // needed because single selection tracking automatically unchecks previous choice once a new one's made
             if (viewModel.choiceLimit == 1) {
                 // observer into variable for reuse
                 val observer = Observer<MutableList<CheckableItem<Photo>>> {

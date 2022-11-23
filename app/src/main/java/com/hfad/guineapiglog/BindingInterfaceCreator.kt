@@ -1,32 +1,15 @@
 package com.hfad.guineapiglog
 
+import android.content.Context
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.hfad.guineapiglog.databinding.*
 
 object BindingInterfaceCreator {
-    fun setupNavigatablePetAdapter(petNavigator: Navigator): DataItemAdapter<Pet, PetItemBinding> {
-        return DataItemAdapter<Pet, PetItemBinding>(
-            layoutId = R.layout.pet_item,
-            bindingInterface = createPetItemBindingInterface(petNavigator)
-        )
-    }
-
-    private fun createPetItemBindingInterface(petNavigator: Navigator)
-            = object : DataItemBindingInterface<Pet, PetItemBinding> {
-        override fun bind(
-            item: Pet,
-            binder: PetItemBinding
-        ) {
-            binder.pet = item
-            binder.viewPetButton.setOnClickListener {
-                petNavigator.navigateTo(item.petID)
-            }
-            binder.deletePetButton.setOnClickListener {
-            }
-        }
-    }
-
     fun setupNavigatableEventAdapter(eventNavigator: Navigator): DataItemAdapter<Event, EventItemBinding> {
         return DataItemAdapter<Event, EventItemBinding>(
             layoutId = R.layout.event_item,
@@ -87,6 +70,46 @@ object BindingInterfaceCreator {
             binder.card.setOnClickListener { null }
             binder.card.setOnClickListener {
                 weightNavigator.navigateTo(item.id)
+            }
+        }
+    }
+
+    fun setupPetWithProfilePhotoAdapter(petList: MutableLiveData<List<PetWithProfilePic>>,
+                                        recyclerView: RecyclerView,
+                                        lifecycleOwner: LifecycleOwner,
+                                        context: Context,
+                                        navigator: Navigator?
+    ) {
+        val adapter = DataItemAdapter<PetWithProfilePic, PetItemBinding>(
+            layoutId = R.layout.pet_item,
+            bindingInterface = createPetWithProfilePhotoItemBindingInterface(context, navigator)
+        )
+        recyclerView.adapter = adapter
+        petList.observe(lifecycleOwner, Observer {
+            adapter.submitList(it)
+        })
+    }
+
+    private fun createPetWithProfilePhotoItemBindingInterface(context: Context, navigator: Navigator? = null)
+            = object: DataItemBindingInterface<PetWithProfilePic, PetItemBinding> {
+        override fun bind(item: PetWithProfilePic, binder: PetItemBinding) {
+            binder.pet = item
+
+            binder.petProfileImage.setImageBitmap(null)
+
+            if (item.profilePic != null) {
+                Glide.with(context)
+                    .load(item.profilePic.contentUri)
+                    .apply(RequestOptions().placeholder(R.drawable.placeholder))
+                    .into(binder.petProfileImage)
+            } else {
+                binder.petProfileImage.setImageResource(R.drawable.placeholder)
+            }
+
+            binder.petCard.setOnClickListener { null }
+
+            binder.petCard.setOnClickListener {
+                navigator?.navigateTo(item.pet.petID)
             }
         }
     }

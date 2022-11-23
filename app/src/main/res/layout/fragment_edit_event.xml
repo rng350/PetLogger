@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".EditEventFragment">
+    <data>
+        <variable
+            name="viewModel"
+            type="com.hfad.guineapiglog.EditEventViewModel" />
+        <variable
+            name="galleryViewModel"
+            type="com.hfad.guineapiglog.GalleryViewModel" />
+    </data>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -12,8 +21,96 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:weightSum="2">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
+                <EditText
+                    android:id="@+id/eventTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Event title"
+                    android:text="@={viewModel.event.title}"/>
+
+                <TextView
+                    android:id="@+id/eventDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{viewModel.eventDateTime.dateDisplay}" />
+
+                <Button
+                    android:id="@+id/inputEventDateButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/input_event_date" />
+
+                <TextView
+                    android:id="@+id/eventTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{viewModel.eventDateTime.timeDisplay}" />
+
+                <Button
+                    android:id="@+id/inputEventTimeButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/input_event_time" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/pet_selector"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top"
+                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                    app:spanCount="3"/>
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Add details here"
+                    android:text="@={viewModel.event.details}"
+                    android:minHeight="48dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/submit_changes_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/submit"/>
+
+                    <Button
+                        android:id="@+id/cancel_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/cancel" />
+
+                    <Button
+                        android:id="@+id/delete_event_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/delete" />
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/galleryPickerSpace"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="bottom"
+                android:orientation="vertical"
+                android:layout_weight="1">
+                <include
+                    android:id="@+id/galleryPicker"
+                    layout="@layout/fragment_gallery_picker"
+                    app:viewModel="@{galleryViewModel}"/>
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 </layout>

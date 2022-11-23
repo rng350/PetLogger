@@ -3,7 +3,7 @@ package com.hfad.guineapiglog
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 
-class SelectionTracker<T>(val choiceLimit: Int?) {
+class SelectionTracker<T>(val choiceLimit: Int? = null) {
     private val tracker: SelectionTrackerInterface<CheckableItem<T>, T> =
         if (choiceLimit == 1) SelectionTrackerSinglePick<CheckableItem<T>, T>()
         else SelectionTrackerMultiPick<CheckableItem<T>, T>(choiceLimit)

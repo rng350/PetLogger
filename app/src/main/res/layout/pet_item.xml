@@ -6,46 +6,43 @@
     <data>
         <variable
             name="pet"
-            type="com.hfad.guineapiglog.Pet" />
+            type="com.hfad.guineapiglog.PetWithProfilePic" />
     </data>
 
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/pet_card"
+        android:layout_width="125dp"
+        android:layout_height="150dp"
         android:layout_margin="8dp"
+        android:background="@color/white"
         app:cardElevation="4dp"
-        app:cardCornerRadius="4dp">
+        app:cardCornerRadius="4dp"
+        android:clickable="true"
+        android:focusable="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <ImageView
+                android:id="@+id/pet_profile_image"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp"
+                android:scaleType="centerCrop"
+                android:layout_gravity="center"
+                app:srcCompat="@drawable/placeholder"/>
+
             <TextView
                 android:id="@+id/pet_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:textSize="16sp"
-                android:padding="8dp"
-                android:text="@{pet.petName}"/>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center">
-                <Button
-                    android:id="@+id/view_pet_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="View"
-                    android:layout_marginEnd="5dp"/>
-                <Button
-                    android:id="@+id/delete_pet_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Delete"
-                    android:layout_marginStart="5dp"/>
-            </LinearLayout>
+                android:text="@{pet.pet.petName}"/>
+
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 </layout>

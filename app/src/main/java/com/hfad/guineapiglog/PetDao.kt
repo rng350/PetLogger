@@ -46,4 +46,7 @@ interface PetDao {
 
     @Delete
     suspend fun delete(petEvents: MutableList<EventPet>)
+
+    @Query("SELECT * FROM pet_table")
+    suspend fun getAllPetsWithProfilePhotos(): List<PetWithProfilePic>
 }

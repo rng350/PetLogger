@@ -34,16 +34,23 @@ class HomeFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        val petAdapter = BindingInterfaceCreator.setupNavigatablePetAdapter(viewModel.petNavigator)
-        binding.petsList.adapter = petAdapter
-        binding.addPetButton.setOnClickListener {
-            this.findNavController().navigate(R.id.action_homeFragment_to_newPetFragment)
-        }
-        viewModel.pets.observe(viewLifecycleOwner, Observer {
+        //val petAdapter = BindingInterfaceCreator.setupNavigatablePetAdapter(viewModel.petNavigator)
+        //binding.petsList.adapter = petAdapter
+        /*viewModel.pets.observe(viewLifecycleOwner, Observer {
             it?.let {
                 petAdapter.submitList(it)
             }
-        })
+        })*/
+        BindingInterfaceCreator.setupPetWithProfilePhotoAdapter(
+            viewModel.pets,
+            binding.petsList,
+            viewLifecycleOwner,
+            requireContext(),
+            viewModel.petNavigator)
+        
+        binding.addPetButton.setOnClickListener {
+            this.findNavController().navigate(R.id.action_homeFragment_to_newPetFragment)
+        }
         viewModel.petNavigator.navigateTo.observe(viewLifecycleOwner, Observer {
             it?.let {
                 val action = HomeFragmentDirections.actionHomeFragmentToViewPetFragment(it)

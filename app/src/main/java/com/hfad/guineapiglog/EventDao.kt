@@ -29,4 +29,9 @@ interface EventDao {
             "FROM photo_table LEFT JOIN photo_event_table " +
             "WHERE photo_event_table.event_id=:eventId AND photo_table.photo_id=photo_event_table.photo_id")
     suspend fun fetchPhotosOfEvent(eventId: Long): List<Photo>
+
+    @Query("SELECT pet_table.pet_id AS pet_id, pet_name, pet_species, pet_breed, pet_sex, pet_dob, has_dob " +
+            "FROM pet_table LEFT JOIN event_pet_table " +
+            "WHERE event_id = :eventId AND pet_table.pet_id = event_pet_table.pet_id")
+    suspend fun getPetsOfEventWithProfilePhotos(eventId: Long): List<PetWithProfilePic>
 }
