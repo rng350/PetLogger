@@ -1,13 +1,14 @@
 package com.hfad.guineapiglog
 
-import android.app.DatePickerDialog
-import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.async
-import java.time.OffsetDateTime
+import com.hfad.guineapiglog.entities.Pet
+import com.hfad.guineapiglog.entities.Photo
+import com.hfad.guineapiglog.selectiontracker.NewSelectionTracker
+import com.hfad.guineapiglog.selectiontracker.SharedCounterSelectionTracker
+import com.hfad.guineapiglog.selectiontracker.VariableSelectionMode
 import kotlinx.coroutines.launch
 
 class NewPetViewModel(val dao: PetDao) : ViewModel() {
@@ -19,6 +20,10 @@ class NewPetViewModel(val dao: PetDao) : ViewModel() {
         get() = _petSex
     var petDOB : SelectableDateOptional = SelectableDateOptional()
     val petID = MutableLiveData<Long>()
+    val petPhotoSelection = NewSelectionTracker<Photo>(1)
+
+    val tempSharedCounter = MutableLiveData<Int>(0)
+    val tempDELETEMEBITCH = SharedCounterSelectionTracker<Photo>(1, tempSharedCounter, VariableSelectionMode.CUMULATIVE)
 
     fun addPet() {
         Log.i("PET_ADDING", "trying to add pet... name:${petName}")

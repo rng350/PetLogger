@@ -2,7 +2,8 @@ package com.hfad.guineapiglog
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.room.Dao
+import com.hfad.guineapiglog.entities.Photo
+import com.hfad.guineapiglog.fetchers.LinkedEntityFetcher
 
 class GalleryDisplayViewModelFactory(private val associatedID: Long, private val fetcher: LinkedEntityFetcher<Photo>)
     : ViewModelProvider.Factory {

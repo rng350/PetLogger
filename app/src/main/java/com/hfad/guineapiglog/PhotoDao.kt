@@ -1,6 +1,9 @@
 package com.hfad.guineapiglog
 
 import androidx.room.*
+import com.hfad.guineapiglog.entities.PetProfilePhoto
+import com.hfad.guineapiglog.entities.Photo
+import com.hfad.guineapiglog.entities.PhotoEvent
 
 @Dao
 interface PhotoDao {

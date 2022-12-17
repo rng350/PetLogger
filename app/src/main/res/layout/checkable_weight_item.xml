@@ -9,7 +9,7 @@
             type="com.hfad.guineapiglog.CheckableItem" />
         <variable
             name="weight"
-            type="com.hfad.guineapiglog.Weight" />
+            type="com.hfad.guineapiglog.entities.Weight" />
     </data>
 
     <com.google.android.material.card.MaterialCardView

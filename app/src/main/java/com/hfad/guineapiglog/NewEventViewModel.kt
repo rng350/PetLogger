@@ -2,7 +2,11 @@ package com.hfad.guineapiglog
 
 import android.util.Log
 import androidx.lifecycle.*
-import java.time.OffsetDateTime
+import com.hfad.guineapiglog.entities.Event
+import com.hfad.guineapiglog.entities.EventPet
+import com.hfad.guineapiglog.entities.Pet
+import com.hfad.guineapiglog.entities.Photo
+import com.hfad.guineapiglog.selectiontracker.NewSelectionTracker
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
@@ -16,6 +20,7 @@ class NewEventViewModel(val eventDao: EventDao, val eventPetDao: EventPetDao, va
     private val _eventID = MutableLiveData<Long>(null)
     val eventID: LiveData<Long>
         get() = _eventID
+    val eventPhotoSelection = NewSelectionTracker<Photo>(10)
 
     init {
         fetchPets()

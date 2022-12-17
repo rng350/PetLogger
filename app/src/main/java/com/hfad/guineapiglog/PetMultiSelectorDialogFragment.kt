@@ -5,8 +5,8 @@ import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
+import com.hfad.guineapiglog.entities.Pet
 
 class PetMultiSelectorDialogFragment<T>(private val viewModel: T): DialogFragment() where T: ViewModel, T: WithMultiPetSelection {
     // could be NewEventViewModel, NewNoteViewModel, NewPhotoViewModel

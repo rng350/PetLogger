@@ -10,7 +10,7 @@
             type="com.hfad.guineapiglog.NewPetViewModel" />
         <variable
             name="galleryViewModel"
-            type="com.hfad.guineapiglog.GalleryViewModel" />
+            type="com.hfad.guineapiglog.photoselection.GalleryViewModel" />
     </data>
 
     <ScrollView
@@ -130,10 +130,18 @@
                     android:hint="@string/pet_additional_notes"/>-->
             </LinearLayout>
 
-            <include
-                android:id="@+id/galleryPicker"
-                layout="@layout/fragment_gallery_picker"
-                app:viewModel="@{galleryViewModel}"/>
+            <LinearLayout
+                android:id="@+id/galleryPickerSpace"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_gravity="bottom"
+                android:orientation="vertical"
+                android:layout_weight="1">
+                <include
+                    android:id="@+id/galleryPicker"
+                    layout="@layout/fragment_gallery_picker"
+                    app:viewModel="@{galleryViewModel}"/>
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"

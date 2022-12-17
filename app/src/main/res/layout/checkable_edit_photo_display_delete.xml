@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="checkable_item"
+            type="com.hfad.guineapiglog.CheckableItem" />
+        <variable
+            name="photo_item"
+            type="com.hfad.guineapiglog.entities.Photo" />
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/photo_card"
+        android:layout_width="125dp"
+        android:layout_height="125dp"
+        android:clickable="true"
+        android:checkable="true"
+        android:focusable="true"
+        app:checkedIcon="@drawable/ic_baseline_delete_24">
+
+        <ImageView
+            android:id="@+id/photo"
+            android:layout_width="125dp"
+            android:layout_height="125dp"
+            android:scaleType="centerCrop"
+            />
+
+    </com.google.android.material.card.MaterialCardView>
+</layout>

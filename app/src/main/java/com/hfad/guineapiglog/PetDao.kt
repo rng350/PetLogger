@@ -2,6 +2,7 @@ package com.hfad.guineapiglog
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import com.hfad.guineapiglog.entities.*
 
 @Dao
 interface PetDao {

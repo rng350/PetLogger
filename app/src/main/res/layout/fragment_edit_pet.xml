@@ -10,7 +10,7 @@
             type="com.hfad.guineapiglog.EditPetViewModel" />
         <variable
             name="galleryViewModel"
-            type="com.hfad.guineapiglog.GalleryViewModel" />
+            type="com.hfad.guineapiglog.photoselection.GalleryViewModel" />
     </data>
 
     <ScrollView

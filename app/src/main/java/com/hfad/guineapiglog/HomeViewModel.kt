@@ -1,10 +1,13 @@
 package com.hfad.guineapiglog
 
-import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hfad.guineapiglog.entities.Event
+import com.hfad.guineapiglog.entities.Pet
+import com.hfad.guineapiglog.entities.PetWithProfilePic
+import com.hfad.guineapiglog.entities.WeightWithPetName
+import com.hfad.guineapiglog.fetchers.Fetcher
 import kotlinx.coroutines.launch
 
 class HomeViewModel(val petDao: PetDao, val eventDao: EventDao, val weightDao: WeightDao) : ViewModel() {

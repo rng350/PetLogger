@@ -3,7 +3,7 @@
     <data>
         <variable
             name="photo"
-            type="com.hfad.guineapiglog.Photo" />
+            type="com.hfad.guineapiglog.entities.Photo" />
     </data>
 
     <com.google.android.material.card.MaterialCardView

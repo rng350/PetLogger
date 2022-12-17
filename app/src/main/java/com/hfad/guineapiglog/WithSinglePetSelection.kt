@@ -1,6 +1,7 @@
 package com.hfad.guineapiglog
 
 import androidx.lifecycle.MutableLiveData
+import com.hfad.guineapiglog.entities.Pet
 
 interface WithSinglePetSelection {
     var pets : MutableLiveData<MutableList<Pet>>

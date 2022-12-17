@@ -6,8 +6,8 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
+import com.hfad.guineapiglog.entities.Pet
 
 class PetSingleSelectorDialogFragment<T>(var viewModel: T, var curSelectedPet: Pet? = null, var curSelectedIndex: Int = -1): DialogFragment() where T: ViewModel, T: WithSinglePetSelection {
     // could be NewWeightViewModel

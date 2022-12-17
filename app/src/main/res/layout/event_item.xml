@@ -6,7 +6,7 @@
     <data>
         <variable
             name="event"
-            type="com.hfad.guineapiglog.Event" />
+            type="com.hfad.guineapiglog.entities.Event" />
     </data>
 
     <androidx.cardview.widget.CardView

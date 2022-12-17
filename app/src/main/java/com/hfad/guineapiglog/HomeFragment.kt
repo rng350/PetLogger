@@ -1,7 +1,6 @@
 package com.hfad.guineapiglog
 
 import android.os.Bundle
-import android.provider.ContactsContract.Data
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,9 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.hfad.guineapiglog.databinding.FragmentHomeBinding
 import androidx.lifecycle.Observer
-import com.hfad.guineapiglog.databinding.EventItemBinding
-import com.hfad.guineapiglog.databinding.PetItemBinding
-import com.hfad.guineapiglog.databinding.WeightItemBinding
+import com.hfad.guineapiglog.recyclerviews.BindingInterfaceCreator
 
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null

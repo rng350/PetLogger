@@ -1,28 +1,22 @@
 package com.hfad.guineapiglog
 
-import android.app.Activity
-import android.content.Intent
-import android.net.Uri
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.google.android.material.datepicker.MaterialDatePicker
 import com.hfad.guineapiglog.databinding.FragmentNewPetBinding
-import java.time.Instant
-import java.time.OffsetDateTime
-import java.time.ZoneId
+import com.hfad.guineapiglog.entitylinkers.PetProfilePhotoLinker
+import com.hfad.guineapiglog.photoselection.GalleryPicker
+import com.hfad.guineapiglog.photoselection.GalleryViewModel
+import com.hfad.guineapiglog.photoselection.GalleryViewModelFactory
 
 
 class NewPetFragment : Fragment() {
@@ -44,7 +38,12 @@ class NewPetFragment : Fragment() {
         val viewModel = ViewModelProvider(this, viewModelFactory).get(NewPetViewModel::class.java)
         //val datePicker = DatePicker.generate(viewModel.petDOB)
 
-        val galleryViewModelFactory = GalleryViewModelFactory(entityLinker = PetProfilePhotoLinker(photoDao), choiceLimit = 1, photoDao = photoDao)
+        val galleryViewModelFactory = GalleryViewModelFactory(
+            entityLinker = PetProfilePhotoLinker(photoDao),
+            photoDao = photoDao,
+            photosSelected = viewModel.petPhotoSelection
+            //photosSelected = viewModel.tempDELETEMEBITCH
+        )
         val galleryViewModel = ViewModelProvider(this, galleryViewModelFactory).get(GalleryViewModel::class.java)
         binding.galleryViewModel = galleryViewModel
 
@@ -54,7 +53,7 @@ class NewPetFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        galleryViewModel.photosSelected.selection.observe(viewLifecycleOwner, Observer {
+        galleryViewModel.photosSelected.selectionToAdd.observe(viewLifecycleOwner, Observer {
             if (it.size > 0) {
                 Glide.with(requireContext())
                     .load(it[0].item.contentUri)

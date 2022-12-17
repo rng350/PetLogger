@@ -9,7 +9,7 @@
             type="com.hfad.guineapiglog.CheckableItem" />
         <variable
             name="event"
-            type="com.hfad.guineapiglog.Event" />
+            type="com.hfad.guineapiglog.entities.Event" />
     </data>
 
     <com.google.android.material.card.MaterialCardView

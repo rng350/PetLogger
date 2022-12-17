@@ -50,4 +50,7 @@
     <string name="delete">Delete</string>
     <string name="pet_events_header">Events</string>
     <string name="pet_weights_header">Weights</string>
+    <string name="old_photos_header">Old Photos</string>
+    <string name="new_photos_header">New Photos</string>
+    <string name="photos_header">Photos</string>
 </resources>

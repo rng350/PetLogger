@@ -4,11 +4,10 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.android.material.datepicker.MaterialDatePicker
+import com.hfad.guineapiglog.entities.Pet
+import com.hfad.guineapiglog.entities.Weight
+import com.hfad.guineapiglog.fetchers.Fetcher
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.LocalTime
-import java.time.OffsetDateTime
 
 class NewWeightViewModel(val weightDao: WeightDao, val petDao: PetDao, petId: Long?) : ViewModel(), WithSinglePetSelection {
     override var petAssociated: MutableLiveData<Pet> = MutableLiveData<Pet>()

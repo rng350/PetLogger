@@ -1,6 +1,10 @@
 package com.hfad.guineapiglog
 
 import androidx.room.*
+import com.hfad.guineapiglog.entities.Event
+import com.hfad.guineapiglog.entities.Pet
+import com.hfad.guineapiglog.entities.PetWithProfilePic
+import com.hfad.guineapiglog.entities.Photo
 
 @Dao
 interface EventDao {

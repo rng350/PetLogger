@@ -10,12 +10,17 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.hfad.guineapiglog.databinding.FragmentEditEventBinding
+import com.hfad.guineapiglog.entitylinkers.PhotoToEventLinker
+import com.hfad.guineapiglog.photoselection.*
+import com.hfad.guineapiglog.recyclerviews.ItemPickers
 
 class EditEventFragment : Fragment() {
     private var _binding: FragmentEditEventBinding? = null
     private val binding get() = _binding!!
-    private var _galleryPicker: GalleryPicker? = null
-    private val galleryPicker get() = _galleryPicker!!
+    /*private var _galleryPicker: GalleryPicker? = null
+    private val galleryPicker get() = _galleryPicker!!*/
+    private var _galleryEditDisplay: GalleryEditDisplay? = null
+    private val galleryEditDisplay get() = _galleryEditDisplay
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,12 +42,31 @@ class EditEventFragment : Fragment() {
         val editEventViewModel = ViewModelProvider(this, editEventViewModelFactory).get(EditEventViewModel::class.java)
         binding.viewModel = editEventViewModel
 
-        val galleryViewModelFactory = GalleryViewModelFactory(entityLinker = PhotoToEventLinker(photoDao), choiceLimit = 10, photoDao = photoDao)
+        val galleryEditDisplayViewModelFactory = GalleryEditDisplayViewModelFactory(
+            associatedID = editEventViewModel.eventID,
+            eventDao = eventDao,
+            choiceLimit = 10
+        )
+        val galleryEditDisplayViewModel = ViewModelProvider(this, galleryEditDisplayViewModelFactory).get((GalleryEditDisplayViewModel::class.java))
+        binding.galleryEditDisplayViewModel = galleryEditDisplayViewModel
+
+        val galleryViewModelFactory = GalleryViewModelFactory(
+            entityLinker = PhotoToEventLinker(photoDao),
+            photoDao = photoDao,
+            photosSelected = galleryEditDisplayViewModel.newPhotosAssociatedTracker)
         val galleryViewModel = ViewModelProvider(this, galleryViewModelFactory).get(GalleryViewModel::class.java)
         binding.galleryViewModel = galleryViewModel
 
-        _galleryPicker = GalleryPicker(this, binding.galleryPicker, galleryViewModel, associatedID = editEventViewModel.eventID)
-        galleryPicker.onCreate(savedInstanceState)
+        _galleryEditDisplay = GalleryEditDisplay(
+            binding.galleryEditPicker,
+            photoDao,
+            eventDao,
+            this,
+            editEventViewModel.eventID,
+            galleryEditDisplayViewModel,
+            galleryViewModel
+        )
+        galleryEditDisplay?.onCreate(savedInstanceState)
 
         ItemPickers.setupPetWithProfilePhotoEditPicker(
             editEventViewModel.pets,
@@ -59,7 +83,6 @@ class EditEventFragment : Fragment() {
             Log.e("petlist", "about to initialize shit")
             editEventViewModel.petsAssociated.initializeSelection(it)
             editEventViewModel.associatedPetsFetched = true
-            Log.e("petlist", "selectopm initialized: ${editEventViewModel.petsAssociated.initialSelection}")
             editEventViewModel.initRecyclerViewPetList()
             Log.e("petlist", "recyc initialized")
         })
@@ -70,8 +93,7 @@ class EditEventFragment : Fragment() {
         })
 
         editEventViewModel.initialPhotoSelection.observeOnce(viewLifecycleOwner, Observer {
-            editEventViewModel.photosAssociated.initializeSelection(it)
-            editEventViewModel.initRecyclerViewPhotosList()
+            editEventViewModel.initAssociatedPhotoList()
         })
 
         binding.submitChangesButton.setOnClickListener {
@@ -93,12 +115,14 @@ class EditEventFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        galleryPicker.onResume()
+        galleryEditDisplay?.onResume()
+        /*galleryPicker.onResume()*/
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        galleryPicker.onDestroy()
+        galleryEditDisplay?.onDestroy()
+        /*galleryPicker.onDestroy()*/
         _binding = null
     }
 }

@@ -3,7 +3,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.hfad.guineapiglog.GalleryViewModel" />
+            type="com.hfad.guineapiglog.photoselection.GalleryViewModel" />
     </data>
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -16,7 +16,7 @@
             android:id="@+id/gallery_picker_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{@string/photos_selected(viewModel.photosSelectedAmt, String.valueOf(viewModel.choiceLimit))}"/>
+            android:text="@{@string/photos_selected(viewModel.photosSelected.itemsSelectedAmt, String.valueOf(viewModel.photosSelected.choiceLimit))}"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/media_list"

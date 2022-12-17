@@ -1,9 +1,10 @@
 package com.hfad.guineapiglog
 
 import androidx.lifecycle.*
-import kotlinx.coroutines.async
+import com.hfad.guineapiglog.entities.*
+import com.hfad.guineapiglog.fetchers.Fetcher
+import com.hfad.guineapiglog.selectiontracker.NewSelectionTracker
 import kotlinx.coroutines.launch
-import java.time.OffsetDateTime
 
 class EditPetViewModel(val petID: Long, val petDao: PetDao, val photoDao: PhotoDao, val eventDao: EventDao, val weightDao: WeightDao): ViewModel() {
     val pet = MutableLiveData<Pet>()
@@ -13,8 +14,9 @@ class EditPetViewModel(val petID: Long, val petDao: PetDao, val photoDao: PhotoD
     val petProfilePic = MutableLiveData<Photo>()
     val newPetProfilePic = MutableLiveData<Photo>()
     val newPetProfilePicLocal = MutableLiveData<Photo>()
-    val weightsToRemove = SelectionTracker<Weight>(choiceLimit = null)
-    val eventsToRemove = SelectionTracker<Event>(choiceLimit = null)
+    val weightsToRemove = NewSelectionTracker<Weight>(choiceLimit = null)
+    val eventsToRemove = NewSelectionTracker<Event>(choiceLimit = null)
+    val photoSelection = NewSelectionTracker<Photo>(1)
     val _petID = MutableLiveData<Long>(petID)
 
     val newPetSex = MutableLiveData<String>("N/A")
@@ -55,12 +57,12 @@ class EditPetViewModel(val petID: Long, val petDao: PetDao, val photoDao: PhotoD
         viewModelScope.launch {
             petDao.update(editedPet)
         }
-        for (event in eventsToRemove.selection.value!!) {
+        for (event in eventsToRemove.selectionToAdd.value!!) {
             viewModelScope.launch {
                 petDao.delete(EventPet(event.item.eventId, petID))
             }
         }
-        for (weight in weightsToRemove.selection.value!!) {
+        for (weight in weightsToRemove.selectionToAdd.value!!) {
             viewModelScope.launch {
                 weightDao.delete(weight.item)
             }

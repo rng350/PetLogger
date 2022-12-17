@@ -10,7 +10,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.hfad.guineapiglog.databinding.FragmentViewEventBinding
-import com.hfad.guineapiglog.databinding.PetItemBinding
+import com.hfad.guineapiglog.fetchers.PhotosOfEventFetcher
+import com.hfad.guineapiglog.recyclerviews.BindingInterfaceCreator
 
 class ViewEventFragment : Fragment() {
     private var _binding: FragmentViewEventBinding? = null

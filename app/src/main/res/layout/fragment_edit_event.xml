@@ -10,7 +10,10 @@
             type="com.hfad.guineapiglog.EditEventViewModel" />
         <variable
             name="galleryViewModel"
-            type="com.hfad.guineapiglog.GalleryViewModel" />
+            type="com.hfad.guineapiglog.photoselection.GalleryViewModel" />
+        <variable
+            name="galleryEditDisplayViewModel"
+            type="com.hfad.guineapiglog.photoselection.GalleryEditDisplayViewModel" />
     </data>
 
     <ScrollView
@@ -106,10 +109,11 @@
                 android:layout_gravity="bottom"
                 android:orientation="vertical"
                 android:layout_weight="1">
-                <include
-                    android:id="@+id/galleryPicker"
-                    layout="@layout/fragment_gallery_picker"
-                    app:viewModel="@{galleryViewModel}"/>
+                    <include
+                        android:id="@+id/galleryEditPicker"
+                        layout="@layout/fragment_gallery_edit_display"
+                        app:displayViewModel="@{galleryEditDisplayViewModel}"
+                        app:galleryViewModel="@{galleryViewModel}"/>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

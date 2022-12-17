@@ -8,6 +8,9 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.hfad.guineapiglog.databinding.FragmentGalleryDisplayBinding
 import com.hfad.guineapiglog.databinding.GalleryDisplayItemBinding
+import com.hfad.guineapiglog.entities.Photo
+import com.hfad.guineapiglog.recyclerviews.DataItemAdapter
+import com.hfad.guineapiglog.recyclerviews.DataItemBindingInterface
 
 // for viewing subjects' associated photos (i.e. Pet, Event, Note)
 class GalleryDisplay(private val fragment: Fragment,
@@ -38,8 +41,6 @@ class GalleryDisplay(private val fragment: Fragment,
             binder: GalleryDisplayItemBinding
         ) {
             binder.photo = item
-
-            Log.d("adapter_bind", "Are we even there?")
 
             Glide.with(fragment.requireContext())
                 .load(item.contentUri)

@@ -1,11 +1,12 @@
 package com.hfad.guineapiglog
 
-import android.util.Log
 import androidx.lifecycle.*
+import com.hfad.guineapiglog.entities.Event
+import com.hfad.guineapiglog.entities.PetWithProfilePic
+import com.hfad.guineapiglog.fetchers.Fetcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.LocalTime
 
 class ViewEventViewModel(val eventDao: EventDao, private val eventID: Long): ViewModel() {

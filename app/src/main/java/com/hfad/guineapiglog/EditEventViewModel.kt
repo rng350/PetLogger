@@ -4,17 +4,22 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hfad.guineapiglog.entities.Event
+import com.hfad.guineapiglog.entities.PetWithProfilePic
+import com.hfad.guineapiglog.entities.Photo
+import com.hfad.guineapiglog.fetchers.Fetcher
+import com.hfad.guineapiglog.selectiontracker.EditSelectionTracker
 
 class EditEventViewModel(_eventID: Long, eventDao: EventDao, petDao: PetDao): ViewModel() {
     val event = MutableLiveData<Event>()
     val allPets = MutableLiveData<List<PetWithProfilePic>>() // yuck, wanna remove this...
     val initialPetSelection = MutableLiveData<List<PetWithProfilePic>>() // yuck, wanna remove this...
-    val petsAssociated = SelectionEditTracker<PetWithProfilePic>(null)
+    val petsAssociated = EditSelectionTracker<PetWithProfilePic>(null)
     val pets = MutableLiveData<List<CheckableItem<PetWithProfilePic>>>()
     val eventID = MutableLiveData<Long>(_eventID)
     val eventDateTime = SelectableDateTime()
-    val initialPhotoSelection = MutableLiveData<List<Photo>>()
-    val photosAssociated = SelectionEditTracker<Photo>(10)
+    val initialPhotoSelection = MutableLiveData<List<Photo>>() // yuck, wanna remove this...
+    val initialPhotos = MutableLiveData<List<CheckableItem<Photo>>>()
 
     var allPetsFetched = false
     var associatedPetsFetched = false
@@ -35,7 +40,7 @@ class EditEventViewModel(_eventID: Long, eventDao: EventDao, petDao: PetDao): Vi
         if (allPetsFetched && associatedPetsFetched) {
             val petList = mutableListOf<CheckableItem<PetWithProfilePic>>()
             allPets.value?.map {
-                petList.add(CheckableItem(it, petsAssociated.shouldBeChecked(it)))
+                petList.add(CheckableItem(it, MutableLiveData(petsAssociated.inInitialSelection(it))))
             }
             Log.e("recyc view init", "about to initialize recyc view 2/3")
             pets.value = petList
@@ -43,10 +48,13 @@ class EditEventViewModel(_eventID: Long, eventDao: EventDao, petDao: PetDao): Vi
         }
     }
 
-    fun initRecyclerViewPhotosList() {
-
-    }
-
-    fun submitChanges() {
+    fun initAssociatedPhotoList() {
+        initialPhotoSelection.value?.let { photos ->
+            val oldPhotoList = mutableListOf<CheckableItem<Photo>>()
+            photos.map {
+                oldPhotoList.add(CheckableItem(it))
+            }
+            initialPhotos.value = oldPhotoList
+        }
     }
 }

@@ -1,7 +1,7 @@
 package com.hfad.guineapiglog
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
+import com.hfad.guineapiglog.entities.Weight
 
 @Dao
 interface WeightDao {

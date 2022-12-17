@@ -6,13 +6,17 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.hfad.guineapiglog.databinding.FragmentEditPetBinding
+import com.hfad.guineapiglog.entitylinkers.PetProfilePhotoLinker
+import com.hfad.guineapiglog.photoselection.GalleryPicker
+import com.hfad.guineapiglog.photoselection.GalleryViewModel
+import com.hfad.guineapiglog.photoselection.GalleryViewModelFactory
+import com.hfad.guineapiglog.recyclerviews.ItemPickers
 import java.io.File
 
 class EditPetFragment : Fragment() {
@@ -41,7 +45,10 @@ class EditPetFragment : Fragment() {
         editPetViewModel = ViewModelProvider(this, editPetViewModelFactory).get(EditPetViewModel::class.java)
         binding.viewModel = editPetViewModel
 
-        val galleryViewModelFactory = GalleryViewModelFactory(entityLinker = PetProfilePhotoLinker(photoDao), choiceLimit = 1, photoDao = photoDao)
+        val galleryViewModelFactory = GalleryViewModelFactory(
+            entityLinker = PetProfilePhotoLinker(photoDao),
+            photoDao = photoDao,
+            photosSelected = editPetViewModel.photoSelection)
         val galleryViewModel = ViewModelProvider(this, galleryViewModelFactory).get(GalleryViewModel::class.java)
         binding.galleryViewModel = galleryViewModel
 
@@ -63,7 +70,7 @@ class EditPetFragment : Fragment() {
             }
         })
 
-        galleryViewModel.photosSelected.selection.observe(viewLifecycleOwner, Observer {
+        galleryViewModel.photosSelected.selectionToAdd.observe(viewLifecycleOwner, Observer {
             if (it.size > 0) {
                 Glide.with(requireContext())
                     .load(it[0].item.contentUri)
@@ -110,7 +117,7 @@ class EditPetFragment : Fragment() {
 
         binding.submit.setOnClickListener {
             // do all the stuff
-            if (galleryViewModel.photosSelected.selection.value!!.size > 0) {
+            if (galleryViewModel.photosSelected.selectionToAdd.value!!.size > 0) {
                 Log.e("saving new pfp", "ssss")
                 galleryPicker.saveToLocalStorage()
                 // deleteProfilePicFromLocalStorage()

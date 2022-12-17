@@ -1,22 +1,17 @@
 package com.hfad.guineapiglog
 
 import android.os.Bundle
-import android.text.format.DateFormat.is24HourFormat
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.datepicker.MaterialDatePicker
-import com.google.android.material.timepicker.MaterialTimePicker
-import com.google.android.material.timepicker.MaterialTimePicker.INPUT_MODE_KEYBOARD
-import com.google.android.material.timepicker.TimeFormat
 import com.hfad.guineapiglog.databinding.FragmentNewEventBinding
-import java.time.Instant
-import java.time.OffsetDateTime
-import java.time.ZoneId
+import com.hfad.guineapiglog.entitylinkers.PhotoToEventLinker
+import com.hfad.guineapiglog.photoselection.GalleryPicker
+import com.hfad.guineapiglog.photoselection.GalleryViewModel
+import com.hfad.guineapiglog.photoselection.GalleryViewModelFactory
 
 class NewEventFragment : Fragment() {
     private var _binding: FragmentNewEventBinding? = null
@@ -38,7 +33,10 @@ class NewEventFragment : Fragment() {
 
         val newEventViewModelFactory = NewEventViewModelFactory(eventDao, eventPetDao, petDao)
         val newEventViewModel = ViewModelProvider(this, newEventViewModelFactory).get(NewEventViewModel::class.java)
-        val galleryViewModelFactory = GalleryViewModelFactory(entityLinker = PhotoToEventLinker(photoDao), choiceLimit = 10, photoDao = photoDao)
+        val galleryViewModelFactory = GalleryViewModelFactory(
+            entityLinker = PhotoToEventLinker(photoDao),
+            photoDao = photoDao,
+            photosSelected = newEventViewModel.eventPhotoSelection)
         val galleryViewModel = ViewModelProvider(this, galleryViewModelFactory).get(GalleryViewModel::class.java)
 
         //val petSelectorDialog by lazy { PetMultiSelectorDialogFragment(newEventViewModel) }
