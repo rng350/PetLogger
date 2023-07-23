@@ -1,4 +1,4 @@
-package com.hfad.guineapiglog
+package com.hfad.guineapiglog.util
 
 import android.widget.EditText
 import androidx.databinding.InverseMethod

@@ -1,4 +1,4 @@
-package com.hfad.guineapiglog
+package com.hfad.guineapiglog.dao
 
 import androidx.room.Dao
 import androidx.room.Delete

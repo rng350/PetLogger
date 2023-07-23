@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hfad.guineapiglog.dao.PetDao
+import com.hfad.guineapiglog.dao.WeightDao
 import com.hfad.guineapiglog.entities.Pet
 import com.hfad.guineapiglog.entities.Weight
 import com.hfad.guineapiglog.fetchers.Fetcher
@@ -11,7 +13,7 @@ import kotlinx.coroutines.launch
 
 class NewWeightViewModel(val weightDao: WeightDao, val petDao: PetDao, petId: Long?) : ViewModel(), WithSinglePetSelection {
     override var petAssociated: MutableLiveData<Pet> = MutableLiveData<Pet>()
-    override var pets: MutableLiveData<MutableList<Pet>> = MutableLiveData(mutableListOf<Pet>())
+    override var pets = MutableLiveData<List<Pet>>()
     override var petPicked: MutableLiveData<Int> = MutableLiveData(0)
     val wDateTime = SelectableDateTime()
     var petNameDisplay: MutableLiveData<String> = MutableLiveData<String>()
@@ -23,7 +25,9 @@ class NewWeightViewModel(val weightDao: WeightDao, val petDao: PetDao, petId: Lo
             Fetcher.fetchPet(this, petAssociated, petDao, it)
             petNameDisplay.value = petAssociated.value?.petName
         }
-        Fetcher.fetchAllPets(this, pets, petDao)
+        viewModelScope.launch {
+            pets.value = Fetcher.fetchAllPets(petDao)
+        }
     }
 
     fun submitWeight() {

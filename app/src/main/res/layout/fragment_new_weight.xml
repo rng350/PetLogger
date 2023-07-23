@@ -6,7 +6,7 @@
     tools:context=".NewWeightFragment">
     <data>
         <import
-            type="com.hfad.guineapiglog.DataBindingConverter" />
+            type="com.hfad.guineapiglog.util.DataBindingConverter" />
         <variable
             name="viewModel"
             type="com.hfad.guineapiglog.NewWeightViewModel" />
@@ -19,7 +19,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <EditText

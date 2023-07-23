@@ -6,7 +6,14 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.hfad.guineapiglog.dao.EventDao
+import com.hfad.guineapiglog.dao.EventPetDao
+import com.hfad.guineapiglog.dao.PetDao
+import com.hfad.guineapiglog.dao.PhotoDao
+import com.hfad.guineapiglog.dao.WeightDao
 import com.hfad.guineapiglog.entities.*
+import com.hfad.guineapiglog.util.Converter
+import com.hfad.guineapiglog.util.URIConverter
 
 @Database(entities = [
     Pet::class,

@@ -12,12 +12,14 @@ import com.hfad.guineapiglog.entitylinkers.PhotoToEventLinker
 import com.hfad.guineapiglog.photoselection.GalleryPicker
 import com.hfad.guineapiglog.photoselection.GalleryViewModel
 import com.hfad.guineapiglog.photoselection.GalleryViewModelFactory
+import kotlinx.coroutines.*
 
 class NewEventFragment : Fragment() {
     private var _binding: FragmentNewEventBinding? = null
     private val binding get() = _binding!!
     private var _galleryPicker: GalleryPicker? = null
     private val galleryPicker get() = _galleryPicker!!
+    var petSelector: PetMultiSelectorDialogFragment<NewEventViewModel>? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -62,8 +64,17 @@ class NewEventFragment : Fragment() {
 
         binding.inputAddPetsButton.setOnClickListener {
             //multiChoiceList(view, viewModel.pets)
-            //petSelectorDialog.show(childFragmentManager, null)
-            PetMultiSelectorDialogFragment.newInstance(newEventViewModel).show(childFragmentManager, "PET_SELECTOR")
+            //PetMultiSelectorDialogFragment.newInstance(newEventViewModel).show(childFragmentManager, "PET_SELECTOR")
+
+            binding.inputAddPetsButton.isEnabled = false
+
+            val coroutineScope = CoroutineScope(Dispatchers.Main.immediate)
+            coroutineScope.launch {
+                petSelector = PetMultiSelectorDialogFragment.newInstance(newEventViewModel)
+                petSelector!!.show(childFragmentManager, "PET_SELECTOR")
+                delay(200)
+                binding.inputAddPetsButton.isEnabled = true
+            }
         }
 
         binding.submitEventButton.setOnClickListener {

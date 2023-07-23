@@ -4,11 +4,21 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hfad.guineapiglog.*
-import com.hfad.guineapiglog.entities.*
+import com.hfad.guineapiglog.CheckableItem
+import com.hfad.guineapiglog.dao.EventDao
+import com.hfad.guineapiglog.dao.PetDao
+import com.hfad.guineapiglog.dao.WeightDao
+import com.hfad.guineapiglog.entities.Event
+import com.hfad.guineapiglog.entities.Pet
+import com.hfad.guineapiglog.entities.PetWithProfilePic
+import com.hfad.guineapiglog.entities.Photo
+import com.hfad.guineapiglog.entities.Weight
+import com.hfad.guineapiglog.entities.WeightWithPetName
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 object Fetcher {
     fun fetchPet(viewModel: ViewModel, associatedPet: MutableLiveData<Pet>, petDao: PetDao, petID: Long) {
@@ -20,13 +30,8 @@ object Fetcher {
         }
     }
 
-    fun fetchAllPets(viewModel: ViewModel, petsList: MutableLiveData<MutableList<Pet>>, petDao: PetDao) {
-        viewModel.viewModelScope.launch {
-            var fetchedPets = async {
-                petDao.getAll()
-            }
-            petsList.value = fetchedPets.await()
-        }
+    suspend fun fetchAllPets(petDao: PetDao) = withContext(Dispatchers.IO) {
+       petDao.getAll()
     }
 
     fun fetchPetsOfEvent(viewModel: ViewModel, petsList: MutableLiveData<MutableList<Pet>>, eventDao: EventDao, eventID: Long) {
@@ -122,16 +127,11 @@ object Fetcher {
         }
     }
 
-    fun fetchAllEvents(viewModel: ViewModel, eventsList: MutableLiveData<MutableList<Event>>, eventDao: EventDao) {
-        viewModel.viewModelScope.launch {
-            val fetchedEvents = async {
-                eventDao.getAll()
-            }
-            eventsList.value =
-                fetchedEvents.await()
-                    .sortedByDescending { it.date }
-                    .toMutableList()
-        }
+    suspend fun fetchAllEvents(eventDao: EventDao) = withContext(Dispatchers.IO) {
+        val eventsFetched = eventDao.getAll()
+            .sortedByDescending { it.date }
+        Log.d("Fetcher", "Fetched events: $eventsFetched")
+        eventsFetched
     }
 
     fun fetchEventsOfPet(viewModel: ViewModel, eventsList: MutableLiveData<MutableList<Event>>, petDao: PetDao, petID: Long) {
@@ -204,14 +204,10 @@ object Fetcher {
         }
     }
 
-    fun fetchPetsWithProfilePhotos(coroutineScope: CoroutineScope, petsWithProfilePhotos: MutableLiveData<List<PetWithProfilePic>>, petDao: PetDao) {
-        coroutineScope.launch {
-            val fetchedPets = async { petDao.getAllPetsWithProfilePhotos() }
-            fetchedPets.await().let {
-                Log.e("pets with pfp", "${it}")
-                petsWithProfilePhotos.value = it
-            }
-        }
+    suspend fun fetchPetsWithProfilePhotos(petDao: PetDao): List<PetWithProfilePic> = withContext(Dispatchers.IO) {
+        val fetchedPets = petDao.getAllPetsWithProfilePhotos()
+        Log.d("Fetcher", "fetched pets: ${fetchedPets}")
+        fetchedPets
     }
 
     fun fetchPetsOfEventWithProfilePhotos(coroutineScope: CoroutineScope, petsWithProfilePhotos: MutableLiveData<List<PetWithProfilePic>>, eventDao: EventDao, eventID: Long) {

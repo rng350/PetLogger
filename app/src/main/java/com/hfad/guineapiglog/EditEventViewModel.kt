@@ -4,11 +4,15 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hfad.guineapiglog.dao.EventDao
+import com.hfad.guineapiglog.dao.PetDao
 import com.hfad.guineapiglog.entities.Event
 import com.hfad.guineapiglog.entities.PetWithProfilePic
 import com.hfad.guineapiglog.entities.Photo
 import com.hfad.guineapiglog.fetchers.Fetcher
 import com.hfad.guineapiglog.selectiontracker.EditSelectionTracker
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class EditEventViewModel(_eventID: Long, eventDao: EventDao, petDao: PetDao): ViewModel() {
     val event = MutableLiveData<Event>()
@@ -26,7 +30,9 @@ class EditEventViewModel(_eventID: Long, eventDao: EventDao, petDao: PetDao): Vi
 
     init {
         Fetcher.fetchEvent(this, event, eventDao, _eventID)
-        Fetcher.fetchPetsWithProfilePhotos(viewModelScope, allPets, petDao)
+        viewModelScope.launch(Dispatchers.IO) {
+            allPets.postValue(Fetcher.fetchPetsWithProfilePhotos(petDao))
+        }
         Fetcher.fetchPetsOfEventWithProfilePhotos(viewModelScope, initialPetSelection, eventDao, _eventID)
         Fetcher.fetchPhotosOfEvent(this, initialPhotoSelection, eventDao, _eventID)
     }

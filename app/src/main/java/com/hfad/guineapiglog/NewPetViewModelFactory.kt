@@ -2,6 +2,7 @@ package com.hfad.guineapiglog
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.hfad.guineapiglog.dao.PetDao
 
 class NewPetViewModelFactory(private val dao: PetDao)
     : ViewModelProvider.Factory {

@@ -4,10 +4,10 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.hfad.guineapiglog.*
+import com.hfad.guineapiglog.dao.EventDao
+import com.hfad.guineapiglog.dao.PhotoDao
 import com.hfad.guineapiglog.databinding.FragmentGalleryEditDisplayBinding
-import com.hfad.guineapiglog.entitylinkers.PhotoToEventLinker
 import com.hfad.guineapiglog.recyclerviews.ItemPickers
 
 class GalleryEditDisplay(

@@ -1,4 +1,4 @@
-package com.hfad.guineapiglog
+package com.hfad.guineapiglog.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*

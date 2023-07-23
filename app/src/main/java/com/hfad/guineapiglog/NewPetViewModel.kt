@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hfad.guineapiglog.dao.PetDao
 import com.hfad.guineapiglog.entities.Pet
 import com.hfad.guineapiglog.entities.Photo
 import com.hfad.guineapiglog.selectiontracker.NewSelectionTracker
@@ -21,9 +22,6 @@ class NewPetViewModel(val dao: PetDao) : ViewModel() {
     var petDOB : SelectableDateOptional = SelectableDateOptional()
     val petID = MutableLiveData<Long>()
     val petPhotoSelection = NewSelectionTracker<Photo>(1)
-
-    val tempSharedCounter = MutableLiveData<Int>(0)
-    val tempDELETEMEBITCH = SharedCounterSelectionTracker<Photo>(1, tempSharedCounter, VariableSelectionMode.CUMULATIVE)
 
     fun addPet() {
         Log.i("PET_ADDING", "trying to add pet... name:${petName}")

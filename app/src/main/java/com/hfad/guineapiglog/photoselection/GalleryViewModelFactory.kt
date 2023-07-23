@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.hfad.guineapiglog.entitylinkers.EntityLinker
 import com.hfad.guineapiglog.entities.Photo
-import com.hfad.guineapiglog.PhotoDao
+import com.hfad.guineapiglog.dao.PhotoDao
 import com.hfad.guineapiglog.selectiontracker.SelectionTracker
 
 class GalleryViewModelFactory(private val entityLinker: EntityLinker,

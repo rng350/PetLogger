@@ -2,6 +2,8 @@ package com.hfad.guineapiglog
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.hfad.guineapiglog.dao.PetDao
+import com.hfad.guineapiglog.dao.WeightDao
 
 class ViewPetViewModelFactory (val petDao: PetDao, val weightDao: WeightDao, val petID: Long) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

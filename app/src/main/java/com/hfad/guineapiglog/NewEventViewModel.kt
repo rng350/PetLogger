@@ -2,6 +2,9 @@ package com.hfad.guineapiglog
 
 import android.util.Log
 import androidx.lifecycle.*
+import com.hfad.guineapiglog.dao.EventDao
+import com.hfad.guineapiglog.dao.EventPetDao
+import com.hfad.guineapiglog.dao.PetDao
 import com.hfad.guineapiglog.entities.Event
 import com.hfad.guineapiglog.entities.EventPet
 import com.hfad.guineapiglog.entities.Pet
@@ -15,7 +18,7 @@ class NewEventViewModel(val eventDao: EventDao, val eventPetDao: EventPetDao, va
     var eventDetails: String = "N/A"
     var eventDateTime = SelectableDateTime()
     override var pets : MutableList<Pet>? = null
-    override var petsAssociated: MutableLiveData<MutableList<Pet>> = MutableLiveData(mutableListOf<Pet>())
+    override var petsAssociated = MutableLiveData<List<Pet>>()
     override lateinit var petsPicked: MutableLiveData<BooleanArray>
     private val _eventID = MutableLiveData<Long>(null)
     val eventID: LiveData<Long>
@@ -29,7 +32,7 @@ class NewEventViewModel(val eventDao: EventDao, val eventPetDao: EventPetDao, va
 
     fun addEvent() {
         viewModelScope.launch {
-            var event = Event(date = eventDateTime.dateTime)
+            val event = Event(date = eventDateTime.dateTime)
             event.title = eventTitle
             event.details = eventDetails
             event.date = eventDateTime.dateTime
@@ -64,7 +67,7 @@ class NewEventViewModel(val eventDao: EventDao, val eventPetDao: EventPetDao, va
     }
 
     fun removeAssociatedPet(pet: Pet) {
-        petsAssociated.value?.remove(pet)
+        petsAssociated.value?.toMutableList()?.remove(pet)
         pets?.let {
             val index = it.indexOf(pet)
             petsPicked.value!![index] = false

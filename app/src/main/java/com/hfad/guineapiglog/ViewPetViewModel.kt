@@ -2,11 +2,14 @@ package com.hfad.guineapiglog
 
 import android.util.Log
 import androidx.lifecycle.*
+import com.hfad.guineapiglog.dao.PetDao
+import com.hfad.guineapiglog.dao.WeightDao
 import com.hfad.guineapiglog.entities.Event
 import com.hfad.guineapiglog.entities.Pet
 import com.hfad.guineapiglog.entities.Photo
 import com.hfad.guineapiglog.entities.Weight
 import com.hfad.guineapiglog.fetchers.Fetcher
+import com.hfad.guineapiglog.util.Navigator
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.time.OffsetDateTime

@@ -1,6 +1,7 @@
 package com.hfad.guineapiglog
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -31,13 +32,6 @@ class HomeFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        //val petAdapter = BindingInterfaceCreator.setupNavigatablePetAdapter(viewModel.petNavigator)
-        //binding.petsList.adapter = petAdapter
-        /*viewModel.pets.observe(viewLifecycleOwner, Observer {
-            it?.let {
-                petAdapter.submitList(it)
-            }
-        })*/
         BindingInterfaceCreator.setupPetWithProfilePhotoAdapter(
             viewModel.pets,
             binding.petsList,
@@ -63,7 +57,9 @@ class HomeFragment : Fragment() {
         }
         viewModel.events.observe(viewLifecycleOwner, Observer {
             it?.let {
+                println("events...")
                 eventAdapter.submitList(it)
+                println("events: ${it.toString()}")
             }
         })
         viewModel.eventNavigator.navigateTo.observe(viewLifecycleOwner, Observer {
@@ -77,13 +73,16 @@ class HomeFragment : Fragment() {
         val weightAdapter = BindingInterfaceCreator.setupNavigatableWeightWithPetNameAdapter(viewModel.weightNavigator)
         viewModel.weights.observe(viewLifecycleOwner, Observer {
             it?.let {
+                println("weights...")
                 weightAdapter.submitList(it)
+                println("weights: ${it.toString()}")
             }
         })
         binding.weightsList.adapter = weightAdapter
         binding.addWeightButton.setOnClickListener {
             this.findNavController().navigate(R.id.action_homeFragment_to_newWeightFragment)
         }
+        Log.d("Home","Created")
 
         return view
     }
@@ -92,48 +91,4 @@ class HomeFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
-    /*private fun createPetItemBindingInterface() = object : DataItemBindingInterface<Pet, PetItemBinding> {
-        override fun bind(
-            item: Pet,
-            binder: PetItemBinding
-        ) {
-            binder.pet = item
-            binder.viewPetButton.setOnClickListener {
-                binding.viewModel.petNavigator.navigateTo(item.petID)
-            }
-            binder.deletePetButton.setOnClickListener {
-            }
-        }
-    }
-
-    private fun createEventItemBindingInterface()
-        = object : DataItemBindingInterface<Event, EventItemBinding> {
-        override fun bind(
-            item: Event,
-            binder: EventItemBinding
-        ) {
-            binder.event = item
-            binder.viewEventButton.setOnClickListener {
-                binding.viewModel.eventNavigator.navigateTo(item.eventId)
-            }
-            binder.deleteEventButton.setOnClickListener {
-            }
-        }
-    }
-
-    private fun createWeightItemBindingInterface()
-        = object : DataItemBindingInterface<WeightWithPetName, WeightItemBinding> {
-        override fun bind(
-            item: WeightWithPetName,
-            binder: WeightItemBinding
-        ) {
-            binder.weight = item
-            binder.viewWeightButton.setOnClickListener {
-                binding.viewModel.weightNavigator.navigateTo(item.weight.id)
-            }
-            binder.deleteWeightButton.setOnClickListener {
-            }
-        }
-    }*/
 }

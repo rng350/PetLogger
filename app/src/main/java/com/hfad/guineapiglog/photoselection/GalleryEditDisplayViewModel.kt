@@ -4,7 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hfad.guineapiglog.CheckableItem
-import com.hfad.guineapiglog.EventDao
+import com.hfad.guineapiglog.dao.EventDao
 import com.hfad.guineapiglog.fetchers.Fetcher
 import com.hfad.guineapiglog.entities.Photo
 import com.hfad.guineapiglog.selectiontracker.SharedCounterSelectionTracker

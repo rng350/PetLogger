@@ -13,10 +13,11 @@ import com.hfad.guineapiglog.entities.Event
 import com.hfad.guineapiglog.entities.PetWithProfilePic
 import com.hfad.guineapiglog.entities.Weight
 import com.hfad.guineapiglog.entities.WeightWithPetName
+import com.hfad.guineapiglog.util.Navigator
 
 object BindingInterfaceCreator {
-    fun setupNavigatableEventAdapter(eventNavigator: Navigator): DataItemAdapter<Event, EventItemBinding> {
-        return DataItemAdapter<Event, EventItemBinding>(
+    fun setupNavigatableEventAdapter(eventNavigator: Navigator): GenericRecyclerViewAdapter<Event, EventItemBinding> {
+        return GenericRecyclerViewAdapter<Event, EventItemBinding>(
             layoutId = R.layout.event_item,
             bindingInterface = createEventItemBindingInterface(eventNavigator)
         )
@@ -37,8 +38,8 @@ object BindingInterfaceCreator {
         }
     }
 
-    fun setupNavigatableWeightWithPetNameAdapter(weightNavigator: Navigator): DataItemAdapter<WeightWithPetName, WeightItemBinding> {
-        return DataItemAdapter<WeightWithPetName, WeightItemBinding>(
+    fun setupNavigatableWeightWithPetNameAdapter(weightNavigator: Navigator): GenericRecyclerViewAdapter<WeightWithPetName, WeightItemBinding> {
+        return GenericRecyclerViewAdapter<WeightWithPetName, WeightItemBinding>(
             layoutId = R.layout.weight_item,
             bindingInterface = createWeightWithPetNameItemBindingInterface(weightNavigator)
         )
@@ -59,8 +60,8 @@ object BindingInterfaceCreator {
         }
     }
 
-    fun setupNavigatableWeightAdapter(weightNavigator: Navigator): DataItemAdapter<Weight, PetWeightItemBinding> {
-        return DataItemAdapter<Weight, PetWeightItemBinding>(
+    fun setupNavigatableWeightAdapter(weightNavigator: Navigator): GenericRecyclerViewAdapter<Weight, PetWeightItemBinding> {
+        return GenericRecyclerViewAdapter<Weight, PetWeightItemBinding>(
             layoutId = R.layout.pet_weight_item,
             bindingInterface = createWeightItemBindingInterface(weightNavigator)
         )
@@ -86,13 +87,15 @@ object BindingInterfaceCreator {
                                         context: Context,
                                         navigator: Navigator?
     ) {
-        val adapter = DataItemAdapter<PetWithProfilePic, PetItemBinding>(
+        val adapter = GenericRecyclerViewAdapter<PetWithProfilePic, PetItemBinding>(
             layoutId = R.layout.pet_item,
             bindingInterface = createPetWithProfilePhotoItemBindingInterface(context, navigator)
         )
         recyclerView.adapter = adapter
         petList.observe(lifecycleOwner, Observer {
+            println("Pets...")
             adapter.submitList(it)
+            println("Pets: ${it.toString()}")
         })
     }
 

@@ -5,12 +5,13 @@ import androidx.lifecycle.*
 import com.hfad.guineapiglog.CheckableItem
 import com.hfad.guineapiglog.entitylinkers.EntityLinker
 import com.hfad.guineapiglog.entities.Photo
-import com.hfad.guineapiglog.PhotoDao
+import com.hfad.guineapiglog.dao.PhotoDao
 import com.hfad.guineapiglog.databinding.GalleryPickerItemBinding
 import com.hfad.guineapiglog.selectiontracker.SelectionTracker
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
-import java.util.concurrent.atomic.AtomicInteger
 
 class GalleryViewModel(val entityLinker: EntityLinker,
                        val photoDao: PhotoDao,
@@ -22,36 +23,30 @@ class GalleryViewModel(val entityLinker: EntityLinker,
     val isExpanded = MutableLiveData<Boolean>(false)
     val curSelectionFileSize = MutableLiveData<Double>(0.0)
     val freeSpace = MutableLiveData<Int>(0)
-    val finalPhotoSelection = MutableLiveData<List<Photo>>(null)
-    val associatedID = MediatorLiveData<Long>()
+    val finalPhotoSelection = MutableLiveData<List<Photo>?>(null)
+    val associatedID = MediatorLiveData<Long?>()
     val allPhotosInsertedToDB = MutableLiveData<Boolean>(false)
-    private val photosInsertedAmt = AtomicInteger(0)
 
     // for the recyclerview adapter
     val selected = HashMap<GalleryPickerItemBinding, Observer<Boolean>>()
 
-    // TODO: delete this when can, function moved to selectiontracker
     fun toggle(photo: CheckableItem<Photo>) {
         photosSelected.toggle(photo)
     }
 
-    // TODO: delete this when can, function moved to selectiontracker
     fun canSelectMore(): Boolean {
         return photosSelected.canSelectMore()
     }
 
     fun onFinalPhotoSelectionUploaded() {
-        for (photo in finalPhotoSelection.value!!) {
-            viewModelScope.launch {
-                val inserted = async {
+        viewModelScope.launch(Dispatchers.IO) {
+            finalPhotoSelection.value?.map {photo ->
+                async {
                     photoDao.insert(photo)
                     Log.d("photo_inserted_db", "${photo}")
                 }
-                inserted.await()
-                if (photosInsertedAmt.incrementAndGet() == finalPhotoSelection.value!!.size) {
-                    allPhotosInsertedToDB.value = true
-                }
-            }
+            }?.awaitAll()
+            allPhotosInsertedToDB.postValue(true)
         }
     }
 
@@ -71,5 +66,8 @@ class GalleryViewModel(val entityLinker: EntityLinker,
                 finalPhotoSelection.value = null
             }
         }
+    }
+
+    fun insertPhotos() {
     }
 }

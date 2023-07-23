@@ -1,6 +1,10 @@
 package com.hfad.guineapiglog
 
 import androidx.lifecycle.*
+import com.hfad.guineapiglog.dao.EventDao
+import com.hfad.guineapiglog.dao.PetDao
+import com.hfad.guineapiglog.dao.PhotoDao
+import com.hfad.guineapiglog.dao.WeightDao
 import com.hfad.guineapiglog.entities.*
 import com.hfad.guineapiglog.fetchers.Fetcher
 import com.hfad.guineapiglog.selectiontracker.NewSelectionTracker

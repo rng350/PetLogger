@@ -2,6 +2,7 @@ package com.hfad.guineapiglog.selectiontracker
 
 import androidx.lifecycle.MutableLiveData
 import com.hfad.guineapiglog.CheckableItem
+import com.hfad.guineapiglog.mutableCopyOf
 
 /*
     1. fetch pets from viewmodel
@@ -19,7 +20,7 @@ class EditSelectionTrackerMultiPick<T: CheckableItem<U>, U>(choiceLimitSet: Int?
     override val itemsSelectedAmt = MutableLiveData<Int>()
 
     init {
-        choiceLimit.value = choiceLimitSet
+        choiceLimit.value = choiceLimitSet ?: Int.MAX_VALUE
     }
 
     override fun initializeSelection(selection: List<U>) {
@@ -31,30 +32,32 @@ class EditSelectionTrackerMultiPick<T: CheckableItem<U>, U>(choiceLimitSet: Int?
         checkable.item.let {
             val choiceLimit = choiceLimit.value ?: Int.MAX_VALUE
             if (inInitialSelection(it)) {
+                val newToRemoveList = selectionToRemove.value!!.mutableCopyOf()
                 if (selectionToRemove.value!!.contains(checkable)) {
                     if (itemsSelectedAmt.value!! < choiceLimit) {
-                        selectionToRemove.value!!.remove(checkable)
-                        selectionToRemove.value = selectionToRemove.value
+                        newToRemoveList.remove(checkable)
                         checkable.isChecked.value = true
+                        selectionToRemove.value = newToRemoveList
                         itemsSelectedAmt.value = itemsSelectedAmt.value!! + 1
                     }
                 } else {
-                    selectionToRemove.value!!.add(checkable)
-                    selectionToRemove.value = selectionToRemove.value
+                    newToRemoveList.add(checkable)
                     checkable.isChecked.value = false
+                    selectionToRemove.value = newToRemoveList
                     itemsSelectedAmt.value = itemsSelectedAmt.value!! - 1
                 }
             } else {
+                val newToAddList = selectionToAdd.value!!.mutableCopyOf()
                 if (selectionToAdd.value!!.contains(checkable)) {
-                    selectionToAdd.value!!.remove(checkable)
-                    selectionToAdd.value = selectionToAdd.value
+                    newToAddList.remove(checkable)
                     checkable.isChecked.value = false
+                    selectionToAdd.value = newToAddList
                     itemsSelectedAmt.value = itemsSelectedAmt.value!! - 1
                 } else {
                     if (itemsSelectedAmt.value!! < choiceLimit) {
-                        selectionToAdd.value!!.add(checkable)
-                        selectionToAdd.value = selectionToAdd.value
+                        newToAddList.add(checkable)
                         checkable.isChecked.value = true
+                        selectionToAdd.value = newToAddList
                         itemsSelectedAmt.value = itemsSelectedAmt.value!! + 1
                     }
                 }
@@ -70,7 +73,7 @@ class EditSelectionTrackerMultiPick<T: CheckableItem<U>, U>(choiceLimitSet: Int?
         for (checkable in requireNotNull(selectionToAdd.value)) {
             checkable.isChecked.value = false
         }
-        selectionToAdd.value!!.clear()
+        selectionToAdd.value = mutableListOf<T>()
     }
 
     override fun canSelectMore(): Boolean {

@@ -24,8 +24,8 @@ class NewSelectionTrackerMultiPick<T: CheckableItem<U>, U>(val choiceLimit: Int?
         if (canSelectMore()) {
             val newList = selection.value!!.mutableCopyOf()
             newList.add(item)
-            selection.value = newList
             item.isChecked.value = true
+            selection.value = newList
             _itemsSelectedAmt.value = _itemsSelectedAmt.value!! + 1
             return true
         }
@@ -35,8 +35,8 @@ class NewSelectionTrackerMultiPick<T: CheckableItem<U>, U>(val choiceLimit: Int?
     override fun remove(item: T): Boolean {
         val newList = selection.value!!.mutableCopyOf()
         val removed = newList.remove(item)
-        selection.value = newList
         item.isChecked.value = false
+        selection.value = newList
         _itemsSelectedAmt.value = _itemsSelectedAmt.value!! - 1
         return removed
     }

@@ -27,9 +27,11 @@ import com.hfad.guineapiglog.*
 import com.hfad.guineapiglog.databinding.FragmentGalleryPickerBinding
 import com.hfad.guineapiglog.databinding.GalleryPickerItemBinding
 import com.hfad.guineapiglog.entities.Photo
-import com.hfad.guineapiglog.recyclerviews.DataItemAdapter
+import com.hfad.guineapiglog.recyclerviews.GenericRecyclerViewAdapter
 import com.hfad.guineapiglog.recyclerviews.DataItemBindingInterface
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -45,12 +47,12 @@ class GalleryPicker(private val fragment: Fragment,
                     private val associatedID: LiveData<Long>) {
     private lateinit var permissionsLauncher: ActivityResultLauncher<String>
     private lateinit var contentObserver: ContentObserver
-    private lateinit var adapter: DataItemAdapter<CheckableItem<Photo>, GalleryPickerItemBinding>
+    private lateinit var adapter: GenericRecyclerViewAdapter<CheckableItem<Photo>, GalleryPickerItemBinding>
 
     fun onCreate(savedInstanceState: Bundle?) {
         updateExternalReadPermission()
 
-        adapter = DataItemAdapter<CheckableItem<Photo>, GalleryPickerItemBinding> (
+        adapter = GenericRecyclerViewAdapter<CheckableItem<Photo>, GalleryPickerItemBinding> (
             layoutId = R.layout.gallery_picker_item,
             bindingInterface = createMediaItemBindingInterface()
         )
@@ -141,7 +143,7 @@ class GalleryPicker(private val fragment: Fragment,
         }
     }
 
-    // reaload for when external media has been updated
+    // reload for when external media has been updated
     private fun initContentObserver() {
         contentObserver = object : ContentObserver(null) {
             override fun onChange(selfChange: Boolean) {
@@ -227,33 +229,41 @@ class GalleryPicker(private val fragment: Fragment,
     // 2a. if so, try to save files
     // 2b. if not, create a toaster saying there's not enough space
     fun saveToLocalStorage() {
-        val savedPhotos = mutableListOf<Photo>()
-        viewModel.photosSelected.selectionToAdd.value?.map { photo ->
-            val item = photo.item
-            val fileName = generateFilename(item.date)
+        viewModel.viewModelScope.launch {
+            val savedPhotos = mutableListOf<Photo>()
 
-            var height = 0
-            var width = 0
+            withContext(Dispatchers.IO) {
+                viewModel.photosSelected.selectionToAdd.value?.map { photo ->
+                    async {
+                        val item = photo.item
+                        val fileName = generateFilename(item.date)
 
-            fragment.requireContext().contentResolver.openInputStream(item.contentUri).use { input ->
-                fragment.context!!.openFileOutput(fileName, Context.MODE_PRIVATE).use { output ->
-                    val options = BitmapFactory.Options()
-                    BitmapFactory.decodeStream(input, null, options)!!.compress(Bitmap.CompressFormat.WEBP, 95, output)
-                    height = options.outHeight
-                    width = options.outWidth
-                }
+                        var height = 0
+                        var width = 0
+
+                        fragment.requireContext().contentResolver.openInputStream(item.contentUri).use { input ->
+                            fragment.context!!.openFileOutput(fileName, Context.MODE_PRIVATE).use { output ->
+                                val options = BitmapFactory.Options()
+                                BitmapFactory.decodeStream(input, null, options)!!.compress(Bitmap.CompressFormat.WEBP, 95, output)
+                                height = options.outHeight
+                                width = options.outWidth
+                            }
+                        }
+
+                        val createdFile = File(fragment.context!!.filesDir, fileName)
+                        if (createdFile.exists()) {
+                            val fileSize = createdFile.size
+                            savedPhotos.add(Photo(item.id, item.name, createdFile.toUri(), width, height, fileSize, item.date))
+                            Log.d("photo_added", "uri: ${createdFile.toUri()}")
+                        }
+                    }
+                }?.awaitAll()
             }
-            val createdFile = File(fragment.context!!.filesDir, fileName)
-            if (createdFile.exists()) {
-                val fileSize = createdFile.size
-                savedPhotos.add(Photo(item.id, item.name, createdFile.toUri(), width, height, fileSize, item.date))
-                Log.d("photo_added", "uri: ${createdFile.toUri()}")
-                //createdFile.delete() // TODO: comment this out when ready
-            }
+
+            viewModel.finalPhotoSelection.value = savedPhotos.toList()
+            Log.d("photo_final_selection", "${viewModel.finalPhotoSelection.value}")
+            viewModel.onFinalPhotoSelectionUploaded()
         }
-        viewModel.finalPhotoSelection.value = savedPhotos.toList()
-        Log.d("photo_final_selection", "${viewModel.finalPhotoSelection.value}")
-        viewModel.onFinalPhotoSelectionUploaded()
     }
 
     // filename format
@@ -309,6 +319,10 @@ class GalleryPicker(private val fragment: Fragment,
             item: CheckableItem<Photo>,
             binder: GalleryPickerItemBinding
         ) {
+            // recyclerview-related cleanup to multiple checks
+            binder.galleryCard.setOnClickListener (null)
+            binder.galleryCard.setOnCheckedChangeListener(null)
+
             binder.photo = item
 
             Glide.with(fragment.requireContext())
@@ -316,11 +330,9 @@ class GalleryPicker(private val fragment: Fragment,
                 .apply(RequestOptions().placeholder(R.drawable.placeholder))
                 .into(binder.galleryImage)
 
-            // recyclerview-related cleanup to multiple checks
-            binder.galleryCard.setOnClickListener { null }
 
             // cleanup for single choice selection only
-            if (true || viewModel.photosSelected.choiceLimit == 1) {
+            if (/*true || */viewModel.photosSelected.choiceLimit == 1) {
                 val prevBindingObserver = viewModel.selected[binder]
                 prevBindingObserver?.let {
                     item.isChecked.removeObserver(it)
@@ -335,7 +347,7 @@ class GalleryPicker(private val fragment: Fragment,
             }
 
             // needed because single selection tracking automatically unchecks previous choice once a new one's made
-            if (true || viewModel.photosSelected.choiceLimit == 1) {
+            if (/*true || */viewModel.photosSelected.choiceLimit == 1) {
                 // observer into variable for reuse
                 val observer = Observer<Boolean> {
                     requireNotNull(it)
@@ -344,8 +356,6 @@ class GalleryPicker(private val fragment: Fragment,
                 item.isChecked.observe(fragment.viewLifecycleOwner, observer)
                 viewModel.selected[binder] = observer
             }
-
-            // TODO: get rid of recyclerviews altogether and replace with LazyColumns (compose)
         }
     }
 }

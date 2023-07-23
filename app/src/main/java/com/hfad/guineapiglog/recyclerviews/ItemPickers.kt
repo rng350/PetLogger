@@ -24,7 +24,7 @@ object ItemPickers {
                          eventsSelected: SelectionTracker<Event>,
                          recyclerView: RecyclerView,
                          lifecycleOwner: LifecycleOwner) {
-        val adapter = DataItemAdapter<CheckableItem<Event>, CheckableEventItemBinding>(
+        val adapter = GenericRecyclerViewAdapter<CheckableItem<Event>, CheckableEventItemBinding>(
             layoutId = R.layout.checkable_event_item,
             bindingInterface = createCheckableEventItemBindingInterface(eventsSelected)
         )
@@ -58,7 +58,7 @@ object ItemPickers {
                           weightsSelected: SelectionTracker<Weight>,
                           recyclerView: RecyclerView,
                           lifecycleOwner: LifecycleOwner) {
-        val adapter = DataItemAdapter<CheckableItem<Weight>, CheckableWeightItemBinding>(
+        val adapter = GenericRecyclerViewAdapter<CheckableItem<Weight>, CheckableWeightItemBinding>(
             layoutId = R.layout.checkable_weight_item,
             bindingInterface = createCheckableWeightItemBindingInterface(weightsSelected)
         )
@@ -93,7 +93,7 @@ object ItemPickers {
                                            lifecycleOwner: LifecycleOwner,
                                            context: Context
     ) {
-        val adapter = DataItemAdapter<CheckableItem<PetWithProfilePic>, CheckablePetItemBinding>(
+        val adapter = GenericRecyclerViewAdapter<CheckableItem<PetWithProfilePic>, CheckablePetItemBinding>(
             layoutId = R.layout.checkable_pet_item,
             bindingInterface = createCheckablePetWithProfilePhotoItemBindingInterface(petsSelected, context)
         )
@@ -143,7 +143,7 @@ object ItemPickers {
                               context: Context,
                               selected: HashMap<GalleryPickerItemBinding, Observer<Boolean>>
     ) {
-        val adapter = DataItemAdapter<CheckableItem<Photo>, GalleryPickerItemBinding>(
+        val adapter = GenericRecyclerViewAdapter<CheckableItem<Photo>, GalleryPickerItemBinding>(
             layoutId = R.layout.gallery_picker_item,
             bindingInterface = createGalleryPickerItemBindingInterface(photosSelected, context, lifecycleOwner, selected)
         )
@@ -206,7 +206,7 @@ object ItemPickers {
         context: Context,
     ) {
         require(photosDeselected.tracker is SharedCounterSelectionTrackerSubtractive)
-        val adapter = DataItemAdapter<CheckableItem<Photo>, CheckableEditPhotoDisplayDeleteBinding>(
+        val adapter = GenericRecyclerViewAdapter<CheckableItem<Photo>, CheckableEditPhotoDisplayDeleteBinding>(
             layoutId = R.layout.checkable_edit_photo_display_delete,
             bindingInterface = createOldPhotoDeselectionItemBindingInterface(photosDeselected, context)
         )
@@ -257,7 +257,7 @@ object ItemPickers {
     ) {
         require(photosSelected.tracker is SharedCounterSelectionTrackerCumulative)
 
-        val adapter = DataItemAdapter<CheckableItem<Photo>, CheckableEditPhotoDisplayNewBinding>(
+        val adapter = GenericRecyclerViewAdapter<CheckableItem<Photo>, CheckableEditPhotoDisplayNewBinding>(
             layoutId = R.layout.checkable_edit_photo_display_new,
             bindingInterface = createNewPhotoDeselectionItemBindingInterface(photosSelected, context)
         )

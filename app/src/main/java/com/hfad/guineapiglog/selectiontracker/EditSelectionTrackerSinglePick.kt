@@ -2,6 +2,7 @@ package com.hfad.guineapiglog.selectiontracker
 
 import androidx.lifecycle.MutableLiveData
 import com.hfad.guineapiglog.CheckableItem
+import com.hfad.guineapiglog.mutableCopyOf
 
 class EditSelectionTrackerSinglePick<T: CheckableItem<U>, U>(): EditSelectionTrackerInterface<T,U> {
     var initialSelection: U? = null
@@ -26,8 +27,10 @@ class EditSelectionTrackerSinglePick<T: CheckableItem<U>, U>(): EditSelectionTra
         if (inInitialSelection(checkable.item)) {
             if (selectionToRemove.value!!.contains(checkable)) {
                 removeNewSelection()
-                selectionToRemove.value!!.remove(checkable)
+                val newList = selectionToRemove.value!!.mutableCopyOf()
+                newList.remove(checkable)
                 checkable.isChecked.value = true
+                selectionToRemove.value = newList
                 itemsSelectedAmt.value = 1
             } else {
                 removeInitSelection()
@@ -40,8 +43,10 @@ class EditSelectionTrackerSinglePick<T: CheckableItem<U>, U>(): EditSelectionTra
             } else {
                 removeInitSelection()
                 removeNewSelection()
-                selectionToAdd.value!!.add(checkable)
+                val newList = selectionToAdd.value!!.mutableCopyOf()
+                newList.add(checkable)
                 checkable.isChecked.value = true
+                selectionToAdd.value = newList
                 itemsSelectedAmt.value = 1
             }
         }
@@ -50,16 +55,20 @@ class EditSelectionTrackerSinglePick<T: CheckableItem<U>, U>(): EditSelectionTra
     private fun removeInitSelection() {
         initialSelectionCheckable?.let {
             if (selectionToRemove.value!!.isEmpty()) {
-                selectionToRemove.value!!.add(it)
+                val newList = selectionToRemove.value!!.mutableCopyOf()
+                newList.add(it)
                 it.isChecked.value = false
+                selectionToRemove.value = newList
             }
         }
     }
 
     private fun removeNewSelection() {
         if (selectionToAdd.value!!.isNotEmpty()) {
-            val removed = selectionToAdd.value!!.removeAt(0)
+            val newList = selectionToAdd.value!!.mutableCopyOf()
+            val removed = newList.removeAt(0)
             removed.isChecked.value = false
+            selectionToAdd.value = newList
         }
     }
 
@@ -68,8 +77,8 @@ class EditSelectionTrackerSinglePick<T: CheckableItem<U>, U>(): EditSelectionTra
     }
 
     override fun clear() {
-        itemsSelectedAmt.value = itemsSelectedAmt.value!!.minus(selectionToAdd.value!!.size)
-        selectionToAdd.value!!.clear()
+        itemsSelectedAmt.value = itemsSelectedAmt.value!! - selectionToAdd.value!!.size
+        selectionToAdd.value = mutableListOf<T>()
     }
 
     override fun canSelectMore(): Boolean {

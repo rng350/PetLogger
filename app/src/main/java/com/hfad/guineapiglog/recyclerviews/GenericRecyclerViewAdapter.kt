@@ -11,11 +11,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 
-class DataItemAdapter<T, U: ViewDataBinding>(
+class GenericRecyclerViewAdapter<T, U: ViewDataBinding>(
     @LayoutRes val layoutId: Int,
     private val bindingInterface: DataItemBindingInterface<T, U>
 )
-    : ListAdapter<T, DataItemAdapter.DataItemViewHolder>(DataItemDiffUtilCallback()) {
+    : ListAdapter<T, GenericRecyclerViewAdapter.DataItemViewHolder>(DataItemDiffUtilCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) : DataItemViewHolder {
         return DataItemViewHolder.inflateFrom(parent, layoutId)

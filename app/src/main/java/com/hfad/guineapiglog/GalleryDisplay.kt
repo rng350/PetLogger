@@ -9,18 +9,18 @@ import com.bumptech.glide.request.RequestOptions
 import com.hfad.guineapiglog.databinding.FragmentGalleryDisplayBinding
 import com.hfad.guineapiglog.databinding.GalleryDisplayItemBinding
 import com.hfad.guineapiglog.entities.Photo
-import com.hfad.guineapiglog.recyclerviews.DataItemAdapter
+import com.hfad.guineapiglog.recyclerviews.GenericRecyclerViewAdapter
 import com.hfad.guineapiglog.recyclerviews.DataItemBindingInterface
 
 // for viewing subjects' associated photos (i.e. Pet, Event, Note)
 class GalleryDisplay(private val fragment: Fragment,
                      private val binding: FragmentGalleryDisplayBinding,
                      private val viewModel: GalleryDisplayViewModel) {
-    private lateinit var adapter: DataItemAdapter<Photo, GalleryDisplayItemBinding>
+    private lateinit var adapter: GenericRecyclerViewAdapter<Photo, GalleryDisplayItemBinding>
 
     fun onCreate(savedInstanceState: Bundle?) {
         Log.e("gallery_display", "oncreate a")
-        adapter = DataItemAdapter<Photo, GalleryDisplayItemBinding>(
+        adapter = GenericRecyclerViewAdapter<Photo, GalleryDisplayItemBinding>(
             layoutId = R.layout.gallery_display_item,
             bindingInterface = createMediaItemBindingInterface()
         )
@@ -48,13 +48,11 @@ class GalleryDisplay(private val fragment: Fragment,
                 .into(binder.galleryImage)
 
             // recyclerview-related cleanup to prevent listeners
-            binder.galleryCard.setOnClickListener { null }
+            binder.galleryCard.setOnClickListener(null)
 
             binder.galleryCard.setOnClickListener {
-                // TODO: need to implement ViewPhotoFragment & ViewModel, navgraph stuff
                 viewModel.photoNavigator.navigateTo(item.id)
             }
-            // TODO: get rid of recyclerviews altogether and replace with LazyColumns (compose)
         }
     }
 }

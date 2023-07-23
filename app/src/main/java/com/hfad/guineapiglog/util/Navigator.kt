@@ -1,4 +1,4 @@
-package com.hfad.guineapiglog
+package com.hfad.guineapiglog.util
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

@@ -3,7 +3,7 @@ package com.hfad.guineapiglog.photoselection
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.hfad.guineapiglog.EventDao
+import com.hfad.guineapiglog.dao.EventDao
 
 class GalleryEditDisplayViewModelFactory(private val associatedID: MutableLiveData<Long>,
                                          private val eventDao: EventDao,

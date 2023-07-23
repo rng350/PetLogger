@@ -1,4 +1,4 @@
-package com.hfad.guineapiglog
+package com.hfad.guineapiglog.util
 
 import androidx.room.TypeConverter
 import java.time.Instant
