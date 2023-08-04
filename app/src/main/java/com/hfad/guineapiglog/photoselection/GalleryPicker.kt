@@ -242,15 +242,21 @@ class GalleryPicker(private val fragment: Fragment,
                         var width = 0
 
                         fragment.requireContext().contentResolver.openInputStream(item.contentUri).use { input ->
-                            fragment.context!!.openFileOutput(fileName, Context.MODE_PRIVATE).use { output ->
+                            fragment.requireContext().openFileOutput(fileName, Context.MODE_PRIVATE).use { output ->
                                 val options = BitmapFactory.Options()
-                                BitmapFactory.decodeStream(input, null, options)!!.compress(Bitmap.CompressFormat.WEBP, 95, output)
+                                BitmapFactory.decodeStream(input, null, options)!!.compress(
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+                                        Bitmap.CompressFormat.WEBP_LOSSY
+                                    else Bitmap.CompressFormat.WEBP,
+                                    95,
+                                    output
+                                )
                                 height = options.outHeight
                                 width = options.outWidth
                             }
                         }
 
-                        val createdFile = File(fragment.context!!.filesDir, fileName)
+                        val createdFile = File(fragment.requireContext().filesDir, fileName)
                         if (createdFile.exists()) {
                             val fileSize = createdFile.size
                             savedPhotos.add(Photo(item.id, item.name, createdFile.toUri(), width, height, fileSize, item.date))
@@ -308,8 +314,8 @@ class GalleryPicker(private val fragment: Fragment,
     }
 
     fun fileAlreadyExists(fileName: String): Boolean {
-        Log.d("fileExists", "file: ${fragment.context!!.filesDir}/${fileName}, true/false?? ans: ${File("${fragment.context!!.filesDir}/${fileName}").exists()}")
-        return File("${fragment.context!!.filesDir}/${fileName}").exists()
+        Log.d("fileExists", "file: ${fragment.requireContext().filesDir}/${fileName}, true/false?? ans: ${File("${fragment.requireContext().filesDir}/${fileName}").exists()}")
+        return File("${fragment.requireContext().filesDir}/${fileName}").exists()
     }
 
     // TODO: delete this thing and use the newer version in ItemPicker

@@ -94,6 +94,11 @@ class NewEventFragment : Fragment() {
         galleryPicker.onResume()
     }
 
+    override fun onStop() {
+        super.onStop()
+        binding.inputAddPetsButton.isEnabled = true
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         galleryPicker.onDestroy()
