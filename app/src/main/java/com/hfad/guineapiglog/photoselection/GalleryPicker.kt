@@ -245,10 +245,8 @@ class GalleryPicker(private val fragment: Fragment,
                             fragment.requireContext().openFileOutput(fileName, Context.MODE_PRIVATE).use { output ->
                                 val options = BitmapFactory.Options()
                                 BitmapFactory.decodeStream(input, null, options)!!.compress(
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
-                                        Bitmap.CompressFormat.WEBP_LOSSY
-                                    else Bitmap.CompressFormat.WEBP,
-                                    95,
+                                    Bitmap.CompressFormat.JPEG,
+                                    100,
                                     output
                                 )
                                 height = options.outHeight
