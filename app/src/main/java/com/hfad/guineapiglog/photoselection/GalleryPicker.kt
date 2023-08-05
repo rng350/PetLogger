@@ -271,7 +271,7 @@ class GalleryPicker(private val fragment: Fragment,
     }
 
     // filename format
-    // year-month-day-hour-minute-second-uuid
+    // [year][month][day]_[hour]h[minute]m[second]s_[uuid]
     // i.e.
     // 20220614_18h22m_[random UUID]
     // 00000000_00h00m_[random UUID]
