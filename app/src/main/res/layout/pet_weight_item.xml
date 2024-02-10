@@ -5,7 +5,7 @@
     <data>
         <variable
             name="weight"
-            type="com.hfad.guineapiglog.entities.Weight" />
+            type="com.hfad.petlogger.entities.Weight" />
     </data>
 
     <com.google.android.material.card.MaterialCardView

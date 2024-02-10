@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.hfad.guineapiglog.HomeFragment"
+        android:name="com.hfad.petlogger.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" >
         <action
@@ -29,7 +29,7 @@
     </fragment>
     <fragment
         android:id="@+id/editEventFragment"
-        android:name="com.hfad.guineapiglog.EditEventFragment"
+        android:name="com.hfad.petlogger.EditEventFragment"
         android:label="fragment_edit_event"
         tools:layout="@layout/fragment_edit_event" >
         <action
@@ -46,7 +46,7 @@
     </fragment>
     <fragment
         android:id="@+id/editPetFragment"
-        android:name="com.hfad.guineapiglog.EditPetFragment"
+        android:name="com.hfad.petlogger.EditPetFragment"
         android:label="fragment_edit_pet"
         tools:layout="@layout/fragment_edit_pet" >
         <action
@@ -65,7 +65,7 @@
     </fragment>
     <fragment
         android:id="@+id/newEventFragment"
-        android:name="com.hfad.guineapiglog.NewEventFragment"
+        android:name="com.hfad.petlogger.NewEventFragment"
         android:label="fragment_new_event"
         tools:layout="@layout/fragment_new_event" >
         <action
@@ -76,7 +76,7 @@
     </fragment>
     <fragment
         android:id="@+id/viewPetFragment"
-        android:name="com.hfad.guineapiglog.ViewPetFragment"
+        android:name="com.hfad.petlogger.ViewPetFragment"
         android:label="fragment_view_pet"
         tools:layout="@layout/fragment_view_pet" >
         <action
@@ -102,7 +102,7 @@
     </fragment>
     <fragment
         android:id="@+id/viewEventFragment"
-        android:name="com.hfad.guineapiglog.ViewEventFragment"
+        android:name="com.hfad.petlogger.ViewEventFragment"
         android:label="fragment_view_event"
         tools:layout="@layout/fragment_view_event" >
         <action
@@ -122,7 +122,7 @@
     </fragment>
     <fragment
         android:id="@+id/newPetFragment"
-        android:name="com.hfad.guineapiglog.NewPetFragment"
+        android:name="com.hfad.petlogger.NewPetFragment"
         android:label="fragment_new_pet"
         tools:layout="@layout/fragment_new_pet" >
         <action
@@ -133,7 +133,7 @@
     </fragment>
     <fragment
         android:id="@+id/newWeightFragment"
-        android:name="com.hfad.guineapiglog.NewWeightFragment"
+        android:name="com.hfad.petlogger.NewWeightFragment"
         android:label="fragment_new_weight"
         tools:layout="@layout/fragment_new_weight" >
         <action

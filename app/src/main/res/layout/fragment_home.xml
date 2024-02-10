@@ -7,7 +7,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.hfad.guineapiglog.HomeViewModel" />
+            type="com.hfad.petlogger.HomeViewModel" />
     </data>
     <ScrollView
         android:layout_width="match_parent"

@@ -4,7 +4,7 @@
     <data>
         <variable
             name="photo_item"
-            type="com.hfad.guineapiglog.entities.Photo" />
+            type="com.hfad.petlogger.entities.Photo" />
     </data>
 
     <com.google.android.material.card.MaterialCardView

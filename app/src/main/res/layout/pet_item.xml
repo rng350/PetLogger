@@ -6,7 +6,7 @@
     <data>
         <variable
             name="pet"
-            type="com.hfad.guineapiglog.entities.PetWithProfilePic" />
+            type="com.hfad.petlogger.entities.PetWithProfilePic" />
     </data>
 
     <com.google.android.material.card.MaterialCardView

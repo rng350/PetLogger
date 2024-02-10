@@ -6,10 +6,10 @@
     tools:context=".NewWeightFragment">
     <data>
         <import
-            type="com.hfad.guineapiglog.util.DataBindingConverter" />
+            type="com.hfad.petlogger.util.DataBindingConverter" />
         <variable
             name="viewModel"
-            type="com.hfad.guineapiglog.NewWeightViewModel" />
+            type="com.hfad.petlogger.NewWeightViewModel" />
     </data>
 
     <ScrollView

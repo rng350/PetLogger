@@ -7,10 +7,10 @@
     <data>
         <variable
             name="viewModel"
-            type="com.hfad.guineapiglog.NewEventViewModel" />
+            type="com.hfad.petlogger.NewEventViewModel" />
         <variable
             name="galleryViewModel"
-            type="com.hfad.guineapiglog.photoselection.GalleryViewModel" />
+            type="com.hfad.petlogger.photoselection.GalleryViewModel" />
     </data>
 
     <ScrollView

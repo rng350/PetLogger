@@ -3,7 +3,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.hfad.guineapiglog.GalleryDisplayViewModel" />
+            type="com.hfad.petlogger.GalleryDisplayViewModel" />
     </data>
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"

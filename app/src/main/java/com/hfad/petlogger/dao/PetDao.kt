@@ -1,0 +1,53 @@
+package com.hfad.petlogger.dao
+
+import androidx.lifecycle.LiveData
+import androidx.room.*
+import com.hfad.petlogger.entities.*
+
+@Dao
+interface PetDao {
+    @Insert
+    suspend fun insert(pet: Pet): Long
+
+    @Delete
+    suspend fun delete(pet: Pet)
+
+    @Update
+    suspend fun update(pet: Pet)
+
+    @Query("SELECT * FROM pet_table WHERE pet_id=:petId")
+    fun get(petId: Long): LiveData<Pet>
+
+    @Query("SELECT * FROM pet_table WHERE pet_id=:petId")
+    suspend fun getAsync(petId: Long): Pet?
+
+    @Query("SELECT * FROM pet_table")
+    suspend fun getAll(): MutableList<Pet>
+
+    @Query("SELECT event_table.event_id AS event_id, event_title, event_details, event_date " +
+            "FROM event_table, event_pet_table " +
+            "WHERE event_pet_table.pet_id=:petId " +
+            "AND event_table.event_id=event_pet_table.event_id " +
+            "ORDER BY event_date")
+    suspend fun getEventsOfPet(petId: Long): MutableList<Event>
+
+    @Query("SELECT photo_table.photo_id, photo_date, photo_filesize, photo_width, photo_height, photo_uri, photo_name " +
+            "FROM photo_table LEFT JOIN pet_profile_photo_table " +
+            "ON photo_table.photo_id = pet_profile_photo_table.photo_id " +
+            "WHERE pet_profile_photo_table.pet_id=:petID " +
+            "LIMIT 1")
+    suspend fun getPetProfilePhoto(petID: Long): Photo?
+
+    //TODO: add "ORDER BY weight_date DESCENDING"
+    @Query("SELECT * FROM weight_table WHERE weight_pet_id=:petId ORDER BY weight_datetime")
+    suspend fun getWeightsOfPet(petId: Long): MutableList<Weight>
+
+    @Delete
+    suspend fun delete(petEvent: EventPet)
+
+    @Delete
+    suspend fun delete(petEvents: MutableList<EventPet>)
+
+    @Query("SELECT * FROM pet_table")
+    suspend fun getAllPetsWithProfilePhotos(): List<PetWithProfilePic>
+}

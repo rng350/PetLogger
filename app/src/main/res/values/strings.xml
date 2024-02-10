@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">GuineaPigLog</string>
+    <string name="app_name">PetLogger</string>
     <string name="add_pet">Add Pet</string>
     <string name="add_event">Add Event</string>
     <string name="pet_species_field">Write pet species here</string>

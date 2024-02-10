@@ -47,7 +47,7 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.6"
     }
-    namespace 'com.hfad.guineapiglog'
+    namespace 'com.hfad.petlogger'
 }
 
 dependencies {
@@ -101,4 +101,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1'
     // Integration with LiveData
     implementation 'androidx.compose.runtime:runtime-livedata'
+
+    //coil
+    implementation("io.coil-kt:coil-compose:2.4.0")
 }

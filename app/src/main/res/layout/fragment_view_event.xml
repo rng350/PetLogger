@@ -7,10 +7,10 @@
     <data>
         <variable
             name="viewModel"
-            type="com.hfad.guineapiglog.ViewEventViewModel" />
+            type="com.hfad.petlogger.ViewEventViewModel" />
         <variable
             name="galleryDisplayViewModel"
-            type="com.hfad.guineapiglog.GalleryDisplayViewModel" />
+            type="com.hfad.petlogger.GalleryDisplayViewModel" />
     </data>
 
     <LinearLayout

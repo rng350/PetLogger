@@ -5,7 +5,7 @@
     <data>
         <variable
             name="photo"
-            type="com.hfad.guineapiglog.CheckableItem" />
+            type="com.hfad.petlogger.CheckableItem" />
     </data>
 
     <com.google.android.material.card.MaterialCardView
