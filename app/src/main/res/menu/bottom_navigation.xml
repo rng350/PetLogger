@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
     <item
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:title="Item" />
+        android:id="@+id/petListFragment"
+        android:icon="@drawable/pets"
+        android:menuCategory="secondary"
+        android:title="Pets" />
     <item
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:title="Item" />
+        android:id="@+id/monitoringListFragment"
+        android:icon="@drawable/monitoring"
+        android:menuCategory="secondary"
+        android:title="Monitor" />
     <item
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:title="Item" />
+        android:id="@+id/eventListFragment"
+        android:icon="@drawable/event_note"
+        android:menuCategory="secondary"
+        android:title="Events" />
     <item
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:title="Item" />
+        android:id="@+id/noteListFragment"
+        android:icon="@drawable/note_stack"
+        android:menuCategory="secondary"
+        android:title="Notes" />
     <item
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:title="Item" />
-    <item
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:title="Item" />
+        android:id="@+id/fullGalleryFragment"
+        android:icon="@drawable/photo_library"
+        android:menuCategory="secondary"
+        android:title="Gallery" />
 </menu>

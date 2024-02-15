@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.hfad.petlogger.CheckableItem
 import com.hfad.petlogger.dao.EventDao
 import com.hfad.petlogger.dao.PetDao
+import com.hfad.petlogger.dao.PhotoDao
 import com.hfad.petlogger.dao.WeightDao
 import com.hfad.petlogger.entities.Event
 import com.hfad.petlogger.entities.Pet
@@ -210,11 +211,25 @@ object Fetcher {
         fetchedPets
     }
 
-    fun fetchPetsOfEventWithProfilePhotos(coroutineScope: CoroutineScope, petsWithProfilePhotos: MutableLiveData<List<PetWithProfilePic>>, eventDao: EventDao, eventID: Long) {
+    fun fetchPetsOfEventWithProfilePhotos(coroutineScope: CoroutineScope,
+                                          petsWithProfilePhotos: MutableLiveData<List<PetWithProfilePic>>,
+                                          eventDao: EventDao,
+                                          eventID: Long) {
         coroutineScope.launch {
             val fetchedPets = async { eventDao.getPetsOfEventWithProfilePhotos(eventID) }
             fetchedPets.await().let {
                 petsWithProfilePhotos.value = it
+            }
+        }
+    }
+
+    fun fetchAllPhotos(coroutineScope: CoroutineScope,
+                       photoList: MutableLiveData<List<Photo>>,
+                       photoDao: PhotoDao) {
+        coroutineScope.launch {
+            val fetchedPhotos = async { photoDao.getAllPhotos() }
+            fetchedPhotos.await().let {
+                photoList.value = it
             }
         }
     }

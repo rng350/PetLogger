@@ -1,6 +1,7 @@
 package com.hfad.petlogger.recyclerviews
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -11,6 +12,7 @@ import com.hfad.petlogger.*
 import com.hfad.petlogger.databinding.*
 import com.hfad.petlogger.entities.Event
 import com.hfad.petlogger.entities.PetWithProfilePic
+import com.hfad.petlogger.entities.Photo
 import com.hfad.petlogger.entities.Weight
 import com.hfad.petlogger.entities.WeightWithPetName
 import com.hfad.petlogger.util.Navigator
@@ -121,6 +123,45 @@ object BindingInterfaceCreator {
 
             binder.petCard.setOnClickListener {
                 navigator?.navigateTo(item.pet.petID)
+            }
+        }
+    }
+
+    fun setupGalleryPhotoItemAdapter(photoList: MutableLiveData<List<Photo>>,
+                                     recyclerView: RecyclerView,
+                                     lifecycleOwner: LifecycleOwner,
+                                     context: Context,
+                                     navigator: Navigator?) {
+        val adapter = GenericRecyclerViewAdapter<Photo, GalleryDisplayItemBinding>(
+            layoutId = R.layout.gallery_display_item,
+            bindingInterface = createGalleryPhotoItemBindingInterface(context, navigator)
+        )
+        Log.i("setupGalleryPhItemAda", "before adapter set")
+        recyclerView.adapter = adapter
+        photoList.observe(lifecycleOwner, Observer {
+            Log.i("setupGalleryPhItemAda", "adapter list submitted...")
+            adapter.submitList(it)
+        })
+    }
+
+    private fun createGalleryPhotoItemBindingInterface(context: Context, navigator: Navigator? = null)
+            = object : DataItemBindingInterface<Photo, GalleryDisplayItemBinding> {
+        override fun bind(
+            item: Photo,
+            binder: GalleryDisplayItemBinding
+        ) {
+            binder.photo = item
+
+            Glide.with(context)
+                .load(item.contentUri)
+                .apply(RequestOptions().placeholder(R.drawable.placeholder))
+                .into(binder.galleryImage)
+
+            // recyclerview-related cleanup to prevent listeners
+            binder.galleryCard.setOnClickListener(null)
+
+            binder.galleryCard.setOnClickListener {
+                navigator?.navigateTo(item.id)
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.hfad.petlogger
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.hfad.petlogger.entities.Photo
