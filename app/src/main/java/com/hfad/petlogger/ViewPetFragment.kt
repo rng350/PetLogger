@@ -67,7 +67,9 @@ class ViewPetFragment : Fragment() {
         })
         viewModel.weightNavigator.navigateTo.observe(viewLifecycleOwner, Observer {
             it?.let {
-                TODO("implement ViewWeightFragment")
+                val action = ViewPetFragmentDirections.actionViewPetFragmentToViewWeightFragment(it)
+                this.findNavController().navigate(action)
+                viewModel.weightNavigator.onNavigated()
             }
         })
 

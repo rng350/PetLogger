@@ -4,11 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.hfad.petlogger.dao.WeightDao
 
-class MonitoringListViewModelFactory(private val weightDao: WeightDao)
-    : ViewModelProvider.Factory {
+class ViewWeightViewModelFactory(val weightDao: WeightDao, val weightId: Long): ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(MonitoringListViewModel::class.java)) {
-            return MonitoringListViewModel(weightDao) as T
+        if (modelClass.isAssignableFrom(ViewWeightViewModel::class.java)) {
+            return ViewWeightViewModel(weightDao, weightId) as T
         }
         throw IllegalArgumentException("Unknown ViewModel")
     }

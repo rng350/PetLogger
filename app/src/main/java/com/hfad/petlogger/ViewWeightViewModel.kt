@@ -2,18 +2,15 @@ package com.hfad.petlogger
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.hfad.petlogger.dao.WeightDao
 import com.hfad.petlogger.entities.Weight
 import com.hfad.petlogger.fetchers.Fetcher
 import com.hfad.petlogger.util.Navigator
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
-class MonitoringListViewModel(weightDao: WeightDao) : ViewModel() {
-    val weights = MutableLiveData<MutableList<Weight>>()
+class ViewWeightViewModel(val weightDao: WeightDao, val weightId: Long): ViewModel() {
+    val weight = MutableLiveData<Weight>()
     val weightNavigator = Navigator()
     init {
-        Fetcher.fetchAllWeights(this, weights, weightDao)
+        Fetcher.fetchWeight(this, weight, weightDao, weightId)
     }
 }
