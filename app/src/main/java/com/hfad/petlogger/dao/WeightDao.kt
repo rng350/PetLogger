@@ -2,6 +2,7 @@ package com.hfad.petlogger.dao
 
 import androidx.room.*
 import com.hfad.petlogger.entities.Weight
+import java.time.OffsetDateTime
 
 @Dao
 interface WeightDao {
@@ -22,4 +23,9 @@ interface WeightDao {
 
     @Query("SELECT * FROM weight_table")
     suspend fun getAll(): MutableList<Weight>
+
+    @Query("SELECT * FROM weight_table " +
+            "WHERE weight_datetime < :weightDateTimeInString " +
+            "LIMIT 1")
+    suspend fun getPreviousWeight(weightDateTimeInString: String): Weight?
 }

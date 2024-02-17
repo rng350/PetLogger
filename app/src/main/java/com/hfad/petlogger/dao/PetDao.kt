@@ -19,6 +19,9 @@ interface PetDao {
     fun get(petId: Long): LiveData<Pet>
 
     @Query("SELECT * FROM pet_table WHERE pet_id=:petId")
+    fun getPet(petId: Long): Pet
+
+    @Query("SELECT * FROM pet_table WHERE pet_id=:petId")
     suspend fun getAsync(petId: Long): Pet?
 
     @Query("SELECT * FROM pet_table")

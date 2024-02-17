@@ -15,6 +15,7 @@ import com.hfad.petlogger.entities.PetWithProfilePic
 import com.hfad.petlogger.entities.Photo
 import com.hfad.petlogger.entities.Weight
 import com.hfad.petlogger.entities.WeightWithPetName
+import com.hfad.petlogger.util.Converter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -44,8 +45,8 @@ object Fetcher {
         }
     }
 
-    fun fetchWeight(viewModel: ViewModel, associatedWeight: MutableLiveData<Weight>, weightDao: WeightDao, weightID: Long) {
-        viewModel.viewModelScope.launch {
+    fun fetchWeight(coroutineScope: CoroutineScope, associatedWeight: MutableLiveData<Weight>, weightDao: WeightDao, weightID: Long) {
+        coroutineScope.launch {
             var fetchedWeight = async {
                 weightDao.get(weightID)
             }
@@ -53,6 +54,39 @@ object Fetcher {
         }
     }
 
+    /*fun fetchWeightPrevWeightAndPet(coroutineScope: CoroutineScope,
+                                    weight: MutableLiveData<Weight>,
+                                    previousWeight: MutableLiveData<Weight?>,
+                                    associatedPet: MutableLiveData<Pet>,
+                                    weightID: Long, weightDao: WeightDao, petDao: PetDao) {
+        coroutineScope.launch(Dispatchers.IO) {
+            Log.i("fetchWeightPrev", "calling function")
+            val fetchedWeight = async {
+                Log.i("fetchWeightPrev", "got weight 1")
+                weightDao.get(weightID)
+            }
+            Log.i("fetchWeightPrev", "got weight 2")
+            weight.value = fetchedWeight.await()
+            Log.i("fetchWeightPrev", "got weight 3")
+            weight.value?.let {
+                coroutineScope.launch(Dispatchers.IO) {
+                    *//*Converter.fromOffsetDateTime(it.weightDateTime)?.let {
+                        val fetchedPrevWeight = async {
+                            weightDao.getPreviousWeight(it)
+                        }
+                        previousWeight.value = fetchedPrevWeight.await()
+                    }*//*
+                }
+                coroutineScope.launch(Dispatchers.IO) {
+                    val fetchedAssociatedPet = async {
+                        petDao.getPet(it.petId)
+                    }
+                    associatedPet.value = fetchedAssociatedPet.await()
+                    Log.i("fetchWeightPrev", "got pet")
+                }
+            }
+        }
+    }*/
     fun fetchAllWeights(viewModel: ViewModel, weightsList: MutableLiveData<MutableList<Weight>>, weightDao: WeightDao) {
         viewModel.viewModelScope.launch {
             val fetchedWeights = async {

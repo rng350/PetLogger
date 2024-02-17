@@ -25,8 +25,9 @@ class MonitoringListFragment : Fragment() {
         val view = binding.root
         val application = requireNotNull(this.activity).application
         val weightDao = PetLoggerDatabase.getInstance(application).weightDao
+        val petDao = PetLoggerDatabase.getInstance(application).petDao
 
-        val viewModelFactory = MonitoringListViewModelFactory(weightDao)
+        val viewModelFactory = MonitoringListViewModelFactory(weightDao, petDao)
         viewModel = ViewModelProvider(this, viewModelFactory).get(MonitoringListViewModel::class.java)
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
@@ -42,7 +43,7 @@ class MonitoringListFragment : Fragment() {
         this.findNavController().navigate(R.id.action_petListFragment_to_newPetFragment)
         }**/
 
-        val weightAdapter = BindingInterfaceCreator.setupNavigatableWeightAdapter(viewModel.weightNavigator)
+        val weightAdapter = BindingInterfaceCreator.setupNavigatableWeightWithPetNameAdapter(viewModel.weightNavigator)
         binding.weightsList.adapter = weightAdapter
         viewModel.weights.observe(viewLifecycleOwner, Observer {
             it?.let {
@@ -51,9 +52,8 @@ class MonitoringListFragment : Fragment() {
         })
         viewModel.weightNavigator.navigateTo.observe(viewLifecycleOwner, Observer {
             it?.let {
-                // TODO: Implement
-                /*val action = PetListFragmentDirections.ACTION_TRANSFER_TO_VIEW_PHOTO_OR_WHATEVER(it)
-                this.findNavController().navigate(action)*/
+                val action = MonitoringListFragmentDirections.actionMonitoringListFragmentToViewWeightFragment(it)
+                this.findNavController().navigate(action)
                 viewModel.weightNavigator.onNavigated()
             }
         })

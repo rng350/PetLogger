@@ -23,9 +23,10 @@ class ViewWeightFragment : Fragment() {
         val application = requireActivity().application
 
         val weightDao = PetLoggerDatabase.getInstance(application).weightDao
+        val petDao = PetLoggerDatabase.getInstance(application).petDao
         val weightId = ViewWeightFragmentArgs.fromBundle(requireArguments()).weightId
 
-        val viewModelFactory = ViewWeightViewModelFactory(weightDao, weightId)
+        val viewModelFactory = ViewWeightViewModelFactory(weightDao, petDao, weightId)
         val viewModel = ViewModelProvider(this, viewModelFactory).get(ViewWeightViewModel::class.java)
 
         binding.viewModel = viewModel
