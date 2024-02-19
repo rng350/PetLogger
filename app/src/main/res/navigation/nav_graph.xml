@@ -195,6 +195,9 @@
         <action
             android:id="@+id/action_monitoringListFragment_to_viewWeightFragment"
             app:destination="@id/viewWeightFragment" />
+        <action
+            android:id="@+id/action_monitoringListFragment_to_newWeightFragment"
+            app:destination="@id/newWeightFragment" />
     </fragment>
     <fragment
         android:id="@+id/viewWeightFragment"

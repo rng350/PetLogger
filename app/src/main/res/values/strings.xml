@@ -53,8 +53,11 @@
     <string name="old_photos_header">Old Photos</string>
     <string name="new_photos_header">New Photos</string>
     <string name="photos_header">Photos</string>
+    <!-- ViewWeight Screen -->
     <string name="weightGramsDisplay">%s grams</string>
-    <string name="previous_weight">Previous Weight (%s)</string>
-    <string name="weight_difference_plus">(+%s grams)</string>
-    <string name="weight_difference_minus">(-%s grams)</string>
+    <string name="previous_weight">Previous Weight: %s gram(s)</string>
+    <string name="weight_difference_plus">(+%s gram(s))</string>
+    <string name="weight_difference_minus">(-%s gram(s))</string>
+    <string name="weight_difference_no_change">(+0 grams)</string>
+    <string name="weight_note_header">Note</string>
 </resources>

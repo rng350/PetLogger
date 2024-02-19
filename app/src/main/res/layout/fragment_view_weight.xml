@@ -17,15 +17,18 @@
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/currentWeightCard"
+            app:cardCornerRadius="2dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="8dp"
+                android:layout_marginHorizontal="6dp">
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/currentWeightDate"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -48,12 +51,13 @@
                     app:layout_constraintStart_toStartOf="parent"
                     android:text="@{@string/weightGramsDisplay(viewModel.weight.weightGrams)}" />
                 <com.google.android.material.textview.MaterialTextView
-                    android:layout_width="wrap_content"
+                    android:id="@+id/differenceFromPrevWeight"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toBottomOf="@+id/currentWeightDivider"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:text="(+0 grams) PLACEHOLDER" />
+                    android:text="" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -61,36 +65,58 @@
             android:id="@+id/previousWeightCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:visibility="gone">
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="8dp"
+                android:layout_marginHorizontal="6dp">
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/previousWeightHeader"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
-                    android:text="@string/previous_weight" />
+                    android:text="@{@string/previous_weight(viewModel.prevWeight.weightGrams)}" />
+                <com.google.android.material.divider.MaterialDivider
+                    android:id="@+id/previousWeightHeaderDivider"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@+id/previousWeightHeader"
+                    app:dividerInsetStart="16dp"
+                    app:dividerInsetEnd="16dp"/>
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/previousWeightDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@+id/previousWeightHeaderDivider"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    android:text="@{viewModel.prevWeight.weightDateTime.toLocalDateTime().toString()}" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/weightNotesCard"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:visibility="gone">
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="8dp"
+                android:layout_marginHorizontal="6dp">
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/weightNotesHeader"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
-                    android:text="ABCDE" />
+                    android:text="@string/weight_note_header" />
                 <com.google.android.material.divider.MaterialDivider
                     android:id="@+id/weightNotesDivider"
                     android:layout_width="match_parent"
@@ -99,12 +125,13 @@
                     app:dividerInsetStart="16dp"
                     app:dividerInsetEnd="16dp"/>
                 <com.google.android.material.textview.MaterialTextView
-                    android:layout_width="wrap_content"
+                    android:id="@+id/weightNotesContent"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toBottomOf="@+id/weightNotesDivider"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
-                    android:text="XXXXX" />
+                    android:text="@{viewModel.weight.weightNotes}" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>
     </LinearLayout>

@@ -58,6 +58,10 @@ class MonitoringListFragment : Fragment() {
             }
         })
 
+        binding.addWeightButton.setOnClickListener{
+            this.findNavController().navigate(MonitoringListFragmentDirections.actionMonitoringListFragmentToNewWeightFragment())
+        }
+
         return view
     }
 

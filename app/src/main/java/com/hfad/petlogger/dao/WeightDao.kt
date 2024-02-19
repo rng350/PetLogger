@@ -25,7 +25,9 @@ interface WeightDao {
     suspend fun getAll(): MutableList<Weight>
 
     @Query("SELECT * FROM weight_table " +
-            "WHERE weight_datetime < :weightDateTimeInString " +
+            "WHERE weight_pet_id=:petId " +
+            "AND weight_datetime < :weightDateTimeInString " +
+            "ORDER BY weight_datetime DESC " +
             "LIMIT 1")
-    suspend fun getPreviousWeight(weightDateTimeInString: String): Weight?
+    suspend fun getPreviousWeight(petId: Long, weightDateTimeInString: String): Weight?
 }

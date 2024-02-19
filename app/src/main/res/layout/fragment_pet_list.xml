@@ -10,9 +10,10 @@
             type="com.hfad.petlogger.PetListViewModel" />
     </data>
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:fillViewport="true">
 
         <LinearLayout
@@ -33,7 +34,8 @@
                 android:id="@+id/add_pet_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="0"
                 android:text="@string/add_pet" />
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 </layout>

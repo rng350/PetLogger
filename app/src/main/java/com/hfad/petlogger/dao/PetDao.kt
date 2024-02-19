@@ -19,7 +19,7 @@ interface PetDao {
     fun get(petId: Long): LiveData<Pet>
 
     @Query("SELECT * FROM pet_table WHERE pet_id=:petId")
-    fun getPet(petId: Long): Pet
+    suspend fun getPet(petId: Long): Pet
 
     @Query("SELECT * FROM pet_table WHERE pet_id=:petId")
     suspend fun getAsync(petId: Long): Pet?
@@ -53,4 +53,7 @@ interface PetDao {
 
     @Query("SELECT * FROM pet_table")
     suspend fun getAllPetsWithProfilePhotos(): List<PetWithProfilePic>
+
+    @Query("SELECT * FROM pet_table WHERE pet_id=:petID")
+    suspend fun getPetWithProfilePic(petID: Long): PetWithProfilePic
 }
