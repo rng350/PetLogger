@@ -77,7 +77,8 @@ class ViewPetFragment : Fragment() {
             this.findNavController().navigate(ViewPetFragmentDirections.actionViewPetFragmentToEditPetFragment(petId))
         }
         binding.backButton.setOnClickListener {
-            this.findNavController().navigate(R.id.action_viewPetFragment_to_homeFragment)
+            //this.findNavController().navigate(R.id.action_viewPetFragment_to_homeFragment)
+            findNavController().popBackStack()
         }
 
         return view
