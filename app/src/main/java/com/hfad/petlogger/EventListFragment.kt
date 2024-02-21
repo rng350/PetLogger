@@ -37,6 +37,11 @@ class EventListFragment : Fragment() {
         binding.addEventButton.setOnClickListener {
             this.findNavController().navigate(EventListFragmentDirections.actionEventListFragmentToNewEventFragment())
         }
+
+        val mainActivity = (activity as MainActivity)
+        mainActivity.setTopAppBarTitle(getString(R.string.event_list_header))
+        mainActivity.disableTopAppBarSubtitle()
+
         // TODO: Put that shit away
         viewModel.events.observe(viewLifecycleOwner, Observer {
             it?.let {

@@ -33,6 +33,23 @@ class ViewWeightFragment : Fragment() {
 
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
+
+        val mainActivity = (activity as MainActivity)
+        viewModel.assocPet.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                val topAppBarTitleRemainder = if (it.petName[it.petName.length-1].lowercaseChar() != 's') "\'s Weight" else "\' Weight"
+                mainActivity.setTopAppBarTitle("${it.petName}${topAppBarTitleRemainder}")
+            }
+        })
+        viewModel.weight.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                mainActivity.setTopAppBarSubtitle("${it.weightDateTime}")
+
+                if (it.weightNotes.isNotEmpty()) {
+                    binding.weightNotesCard.visibility = View.VISIBLE
+                }
+            }
+        })
         
         viewModel.prevWeight.observe(viewLifecycleOwner, Observer { prevWeight ->
             viewModel.weight.value?.let { newerWeight ->
@@ -50,14 +67,6 @@ class ViewWeightFragment : Fragment() {
                     }
                 }
             } 
-        })
-
-        viewModel.weight.observe(viewLifecycleOwner, Observer {
-            viewModel.weight.value?.let {
-                if (it.weightNotes.isNotEmpty()) {
-                    binding.weightNotesCard.visibility = View.VISIBLE
-                }
-            }
         })
 
         return view

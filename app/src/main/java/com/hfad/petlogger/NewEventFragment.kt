@@ -52,6 +52,10 @@ class NewEventFragment : Fragment() {
         binding.galleryViewModel = galleryViewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
+        val mainActivity = (activity as MainActivity)
+        mainActivity.setTopAppBarTitle(getString(R.string.new_event_header))
+        mainActivity.disableTopAppBarSubtitle()
+
         binding.inputEventDateButton.setOnClickListener {
             //datePicker.show(parentFragmentManager, "DATE_PICKER")
             DatePicker.generate(newEventViewModel.eventDateTime).show(parentFragmentManager, "DATE_PICKER")

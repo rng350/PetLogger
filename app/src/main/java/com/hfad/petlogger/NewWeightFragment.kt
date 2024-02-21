@@ -33,6 +33,10 @@ class NewWeightFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
+        val mainActivity = (activity as MainActivity)
+        mainActivity.setTopAppBarTitle(getString(R.string.new_weight_header))
+        mainActivity.disableTopAppBarSubtitle()
+
         binding.inputAddPetButton.setOnClickListener {
             PetSingleSelectorDialogFragment.newInstance(viewModel).show(childFragmentManager, "PET_SELECTOR")
 

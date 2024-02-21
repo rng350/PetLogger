@@ -57,6 +57,15 @@ class ViewEventFragment : Fragment() {
                 petAdapter.submitList(it)
             }
         })*/
+
+        viewModel.event.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                val mainActivity = (activity as MainActivity)
+                mainActivity.setTopAppBarTitle(it.title)
+                mainActivity.setTopAppBarSubtitle(getString(R.string.viewing_event_details))
+            }
+        })
+
         BindingInterfaceCreator.setupPetWithProfilePhotoAdapter(
             viewModel.petsAssociated,
             binding.petsList,
@@ -77,7 +86,7 @@ class ViewEventFragment : Fragment() {
         }
 
         binding.backButton.setOnClickListener {
-            this.findNavController().navigate(R.id.action_viewEventFragment_to_homeFragment)
+            this.findNavController().popBackStack()
         }
 
         // Inflate the layout for this fragment

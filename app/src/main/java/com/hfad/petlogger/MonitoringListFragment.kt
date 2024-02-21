@@ -43,6 +43,10 @@ class MonitoringListFragment : Fragment() {
         this.findNavController().navigate(R.id.action_petListFragment_to_newPetFragment)
         }**/
 
+        val mainActivity = (activity as MainActivity)
+        mainActivity.setTopAppBarTitle(getString(R.string.weight_list_header))
+        mainActivity.disableTopAppBarSubtitle()
+
         val weightAdapter = BindingInterfaceCreator.setupNavigatableWeightWithPetNameAdapter(viewModel.weightNavigator)
         binding.weightsList.adapter = weightAdapter
         viewModel.weights.observe(viewLifecycleOwner, Observer {

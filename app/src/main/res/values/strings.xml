@@ -60,4 +60,15 @@
     <string name="weight_difference_minus">(-%s gram(s))</string>
     <string name="weight_difference_no_change">(+0 grams)</string>
     <string name="weight_note_header">Note</string>
+    <string name="viewing_details">Viewing Details</string>
+    <string name="editing_details">Editing Details</string>
+    <string name="event_list_header">Event List</string>
+    <string name="viewing_event_details">Viewing Event Details</string>
+    <string name="editing_event_details">Editing Event Details</string>
+    <string name="note_list_header">Note List</string>
+    <string name="new_event_header">New Event</string>
+    <string name="new_pet_header">New Pet</string>
+    <string name="new_weight_header">New Weight</string>
+    <string name="weight_list_header">Weights List</string>
+    <string name="media_gallery_header">Media Gallery</string>
 </resources>

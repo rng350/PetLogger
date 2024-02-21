@@ -35,6 +35,14 @@ class ViewPetFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
+        viewModel.pet.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                val mainActivity = (activity as MainActivity)
+                mainActivity.setTopAppBarTitle(it.petName)
+                mainActivity.setTopAppBarSubtitle(getString(R.string.viewing_details))
+            }
+        })
+
         viewModel.petProfilePhoto.observe(viewLifecycleOwner, Observer { it ->
             Glide.with(requireContext())
                 .load(it.contentUri)
@@ -77,7 +85,6 @@ class ViewPetFragment : Fragment() {
             this.findNavController().navigate(ViewPetFragmentDirections.actionViewPetFragmentToEditPetFragment(petId))
         }
         binding.backButton.setOnClickListener {
-            //this.findNavController().navigate(R.id.action_viewPetFragment_to_homeFragment)
             findNavController().popBackStack()
         }
 

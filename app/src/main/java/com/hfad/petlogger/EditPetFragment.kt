@@ -60,6 +60,14 @@ class EditPetFragment : Fragment() {
         ItemPickers.setupEventPicker(editPetViewModel.events, editPetViewModel.eventsToRemove, binding.eventsList, viewLifecycleOwner)
         ItemPickers.setupWeightPicker(editPetViewModel.weights, editPetViewModel.weightsToRemove, binding.weightsList, viewLifecycleOwner)
 
+        editPetViewModel.pet.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                val mainActivity = (activity as MainActivity)
+                mainActivity.setTopAppBarTitle(it.petName)
+                mainActivity.setTopAppBarSubtitle(getString(R.string.editing_details))
+            }
+        })
+
         editPetViewModel.petProfilePic.observe(viewLifecycleOwner, Observer {
             // if new pfp hasn't been picked yet
             if (editPetViewModel.newPetProfilePic.value == null) {
@@ -130,8 +138,7 @@ class EditPetFragment : Fragment() {
         }
 
         binding.cancel.setOnClickListener {
-            // return to viewpet
-            this.findNavController().navigate(EditPetFragmentDirections.actionEditPetFragmentToViewPetFragment(petID))
+            this.findNavController().popBackStack()
         }
 
         binding.delete.setOnClickListener {

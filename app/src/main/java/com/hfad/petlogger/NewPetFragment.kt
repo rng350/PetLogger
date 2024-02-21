@@ -53,6 +53,10 @@ class NewPetFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
+        val mainActivity = (activity as MainActivity)
+        mainActivity.setTopAppBarTitle(getString(R.string.new_pet_header))
+        mainActivity.disableTopAppBarSubtitle()
+
         galleryViewModel.photosSelected.selectionToAdd.observe(viewLifecycleOwner, Observer {
             if (it.size > 0) {
                 Glide.with(requireContext())

@@ -50,6 +50,14 @@ class EditEventFragment : Fragment() {
         val galleryEditDisplayViewModel = ViewModelProvider(this, galleryEditDisplayViewModelFactory).get((GalleryEditDisplayViewModel::class.java))
         binding.galleryEditDisplayViewModel = galleryEditDisplayViewModel
 
+        editEventViewModel.event.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                val mainActivity = (activity as MainActivity)
+                mainActivity.setTopAppBarTitle(it.title)
+                mainActivity.setTopAppBarSubtitle(getString(R.string.editing_event_details))
+            }
+        })
+
         val galleryViewModelFactory = GalleryViewModelFactory(
             entityLinker = PhotoToEventLinker(photoDao),
             photoDao = photoDao,
