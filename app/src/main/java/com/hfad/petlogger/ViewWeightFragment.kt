@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.databinding.FragmentViewWeightBinding
 
 
@@ -68,6 +69,14 @@ class ViewWeightFragment : Fragment() {
                 }
             } 
         })
+
+        binding.editWeight.setOnClickListener{
+            findNavController().navigate(ViewWeightFragmentDirections.actionViewWeightFragmentToEditWeightFragment(weightId))
+        }
+
+        binding.back.setOnClickListener{
+            findNavController().popBackStack()
+        }
 
         return view
     }

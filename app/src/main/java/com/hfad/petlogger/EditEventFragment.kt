@@ -104,13 +104,21 @@ class EditEventFragment : Fragment() {
             editEventViewModel.initAssociatedPhotoList()
         })
 
+        binding.inputEventDateButton.setOnClickListener {
+            // TODO: Implement
+        }
+
+        binding.inputEventTimeButton.setOnClickListener{
+            // TODO: Implement
+        }
+
         binding.submitChangesButton.setOnClickListener {
             // TODO: submit stuff
             this.findNavController().navigate(EditEventFragmentDirections.actionEditEventFragmentToViewEventFragment(eventID))
         }
 
         binding.cancelButton.setOnClickListener {
-            this.findNavController().navigate(EditEventFragmentDirections.actionEditEventFragmentToViewEventFragment(eventID))
+            this.findNavController().popBackStack()
         }
 
         binding.deleteEventButton.setOnClickListener {

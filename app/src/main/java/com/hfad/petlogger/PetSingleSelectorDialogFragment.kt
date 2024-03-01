@@ -9,16 +9,24 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModel
 import com.hfad.petlogger.entities.Pet
 
-class PetSingleSelectorDialogFragment<T>(var viewModel: T, var curSelectedPet: Pet? = null, var curSelectedIndex: Int = -1): DialogFragment() where T: ViewModel, T: WithSinglePetSelection {
+class PetSingleSelectorDialogFragment<T>(): DialogFragment() where T: ViewModel, T: WithSinglePetSelection {
     // could be NewWeightViewModel
-    //private val viewModel: T by viewModels({requireParentFragment()})
+    private lateinit var viewModel: T
+    private var curSelectedPet: Pet? = null
+    private var curSelectedIndex: Int = -1
 
     companion object {
         fun <T> newInstance(vm: T, selectedPet: Pet? = null, selectedIndex: Int = -1): PetSingleSelectorDialogFragment<T>
                 where T: ViewModel, T: WithSinglePetSelection {
             Log.e("pet_selector", "created new instance!")
-            return PetSingleSelectorDialogFragment(vm, selectedPet, selectedIndex)
+            val instance = PetSingleSelectorDialogFragment<T>()
+            instance.setupDialogFragment(vm, selectedPet, selectedIndex)
+            return instance
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -47,5 +55,15 @@ class PetSingleSelectorDialogFragment<T>(var viewModel: T, var curSelectedPet: P
                     })
             builder.create()
         } ?: throw IllegalStateException("Activity cannot be null")
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+    }
+
+    fun setupDialogFragment(vm: T, selectedPet: Pet? = null, selectedIndex: Int = -1) {
+        this.viewModel = vm
+        this.curSelectedPet = selectedPet
+        this.curSelectedIndex = selectedIndex
     }
 }

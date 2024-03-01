@@ -3,6 +3,7 @@ package com.hfad.petlogger.recyclerviews
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
@@ -83,7 +84,7 @@ object BindingInterfaceCreator {
         }
     }
 
-    fun setupPetWithProfilePhotoAdapter(petList: MutableLiveData<List<PetWithProfilePic>>,
+    fun setupPetWithProfilePhotoAdapter(petList: LiveData<List<PetWithProfilePic>>,
                                         recyclerView: RecyclerView,
                                         lifecycleOwner: LifecycleOwner,
                                         context: Context,

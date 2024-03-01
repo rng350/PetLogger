@@ -36,7 +36,6 @@ class NewPetFragment : Fragment() {
         val photoDao = PetLoggerDatabase.getInstance(application).photoDao
         val viewModelFactory = NewPetViewModelFactory(petDao)
         val viewModel = ViewModelProvider(this, viewModelFactory).get(NewPetViewModel::class.java)
-        //val datePicker = DatePicker.generate(viewModel.petDOB)
 
         val galleryViewModelFactory = GalleryViewModelFactory(
             entityLinker = PetProfilePhotoLinker(photoDao),
@@ -84,7 +83,6 @@ class NewPetFragment : Fragment() {
         }
 
         binding.inputDOBButton.setOnClickListener {
-            //datePicker.show(parentFragmentManager, "DATE_PICKER")
             DatePicker.generate(viewModel.petDOB).show(parentFragmentManager, "DATE_PICKER")
         }
 

@@ -71,4 +71,9 @@
     <string name="new_weight_header">New Weight</string>
     <string name="weight_list_header">Weights List</string>
     <string name="media_gallery_header">Media Gallery</string>
+    <string name="edit_weight_header">Editing Weight</string>
+    <string name="weight">Weight</string>
+    <string name="edit_weight_button">Edit Weight</string>
+    <string name="date">Date</string>
+    <string name="change_associated_pet_button">Change Associated Pet</string>
 </resources>

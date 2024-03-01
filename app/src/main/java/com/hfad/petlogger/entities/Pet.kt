@@ -1,11 +1,14 @@
 package com.hfad.petlogger.entities
 
+import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.parcelize.Parcelize
 import java.time.OffsetDateTime
 
 @Entity(tableName = "pet_table")
+@Parcelize
 data class Pet(
 
     @PrimaryKey(autoGenerate = true)
@@ -29,4 +32,4 @@ data class Pet(
 
     @ColumnInfo(name="has_dob")
     var hasDOB : Boolean = false
-)
+) : Parcelable

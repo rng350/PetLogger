@@ -57,12 +57,10 @@ class NewEventFragment : Fragment() {
         mainActivity.disableTopAppBarSubtitle()
 
         binding.inputEventDateButton.setOnClickListener {
-            //datePicker.show(parentFragmentManager, "DATE_PICKER")
             DatePicker.generate(newEventViewModel.eventDateTime).show(parentFragmentManager, "DATE_PICKER")
         }
 
         binding.inputEventTimeButton.setOnClickListener {
-            //timePicker.show(parentFragmentManager, "TIME_PICKER")
             TimePicker.generate(newEventViewModel.eventDateTime, requireContext()).show(parentFragmentManager, "TIME_PICKER")
         }
 

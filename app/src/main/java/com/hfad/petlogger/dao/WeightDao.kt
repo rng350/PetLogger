@@ -2,6 +2,7 @@ package com.hfad.petlogger.dao
 
 import androidx.room.*
 import com.hfad.petlogger.entities.Weight
+import com.hfad.petlogger.entities.WeightDetails
 import java.time.OffsetDateTime
 
 @Dao
@@ -30,4 +31,7 @@ interface WeightDao {
             "ORDER BY weight_datetime DESC " +
             "LIMIT 1")
     suspend fun getPreviousWeight(petId: Long, weightDateTimeInString: String): Weight?
+
+    @Query("SELECT * FROM weight_table WHERE weight_id = :weightID")
+    suspend fun getWeightDetails(weightID: Long): WeightDetails
 }

@@ -27,7 +27,6 @@ class NewWeightFragment : Fragment() {
 
         val viewModelFactory = NewWeightViewModelFactory(weightDao, petDao, petIdArg?.toLong())
         val viewModel = ViewModelProvider(this, viewModelFactory).get(NewWeightViewModel::class.java)
-        val datePicker = DatePicker.generate(viewModel.wDateTime)
         //val timePicker = TimePicker.generate(viewModel.wDateTime, requireContext())
 
         binding.viewModel = viewModel
@@ -50,11 +49,10 @@ class NewWeightFragment : Fragment() {
         }
 
         binding.inputWeightDateButton.setOnClickListener {
-            datePicker.show(parentFragmentManager, "DATE_PICKER")
+            DatePicker.generate(viewModel.wDateTime).show(parentFragmentManager, "DATE_PICKER")
         }
 
         binding.inputWeightTimeButton.setOnClickListener {
-            //timePicker.show(parentFragmentManager, "TIME_PICKER")
             TimePicker.generate(viewModel.wDateTime, requireContext()).show(parentFragmentManager, "TIME_PICKER")
         }
 

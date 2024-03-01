@@ -15,7 +15,6 @@ class ViewWeightViewModel(val weightDao: WeightDao, val petDao: PetDao, val weig
     val prevWeight = MutableLiveData<Weight?>()
     val assocPet = MutableLiveData<Pet>()
     init {
-        Fetcher.fetchWeight(viewModelScope, weight, assocPet, prevWeight, weightDao, petDao, weightId)
-        //Fetcher.fetchWeightPrevWeightAndPet(viewModelScope, weight, prevWeight, assocPet, weightId, weightDao, petDao)
+        Fetcher.fetchWeightPrevWeightAndPet(viewModelScope, weight, assocPet, prevWeight, weightDao, petDao, weightId)
     }
 }

@@ -213,5 +213,20 @@
         <action
             android:id="@+id/action_viewWeightFragment_to_viewPetFragment"
             app:destination="@id/viewPetFragment" />
+        <action
+            android:id="@+id/action_viewWeightFragment_to_editWeightFragment"
+            app:destination="@id/editWeightFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editWeightFragment"
+        android:name="com.hfad.petlogger.EditWeightFragment"
+        android:label="fragment_edit_weight"
+        tools:layout="@layout/fragment_edit_weight" >
+        <action
+            android:id="@+id/action_editWeightFragment_to_viewWeightFragment"
+            app:destination="@id/viewWeightFragment" />
+        <argument
+            android:name="weightId"
+            app:argType="long" />
     </fragment>
 </navigation>

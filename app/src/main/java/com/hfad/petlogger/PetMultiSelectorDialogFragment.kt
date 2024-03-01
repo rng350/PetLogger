@@ -5,16 +5,19 @@ import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import com.hfad.petlogger.entities.Pet
 
-class PetMultiSelectorDialogFragment<T>(private val viewModel: T): DialogFragment() where T: ViewModel, T: WithMultiPetSelection {
+class PetMultiSelectorDialogFragment<T>: DialogFragment() where T: ViewModel, T: WithMultiPetSelection {
     // could be NewEventViewModel, NewNoteViewModel, NewPhotoViewModel
-    //private val viewModel: T by viewModels({requireParentFragment()})
+    private lateinit var viewModel: T
 
     companion object {
         fun <T> newInstance(viewModel: T): PetMultiSelectorDialogFragment<T> where T: ViewModel, T: WithMultiPetSelection {
-            return PetMultiSelectorDialogFragment(viewModel)
+            val instance = PetMultiSelectorDialogFragment<T>()
+            instance.viewModel = viewModel
+            return instance
         }
     }
 
@@ -49,5 +52,9 @@ class PetMultiSelectorDialogFragment<T>(private val viewModel: T): DialogFragmen
                     })
             builder.create()
         } ?: throw IllegalStateException("Activity cannot be null")
+    }
+
+    fun setViewmodel(viewModel: T) {
+        this.viewModel = viewModel
     }
 }
