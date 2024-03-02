@@ -11,6 +11,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.hfad.petlogger.CheckableItem
 import com.hfad.petlogger.R
 import com.hfad.petlogger.databinding.CheckablePetItemBinding
+import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.entities.PetWithProfilePic
 import com.hfad.petlogger.mutableCopyOf
 import com.hfad.petlogger.selectiontracker.SelectionTracker
@@ -39,6 +40,9 @@ class SetupPetPickerUseCase(private val petList: MutableLiveData<List<CheckableI
             binder.checkablePet = item
             binder.pet = item.item
 
+            // clear previous requests on viewholder
+            Glide.with(context).clear(binder.petProfileImage)
+
             item.item.profilePic?.let {
                 Glide.with(context)
                     .load(it.contentUri)
@@ -46,18 +50,23 @@ class SetupPetPickerUseCase(private val petList: MutableLiveData<List<CheckableI
                     .into(binder.petProfileImage)
             }
 
-            binder.petCard.setOnClickListener { null }
-
             binder.petCard.isChecked = item.isChecked.value!!
 
+            binder.petCard.setOnClickListener { null }
             binder.petCard.setOnClickListener {
-                updateOldAndNew(item)
+                //updateOldAndNew(item)
+                currentSelection.value = item
             }
+
+            val observer = Observer<CheckableItem<PetWithProfilePic>> {
+                binder.petCard.isChecked = item.item.pet.petID==it.item.pet.petID
+            }
+            currentSelection.observe(lifecycleOwner, observer)
         }
     }
 
     // Single-selection (mandatory)
-    private fun updateOldAndNew(newSelected: CheckableItem<PetWithProfilePic>) {
+    /*private fun updateOldAndNew(newSelected: CheckableItem<PetWithProfilePic>) {
         petList.value?.let { allPets ->
             currentSelection.value?.let { curPetSelected ->
                 val oldIndex = allPets.indexOf(curPetSelected)
@@ -71,5 +80,5 @@ class SetupPetPickerUseCase(private val petList: MutableLiveData<List<CheckableI
                 }
             }
         }
-    }
+    }*/
 }

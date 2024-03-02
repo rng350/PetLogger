@@ -14,23 +14,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class PetSinglePickerDialogViewModel(petDao: PetDao, initialPetSelection: Pet) : ViewModel() {
-    //private val _pets = MutableLiveData<List<PetWithProfilePic>>()
     var petListFetcher = FetchPetListForEditSelectionUseCase(petDao)
-
     var pets = MutableLiveData<List<CheckableItem<PetWithProfilePic>>>()
-
     val selectedPet = MutableLiveData<CheckableItem<PetWithProfilePic>>()
 
     init {
-        /*viewModelScope.launch(Dispatchers.IO) {
-            _pets.postValue(Fetcher.fetchPetsWithProfilePhotos(petDao))
-        }*/
         viewModelScope.launch {
             pets.value = petListFetcher(initialPetSelection) ?: listOf<CheckableItem<PetWithProfilePic>>()
+            pets.value?.first { it.isChecked.value == true }?.let {
+                selectedPet.value = it
+            }
         }
-    }
-
-    fun getPetSelection(): Pet? {
-        return selectedPet.value?.item?.pet
     }
 }

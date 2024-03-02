@@ -8,15 +8,16 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.setFragmentResult
 import com.hfad.petlogger.databinding.FragmentPetSinglePickerDialogBinding
 import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.recyclerviews.SetupPetPickerUseCase
 import java.lang.ClassCastException
 
-// Any fragment or activity that implements this dialog fragment must implement the PetSinglePickerDialogListener interface
 class PetSinglePickerDialogFragment : DialogFragment() {
-    internal lateinit var listener: PetSinglePickerDialogListener
     private var _binding: FragmentPetSinglePickerDialogBinding? = null
     val binding: FragmentPetSinglePickerDialogBinding
         get() = _binding!!
@@ -25,16 +26,13 @@ class PetSinglePickerDialogFragment : DialogFragment() {
     val selectedPet: Pet
         get() = _selectedPet!!
     companion object {
-        fun newInstance(selectedPet: Pet? = null, listener: PetSinglePickerDialogListener): PetSinglePickerDialogFragment {
+        val requestKey by lazy {"PetSinglePickerDialog"}
+        val resultBundleKey by lazy {"petSinglePickerBundle"}
+        fun newInstance(selectedPet: Pet? = null): PetSinglePickerDialogFragment {
             val instance = PetSinglePickerDialogFragment()
             instance.setupDialogFragment(selectedPet)
-            instance.listener = listener
             return instance
         }
-    }
-
-    interface PetSinglePickerDialogListener {
-        fun onPetSingleSelectionConfirmation()
     }
 
     override fun onCreateView(
@@ -68,8 +66,10 @@ class PetSinglePickerDialogFragment : DialogFragment() {
             requireContext())()
 
         binding.submitButton.setOnClickListener{
-            //listener.onPetSingleSelectionConfirmation()
-            requireDialog().dismiss()
+            viewModel.selectedPet.value?.item?.pet?.let {
+                setFragmentResult(PetSinglePickerDialogFragment.requestKey, bundleOf(PetSinglePickerDialogFragment.resultBundleKey to it))
+                requireDialog().dismiss()
+            }
         }
 
         binding.cancelButton.setOnClickListener{
@@ -78,7 +78,13 @@ class PetSinglePickerDialogFragment : DialogFragment() {
 
         return view
     }
-
+    override fun onStart() {
+        super.onStart()
+        dialog?.window?.setLayout(
+            WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.WRAP_CONTENT
+        )
+    }
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putParcelable("PET", _selectedPet)
