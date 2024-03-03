@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.get
+import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.databinding.FragmentEditWeightBinding
 import com.hfad.petlogger.entities.Pet
 
@@ -22,8 +23,9 @@ class EditWeightFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentEditWeightBinding.inflate(inflater, container, false)
-        val view = binding.root
         binding.lifecycleOwner = viewLifecycleOwner
+
+        val view = binding.root
 
         val application = requireNotNull(this.activity).application
 
@@ -48,6 +50,20 @@ class EditWeightFragment : Fragment() {
         binding.changeAssocPetButton.setOnClickListener{
             petPickerDialog = PetSinglePickerDialogFragment.newInstance(editWeightViewModel.pet.value)
             petPickerDialog?.show(childFragmentManager, "PET_SINGLE_PICKER")
+        }
+
+        binding.weightDateLayout.setOnClickListener{
+            DatePicker.generate(editWeightViewModel.weightDateTime).show(parentFragmentManager, "DATEPICKER")
+        }
+
+        binding.weightTimeLayout.setOnClickListener{
+            TimePicker.generate(editWeightViewModel.weightDateTime, requireContext()).show(parentFragmentManager, "TIMEPICKER")
+        }
+        binding.submitButton.setOnClickListener {
+            editWeightViewModel.submitChanges()
+        }
+        binding.cancelButton.setOnClickListener{
+            findNavController().popBackStack()
         }
 
         return view

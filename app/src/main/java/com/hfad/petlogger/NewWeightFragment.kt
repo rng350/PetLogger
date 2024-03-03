@@ -61,7 +61,7 @@ class NewWeightFragment : Fragment() {
         }
 
         binding.backButton.setOnClickListener {
-            this.findNavController().navigate(R.id.action_newWeightFragment_to_homeFragment)
+            findNavController().popBackStack()
         }
 
         return view

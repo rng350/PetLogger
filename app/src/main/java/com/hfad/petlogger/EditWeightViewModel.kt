@@ -15,6 +15,7 @@ class EditWeightViewModel(val weightId: Long,
                           val weightDao: WeightDao): ViewModel() {
     val weight = MutableLiveData<Weight>()
     val pet = MutableLiveData<Pet>()
+    val weightDateTime = SelectableDateTime()
     init {
         viewModelScope.launch {
             val fetchedWeightDetails = async {
@@ -23,6 +24,17 @@ class EditWeightViewModel(val weightId: Long,
             val weightDetails = fetchedWeightDetails.await()
             weight.value = weightDetails.weight
             pet.value = weightDetails.assocPet
+            weight.value?.let {
+                weightDateTime.set(it.weightDateTime)
+            }
+        }
+    }
+
+    fun submitChanges() {
+        weight.value?.let {
+            viewModelScope.launch {
+                weightDao.update(Weight(it.id, pet.value?.petID ?: it.petId, it.weightGrams, weightDateTime.dateTime, it.weightNotes))
+            }
         }
     }
 }

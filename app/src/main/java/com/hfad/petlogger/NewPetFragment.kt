@@ -87,7 +87,7 @@ class NewPetFragment : Fragment() {
         }
 
         binding.back.setOnClickListener {
-            this.findNavController().navigate(R.id.action_newPetFragment_to_homeFragment)
+            findNavController().popBackStack()
         }
 
         return view

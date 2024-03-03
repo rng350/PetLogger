@@ -85,7 +85,7 @@ class NewEventFragment : Fragment() {
         }
 
         binding.backButton.setOnClickListener {
-            this.findNavController().navigate(R.id.action_newEventFragment_to_homeFragment)
+            findNavController().popBackStack()
         }
 
         return view
