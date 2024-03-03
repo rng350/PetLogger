@@ -33,7 +33,6 @@
             android:id="@+id/weightDateLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:enabled="false"
             android:hint="@string/date">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/weightDate"
@@ -41,13 +40,14 @@
                 android:layout_height="wrap_content"
                 android:drawableEnd="@drawable/baseline_edit_24"
                 android:text="@{viewModel.weightDateTime.dateDisplay}"
+                android:focusable="false"
+                android:clickable="true"
                 android:inputType="date"/>
         </com.google.android.material.textfield.TextInputLayout>
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/weightTimeLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:enabled="false"
             android:hint="@string/time_header">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/weightTime"
@@ -55,6 +55,8 @@
                 android:layout_height="wrap_content"
                 android:drawableEnd="@drawable/baseline_edit_24"
                 android:text="@{viewModel.weightDateTime.timeDisplay}"
+                android:focusable="false"
+                android:clickable="true"
                 android:inputType="time"/>
         </com.google.android.material.textfield.TextInputLayout>
 

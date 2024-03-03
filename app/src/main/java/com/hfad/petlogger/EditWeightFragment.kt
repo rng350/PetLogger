@@ -31,7 +31,6 @@ class EditWeightFragment : Fragment() {
 
         val weightID = EditWeightFragmentArgs.fromBundle(requireArguments()).weightId
         val weightDao = PetLoggerDatabase.getInstance(application).weightDao
-        val petDao = PetLoggerDatabase.getInstance(application).petDao
 
         val editWeightViewModelFactory = EditWeightViewModelFactory(weightID, weightDao)
         val editWeightViewModel = ViewModelProvider(this, editWeightViewModelFactory).get(EditWeightViewModel::class.java)
@@ -52,11 +51,11 @@ class EditWeightFragment : Fragment() {
             petPickerDialog?.show(childFragmentManager, "PET_SINGLE_PICKER")
         }
 
-        binding.weightDateLayout.setOnClickListener{
+        binding.weightDate.setOnClickListener{
             DatePicker.generate(editWeightViewModel.weightDateTime).show(parentFragmentManager, "DATEPICKER")
         }
 
-        binding.weightTimeLayout.setOnClickListener{
+        binding.weightTime.setOnClickListener{
             TimePicker.generate(editWeightViewModel.weightDateTime, requireContext()).show(parentFragmentManager, "TIMEPICKER")
         }
         binding.submitButton.setOnClickListener {
