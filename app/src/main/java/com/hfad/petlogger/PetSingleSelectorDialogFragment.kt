@@ -9,6 +9,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModel
 import com.hfad.petlogger.entities.Pet
 
+// TODO: Replace usage of this DialogFragment with PetSinglePickerDialogFragment, then delete this
 class PetSingleSelectorDialogFragment<T>(): DialogFragment() where T: ViewModel, T: WithSinglePetSelection {
     // could be NewWeightViewModel
     private lateinit var viewModel: T

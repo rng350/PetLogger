@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import com.hfad.petlogger.entities.Pet
 
+// TODO: Replace with DialogFragment like PetSinglePickerDialogFragment, then delete this
 class PetMultiSelectorDialogFragment<T>: DialogFragment() where T: ViewModel, T: WithMultiPetSelection {
     // could be NewEventViewModel, NewNoteViewModel, NewPhotoViewModel
     private lateinit var viewModel: T
