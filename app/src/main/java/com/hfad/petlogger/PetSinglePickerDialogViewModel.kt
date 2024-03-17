@@ -1,5 +1,6 @@
 package com.hfad.petlogger
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -23,6 +24,18 @@ class PetSinglePickerDialogViewModel(petDao: PetDao, initialPetSelection: Pet) :
             pets.value = petListFetcher(initialPetSelection) ?: listOf<CheckableItem<PetWithProfilePic>>()
             pets.value?.first { it.isChecked.value == true }?.let {
                 selectedPet.value = it
+            }
+            Log.d("PetPickerSingleDialog", "intiialized")
+        }
+    }
+
+    companion object {
+        fun provideFactory(petDao: PetDao, initialPetSelection: Pet): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                if (modelClass.isAssignableFrom(PetSinglePickerDialogViewModel::class.java)) {
+                    return PetSinglePickerDialogViewModel(petDao, initialPetSelection) as T
+                }
+                throw IllegalArgumentException("Unknown ViewModel")
             }
         }
     }

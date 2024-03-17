@@ -105,15 +105,15 @@ class EditEventFragment : Fragment() {
         })
 
         binding.inputEventDateButton.setOnClickListener {
-            // TODO: Implement
+            DatePicker.generate(editEventViewModel.eventDateTime).show(parentFragmentManager, "DATE_PICKER")
         }
 
         binding.inputEventTimeButton.setOnClickListener{
-            // TODO: Implement
+            TimePicker.generate(editEventViewModel.eventDateTime, requireContext()).show(parentFragmentManager, "TIME_PICKER")
         }
 
         binding.submitChangesButton.setOnClickListener {
-            // TODO: submit stuff
+            editEventViewModel.submitChanges()
             this.findNavController().navigate(EditEventFragmentDirections.actionEditEventFragmentToViewEventFragment(eventID))
         }
 
@@ -122,7 +122,7 @@ class EditEventFragment : Fragment() {
         }
 
         binding.deleteEventButton.setOnClickListener {
-            // TODO: delete
+            editEventViewModel.deleteEvent()
             this.findNavController().navigate(R.id.action_editEventFragment_to_homeFragment)
         }
 

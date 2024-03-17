@@ -36,4 +36,9 @@ interface PhotoDao {
 
     @Delete
     suspend fun delete(petProfilePhoto: PetProfilePhoto)
+
+    @Query("SELECT photo_table.photo_id AS photo_id, photo_name, photo_uri, photo_width, photo_height, photo_filesize, photo_date " +
+            "FROM photo_table LEFT JOIN photo_event_table " +
+            "WHERE photo_event_table.event_id=:eventId AND photo_table.photo_id=photo_event_table.photo_id")
+    suspend fun fetchPhotosOfEvent(eventId: Long): List<Photo>
 }

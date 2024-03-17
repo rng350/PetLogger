@@ -10,6 +10,9 @@
         <variable
             name="viewModel"
             type="com.hfad.petlogger.EditWeightViewModel" />
+        <variable
+            name="petPickerViewModel"
+            type="com.hfad.petlogger.PetSinglePickerDialogViewModel" />
     </data>
 
     <LinearLayout

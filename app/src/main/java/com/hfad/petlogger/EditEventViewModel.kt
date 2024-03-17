@@ -14,7 +14,7 @@ import com.hfad.petlogger.selectiontracker.EditSelectionTracker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class EditEventViewModel(_eventID: Long, eventDao: EventDao, petDao: PetDao): ViewModel() {
+class EditEventViewModel(_eventID: Long, val eventDao: EventDao, petDao: PetDao): ViewModel() {
     val event = MutableLiveData<Event>()
     val allPets = MutableLiveData<List<PetWithProfilePic>>() // yuck, wanna remove this...
     val initialPetSelection = MutableLiveData<List<PetWithProfilePic>>() // yuck, wanna remove this...
@@ -62,5 +62,24 @@ class EditEventViewModel(_eventID: Long, eventDao: EventDao, petDao: PetDao): Vi
             }
             initialPhotos.value = oldPhotoList
         }
+    }
+
+    // TODO: Implement
+    fun submitChanges() {
+        event.value?.date = eventDateTime.dateTime
+        event.value?.let {
+            viewModelScope.launch {
+                eventDao.update(it)
+            }
+        }
+        petsAssociated.selectionToAdd.value?.let {
+        }
+        petsAssociated.selectionToRemove.value?.let {
+        }
+    }
+
+    // TODO: Implement
+    fun deleteEvent() {
+
     }
 }

@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.setFragmentResultListener
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.get
 import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.databinding.FragmentEditWeightBinding
@@ -16,7 +17,7 @@ import com.hfad.petlogger.entities.Pet
 class EditWeightFragment : Fragment() {
     private var _binding: FragmentEditWeightBinding? = null
     val binding get() = _binding!!
-    private var petPickerDialog: PetSinglePickerDialogFragment? = null
+    lateinit var petPickerViewModel: PetSinglePickerDialogViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,6 +37,16 @@ class EditWeightFragment : Fragment() {
         val editWeightViewModel = ViewModelProvider(this, editWeightViewModelFactory).get(EditWeightViewModel::class.java)
         binding.viewModel = editWeightViewModel
 
+        val petDao = PetLoggerDatabase.getInstance(application).petDao
+        editWeightViewModel.pet.observeOnce(viewLifecycleOwner) {
+            it?.let {
+                petPickerViewModel = ViewModelProvider(
+                    this,
+                    PetSinglePickerDialogViewModel.provideFactory(petDao, it)
+                )[PetSinglePickerDialogViewModel::class.java]
+            }
+        }
+
         childFragmentManager.setFragmentResultListener(PetSinglePickerDialogFragment.requestKey, viewLifecycleOwner) { _, bundle ->
             val selectedPet = bundle.get(PetSinglePickerDialogFragment.resultBundleKey) as Pet
             editWeightViewModel.pet.value = selectedPet
@@ -47,8 +58,7 @@ class EditWeightFragment : Fragment() {
         mainActivity.disableTopAppBarSubtitle()
 
         binding.changeAssocPetButton.setOnClickListener{
-            petPickerDialog = PetSinglePickerDialogFragment.newInstance(editWeightViewModel.pet.value)
-            petPickerDialog?.show(childFragmentManager, "PET_SINGLE_PICKER")
+            PetSinglePickerDialogFragment().show(childFragmentManager, "PET_SINGLE_PICKER")
         }
 
         binding.weightDate.setOnClickListener{
