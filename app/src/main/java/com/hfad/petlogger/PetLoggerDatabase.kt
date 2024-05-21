@@ -8,6 +8,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.hfad.petlogger.dao.EventDao
 import com.hfad.petlogger.dao.EventPetDao
+import com.hfad.petlogger.dao.NoteDao
 import com.hfad.petlogger.dao.PetDao
 import com.hfad.petlogger.dao.PhotoDao
 import com.hfad.petlogger.dao.WeightDao
@@ -15,15 +16,27 @@ import com.hfad.petlogger.entities.*
 import com.hfad.petlogger.util.Converter
 import com.hfad.petlogger.util.URIConverter
 
-@Database(entities = [
-    Pet::class,
-    PetProfilePhoto::class,
-    Event::class,
-    EventPet::class,
-    Weight::class,
-    Photo::class,
-    PhotoEvent::class],
-    version = 1, exportSchema = false)
+@Database(
+    entities = [
+        Pet::class,
+
+        Event::class,
+        EventPet::class,
+
+        Weight::class,
+
+        Photo::class,
+        PetProfilePhoto::class,
+        PhotoEvent::class,
+
+        Note::class,
+        EventNote::class,
+        PetNote::class,
+        PhotoNote::class,
+        WeightNote::class
+    ],
+    version = 2,
+    exportSchema = false)
 @TypeConverters(
     Converter::class,
     URIConverter::class)
@@ -33,6 +46,7 @@ abstract class PetLoggerDatabase: RoomDatabase() {
     abstract val eventPetDao: EventPetDao
     abstract val weightDao: WeightDao
     abstract val photoDao: PhotoDao
+    abstract val noteDao: NoteDao
 
     companion object {
         @Volatile

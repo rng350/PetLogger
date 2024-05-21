@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="note"
+            type="com.hfad.petlogger.entities.Note" />
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/note_card"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_margin="8dp"
+        android:background="@color/white"
+        app:cardElevation="4dp"
+        app:cardCornerRadius="4dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="5dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/note_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:text="@{note.title}"/>
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/note_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="12sp"
+                android:text="@{note.details}"
+                android:maxLines="2"
+                android:ellipsize="end"/>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+</layout>

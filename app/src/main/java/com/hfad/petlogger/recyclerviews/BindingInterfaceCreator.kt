@@ -12,6 +12,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.hfad.petlogger.*
 import com.hfad.petlogger.databinding.*
 import com.hfad.petlogger.entities.Event
+import com.hfad.petlogger.entities.Note
 import com.hfad.petlogger.entities.PetWithProfilePic
 import com.hfad.petlogger.entities.Photo
 import com.hfad.petlogger.entities.Weight
@@ -163,6 +164,38 @@ object BindingInterfaceCreator {
 
             binder.galleryCard.setOnClickListener {
                 navigator?.navigateTo(item.id)
+            }
+        }
+    }
+
+
+    fun setupNoteListItemAdapter(noteList: MutableLiveData<List<Note>>,
+                                 recyclerView: RecyclerView,
+                                 lifecycleOwner: LifecycleOwner,
+                                 navigator: Navigator) {
+        val adapter = GenericRecyclerViewAdapter<Note, NoteShortItemBinding>(
+            layoutId = R.layout.note_short_item,
+            bindingInterface = createNoteListItemBindingInterface(navigator)
+        )
+        recyclerView.adapter = adapter
+        noteList.observe(lifecycleOwner, Observer {
+            adapter.submitList(it)
+        })
+    }
+
+    private fun createNoteListItemBindingInterface(navigator: Navigator)
+            = object : DataItemBindingInterface<Note,NoteShortItemBinding> {
+        override fun bind(
+            item: Note,
+            binder: NoteShortItemBinding
+        ) {
+            binder.note = item
+
+            // recyclerview-related cleanup to prevent listeners
+            binder.noteCard.setOnClickListener(null)
+
+            binder.noteCard.setOnClickListener {
+                navigator.navigateTo(item.id)
             }
         }
     }

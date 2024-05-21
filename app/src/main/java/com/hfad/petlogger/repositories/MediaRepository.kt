@@ -10,6 +10,7 @@ import com.hfad.petlogger.dao.PhotoDao
 import com.hfad.petlogger.entities.PetProfilePhoto
 import com.hfad.petlogger.entities.Photo
 import com.hfad.petlogger.entities.PhotoEvent
+import com.hfad.petlogger.entities.PhotoNote
 import com.hfad.petlogger.entitylinkers.EntityLinker
 import com.hfad.petlogger.size
 import kotlinx.coroutines.Dispatchers
@@ -74,6 +75,17 @@ class MediaRepository(
             }.await()
             photoAdded?.let {
                 photoDao.insert(PetProfilePhoto(photo.id, petID))
+            }
+        }
+    }
+
+    suspend fun addNotePhoto(photo: Photo, noteId: Long) {
+        withContext(Dispatchers.IO) {
+            val photoAdded = async {
+                addPhoto(photo)
+            }.await()
+            photoAdded?.let {
+                photoDao.insert(PhotoNote(photo.id, noteId))
             }
         }
     }

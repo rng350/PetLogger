@@ -9,12 +9,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.viewModels
 import com.hfad.petlogger.databinding.FragmentMediaSelectionBinding
 
 class MediaSelectionFragment : Fragment() {
     private var _binding: FragmentMediaSelectionBinding? = null
     private val binding get() = _binding!!
-    private lateinit var viewModel: MediaSelectionViewModel
+    private val viewModel: MediaSelectionViewModel by viewModels({requireParentFragment()})
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,10 +41,8 @@ class MediaSelectionFragment : Fragment() {
         return view
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(MediaSelectionViewModel::class.java)
-        // TODO: Use the ViewModel
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
-
 }

@@ -76,4 +76,8 @@
     <string name="edit_weight_button">Edit Weight</string>
     <string name="date">Date</string>
     <string name="change_associated_pet_button">Change Associated Pet</string>
+    <string name="title">Title</string>
+    <string name="note_details">Details</string>
+    <string name="clear">Clear</string>
+    <string name="add_note">Add Note</string>
 </resources>

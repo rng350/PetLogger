@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".NewNoteFragment">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.hfad.petlogger.NewNoteViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/noteTitleTextField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/title">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/noteTitleTextInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:text="@={viewModel.noteTitle}"
+                android:inputType="text"/>
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/noteDetailsTextField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/note_details">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/noteDetailsTextInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top"
+                android:minLines="10"
+                android:maxLines="15"
+                android:text="@={viewModel.noteDetails}"
+                android:inputType="textMultiLine|textCapSentences"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/changeAssocPetButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/change_associated_pet_button"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/submitButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/submit"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/clearButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/clear"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/backButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/back"/>
+        </LinearLayout>
+    </LinearLayout>
+</layout>

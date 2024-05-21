@@ -186,7 +186,11 @@
         android:id="@+id/noteListFragment"
         android:name="com.hfad.petlogger.NoteListFragment"
         android:label="fragment_note_list"
-        tools:layout="@layout/fragment_note_list" />
+        tools:layout="@layout/fragment_note_list" >
+        <action
+            android:id="@+id/action_noteListFragment_to_newNoteFragment"
+            app:destination="@id/newNoteFragment" />
+    </fragment>
     <fragment
         android:id="@+id/monitoringListFragment"
         android:name="com.hfad.petlogger.MonitoringListFragment"
@@ -228,5 +232,14 @@
         <argument
             android:name="weightId"
             app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/newNoteFragment"
+        android:name="com.hfad.petlogger.NewNoteFragment"
+        android:label="fragment_new_note"
+        tools:layout="@layout/fragment_new_note" >
+        <action
+            android:id="@+id/action_newNoteFragment_to_noteListFragment"
+            app:destination="@id/noteListFragment" />
     </fragment>
 </navigation>

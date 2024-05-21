@@ -4,6 +4,7 @@ import androidx.room.*
 import com.hfad.petlogger.entities.PetProfilePhoto
 import com.hfad.petlogger.entities.Photo
 import com.hfad.petlogger.entities.PhotoEvent
+import com.hfad.petlogger.entities.PhotoNote
 
 @Dao
 interface PhotoDao {
@@ -41,4 +42,13 @@ interface PhotoDao {
             "FROM photo_table LEFT JOIN photo_event_table " +
             "WHERE photo_event_table.event_id=:eventId AND photo_table.photo_id=photo_event_table.photo_id")
     suspend fun fetchPhotosOfEvent(eventId: Long): List<Photo>
+
+    @Insert
+    suspend fun insert(photoNote: PhotoNote)
+
+    @Update
+    suspend fun update(photoNote: PhotoNote)
+
+    @Delete
+    suspend fun delete(photoNote: PhotoNote)
 }
