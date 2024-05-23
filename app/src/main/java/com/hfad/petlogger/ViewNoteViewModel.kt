@@ -6,11 +6,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.hfad.petlogger.entities.Note
 import com.hfad.petlogger.repositories.NoteRepository
+import com.hfad.petlogger.util.GetDateTimeDisplayUseCase
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class ViewNoteViewModel(private val noteRepository: NoteRepository, private val noteId: Long) : ViewModel() {
     val note =  MutableLiveData<Note>()
+    val lastUpdatedDateDisplay = MutableLiveData<String>()
 
     init {
         viewModelScope.launch {
@@ -18,6 +20,10 @@ class ViewNoteViewModel(private val noteRepository: NoteRepository, private val 
                 noteRepository.getNote(noteId)
             }
             note.value = fetchedNote.await()
+            note.value?.let {
+                val dateTimeDisplayUseCase = GetDateTimeDisplayUseCase()
+                lastUpdatedDateDisplay.value = dateTimeDisplayUseCase(it.lastUpdated)
+            }
         }
     }
 

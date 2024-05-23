@@ -2,12 +2,16 @@ package com.hfad.petlogger.util
 
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
 
-class DateDisplay {
-    fun getDateTimeDisplayLong(date: LocalDateTime): String {
-        return "${getDateDisplayLong(date.toLocalDate())} at ${date.hour}:${date.minute}"
+class GetDateDisplayUseCase {
+    operator fun invoke(date: OffsetDateTime): String {
+        return invoke(date.toLocalDate())
     }
-    fun getDateDisplayLong(date: LocalDate): String {
+    operator fun invoke(date: LocalDateTime): String {
+        return invoke(date.toLocalDate())
+    }
+    operator fun invoke(date: LocalDate): String {
         val month =
             when(date.month) {
                 java.time.Month.JANUARY -> "Jan"

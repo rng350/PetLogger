@@ -3,59 +3,66 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ViewNoteFragment">
+    tools:context=".EditNoteFragment">
+
     <data>
         <variable
             name="viewModel"
-            type="com.hfad.petlogger.ViewNoteViewModel" />
+            type="com.hfad.petlogger.EditNoteViewModel" />
     </data>
 
     <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/noteTitleTextField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/title">
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/noteTitleText"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/noteTitleTextInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@{viewModel.note.title}"/>
+                android:maxLines="1"
+                android:text="@={viewModel.note.title}"
+                android:inputType="text"/>
         </com.google.android.material.textfield.TextInputLayout>
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/noteDetailsTextField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/note_details">
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/noteDetailsText"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/noteDetailsTextInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@{viewModel.note.details}"/>
+                android:gravity="top"
+                android:minLines="10"
+                android:text="@={viewModel.note.details}"
+                android:inputType="textMultiLine|textCapSentences"/>
         </com.google.android.material.textfield.TextInputLayout>
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/noteLastUpdatedTextField"
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/changeAssocPetButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/note_details">
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/noteLastUpdatedText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@{viewModel.lastUpdatedDateDisplay}"/>
-        </com.google.android.material.textfield.TextInputLayout>
+            android:text="@string/change_associated_pet_button"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/editButton"
+                android:id="@+id/submitButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/edit_note_button"/>
+                android:text="@string/submit"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/resetButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/reset"/>
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/backButton"
                 android:layout_width="wrap_content"
@@ -63,5 +70,4 @@
                 android:text="@string/back"/>
         </LinearLayout>
     </LinearLayout>
-
 </layout>

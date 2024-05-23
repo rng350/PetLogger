@@ -15,7 +15,8 @@ class NoteRepository(
     private val noteDao: NoteDao,
     private val mediaRepository: MediaRepository
 ) {
-    suspend fun getNote(noteId: Long): Note = withContext(Dispatchers.IO) {
+    suspend fun getNote(noteId: Long): Note
+    = withContext(Dispatchers.IO) {
         noteDao.get(noteId)
     }
 
@@ -23,7 +24,11 @@ class NoteRepository(
         return noteDao.getAll()
     }
 
-    suspend fun insertNote(note: Note, events: List<Event>? = null, weights: List<Weight>? = null, photos: List<Photo>? = null): Long = withContext(Dispatchers.IO) {
+    suspend fun insertNote(note: Note,
+                           events: List<Event>? = null,
+                           weights: List<Weight>? = null,
+                           photos: List<Photo>? = null): Long
+    = withContext(Dispatchers.IO) {
         val noteId = noteDao.insert(note)
         photos?.let {
             for (photo in photos) {
@@ -31,6 +36,14 @@ class NoteRepository(
             }
         }
         noteId
+    }
+
+    suspend fun updateNote(note: Note,
+                           events: List<Event>? = null,
+                           weights: List<Weight>? = null,
+                           photos: List<Photo>? = null)
+    = withContext(Dispatchers.IO) {
+        noteDao.update(note)
     }
 
     suspend fun insertPetNote(note: Note, petId: Long) {

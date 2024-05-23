@@ -256,5 +256,20 @@
         <action
             android:id="@+id/action_viewNoteFragment_to_noteListFragment"
             app:destination="@id/noteListFragment" />
+        <action
+            android:id="@+id/action_viewNoteFragment_to_editNoteFragment"
+            app:destination="@id/editNoteFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editNoteFragment"
+        android:name="com.hfad.petlogger.EditNoteFragment"
+        android:label="fragment_edit_note"
+        tools:layout="@layout/fragment_edit_note" >
+        <action
+            android:id="@+id/action_editNoteFragment_to_viewNoteFragment"
+            app:destination="@id/viewNoteFragment" />
+        <argument
+            android:name="noteId"
+            app:argType="long" />
     </fragment>
 </navigation>

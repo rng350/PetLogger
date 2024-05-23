@@ -44,7 +44,7 @@ class ViewNoteFragment : Fragment() {
         })
 
         binding.editButton.setOnClickListener {
-            // TODO: Implement after Edit Note Screen implemented
+            findNavController().navigate(ViewNoteFragmentDirections.actionViewNoteFragmentToEditNoteFragment(noteId))
         }
 
         binding.backButton.setOnClickListener {
