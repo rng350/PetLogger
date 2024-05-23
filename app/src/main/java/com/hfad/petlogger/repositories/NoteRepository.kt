@@ -15,6 +15,10 @@ class NoteRepository(
     private val noteDao: NoteDao,
     private val mediaRepository: MediaRepository
 ) {
+    suspend fun getNote(noteId: Long): Note = withContext(Dispatchers.IO) {
+        noteDao.get(noteId)
+    }
+
     suspend fun getAllNotes(): List<Note> {
         return noteDao.getAll()
     }

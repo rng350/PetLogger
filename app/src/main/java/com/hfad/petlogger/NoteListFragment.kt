@@ -49,7 +49,8 @@ class NoteListFragment : Fragment() {
 
         viewModel.noteNavigator.navigateTo.observe(viewLifecycleOwner) {
             it?.let {
-                // TODO: Implement navigation after ViewNote is done
+                val action = NoteListFragmentDirections.actionNoteListFragmentToViewNoteFragment(it)
+                this.findNavController().navigate(action)
                 viewModel.noteNavigator.onNavigated()
             }
         }

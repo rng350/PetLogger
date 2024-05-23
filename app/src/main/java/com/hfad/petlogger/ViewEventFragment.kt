@@ -20,10 +20,6 @@ class ViewEventFragment : Fragment() {
     private var _galleryDisplay: GalleryDisplay? = null
     private val galleryDisplay get() = _galleryDisplay!!
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

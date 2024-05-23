@@ -80,4 +80,6 @@
     <string name="note_details">Details</string>
     <string name="clear">Clear</string>
     <string name="add_note">Add Note</string>
+    <string name="edit_note_button">Edit Note</string>
+    <string name="viewing_note_details">Viewing Note Details</string>
 </resources>
