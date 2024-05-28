@@ -5,7 +5,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.hfad.petlogger.entities.Event
 import com.hfad.petlogger.entities.Note
+import com.hfad.petlogger.entities.Pet
+import com.hfad.petlogger.entities.Photo
+import com.hfad.petlogger.entities.Weight
 import com.hfad.petlogger.repositories.NoteRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -16,12 +20,15 @@ class NewNoteViewModel(private val noteRepository: NoteRepository) : ViewModel()
     var noteDetails: String = ""
     private val _goBack = MutableLiveData<Boolean>(false)
     val goBack: LiveData<Boolean> = _goBack
-    fun submitNote() {
+    fun submitNote(pets: List<Pet> = listOf(),
+                   events: List<Event> = listOf(),
+                   weights: List<Weight> = listOf(),
+                   photos: List<Photo> = listOf()) {
         if (noteTitle.isNotEmpty() || noteDetails.isNotEmpty()) {
             val note = Note(title = noteTitle, details = noteDetails)
             viewModelScope.launch {
                 val inserted = async {
-                    noteRepository.insertNote(note = note)
+                    noteRepository.insertNote(note, pets, events, weights, photos)
                 }
                 inserted.await()
                 _goBack.value = true

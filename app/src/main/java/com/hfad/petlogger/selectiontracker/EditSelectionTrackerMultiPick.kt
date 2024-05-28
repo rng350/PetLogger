@@ -12,7 +12,7 @@ import com.hfad.petlogger.mutableCopyOf
     use that last checkable petwithphoto list for recycler view
 */
 
-class EditSelectionTrackerMultiPick<T: CheckableItem<U>, U>(choiceLimitSet: Int?): EditSelectionTrackerInterface<T,U> {
+class EditSelectionTrackerMultiPick<T: CheckableItem<U>, U>(choiceLimitSet: Int? = null): EditSelectionTrackerInterface<T,U> {
     private var initialSelection = hashSetOf<U>()
     override val selectionToAdd = MutableLiveData(mutableListOf<T>())
     override val selectionToRemove = MutableLiveData(mutableListOf<T>())
@@ -26,6 +26,8 @@ class EditSelectionTrackerMultiPick<T: CheckableItem<U>, U>(choiceLimitSet: Int?
     override fun initializeSelection(selection: List<U>) {
         initialSelection = selection.toHashSet()
         itemsSelectedAmt.value = selection.size
+        selectionToAdd.value = mutableListOf<T>()
+        selectionToRemove.value = mutableListOf<T>()
     }
 
     override fun toggle(checkable: T) {

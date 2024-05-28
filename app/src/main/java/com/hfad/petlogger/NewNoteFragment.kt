@@ -10,11 +10,13 @@ import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.databinding.FragmentNewNoteBinding
 import com.hfad.petlogger.repositories.MediaRepository
 import com.hfad.petlogger.repositories.NoteRepository
+import com.hfad.petlogger.repositories.PetRepository
 
 class NewNoteFragment : Fragment() {
     private var _binding: FragmentNewNoteBinding? = null
     private val binding get() = _binding!!
-    private lateinit var viewModel: NewNoteViewModel
+    private lateinit var newNoteViewModel: NewNoteViewModel
+    lateinit var petMultiSelectionViewModel: PetMultiSelectionViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -23,28 +25,34 @@ class NewNoteFragment : Fragment() {
         _binding = FragmentNewNoteBinding.inflate(inflater, container, false)
         val view = binding.root
         val application = requireNotNull(this.activity).application
-        val noteDao = PetLoggerDatabase.getInstance(application).noteDao
-        val photoDao = PetLoggerDatabase.getInstance(application).photoDao
+        val database = PetLoggerDatabase.getInstance(application)
+        val photoDao = database.photoDao
+        val petDao = database.petDao
         val mediaRepository = MediaRepository(photoDao, requireContext())
-        val noteRepository = NoteRepository(noteDao, mediaRepository)
-        val viewModelFactory = NewNoteViewModel.provideFactory(noteRepository)
-        viewModel = ViewModelProvider(this, viewModelFactory).get(NewNoteViewModel::class.java)
-        binding.viewModel = viewModel
+        val noteRepository = NoteRepository(database, mediaRepository)
+        val petRepository = PetRepository(petDao, mediaRepository)
+
+        newNoteViewModel = ViewModelProvider(this, NewNoteViewModel.provideFactory(noteRepository)).get(NewNoteViewModel::class.java)
+        petMultiSelectionViewModel = ViewModelProvider(this, PetMultiSelectionViewModel.provideFactory(petRepository)).get(PetMultiSelectionViewModel::class.java)
+        petMultiSelectionViewModel.logSomething("NewNoteFr", "message from NewNoteFragment... VM")
+
+        binding.newNoteViewModel = newNoteViewModel
+        binding.petMultiSelectionViewModel = petMultiSelectionViewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
         binding.submitButton.setOnClickListener {
-            viewModel.submitNote()
+            newNoteViewModel.submitNote(pets = petMultiSelectionViewModel.getPetsToAdd())
         }
 
         binding.clearButton.setOnClickListener {
-            viewModel.clear()
+            newNoteViewModel.clear()
         }
 
         binding.backButton.setOnClickListener {
             findNavController().popBackStack()
         }
 
-        viewModel.goBack.observe(viewLifecycleOwner) {
+        newNoteViewModel.goBack.observe(viewLifecycleOwner) {
             if (it == true) {
                 findNavController().navigate(NewNoteFragmentDirections.actionNewNoteFragmentToNoteListFragment())
             }

@@ -11,7 +11,7 @@ import com.hfad.petlogger.CheckableItem
     use that last checkable petwithphoto list for recycler view
 */
 
-class EditSelectionTracker<T>(override val choiceLimit: Int?): SelectionTracker<T> {
+class EditSelectionTracker<T>(override val choiceLimit: Int? = null): SelectionTracker<T> {
     private val tracker: EditSelectionTrackerInterface<CheckableItem<T>, T> =
         if (choiceLimit == 1) EditSelectionTrackerSinglePick<CheckableItem<T>, T>()
         else EditSelectionTrackerMultiPick<CheckableItem<T>, T>(choiceLimit)

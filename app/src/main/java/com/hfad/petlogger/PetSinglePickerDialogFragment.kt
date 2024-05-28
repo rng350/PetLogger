@@ -67,4 +67,9 @@ class PetSinglePickerDialogFragment : DialogFragment() {
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

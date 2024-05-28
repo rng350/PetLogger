@@ -7,7 +7,10 @@ import androidx.room.Query
 import androidx.room.Update
 import com.hfad.petlogger.entities.EventNote
 import com.hfad.petlogger.entities.Note
+import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.entities.PetNote
+import com.hfad.petlogger.entities.PhotoNote
+import com.hfad.petlogger.entities.WeightNote
 
 @Dao
 interface NoteDao {
@@ -26,6 +29,11 @@ interface NoteDao {
     @Delete
     suspend fun delete(note: Note)
 
+    @Query("SELECT pet_table.pet_id AS pet_id, pet_name, pet_species, pet_breed, pet_sex, pet_dob, has_dob " +
+            "FROM pet_table LEFT JOIN pet_note_table " +
+            "WHERE pet_table.pet_id = pet_note_table.pet_id AND :noteId = pet_note_table.note_id")
+    suspend fun getPetsOfNote(noteId: Long): List<Pet>
+
     @Insert
     suspend fun insert(petNote: PetNote)
 
@@ -43,4 +51,22 @@ interface NoteDao {
 
     @Delete
     suspend fun delete(eventNote: EventNote)
+
+    @Insert
+    suspend fun insert(weightNote: WeightNote)
+
+    @Update
+    suspend fun update(weightNote: WeightNote)
+
+    @Delete
+    suspend fun delete(weightNote: WeightNote)
+
+    @Insert
+    suspend fun insert(photoNote: PhotoNote)
+
+    @Update
+    suspend fun update(photoNote: PhotoNote)
+
+    @Delete
+    suspend fun delete(photoNote: PhotoNote)
 }

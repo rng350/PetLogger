@@ -25,10 +25,11 @@ class ViewNoteFragment : Fragment() {
         _binding = FragmentViewNoteBinding.inflate(layoutInflater, container, false)
         val view = binding.root
 
-        val photoDao = PetLoggerDatabase.getInstance(requireContext()).photoDao
+        val application = requireNotNull(this.activity).application
+        val database = PetLoggerDatabase.getInstance(application)
+        val photoDao = database.photoDao
         val mediaRepository = MediaRepository(photoDao, requireContext())
-        val noteDao = PetLoggerDatabase.getInstance(requireContext()).noteDao
-        val noteRepository = NoteRepository(noteDao, mediaRepository)
+        val noteRepository = NoteRepository(database, mediaRepository)
         val noteId = ViewNoteFragmentArgs.fromBundle(requireArguments()).noteId
 
         viewModel = ViewModelProvider(this, ViewNoteViewModel.provideFactory(noteRepository, noteId)).get(ViewNoteViewModel::class.java)

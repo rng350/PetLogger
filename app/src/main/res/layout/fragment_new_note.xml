@@ -7,8 +7,11 @@
 
     <data>
         <variable
-            name="viewModel"
+            name="newNoteViewModel"
             type="com.hfad.petlogger.NewNoteViewModel" />
+        <variable
+            name="petMultiSelectionViewModel"
+            type="com.hfad.petlogger.PetMultiSelectionViewModel" />
     </data>
 
     <LinearLayout
@@ -25,7 +28,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
-                android:text="@={viewModel.noteTitle}"
+                android:text="@={newNoteViewModel.noteTitle}"
                 android:inputType="text"/>
         </com.google.android.material.textfield.TextInputLayout>
         <com.google.android.material.textfield.TextInputLayout
@@ -39,9 +42,15 @@
                 android:layout_height="wrap_content"
                 android:gravity="top"
                 android:minLines="10"
-                android:text="@={viewModel.noteDetails}"
+                android:text="@={newNoteViewModel.noteDetails}"
                 android:inputType="textMultiLine|textCapSentences"/>
         </com.google.android.material.textfield.TextInputLayout>
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/pet_selection_fragment_container_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:name="com.hfad.petlogger.PetMultiSelectionDisplayFragment" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/changeAssocPetButton"
