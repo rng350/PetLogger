@@ -37,9 +37,7 @@ class ViewPetFragment : Fragment() {
 
         viewModel.pet.observe(viewLifecycleOwner, Observer {
             it?.let {
-                val mainActivity = (activity as MainActivity)
-                mainActivity.setTopAppBarTitle(it.petName)
-                mainActivity.setTopAppBarSubtitle(getString(R.string.viewing_details))
+                setAppBarTitle(it.petName, getString(R.string.viewing_details))
             }
         })
 

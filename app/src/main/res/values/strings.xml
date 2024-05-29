@@ -83,4 +83,9 @@
     <string name="edit_note_button">Edit Note</string>
     <string name="viewing_note_details">Viewing Note Details</string>
     <string name="reset">Reset</string>
+    <string name="new_note_header">New Note</string>
+    <string name="view_untitled_note_header">Untitled Note</string>
+    <string name="editing_pet_details">Editing Pet Details</string>
+    <string name="editing_note_details">Editing Note Details</string>
+    <string name="pet_list_header">Pet List</string>
 </resources>

@@ -38,9 +38,7 @@ class ViewNoteFragment : Fragment() {
 
         viewModel.note.observe(viewLifecycleOwner, Observer {
             it?.let {
-                val mainActivity = (activity as MainActivity)
-                mainActivity.setTopAppBarTitle(it.title)
-                mainActivity.setTopAppBarSubtitle(getString(R.string.viewing_note_details))
+                setAppBarTitle(title = it.title.ifEmpty { getString(R.string.view_untitled_note_header) }, subtitle = getString(R.string.viewing_note_details))
             }
         })
 

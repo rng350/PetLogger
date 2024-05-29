@@ -1,6 +1,7 @@
 package com.hfad.petlogger
 
 import android.net.Uri
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -47,4 +48,13 @@ fun <T> List<T>.copyOf(): List<T> {
 
 fun <T> List<T>.mutableCopyOf(): MutableList<T> {
     return mutableListOf<T>().also { it.addAll(this) }
+}
+
+fun Fragment.setAppBarTitle(title: String, subtitle: String? = null) {
+    val mainActivity = (activity as MainActivity)
+    mainActivity.setTopAppBarTitle(title)
+    mainActivity.disableTopAppBarSubtitle()
+    subtitle?.let {
+        mainActivity.setTopAppBarSubtitle(it)
+    }
 }

@@ -39,13 +39,11 @@ class ViewWeightFragment : Fragment() {
         viewModel.assocPet.observe(viewLifecycleOwner, Observer {
             it?.let {
                 val topAppBarTitleRemainder = if (it.petName[it.petName.length-1].lowercaseChar() != 's') "\'s Weight" else "\' Weight"
-                mainActivity.setTopAppBarTitle("${it.petName}${topAppBarTitleRemainder}")
+                setAppBarTitle(title = "${it.petName}${topAppBarTitleRemainder}", subtitle = "${viewModel.weight.value!!.weightDateTime}")
             }
         })
         viewModel.weight.observe(viewLifecycleOwner, Observer {
             it?.let {
-                mainActivity.setTopAppBarSubtitle("${it.weightDateTime}")
-
                 if (it.weightNotes.isNotEmpty()) {
                     binding.weightNotesCard.visibility = View.VISIBLE
                 }

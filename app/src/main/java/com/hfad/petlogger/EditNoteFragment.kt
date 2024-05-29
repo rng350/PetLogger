@@ -49,6 +49,12 @@ class EditNoteFragment : Fragment() {
             viewModel.reset()
         }
 
+        viewModel.note.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                setAppBarTitle(title = it.title.ifEmpty { getString(R.string.view_untitled_note_header) }, subtitle = getString(R.string.editing_note_details))
+            }
+        })
+
         viewModel.goBack.observe(viewLifecycleOwner, Observer {
             if (it == true) {
                 val action = EditNoteFragmentDirections.actionEditNoteFragmentToViewNoteFragment(noteId)

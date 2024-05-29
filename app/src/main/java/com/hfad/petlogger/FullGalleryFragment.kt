@@ -32,9 +32,7 @@ class FullGalleryFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        val mainActivity = (activity as MainActivity)
-        mainActivity.setTopAppBarTitle(getString(R.string.media_gallery_header))
-        mainActivity.disableTopAppBarSubtitle()
+        setAppBarTitle(getString(R.string.media_gallery_header))
 
         BindingInterfaceCreator.setupGalleryPhotoItemAdapter(
             viewModel.photos,

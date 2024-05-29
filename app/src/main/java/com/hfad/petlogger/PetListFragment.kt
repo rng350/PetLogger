@@ -48,10 +48,8 @@ class PetListFragment : Fragment() {
                 viewModel.petNavigator.onNavigated()
             }
         })
-        
-        val mainActivity = (activity as MainActivity)
-        mainActivity.setTopAppBarTitle("Pet List")
-        mainActivity.disableTopAppBarSubtitle()
+
+        setAppBarTitle(getString(R.string.pet_list_header))
 
         return view
     }

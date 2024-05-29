@@ -64,7 +64,7 @@ class EditPetFragment : Fragment() {
             it?.let {
                 val mainActivity = (activity as MainActivity)
                 mainActivity.setTopAppBarTitle(it.petName)
-                mainActivity.setTopAppBarSubtitle(getString(R.string.editing_details))
+                mainActivity.setTopAppBarSubtitle(getString(R.string.editing_pet_details))
             }
         })
 

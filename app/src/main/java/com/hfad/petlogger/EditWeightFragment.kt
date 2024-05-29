@@ -53,9 +53,7 @@ class EditWeightFragment : Fragment() {
             Log.d("EditWeightFrag", "Pet selected! ${selectedPet.toString()}")
         }
 
-        val mainActivity = (activity as MainActivity)
-        mainActivity.setTopAppBarTitle(getString(R.string.edit_weight_header))
-        mainActivity.disableTopAppBarSubtitle()
+        setAppBarTitle(getString(R.string.edit_weight_header))
 
         binding.changeAssocPetButton.setOnClickListener{
             PetSinglePickerDialogFragment().show(childFragmentManager, "PET_SINGLE_PICKER")

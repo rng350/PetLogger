@@ -52,9 +52,7 @@ class EditEventFragment : Fragment() {
 
         editEventViewModel.event.observe(viewLifecycleOwner, Observer {
             it?.let {
-                val mainActivity = (activity as MainActivity)
-                mainActivity.setTopAppBarTitle(it.title)
-                mainActivity.setTopAppBarSubtitle(getString(R.string.editing_event_details))
+                setAppBarTitle(title = it.title, subtitle = getString(R.string.editing_event_details))
             }
         })
 

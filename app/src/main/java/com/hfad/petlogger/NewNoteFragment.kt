@@ -32,6 +32,8 @@ class NewNoteFragment : Fragment() {
         val noteRepository = NoteRepository(database, mediaRepository)
         val petRepository = PetRepository(petDao, mediaRepository)
 
+        setAppBarTitle(getString(R.string.new_note_header))
+
         newNoteViewModel = ViewModelProvider(this, NewNoteViewModel.provideFactory(noteRepository)).get(NewNoteViewModel::class.java)
         petMultiSelectionViewModel = ViewModelProvider(this, PetMultiSelectionViewModel.provideFactory(petRepository)).get(PetMultiSelectionViewModel::class.java)
         petMultiSelectionViewModel.logSomething("NewNoteFr", "message from NewNoteFragment... VM")

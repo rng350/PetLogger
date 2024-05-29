@@ -27,9 +27,7 @@ class NoteListFragment : Fragment() {
         _binding = FragmentNoteListBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        val mainActivity = (activity as MainActivity)
-        mainActivity.setTopAppBarTitle(getString(R.string.note_list_header))
-        mainActivity.disableTopAppBarSubtitle()
+        setAppBarTitle(getString(R.string.note_list_header))
 
         val noteDao = PetLoggerDatabase.getInstance(requireContext()).noteDao
         val photoDao = PetLoggerDatabase.getInstance(requireContext()).photoDao
