@@ -31,7 +31,11 @@ class NoteListFragment : Fragment() {
 
         val noteDao = PetLoggerDatabase.getInstance(requireContext()).noteDao
         val photoDao = PetLoggerDatabase.getInstance(requireContext()).photoDao
-        val mediaRepository = MediaRepository(photoDao, requireContext())
+
+        val application = requireNotNull(this.activity).application
+        val database = PetLoggerDatabase.getInstance(application)
+
+        val mediaRepository = MediaRepository(database, requireContext())
         val noteRepository = NoteRepository(PetLoggerDatabase.getInstance(requireContext()), mediaRepository)
 
         binding.lifecycleOwner = viewLifecycleOwner

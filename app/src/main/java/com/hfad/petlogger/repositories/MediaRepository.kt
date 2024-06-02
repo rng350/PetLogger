@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
+import com.hfad.petlogger.PetLoggerDatabase
 import com.hfad.petlogger.dao.PhotoDao
 import com.hfad.petlogger.entities.PetProfilePhoto
 import com.hfad.petlogger.entities.Photo
@@ -23,9 +24,10 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 class MediaRepository(
-    private val photoDao: PhotoDao,
+    database: PetLoggerDatabase,
     private val context: Context
 ) {
+    val photoDao = database.photoDao
     suspend fun getEventPhotos(eventID: Long): List<Photo> = withContext(Dispatchers.IO) {
         photoDao.fetchPhotosOfEvent(eventID)
     }

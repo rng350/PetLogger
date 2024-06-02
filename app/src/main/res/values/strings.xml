@@ -41,7 +41,8 @@
     <string name="pet_latest_weight_header">Weight</string>
     <string name="pet_latest_weight">%s %s</string>
     <string name="pet_weighing_date_header">Weighing Date</string>
-    <string name="photos_selected">%s/%s photo(s) selected</string>
+    <string name="amt_with_limit_selected">%s/%s selected</string>
+    <string name="amt_without_limit_selected">%s selected</string>
     <string name="submit_changes">Submit Changes</string>
     <string name="no_pet_name_given">Pet needs a name!</string>
     <string name="pet_sex_male">Male</string>
@@ -88,4 +89,7 @@
     <string name="editing_pet_details">Editing Pet Details</string>
     <string name="editing_note_details">Editing Note Details</string>
     <string name="pet_list_header">Pet List</string>
+    <string name="ok">Ok</string>
+    <string name="add_events">Add Events</string>
+    <string name="associated_events">Associated Events</string>
 </resources>

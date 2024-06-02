@@ -3,12 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".PetMultiSelectionDisplayFragment">
+    tools:context=".EventMultiSelectionDisplayFragment">
 
     <data>
         <variable
             name="viewModel"
-            type="com.hfad.petlogger.PetMultiSelectionViewModel" />
+            type="com.hfad.petlogger.EventMultiSelectionViewModel" />
     </data>
 
     <com.google.android.material.card.MaterialCardView
@@ -22,18 +22,32 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <com.google.android.material.appbar.AppBarLayout
+                android:id="@+id/dialogFragmentAppBarLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+                <com.google.android.material.appbar.MaterialToolbar
+                    android:id="@+id/dialogFragmentAppBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:title="@string/associated_events"
+                    app:titleCentered="true"/>
+            </com.google.android.material.appbar.AppBarLayout>
+
             <androidx.core.widget.NestedScrollView
-                android:id="@+id/pet_list_scroll_view"
+                android:id="@+id/event_list_scroll_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/pets_list"
+                    android:id="@+id/events_list"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:gravity="top"
-                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                    app:spanCount="3"/>
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
             </androidx.core.widget.NestedScrollView>
             <LinearLayout
                 android:layout_width="match_parent"
@@ -41,11 +55,11 @@
                 android:gravity="center"
                 android:orientation="horizontal">
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/addPetsButton"
+                    android:id="@+id/addEventsButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="10dp"
-                    android:text="@string/add_pets" />
+                    android:text="@string/add_events" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/resetButton"

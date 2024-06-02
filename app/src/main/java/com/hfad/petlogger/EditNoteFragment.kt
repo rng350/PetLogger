@@ -29,8 +29,10 @@ class EditNoteFragment : Fragment() {
 
         val noteId = EditNoteFragmentArgs.fromBundle(requireArguments()).noteId
 
-        val photoDao = PetLoggerDatabase.getInstance(requireContext()).photoDao
-        val mediaRepository = MediaRepository(photoDao, requireContext())
+        val application = requireNotNull(this.activity).application
+        val database = PetLoggerDatabase.getInstance(application)
+
+        val mediaRepository = MediaRepository(database, requireContext())
         val noteRepository = NoteRepository(PetLoggerDatabase.getInstance(requireContext()), mediaRepository)
         viewModel = ViewModelProvider(this, EditNoteViewModel.provideFactory(noteRepository, noteId)).get(EditNoteViewModel::class.java)
 
