@@ -3,12 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".PetMultiSelectionDisplayFragment">
+    tools:context=".EventMultiSelectionDisplayFragment">
 
     <data>
         <variable
             name="viewModel"
-            type="com.hfad.petlogger.PetMultiSelectionViewModel" />
+            type="com.hfad.petlogger.WeightMultiSelectionViewModel" />
     </data>
 
     <com.google.android.material.card.MaterialCardView
@@ -33,22 +33,21 @@
                     android:id="@+id/dialogFragmentAppBar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:title="Associated Pets"
+                    app:title="Associated Weights"
                     app:titleCentered="true"/>
             </com.google.android.material.appbar.AppBarLayout>
 
             <androidx.core.widget.NestedScrollView
-                android:id="@+id/pet_list_scroll_view"
+                android:id="@+id/weights_list_scroll_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/pets_list"
+                    android:id="@+id/weights_list"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:gravity="top"
-                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                    app:spanCount="3"/>
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
             </androidx.core.widget.NestedScrollView>
             <LinearLayout
                 android:layout_width="match_parent"
@@ -56,11 +55,11 @@
                 android:gravity="center"
                 android:orientation="horizontal">
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/addPetsButton"
+                    android:id="@+id/addWeightsButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="10dp"
-                    android:text="@string/add_pets" />
+                    android:text="@string/add_weights" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/resetButton"
@@ -70,6 +69,5 @@
                     android:text="@string/reset" />
             </LinearLayout>
         </LinearLayout>
-
     </com.google.android.material.card.MaterialCardView>
 </layout>

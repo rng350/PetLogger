@@ -3,11 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".PetMultiSelectionDialogFragment">
+    tools:context=".WeightMultiSelectionDialogFragment">
     <data>
         <variable
             name="viewModel"
-            type="com.hfad.petlogger.PetMultiSelectionViewModel" />
+            type="com.hfad.petlogger.WeightMultiSelectionViewModel" />
     </data>
 
     <LinearLayout
@@ -25,42 +25,42 @@
                 android:id="@+id/dialogFragmentAppBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:title="Select Pets"
+                app:title="Select Weights"
                 app:subtitle="@{@string/amt_without_limit_selected(String.valueOf(viewModel.currentSelection.size()))}"
                 app:titleCentered="true"
                 app:subtitleCentered="true"/>
         </com.google.android.material.appbar.AppBarLayout>
 
         <ScrollView
-            android:id="@+id/pet_list_scroll_view"
+            android:id="@+id/weights_list_scroll_view"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1">
-
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/pets_list"
+                android:id="@+id/weights_list"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:gravity="top"
-                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                app:spanCount="3"/>
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
         </ScrollView>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0"
+            android:gravity="end"
             android:orientation="horizontal">
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/submit_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/submit"/>
-
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/cancel_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/cancel" />
+                android:layout_marginVertical="10dp"
+                android:text="@string/cancel"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/okay_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="@string/ok" />
         </LinearLayout>
     </LinearLayout>
 </layout>

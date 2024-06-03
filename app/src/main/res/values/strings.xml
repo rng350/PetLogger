@@ -92,4 +92,5 @@
     <string name="ok">Ok</string>
     <string name="add_events">Add Events</string>
     <string name="associated_events">Associated Events</string>
+    <string name="add_weights">Add Weights</string>
 </resources>

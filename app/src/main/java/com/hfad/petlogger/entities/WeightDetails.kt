@@ -7,6 +7,6 @@ data class WeightDetails(
     @Embedded
     val weight: Weight,
 
-    @Relation(parentColumn = "weight_pet_id", entityColumn = "pet_id", entity=Pet::class)
+    @Relation(parentColumn = "weight_pet_id", entityColumn = "pet_id")
     val assocPet: Pet
 )

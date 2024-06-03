@@ -13,6 +13,7 @@ import com.hfad.petlogger.repositories.EventRepository
 import com.hfad.petlogger.repositories.MediaRepository
 import com.hfad.petlogger.repositories.NoteRepository
 import com.hfad.petlogger.repositories.PetRepository
+import com.hfad.petlogger.repositories.WeightRepository
 
 class NewNoteFragment : Fragment() {
     private var _binding: FragmentNewNoteBinding? = null
@@ -20,6 +21,7 @@ class NewNoteFragment : Fragment() {
     private lateinit var newNoteViewModel: NewNoteViewModel
     lateinit var petMultiSelectionViewModel: PetMultiSelectionViewModel
     lateinit var eventMultiSelectionViewModel: EventMultiSelectionViewModel
+    lateinit var weightMultiSelectionViewModel: WeightMultiSelectionViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,6 +36,7 @@ class NewNoteFragment : Fragment() {
         val noteRepository = NoteRepository(database, mediaRepository)
         val petRepository = PetRepository(petDao, mediaRepository)
         val eventRepository = EventRepository(database, mediaRepository)
+        val weightRepository = WeightRepository(database)
 
         setAppBarTitle(getString(R.string.new_note_header))
 
@@ -41,17 +44,20 @@ class NewNoteFragment : Fragment() {
         petMultiSelectionViewModel = ViewModelProvider(this, PetMultiSelectionViewModel.provideFactory(petRepository)).get(PetMultiSelectionViewModel::class.java)
         petMultiSelectionViewModel.logSomething("NewNoteFr", "message from NewNoteFragment... VM")
         eventMultiSelectionViewModel = ViewModelProvider(this, EventMultiSelectionViewModel.provideFactory(eventRepository)).get(EventMultiSelectionViewModel::class.java)
+        weightMultiSelectionViewModel = ViewModelProvider(this, WeightMultiSelectionViewModel.provideFactory(weightRepository)).get(WeightMultiSelectionViewModel::class.java)
 
         binding.newNoteViewModel = newNoteViewModel
         binding.petMultiSelectionViewModel = petMultiSelectionViewModel
         binding.eventMultiSelectionViewModel = eventMultiSelectionViewModel
+        binding.weightMultiSelectionViewModel = weightMultiSelectionViewModel
 
         binding.lifecycleOwner = viewLifecycleOwner
 
         binding.submitButton.setOnClickListener {
             newNoteViewModel.submitNote(
                 pets = petMultiSelectionViewModel.getPetsToAdd(),
-                events = eventMultiSelectionViewModel.getEventsToAdd()
+                events = eventMultiSelectionViewModel.getEventsToAdd(),
+                weights = weightMultiSelectionViewModel.getWeightsToAdd()
             )
         }
 

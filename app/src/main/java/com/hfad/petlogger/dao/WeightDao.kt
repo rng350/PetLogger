@@ -34,4 +34,8 @@ interface WeightDao {
 
     @Query("SELECT * FROM weight_table WHERE weight_id = :weightID")
     suspend fun getWeightDetails(weightID: Long): WeightDetails
+
+    @Transaction
+    @Query("SELECT * FROM weight_table")
+    suspend fun getAllWeightDetails(): List<WeightDetails>
 }
