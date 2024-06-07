@@ -1,8 +1,11 @@
 package com.hfad.petlogger.repositories
 
+import android.content.ContentUris
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
+import android.provider.MediaStore
 import android.util.Log
 import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
@@ -14,13 +17,16 @@ import com.hfad.petlogger.entities.PhotoEvent
 import com.hfad.petlogger.entities.PhotoNote
 import com.hfad.petlogger.entitylinkers.EntityLinker
 import com.hfad.petlogger.size
+import com.hfad.petlogger.sizeInKb
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.time.Instant
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 import java.util.UUID
 
 class MediaRepository(
@@ -104,6 +110,55 @@ class MediaRepository(
         }
     }
 
+    suspend fun retrievePhotos(context: Context, uris: List<Uri>): List<Photo> = withContext(Dispatchers.IO) {
+        val photos = mutableListOf<Photo>()
+        for (uri in uris) {
+            val projection = arrayOf(
+                MediaStore.Images.Media._ID,
+                MediaStore.Images.Media.DISPLAY_NAME,
+                MediaStore.Images.Media.WIDTH,
+                MediaStore.Images.Media.HEIGHT,
+                MediaStore.Images.Media.SIZE,
+                MediaStore.Images.Media.DATE_TAKEN,
+                MediaStore.Images.Media.DATE_ADDED
+            )
+            context.contentResolver.query(
+                uri,
+                projection,
+                null,
+                null,
+                "${MediaStore.Images.Media.DATE_ADDED} DESC"
+            )?.use { cursor ->
+                val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
+                val displayNameColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
+                val widthColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.WIDTH)
+                val heightColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.HEIGHT)
+                val fileSizeColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)
+                val dateTakenColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_TAKEN)
+                val dateAddedColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED)
+                while(cursor.moveToNext()) {
+                    val id = cursor.getLong(idColumn)
+                    val displayName = cursor.getString(displayNameColumn)
+                    val width = cursor.getInt(widthColumn)
+                    val height = cursor.getInt(heightColumn)
+                    val contentUri = ContentUris.withAppendedId(
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                        id
+                    )
+                    val size = cursor.getDouble(fileSizeColumn)
+                    val date: LocalDateTime? =
+                        if (dateTakenColumn != -1) {
+                            LocalDateTime.ofInstant(Instant.ofEpochMilli(cursor.getLong(dateTakenColumn)), ZoneOffset.UTC)
+                        } else if (dateAddedColumn != -1) {
+                            LocalDateTime.ofInstant(Instant.ofEpochMilli(cursor.getLong(dateAddedColumn)), ZoneOffset.UTC)
+                        } else null
+                    photos.add(Photo(id, displayName, contentUri, width, height, size, date))
+                }
+            }
+        }
+        photos.toList()
+    }
+
     // TODO: Implement the following check
     // 1. check that there's enough space
     // 2a. if so, try to save files
@@ -179,7 +234,7 @@ class MediaRepository(
         return File("${context.filesDir}/${fileName}").exists()
     }
 
-    private suspend fun deleteFromLocalStorage(filename: String) {
+    private suspend fun deleteFromLocalStorage(filename: String) = withContext(Dispatchers.IO) {
         val file = File(context.filesDir, filename)
         if (file.exists()) file.delete()
     }

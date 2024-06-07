@@ -93,4 +93,7 @@
     <string name="add_events">Add Events</string>
     <string name="associated_events">Associated Events</string>
     <string name="add_weights">Add Weights</string>
+    <string name="add_photos">Add Photos</string>
+    <string name="associated_photos">Associated Photos</string>
+    <string name="photo_selection_limit_reached">Photo selection limit reached. Deselect some photos if you wish to pick more.</string>
 </resources>

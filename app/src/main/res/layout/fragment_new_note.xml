@@ -18,6 +18,9 @@
         <variable
             name="weightMultiSelectionViewModel"
             type="com.hfad.petlogger.WeightMultiSelectionViewModel" />
+        <variable
+            name="mediaSelectionViewModel"
+            type="com.hfad.petlogger.MediaSelectionViewModel" />
     </data>
 
     <ScrollView
@@ -73,6 +76,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:name="com.hfad.petlogger.WeightMultiSelectionDisplayFragment" />
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/media_selection_fragment_container_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:name="com.hfad.petlogger.MediaSelectionFragment" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/changeAssocPetButton"
