@@ -28,7 +28,22 @@ object DataBindingConverter {
 
     @JvmStatic
     fun stringToIntMaterial(value: String): Int? {
-        if (value == "") return 0
+        if (value == "") return Int.MIN_VALUE
         return value.toInt()
+    }
+
+    @InverseMethod("stringToDouble")
+    @JvmStatic
+    fun doubleToString(value: Double?): String {
+        value?.let {
+            return it.toString()
+        }
+        return ""
+    }
+
+    @JvmStatic
+    fun stringToDouble(value: String): Double? {
+        if (value == "") return Double.MIN_VALUE
+        return value.toDouble()
     }
 }

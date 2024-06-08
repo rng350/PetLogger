@@ -181,7 +181,11 @@
         android:id="@+id/fullGalleryFragment"
         android:name="com.hfad.petlogger.FullGalleryFragment"
         android:label="fragment_full_gallery"
-        tools:layout="@layout/fragment_full_gallery" />
+        tools:layout="@layout/fragment_full_gallery" >
+        <action
+            android:id="@+id/action_fullGalleryFragment_to_newPhotoFragment"
+            app:destination="@id/newPhotoFragment" />
+    </fragment>
     <fragment
         android:id="@+id/noteListFragment"
         android:name="com.hfad.petlogger.NoteListFragment"
@@ -271,5 +275,14 @@
         <argument
             android:name="noteId"
             app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/newPhotoFragment"
+        android:name="com.hfad.petlogger.NewPhotoFragment"
+        android:label="fragment_new_photo"
+        tools:layout="@layout/fragment_new_photo" >
+        <action
+            android:id="@+id/action_newPhotoFragment_to_fullGalleryFragment"
+            app:destination="@id/fullGalleryFragment" />
     </fragment>
 </navigation>

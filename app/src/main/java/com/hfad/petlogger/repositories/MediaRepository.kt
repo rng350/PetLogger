@@ -11,10 +11,14 @@ import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
 import com.hfad.petlogger.PetLoggerDatabase
 import com.hfad.petlogger.dao.PhotoDao
+import com.hfad.petlogger.entities.Event
+import com.hfad.petlogger.entities.Note
+import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.entities.PetProfilePhoto
 import com.hfad.petlogger.entities.Photo
 import com.hfad.petlogger.entities.PhotoEvent
 import com.hfad.petlogger.entities.PhotoNote
+import com.hfad.petlogger.entities.Weight
 import com.hfad.petlogger.entitylinkers.EntityLinker
 import com.hfad.petlogger.size
 import com.hfad.petlogger.sizeInKb
@@ -33,7 +37,7 @@ class MediaRepository(
     database: PetLoggerDatabase,
     private val context: Context
 ) {
-    val photoDao = database.photoDao
+    private val photoDao = database.photoDao
     suspend fun getEventPhotos(eventID: Long): List<Photo> = withContext(Dispatchers.IO) {
         photoDao.fetchPhotosOfEvent(eventID)
     }
@@ -53,6 +57,19 @@ class MediaRepository(
         }
     }
 
+    // Inserting a 'stand-alone' photo
+    suspend fun insertNewPhoto(
+        photo: Photo,
+        newAttachedNotes: List<Note> = listOf<Note>(),
+        existingAttachedNotes: List<Note> = listOf<Note>(),
+        pets: List<Pet> = listOf<Pet>(),
+        events: List<Event> = listOf<Event>(),
+        weights: List<Weight> = listOf<Weight>()
+    ) = withContext(Dispatchers.IO) {
+        val photo = addPhoto(photo)
+    }
+
+    // Inserting a photo as an attachment
     suspend fun addPhoto(photo: Photo): Photo? = withContext(Dispatchers.IO) {
             // step 1 save photo to file storage
         val submittedPhotoDeffered = async {
@@ -156,6 +173,7 @@ class MediaRepository(
                 }
             }
         }
+        Log.d("MediaRep", "Retrieved Photos: ${photos.toString()}")
         photos.toList()
     }
 

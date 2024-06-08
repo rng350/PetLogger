@@ -96,4 +96,9 @@
     <string name="add_photos">Add Photos</string>
     <string name="associated_photos">Associated Photos</string>
     <string name="photo_selection_limit_reached">Photo selection limit reached. Deselect some photos if you wish to pick more.</string>
+    <string name="select_photo">Select Photo</string>
+    <string name="width_header">Width</string>
+    <string name="height_header">Height</string>
+    <string name="file_size_header">Size</string>
+    <string name="clear_photo">Clear Photo</string>
 </resources>

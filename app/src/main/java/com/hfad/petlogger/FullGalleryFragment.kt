@@ -42,7 +42,7 @@ class FullGalleryFragment : Fragment() {
             viewModel.photoNavigator)
 
         binding.addPhotoButton.setOnClickListener {
-            this.findNavController().navigate(R.id.action_petListFragment_to_newPetFragment)
+            this.findNavController().navigate(R.id.action_fullGalleryFragment_to_newPhotoFragment)
         }
         viewModel.photoNavigator.navigateTo.observe(viewLifecycleOwner, Observer {
             it?.let {
