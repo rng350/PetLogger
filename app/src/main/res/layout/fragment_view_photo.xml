@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ViewPhotoFragment">
+
+    <data>
+        <import type="com.hfad.petlogger.util.DataBindingConverter"/>
+        <variable
+            name="viewPhotoViewModel"
+            type="com.hfad.petlogger.ViewPhotoViewModel" />
+        <variable
+            name="petSelectorViewModel"
+            type="com.hfad.petlogger.PetMultiSelectionViewModel" />
+
+        <variable
+            name="eventSelectorViewModel"
+            type="com.hfad.petlogger.EventMultiSelectionViewModel" />
+
+        <variable
+            name="weightSelectorViewModel"
+            type="com.hfad.petlogger.WeightMultiSelectionViewModel" />
+    </data>
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <ImageView
+                        android:id="@+id/photoDisplay"
+                        android:layout_width="match_parent"
+                        android:layout_height="300dp"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitCenter" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/photoTitleTextField"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/title">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/photoTitleTextInput"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:minLines="1"
+                            android:text="@{viewPhotoViewModel.photo.name}"
+                            android:enabled="false"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/photoWidthTextField"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/width_header"
+                            android:layout_weight="1">
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/photoWidthTextInput"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:minLines="1"
+                                android:inputType="number"
+                                android:text="@{DataBindingConverter.intToStringMaterial(viewPhotoViewModel.photo.width)}"
+                                android:enabled="false"/>
+                        </com.google.android.material.textfield.TextInputLayout>
+
+
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/photoHeightTextField"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/height_header"
+                            android:layout_weight="1">
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/photoHeightTextInput"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:minLines="1"
+                                android:text="@{DataBindingConverter.intToStringMaterial(viewPhotoViewModel.photo.height)}"
+                                android:inputType="number"
+                                android:enabled="false"/>
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                    </LinearLayout>
+
+
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/photoSizeTextField"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/file_size_header">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/photoSizeTextInput"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:minLines="1"
+                            android:text="@{DataBindingConverter.doubleToString(viewPhotoViewModel.photo.size)}"
+                            android:inputType="number"
+                            android:enabled="false"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/photoDateTextField"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/date">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/photoDateTextInput"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:minLines="1"
+                            android:text="@{viewPhotoViewModel.photoDate}"
+                            android:enabled="false"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/editButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/edit_button"/>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/backButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/back"/>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</layout>

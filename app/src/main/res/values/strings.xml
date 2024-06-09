@@ -101,4 +101,6 @@
     <string name="height_header">Height</string>
     <string name="file_size_header">Size</string>
     <string name="clear_photo">Clear Photo</string>
+    <string name="edit_button">Edit</string>
+    <string name="viewing_photo_details">Viewing Photo Details\n</string>
 </resources>

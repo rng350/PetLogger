@@ -102,6 +102,9 @@
         <action
             android:id="@+id/action_viewPetFragment_to_viewWeightFragment"
             app:destination="@id/viewWeightFragment" />
+        <action
+            android:id="@+id/action_viewPetFragment_to_viewPhotoFragment"
+            app:destination="@id/viewPhotoFragment" />
     </fragment>
     <fragment
         android:id="@+id/viewEventFragment"
@@ -122,6 +125,9 @@
         <action
             android:id="@+id/action_viewEventFragment_to_editEventFragment"
             app:destination="@id/editEventFragment" />
+        <action
+            android:id="@+id/action_viewEventFragment_to_viewPhotoFragment"
+            app:destination="@id/viewPhotoFragment" />
     </fragment>
     <fragment
         android:id="@+id/newPetFragment"
@@ -185,6 +191,9 @@
         <action
             android:id="@+id/action_fullGalleryFragment_to_newPhotoFragment"
             app:destination="@id/newPhotoFragment" />
+        <action
+            android:id="@+id/action_fullGalleryFragment_to_viewPhotoFragment"
+            app:destination="@id/viewPhotoFragment" />
     </fragment>
     <fragment
         android:id="@+id/noteListFragment"
@@ -263,6 +272,9 @@
         <action
             android:id="@+id/action_viewNoteFragment_to_editNoteFragment"
             app:destination="@id/editNoteFragment" />
+        <action
+            android:id="@+id/action_viewNoteFragment_to_viewPhotoFragment"
+            app:destination="@id/viewPhotoFragment" />
     </fragment>
     <fragment
         android:id="@+id/editNoteFragment"
@@ -284,5 +296,20 @@
         <action
             android:id="@+id/action_newPhotoFragment_to_fullGalleryFragment"
             app:destination="@id/fullGalleryFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/viewPhotoFragment"
+        android:name="com.hfad.petlogger.ViewPhotoFragment"
+        android:label="fragment_view_photo"
+        tools:layout="@layout/fragment_view_photo" >
+        <action
+            android:id="@+id/action_viewPhotoFragment_to_viewPetFragment"
+            app:destination="@id/viewPetFragment" />
+        <action
+            android:id="@+id/action_viewPhotoFragment_to_viewNoteFragment"
+            app:destination="@id/viewNoteFragment" />
+        <argument
+            android:name="photoId"
+            app:argType="long" />
     </fragment>
 </navigation>

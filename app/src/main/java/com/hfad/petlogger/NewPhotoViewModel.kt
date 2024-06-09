@@ -7,10 +7,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.hfad.petlogger.entities.Event
+import com.hfad.petlogger.entities.Note
+import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.entities.Photo
+import com.hfad.petlogger.entities.Weight
 import com.hfad.petlogger.repositories.MediaRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import java.time.ZoneId
 
 class NewPhotoViewModel(private val mediaRepository: MediaRepository) : ViewModel() {
     // TODO: Implement the ViewModel
@@ -28,7 +33,14 @@ class NewPhotoViewModel(private val mediaRepository: MediaRepository) : ViewMode
             val photos = mediaRepository.retrievePhotos(context, listOf<Uri>(uri))
             if (photos.isNotEmpty()) {
                 photo.value = photos[0]
-                _photoDate.value = photo.value?.date?.toString() ?: "N/A"
+                _photoDate.value =
+                    photo.
+                    value?.
+                    date?.
+                    atZoneSameInstant(ZoneId.systemDefault())?.
+                    toLocalDateTime().
+                    toString()
+                        ?: "N/A"
             }
         }
     }
@@ -52,7 +64,13 @@ class NewPhotoViewModel(private val mediaRepository: MediaRepository) : ViewMode
         resetWeightSelection()
     }
 
-    fun submit() {
+    fun submit(
+        newAttachedNotes: List<Note> = listOf<Note>(),
+        existingAttachedNotes: List<Note> = listOf<Note>(),
+        pets: List<Pet> = listOf<Pet>(),
+        events: List<Event> = listOf<Event>(),
+        weights: List<Weight> = listOf<Weight>()
+    ) {
         photo.value?.let {
             viewModelScope.launch {
                 async {

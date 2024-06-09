@@ -6,6 +6,20 @@
         android:maxSdkVersion="32"
         android:required="false"/>
 
+    <!-- Devices running Android 13 (API level 33) or higher -->
+    <uses-permission
+        android:name="android.permission.READ_MEDIA_IMAGES"
+        android:required="false"/>
+    <uses-permission
+        android:name="android.permission.READ_MEDIA_VIDEO"
+        android:required="false"/>
+
+    <!-- To handle the reselection within the app on devices running Android 14
+         or higher if your app targets Android 14 (API level 34) or higher.  -->
+    <uses-permission
+        android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED"
+        android:required="false"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"

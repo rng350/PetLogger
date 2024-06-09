@@ -37,6 +37,8 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.time.Instant
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.time.ZoneId
 import java.time.ZoneOffset
 import java.util.UUID
 
@@ -209,11 +211,11 @@ class GalleryPicker(private val fragment: Fragment,
                     )
                     val size = cursor.getDouble(fileSizeColumn)
                     // TODO: check if every picture has a date taken / date added
-                    val date: LocalDateTime? =
+                    val date: OffsetDateTime? =
                         if (dateTakenColumn != -1) {
-                            LocalDateTime.ofInstant(Instant.ofEpochMilli(cursor.getLong(dateTakenColumn)), ZoneOffset.UTC)
+                            OffsetDateTime.ofInstant(Instant.ofEpochMilli(cursor.getLong(dateTakenColumn)), ZoneId.of("UTC"))
                         } else if (dateAddedColumn != -1) {
-                            LocalDateTime.ofInstant(Instant.ofEpochMilli(cursor.getLong(dateAddedColumn)), ZoneOffset.UTC)
+                            OffsetDateTime.ofInstant(Instant.ofEpochMilli(cursor.getLong(dateAddedColumn)), ZoneId.of("UTC"))
                         } else null
                     photos.add(CheckableItem<Photo>(Photo(id, displayName, contentUri, width, height, size, date)))
                 }
@@ -275,7 +277,8 @@ class GalleryPicker(private val fragment: Fragment,
     // i.e.
     // 20220614_18h22m_[random UUID]
     // 00000000_00h00m_[random UUID]
-    fun generateFilename(date: LocalDateTime?): String {
+    fun generateFilename(date: OffsetDateTime?): String {
+        val dateLocal = date?.toLocalDateTime()
         var prefix = "00000000_00h00m"
 
         date?.let {

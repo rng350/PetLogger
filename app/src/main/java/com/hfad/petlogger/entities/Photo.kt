@@ -5,6 +5,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
 
 @Entity(tableName = "photo_table")
 data class Photo (
@@ -28,5 +29,5 @@ data class Photo (
     var size: Double = 0.0,
 
     @ColumnInfo(name="photo_date")
-    var date: LocalDateTime?
+    var date: OffsetDateTime?
 )

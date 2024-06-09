@@ -30,6 +30,8 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.time.Instant
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.time.ZoneId
 import java.time.ZoneOffset
 import java.util.UUID
 
@@ -38,6 +40,11 @@ class MediaRepository(
     private val context: Context
 ) {
     private val photoDao = database.photoDao
+
+    suspend fun getPhoto(photoId: Long): Photo? = withContext(Dispatchers.IO) {
+        photoDao.getPhoto(photoId)
+    }
+
     suspend fun getEventPhotos(eventID: Long): List<Photo> = withContext(Dispatchers.IO) {
         photoDao.fetchPhotosOfEvent(eventID)
     }
@@ -163,11 +170,17 @@ class MediaRepository(
                         id
                     )
                     val size = cursor.getDouble(fileSizeColumn)
-                    val date: LocalDateTime? =
+//                    val date: LocalDateTime? =
+//                        if (dateTakenColumn != -1) {
+//                            LocalDateTime.ofInstant(Instant.ofEpochMilli(cursor.getLong(dateTakenColumn)), ZoneOffset.UTC)
+//                        } else if (dateAddedColumn != -1) {
+//                            LocalDateTime.ofInstant(Instant.ofEpochMilli(cursor.getLong(dateAddedColumn)), ZoneOffset.UTC)
+//                        } else null
+                    val date: OffsetDateTime? =
                         if (dateTakenColumn != -1) {
-                            LocalDateTime.ofInstant(Instant.ofEpochMilli(cursor.getLong(dateTakenColumn)), ZoneOffset.UTC)
+                            OffsetDateTime.ofInstant(Instant.ofEpochMilli(cursor.getLong(dateTakenColumn)), ZoneId.of("UTC"))
                         } else if (dateAddedColumn != -1) {
-                            LocalDateTime.ofInstant(Instant.ofEpochMilli(cursor.getLong(dateAddedColumn)), ZoneOffset.UTC)
+                            OffsetDateTime.ofInstant(Instant.ofEpochMilli(cursor.getLong(dateAddedColumn)), ZoneId.of("UTC"))
                         } else null
                     photos.add(Photo(id, displayName, contentUri, width, height, size, date))
                 }
@@ -212,10 +225,11 @@ class MediaRepository(
     // i.e.
     // 20220614_18h22m_[random UUID]
     // 00000000_00h00m_[random UUID]
-    private fun generateFilename(date: LocalDateTime?): String {
+    private fun generateFilename(date: OffsetDateTime?): String {
+        val dateLocal = date?.toLocalDateTime()
         var prefix = "00000000_00h00m"
 
-        date?.let {
+        dateLocal?.let {
             val yTho = it.year / 1000
             val yHun = (it.year % 1000) / 100
             val yTen = (it.year % 100) / 10

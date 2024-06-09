@@ -17,6 +17,10 @@ interface PhotoDao {
     @Delete
     suspend fun delete(photo: Photo)
 
+
+    @Query("SELECT * FROM photo_table WHERE photo_id=:photoId LIMIT 1")
+    suspend fun getPhoto(photoId: Long): Photo
+
     @Query("SELECT * FROM photo_table")
     suspend fun getAllPhotos(): List<Photo>
 

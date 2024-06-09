@@ -46,9 +46,8 @@ class FullGalleryFragment : Fragment() {
         }
         viewModel.photoNavigator.navigateTo.observe(viewLifecycleOwner, Observer {
             it?.let {
-                // TODO: Implement
-                /*val action = PetListFragmentDirections.ACTION_TRANSFER_TO_VIEW_PHOTO_OR_WHATEVER(it)
-                this.findNavController().navigate(action)*/
+                val action = FullGalleryFragmentDirections.actionFullGalleryFragmentToViewPhotoFragment(it)
+                this.findNavController().navigate(action)
                 viewModel.photoNavigator.onNavigated()
             }
         })
