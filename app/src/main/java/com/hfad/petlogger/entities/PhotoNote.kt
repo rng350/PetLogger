@@ -15,6 +15,13 @@ import androidx.room.Index
             childColumns = ["photo_id"],
             onUpdate = ForeignKey.CASCADE,
             onDelete = ForeignKey.CASCADE
+        ),
+        ForeignKey(
+            entity = Note::class,
+            parentColumns = ["note_id"],
+            childColumns = ["note_id"],
+            onUpdate = ForeignKey.CASCADE,
+            onDelete = ForeignKey.CASCADE
         )
     ],
     indices = [

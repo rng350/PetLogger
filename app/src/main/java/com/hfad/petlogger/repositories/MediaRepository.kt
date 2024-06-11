@@ -45,6 +45,48 @@ class MediaRepository(
         photoDao.getPhoto(photoId)
     }
 
+    suspend fun updatePhoto(
+        photo: Photo,
+        petsToAdd: List<Pet> = listOf<Pet>(),
+        petsToRemove: List<Pet> = listOf<Pet>(),
+        eventsToAdd: List<Event> = listOf<Event>(),
+        eventsToRemove: List<Event> = listOf<Event>(),
+        weightsToAdd: List<Weight> = listOf<Weight>(),
+        weightsToRemove: List<Weight> = listOf<Weight>(),
+        notesToAdd: List<Note> = listOf<Note>(),
+        notesToRemove: List<Note> = listOf<Note>(),
+        notesToUpdate: List<Note> = listOf<Note>()
+    ) = withContext(Dispatchers.IO) {
+        photoDao.update(photo)
+        for (pet in petsToAdd) {
+
+        }
+        for (pet in petsToRemove) {
+
+        }
+        for (event in eventsToAdd) {
+
+        }
+        for (event in eventsToRemove) {
+
+        }
+        for (weight in weightsToAdd) {
+
+        }
+        for (weight in weightsToRemove) {
+
+        }
+        for (note in notesToAdd) {
+
+        }
+        for (note in notesToRemove) {
+
+        }
+        for (note in notesToUpdate) {
+
+        }
+    }
+
     suspend fun getEventPhotos(eventID: Long): List<Photo> = withContext(Dispatchers.IO) {
         photoDao.fetchPhotosOfEvent(eventID)
     }
@@ -130,7 +172,7 @@ class MediaRepository(
             }
             // step 2 delete photo from file storage
             photoDeletedDeferred.await()
-            deleteFromLocalStorage(photo.name)
+            deleteFromLocalStorage(photo.filename)
         }
     }
 
@@ -182,7 +224,7 @@ class MediaRepository(
                         } else if (dateAddedColumn != -1) {
                             OffsetDateTime.ofInstant(Instant.ofEpochMilli(cursor.getLong(dateAddedColumn)), ZoneId.of("UTC"))
                         } else null
-                    photos.add(Photo(id, displayName, contentUri, width, height, size, date))
+                    photos.add(Photo(id, "", displayName, contentUri, width, height, size, date))
                 }
             }
         }
@@ -215,7 +257,7 @@ class MediaRepository(
         val createdFile = File(context.filesDir, fileName)
         if (createdFile.exists()) {
             val fileSize = createdFile.size
-            return@withContext Photo(photo.id, fileName, createdFile.toUri(), width, height, fileSize, photo.date)
+            return@withContext Photo(photo.id, photo.title, fileName, createdFile.toUri(), width, height, fileSize, photo.date)
         }
         return@withContext null
     }

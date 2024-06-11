@@ -71,10 +71,13 @@ class NewPhotoViewModel(private val mediaRepository: MediaRepository) : ViewMode
         events: List<Event> = listOf<Event>(),
         weights: List<Weight> = listOf<Weight>()
     ) {
-        photo.value?.let {
+        photo.value?.let { photo ->
             viewModelScope.launch {
                 async {
-                    mediaRepository.insertNewPhoto(it)
+                    photoTitle.value?.isNotEmpty()?.let {
+                        photo.title = photoTitle.value!!
+                    }
+                    mediaRepository.insertNewPhoto(photo)
                 }.await()
                 resetPhotoSelection()
                 _goBack.value = true

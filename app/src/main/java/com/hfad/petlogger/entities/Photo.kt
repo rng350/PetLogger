@@ -13,8 +13,11 @@ data class Photo (
     @PrimaryKey(autoGenerate = false)
     var id: Long = 0L,
 
-    @ColumnInfo(name="photo_name")
-    var name: String = "",
+    @ColumnInfo(name="photo_title")
+    var title: String = "",
+
+    @ColumnInfo(name="photo_filename")
+    var filename: String = "",
 
     @ColumnInfo(name="photo_uri")
     var contentUri: Uri = Uri.EMPTY,

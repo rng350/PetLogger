@@ -8,19 +8,24 @@ import androidx.room.Index
 @Entity(tableName = "event_pet_table",
     primaryKeys = ["event_id", "pet_id"],
     foreignKeys = [
-        ForeignKey(entity = Event::class,
-        parentColumns = arrayOf("event_id"),
-        childColumns = arrayOf("event_id"),
-        onDelete = ForeignKey.CASCADE,
-        onUpdate = ForeignKey.CASCADE),
-        ForeignKey(entity = Pet::class,
-        parentColumns = arrayOf("pet_id"),
-        childColumns = arrayOf("pet_id"),
-        onDelete = ForeignKey.CASCADE,
-        onUpdate = ForeignKey.CASCADE)
+        ForeignKey(
+            entity = Event::class,
+            parentColumns = arrayOf("event_id"),
+            childColumns = arrayOf("event_id"),
+            onDelete = ForeignKey.CASCADE,
+            onUpdate = ForeignKey.CASCADE
+        ),
+        ForeignKey(
+            entity = Pet::class,
+            parentColumns = arrayOf("pet_id"),
+            childColumns = arrayOf("pet_id"),
+            onDelete = ForeignKey.CASCADE,
+            onUpdate = ForeignKey.CASCADE
+        )
     ],
     indices = [
-        Index("pet_id")
+        Index("pet_id"),
+        Index("event_id")
     ]
 )
 data class EventPet(

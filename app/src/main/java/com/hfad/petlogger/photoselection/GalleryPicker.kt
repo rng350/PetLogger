@@ -217,7 +217,7 @@ class GalleryPicker(private val fragment: Fragment,
                         } else if (dateAddedColumn != -1) {
                             OffsetDateTime.ofInstant(Instant.ofEpochMilli(cursor.getLong(dateAddedColumn)), ZoneId.of("UTC"))
                         } else null
-                    photos.add(CheckableItem<Photo>(Photo(id, displayName, contentUri, width, height, size, date)))
+                    photos.add(CheckableItem<Photo>(Photo(id, displayName, displayName, contentUri, width, height, size, date)))
                 }
                 //Log.d("load", "photo list size: ${photos.size}")
                 photos.toList()
@@ -259,7 +259,7 @@ class GalleryPicker(private val fragment: Fragment,
                         val createdFile = File(fragment.requireContext().filesDir, fileName)
                         if (createdFile.exists()) {
                             val fileSize = createdFile.size
-                            savedPhotos.add(Photo(item.id, item.name, createdFile.toUri(), width, height, fileSize, item.date))
+                            savedPhotos.add(Photo(item.id, item.filename, item.filename, createdFile.toUri(), width, height, fileSize, item.date))
                             Log.d("photo_added", "uri: ${createdFile.toUri()}")
                         }
                     }

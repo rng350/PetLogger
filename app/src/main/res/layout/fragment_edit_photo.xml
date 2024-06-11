@@ -3,13 +3,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ViewPhotoFragment">
+    tools:context=".EditPhotoFragment">
 
     <data>
         <import type="com.hfad.petlogger.util.DataBindingConverter"/>
         <variable
-            name="viewPhotoViewModel"
-            type="com.hfad.petlogger.ViewPhotoViewModel" />
+            name="editPhotoViewModel"
+            type="com.hfad.petlogger.EditPhotoViewModel" />
         <variable
             name="petSelectorViewModel"
             type="com.hfad.petlogger.PetMultiSelectionViewModel" />
@@ -56,8 +56,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:minLines="1"
-                            android:text="@{viewPhotoViewModel.photo.title}"
-                            android:enabled="false"/>
+                            android:text="@={editPhotoViewModel.photoNew.title}"
+                            android:enabled="true"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <LinearLayout
@@ -79,7 +79,7 @@
                                 android:layout_height="wrap_content"
                                 android:minLines="1"
                                 android:inputType="number"
-                                android:text="@{DataBindingConverter.intToStringMaterial(viewPhotoViewModel.photo.width)}"
+                                android:text="@{DataBindingConverter.intToStringMaterial(editPhotoViewModel.photoNew.width)}"
                                 android:enabled="false"/>
                         </com.google.android.material.textfield.TextInputLayout>
 
@@ -96,7 +96,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:minLines="1"
-                                android:text="@{DataBindingConverter.intToStringMaterial(viewPhotoViewModel.photo.height)}"
+                                android:text="@{DataBindingConverter.intToStringMaterial(editPhotoViewModel.photoNew.height)}"
                                 android:inputType="number"
                                 android:enabled="false"/>
                         </com.google.android.material.textfield.TextInputLayout>
@@ -115,7 +115,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:minLines="1"
-                            android:text="@{DataBindingConverter.doubleToString(viewPhotoViewModel.photo.size)}"
+                            android:text="@{DataBindingConverter.doubleToString(editPhotoViewModel.photoNew.size)}"
                             android:inputType="number"
                             android:enabled="false"/>
                     </com.google.android.material.textfield.TextInputLayout>
@@ -132,7 +132,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:minLines="1"
-                            android:text="@{viewPhotoViewModel.photoDate}"
+                            android:text="@{editPhotoViewModel.photoDate}"
                             android:enabled="false"/>
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
@@ -144,10 +144,20 @@
                 android:gravity="center"
                 android:orientation="horizontal">
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/editButton"
+                    android:id="@+id/submitButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/edit_button"/>
+                    android:text="@string/submit"/>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/deleteButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/delete"/>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/resetButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/reset"/>
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/backButton"
                     android:layout_width="wrap_content"
@@ -156,4 +166,5 @@
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
+
 </layout>

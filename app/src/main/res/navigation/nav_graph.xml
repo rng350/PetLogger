@@ -311,5 +311,24 @@
         <argument
             android:name="photoId"
             app:argType="long" />
+        <action
+            android:id="@+id/action_viewPhotoFragment_to_editPhotoFragment"
+            app:destination="@id/editPhotoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editPhotoFragment"
+        android:name="com.hfad.petlogger.EditPhotoFragment"
+        android:label="fragment_edit_photo"
+        tools:layout="@layout/fragment_edit_photo" >
+        <argument
+            android:name="photoId"
+            app:argType="long" />
+        <action
+            android:id="@+id/action_editPhotoFragment_to_fullGalleryFragment"
+            app:destination="@id/fullGalleryFragment"
+            app:popUpTo="@id/viewPhotoFragment" />
+        <action
+            android:id="@+id/action_editPhotoFragment_to_viewPhotoFragment"
+            app:destination="@id/viewPhotoFragment" />
     </fragment>
 </navigation>

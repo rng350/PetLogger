@@ -3,6 +3,7 @@ package com.hfad.petlogger.entities
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 
 @Entity(
     tableName = "pet_note_table",
@@ -22,7 +23,8 @@ import androidx.room.ForeignKey
             onDelete = ForeignKey.CASCADE,
             onUpdate = ForeignKey.CASCADE
         )
-    ]
+    ],
+    indices = [Index("pet_id"), Index("note_id")]
 )
 data class PetNote (
     @ColumnInfo(name="pet_id")

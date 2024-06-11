@@ -44,7 +44,7 @@ class ViewPhotoFragment : Fragment() {
         }
 
         binding.editButton.setOnClickListener{
-
+            findNavController().navigate(ViewPhotoFragmentDirections.actionViewPhotoFragmentToEditPhotoFragment(photoId))
         }
 
         binding.backButton.setOnClickListener{
@@ -52,5 +52,10 @@ class ViewPhotoFragment : Fragment() {
         }
 
         return view
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 }
