@@ -56,6 +56,13 @@ class ViewNoteFragment : Fragment() {
             findNavController().popBackStack()
         }
 
+        associatedPhotosViewModel.navigator.navigateTo.observe(viewLifecycleOwner) {
+            it?.let {
+                associatedPhotosViewModel.navigator.onNavigated()
+                findNavController().navigate(ViewNoteFragmentDirections.actionViewNoteFragmentToViewPhotoFragment(it))
+            }
+        }
+
         return view
     }
 

@@ -275,6 +275,9 @@
         <action
             android:id="@+id/action_viewNoteFragment_to_viewPhotoFragment"
             app:destination="@id/viewPhotoFragment" />
+        <action
+            android:id="@+id/action_viewNoteFragment_to_viewPhotoFragment2"
+            app:destination="@id/viewPhotoFragment" />
     </fragment>
     <fragment
         android:id="@+id/editNoteFragment"
