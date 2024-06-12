@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.databinding.FragmentViewNoteBinding
+import com.hfad.petlogger.photodisplay.GetAssociatedPhotosUseCase
+import com.hfad.petlogger.photodisplay.GetPhotosOfNoteUseCase
 import com.hfad.petlogger.repositories.MediaRepository
 import com.hfad.petlogger.repositories.NoteRepository
 
@@ -16,7 +18,7 @@ class ViewNoteFragment : Fragment() {
     private var _binding: FragmentViewNoteBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var viewModel: ViewNoteViewModel
+    private lateinit var viewNoteViewModel: ViewNoteViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,11 +34,15 @@ class ViewNoteFragment : Fragment() {
         val noteRepository = NoteRepository(database, mediaRepository)
         val noteId = ViewNoteFragmentArgs.fromBundle(requireArguments()).noteId
 
-        viewModel = ViewModelProvider(this, ViewNoteViewModel.provideFactory(noteRepository, noteId)).get(ViewNoteViewModel::class.java)
-        binding.viewModel = viewModel
+        viewNoteViewModel = ViewModelProvider(this, ViewNoteViewModel.provideFactory(noteRepository, noteId)).get(ViewNoteViewModel::class.java)
+        binding.viewNoteViewModel = viewNoteViewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        viewModel.note.observe(viewLifecycleOwner, Observer {
+        val getPhotosOfNote = GetPhotosOfNoteUseCase(noteId, noteRepository)
+        val associatedPhotosViewModel = ViewModelProvider(this, AssociatedPhotosDisplayViewModel.provideFactory(getPhotosOfNote)).get(AssociatedPhotosDisplayViewModel::class.java)
+        binding.associatedPhotosDisplayViewModel = associatedPhotosViewModel
+
+        viewNoteViewModel.note.observe(viewLifecycleOwner, Observer {
             it?.let {
                 setAppBarTitle(title = it.title.ifEmpty { getString(R.string.view_untitled_note_header) }, subtitle = getString(R.string.viewing_note_details))
             }

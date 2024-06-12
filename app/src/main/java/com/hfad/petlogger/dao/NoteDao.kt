@@ -9,8 +9,10 @@ import com.hfad.petlogger.entities.EventNote
 import com.hfad.petlogger.entities.Note
 import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.entities.PetNote
+import com.hfad.petlogger.entities.Photo
 import com.hfad.petlogger.entities.PhotoNote
 import com.hfad.petlogger.entities.WeightNote
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface NoteDao {
@@ -69,4 +71,10 @@ interface NoteDao {
 
     @Delete
     suspend fun delete(photoNote: PhotoNote)
+
+    @Query("SELECT photo_table.photo_id, photo_uri, photo_title, photo_filename, photo_date, photo_filesize, photo_width, photo_height " +
+            "FROM photo_table LEFT JOIN photo_note_table " +
+            "ON photo_note_table.photo_id = photo_table.photo_id " +
+            "WHERE photo_note_table.note_id = :noteId")
+    fun getPhotosOfNote(noteId: Long): Flow<List<Photo>>
 }

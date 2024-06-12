@@ -153,7 +153,7 @@ class MediaRepository(
         }
     }
 
-    suspend fun addNotePhoto(photo: Photo, noteId: Long) {
+    suspend fun addNewPhotoForNode(photo: Photo, noteId: Long) {
         withContext(Dispatchers.IO) {
             val photoAdded = async {
                 addPhoto(photo)

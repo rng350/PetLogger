@@ -9,11 +9,13 @@ import com.hfad.petlogger.entities.Note
 import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.entities.PetNote
 import com.hfad.petlogger.entities.Photo
+import com.hfad.petlogger.entities.PhotoNote
 import com.hfad.petlogger.entities.Weight
 import com.hfad.petlogger.entities.WeightNote
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 
 class NoteRepository(
@@ -63,7 +65,7 @@ class NoteRepository(
         }
         val photosDeferred = photos.map {
             async {
-                mediaRepository.addNotePhoto(it, noteId)
+                mediaRepository.addNewPhotoForNode(it, noteId)
             }
         }
 
@@ -76,9 +78,14 @@ class NoteRepository(
     }
 
     suspend fun updateNote(note: Note,
-                           events: List<Event>? = null,
-                           weights: List<Weight>? = null,
-                           photos: List<Photo>? = null)
+                           petsToAdd: List<Pet> = listOf<Pet>(),
+                           petsToRemove: List<Pet> = listOf<Pet>(),
+                           eventsToAdd: List<Event> = listOf<Event>(),
+                           eventsToRemove: List<Event> = listOf<Event>(),
+                           weightsToAdd: List<Weight> = listOf<Weight>(),
+                           weightsToRemove: List<Weight> = listOf<Weight>(),
+                           photosToAdd: List<Photo> = listOf<Photo>(),
+                           photosToRemove: List<Photo> = listOf<Photo>())
     = withContext(Dispatchers.IO) {
         noteDao.update(note)
     }
@@ -101,6 +108,11 @@ class NoteRepository(
         }
     }
 
-    suspend fun insertPhotoNote(noteId: Long, photoId: Long) {
+    suspend fun insertPhotoNote(noteId: Long, photoId: Long) = withContext(Dispatchers.IO){
+        noteDao.insert(PhotoNote(photoId, noteId))
+    }
+
+    fun getPhotosOfNote(noteId: Long): Flow<List<Photo>> {
+        return noteDao.getPhotosOfNote(noteId)
     }
 }

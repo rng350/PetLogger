@@ -104,4 +104,5 @@
     <string name="edit_button">Edit</string>
     <string name="viewing_photo_details">Viewing Photo Details\n</string>
     <string name="editing_photo_details">Editing Photo Details</string>
+    <string name="last_updated">Last Updated</string>
 </resources>
