@@ -31,7 +31,6 @@ class SetupAssociatedPhotosDisplayUseCase(private val photos: StateFlow<List<Pho
         coroutineScope.launch {
             photos.collectLatest {
                 adapter.submitList(it)
-                Log.d("SetupAssPhotosDisplay", "invoke() - List submitted!")
             }
         }
     }
@@ -54,7 +53,5 @@ class SetupAssociatedPhotosDisplayUseCase(private val photos: StateFlow<List<Pho
                 photoNavigator.navigateTo(item.id)
             }
         }
-
     }
-
 }

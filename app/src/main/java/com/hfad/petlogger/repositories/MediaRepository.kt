@@ -131,7 +131,15 @@ class MediaRepository(
         submittedPhotoDeffered
     }
 
-    suspend fun addEventPhoto(photo: Photo, eventID: Long) {
+    suspend fun addNewPhotosForEvent(photos: List<Photo>, eventId: Long) = withContext(Dispatchers.IO) {
+        photos.map {photo ->
+            async {
+                addNewPhotoForEvent(photo, eventId)
+            }
+        }.awaitAll()
+    }
+
+    suspend fun addNewPhotoForEvent(photo: Photo, eventID: Long) {
         withContext(Dispatchers.IO) {
             val photoAdded = async {
                 addPhoto(photo)

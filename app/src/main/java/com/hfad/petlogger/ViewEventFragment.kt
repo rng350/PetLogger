@@ -1,7 +1,6 @@
 package com.hfad.petlogger
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,15 +9,14 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.databinding.FragmentViewEventBinding
-import com.hfad.petlogger.fetchers.PhotosOfEventFetcher
+import com.hfad.petlogger.photodisplay.GetPhotosOfEventUseCase
 import com.hfad.petlogger.recyclerviews.BindingInterfaceCreator
+import com.hfad.petlogger.repositories.EventRepository
+import com.hfad.petlogger.repositories.MediaRepository
 
 class ViewEventFragment : Fragment() {
     private var _binding: FragmentViewEventBinding? = null
     private val binding get() = _binding!!
-
-    private var _galleryDisplay: GalleryDisplay? = null
-    private val galleryDisplay get() = _galleryDisplay!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -26,54 +24,51 @@ class ViewEventFragment : Fragment() {
     ): View? {
         _binding = FragmentViewEventBinding.inflate(inflater, container, false)
         val view = binding.root
+        binding.lifecycleOwner = viewLifecycleOwner
+
         val application = requireNotNull(this.activity).application
-        val eventDao = PetLoggerDatabase.getInstance(application).eventDao
+        val database = PetLoggerDatabase.getInstance(application)
+        val eventDao = database.eventDao
+        val mediaRepository = MediaRepository(database, requireContext())
+        val eventRepository = EventRepository(database, mediaRepository)
 
         val eventId = ViewEventFragmentArgs.fromBundle(requireArguments()).eventId
 
         val viewModelFactory = ViewEventViewModelFactory(eventDao, eventId)
-        val viewModel = ViewModelProvider(this, viewModelFactory).get(ViewEventViewModel::class.java)
+        val viewEventViewModel = ViewModelProvider(this, viewModelFactory).get(ViewEventViewModel::class.java)
+        binding.viewEventViewModel = viewEventViewModel
 
-        Log.e("newEventFrag", "before gallery display viewmodel")
-        val galleryDisplayViewModelFactory = GalleryDisplayViewModelFactory(eventId, PhotosOfEventFetcher(eventDao))
-        val galleryDisplayViewModel = ViewModelProvider(this, galleryDisplayViewModelFactory).get(GalleryDisplayViewModel::class.java)
-        Log.e("newEventFrag", "after gallery display viewmodel")
+        val getAssociatedPhotos = GetPhotosOfEventUseCase(eventId, eventRepository)
+        val associatedPhotosDisplayViewModel = ViewModelProvider(this, AssociatedPhotosDisplayViewModel.provideFactory(getAssociatedPhotos)).get(AssociatedPhotosDisplayViewModel::class.java)
+        binding.associatedPhotosDisplayViewModel = associatedPhotosDisplayViewModel
 
-        _galleryDisplay = GalleryDisplay(this, binding.galleryDisplay, galleryDisplayViewModel)
-        galleryDisplay.onCreate(savedInstanceState)
-
-        binding.viewModel = viewModel
-        binding.galleryDisplayViewModel = galleryDisplayViewModel
-        binding.lifecycleOwner = viewLifecycleOwner
-
-        /*val petAdapter = BindingInterfaceCreator.setupNavigatablePetAdapter(viewModel.petNavigator)
-        binding.petsList.adapter = petAdapter
-        viewModel.petsAssociated.observe(viewLifecycleOwner, Observer {
-            it?.let {
-                petAdapter.submitList(it)
-            }
-        })*/
-
-        viewModel.event.observe(viewLifecycleOwner, Observer {
+        viewEventViewModel.event.observe(viewLifecycleOwner, Observer {
             it?.let {
                 setAppBarTitle(title = it.title, subtitle = getString(R.string.viewing_event_details))
             }
         })
 
         BindingInterfaceCreator.setupPetWithProfilePhotoAdapter(
-            viewModel.petsAssociated,
+            viewEventViewModel.petsAssociated,
             binding.petsList,
             viewLifecycleOwner,
             requireContext(),
-            viewModel.petNavigator)
+            viewEventViewModel.petNavigator)
 
-        viewModel.petNavigator.navigateTo.observe(viewLifecycleOwner, Observer {
+        viewEventViewModel.petNavigator.navigateTo.observe(viewLifecycleOwner, Observer {
             it?.let {
                 val action = ViewEventFragmentDirections.actionViewEventFragmentToViewPetFragment(it)
                 this.findNavController().navigate(action)
-                viewModel.petNavigator.onNavigated()
+                viewEventViewModel.petNavigator.onNavigated()
             }
         })
+
+        associatedPhotosDisplayViewModel.navigator.navigateTo.observe(viewLifecycleOwner) {
+            it?.let {
+                associatedPhotosDisplayViewModel.navigator.onNavigated()
+                findNavController().navigate(ViewEventFragmentDirections.actionViewEventFragmentToViewPhotoFragment(it))
+            }
+        }
 
         binding.editEventButton.setOnClickListener {
             this.findNavController().navigate(ViewEventFragmentDirections.actionViewEventFragmentToEditEventFragment(eventId))
@@ -83,7 +78,6 @@ class ViewEventFragment : Fragment() {
             this.findNavController().popBackStack()
         }
 
-        // Inflate the layout for this fragment
         return view
     }
 

@@ -8,6 +8,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.hfad.petlogger.databinding.FragmentPetMultiSelectionDisplayBinding
 import com.hfad.petlogger.recyclerviews.SetupPetMultiPickerSelectionDisplayUseCase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class PetMultiSelectionDisplayFragment : Fragment() {
     private var _binding: FragmentPetMultiSelectionDisplayBinding? = null
@@ -28,7 +32,13 @@ class PetMultiSelectionDisplayFragment : Fragment() {
         viewModel.logSomething("PetMultiSelDisplay", "Message from Pet Selection Display Fragment... VM")
 
         binding.addPetsButton.setOnClickListener {
-            PetMultiSelectionDialogFragment().show(childFragmentManager, "PET_MULTI_PICKER")
+            binding.addPetsButton.isEnabled = false
+            val coroutineScope = CoroutineScope(Dispatchers.Main.immediate)
+            coroutineScope.launch {
+                PetMultiSelectionDialogFragment().show(childFragmentManager, "PET_MULTI_PICKER")
+                delay(200)
+                binding.addPetsButton.isEnabled = true
+            }
         }
 
         binding.resetButton.setOnClickListener {
@@ -44,6 +54,12 @@ class PetMultiSelectionDisplayFragment : Fragment() {
         )()
 
         return view
+    }
+
+
+    override fun onStop() {
+        super.onStop()
+        binding.addPetsButton.isEnabled = true
     }
 
     override fun onDestroy() {

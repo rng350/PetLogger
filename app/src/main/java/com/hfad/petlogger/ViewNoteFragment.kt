@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.databinding.FragmentViewNoteBinding
-import com.hfad.petlogger.photodisplay.GetAssociatedPhotosUseCase
 import com.hfad.petlogger.photodisplay.GetPhotosOfNoteUseCase
 import com.hfad.petlogger.repositories.MediaRepository
 import com.hfad.petlogger.repositories.NoteRepository

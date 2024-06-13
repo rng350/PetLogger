@@ -69,10 +69,8 @@
         android:label="fragment_new_event"
         tools:layout="@layout/fragment_new_event" >
         <action
-            android:id="@+id/action_newEventFragment_to_homeFragment"
-            app:destination="@id/homeFragment"
-            app:popUpTo="@id/homeFragment"
-            app:popUpToInclusive="true" />
+            android:id="@+id/action_newEventFragment_to_eventListFragment"
+            app:destination="@id/eventListFragment" />
     </fragment>
     <fragment
         android:id="@+id/viewPetFragment"

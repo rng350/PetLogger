@@ -6,11 +6,14 @@
     tools:context=".NewEventFragment">
     <data>
         <variable
-            name="viewModel"
+            name="newEventViewModel"
             type="com.hfad.petlogger.NewEventViewModel" />
         <variable
-            name="galleryViewModel"
-            type="com.hfad.petlogger.photoselection.GalleryViewModel" />
+            name="petMultiSelectionViewModel"
+            type="com.hfad.petlogger.PetMultiSelectionViewModel" />
+        <variable
+            name="mediaSelectionViewModel"
+            type="com.hfad.petlogger.MediaSelectionViewModel" />
     </data>
 
     <ScrollView
@@ -25,53 +28,84 @@
             android:weightSum="2">
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <EditText
-                    android:id="@+id/eventTitle"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/eventTitleTextField"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Event title"
-                    android:text="@={viewModel.eventTitle}"/>
+                    android:hint="@string/title">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/eventTitleTextInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:maxLines="1"
+                        android:text="@={newEventViewModel.eventTitle}"
+                        android:inputType="text"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
-                <TextView
-                    android:id="@+id/eventDate"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/eventDateLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@{viewModel.eventDateTime.dateDisplay}" />
+                    android:hint="@string/date">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/eventDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableEnd="@drawable/baseline_edit_24"
+                        android:text="@{newEventViewModel.eventDateTime.dateDisplay}"
+                        android:focusable="true"
+                        android:clickable="true"
+                        android:inputType="date"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
-                <Button
-                    android:id="@+id/inputEventDateButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/input_event_date" />
-
-                <TextView
-                    android:id="@+id/eventTime"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/eventTimeLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@{viewModel.eventDateTime.timeDisplay}" />
+                    android:hint="@string/time_header">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/eventTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableEnd="@drawable/baseline_edit_24"
+                        android:text="@{newEventViewModel.eventDateTime.timeDisplay}"
+                        android:focusable="true"
+                        android:clickable="true"
+                        android:inputType="date"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
-                <Button
-                    android:id="@+id/inputEventTimeButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/input_event_time" />
 
-                <Button
-                    android:id="@+id/inputAddPetsButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/pets_involved_button" />
-
-                <EditText
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/eventDetailsTextField"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Add details here"
-                    android:text="@={viewModel.eventDetails}"
-                    android:minHeight="48dp" />
+                    android:hint="@string/event_details_header">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/eventDetailsTextInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="top"
+                        android:minLines="10"
+                        android:text="@={newEventViewModel.eventDetails}"
+                        android:inputType="textMultiLine|textCapSentences"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <androidx.fragment.app.FragmentContainerView
+                    android:id="@+id/pet_selection_fragment_container_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:name="com.hfad.petlogger.PetMultiSelectionDisplayFragment"
+                    tools:layout="@layout/fragment_pet_multi_selection_display" />
+
+                <androidx.fragment.app.FragmentContainerView
+                    android:id="@+id/media_selection_fragment_container_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:name="com.hfad.petlogger.MediaSelectionFragment"
+                    tools:layout="@layout/fragment_media_selection" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -90,18 +124,6 @@
                         android:layout_height="wrap_content"
                         android:text="@string/back"/>
                 </LinearLayout>
-            </LinearLayout>
-            <LinearLayout
-                android:id="@+id/galleryPickerSpace"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="bottom"
-                android:orientation="vertical"
-                android:layout_weight="1">
-                <include
-                    android:id="@+id/galleryPicker"
-                    layout="@layout/fragment_gallery_picker"
-                    app:viewModel="@{galleryViewModel}"/>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
