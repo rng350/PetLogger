@@ -9,6 +9,9 @@
             name="viewNoteViewModel"
             type="com.hfad.petlogger.ViewNoteViewModel" />
         <variable
+            name="associatedPetsDisplayViewModel"
+            type="com.hfad.petlogger.AssociatedPetsDisplayViewModel" />
+        <variable
             name="associatedPhotosDisplayViewModel"
             type="com.hfad.petlogger.AssociatedPhotosDisplayViewModel" />
     </data>
@@ -58,6 +61,13 @@
                     android:text="@{viewNoteViewModel.lastUpdatedDateDisplay}"
                     android:enabled="false"/>
             </com.google.android.material.textfield.TextInputLayout>
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/associated_pets_fragment_container_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:name="com.hfad.petlogger.AssociatedPetsDisplayFragment"
+                tools:layout="@layout/fragment_associated_pets_display" />
 
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/associated_photos_fragment_container_view"

@@ -5,6 +5,7 @@ import com.hfad.petlogger.dao.EventDao
 import com.hfad.petlogger.entities.Event
 import com.hfad.petlogger.entities.EventPet
 import com.hfad.petlogger.entities.Pet
+import com.hfad.petlogger.entities.PetWithProfilePic
 import com.hfad.petlogger.entities.Photo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -63,7 +64,15 @@ class EventRepository(private val database: PetLoggerDatabase,
         eventPetDao.insert(eventPet)
     }
 
-    fun getPhotosOfEvent(eventId: Long): Flow<List<Photo>> {
+    fun getPhotosOfEventAsFlow(eventId: Long): Flow<List<Photo>> {
         return eventDao.getPhotosOfEventAsFlow(eventId)
+    }
+
+    suspend fun getPhotosOfEvent(eventId: Long): List<Photo> = withContext(Dispatchers.IO) {
+        eventDao.fetchPhotosOfEvent(eventId)
+    }
+
+    fun getPetsWithProfilePicOfEventAsFlow(eventId: Long): Flow<List<PetWithProfilePic>> {
+        return eventDao.getPetsOfEventWithProfilePhotosAsFlow(eventId)
     }
 }

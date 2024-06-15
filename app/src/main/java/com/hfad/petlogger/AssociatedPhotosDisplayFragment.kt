@@ -7,9 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewModelScope
 import com.hfad.petlogger.databinding.FragmentAssociatedPhotosDisplayBinding
 import com.hfad.petlogger.recyclerviews.SetupAssociatedPhotosDisplayUseCase
+import kotlinx.coroutines.launch
 
 class AssociatedPhotosDisplayFragment : Fragment() {
     var _binding: FragmentAssociatedPhotosDisplayBinding? = null
@@ -30,7 +33,8 @@ class AssociatedPhotosDisplayFragment : Fragment() {
             assocPhotosViewModel.navigator,
             binding.photoList,
             requireContext(),
-            assocPhotosViewModel.viewModelScope
+            lifecycleScope,
+            viewLifecycleOwner
         )()
 
         return view

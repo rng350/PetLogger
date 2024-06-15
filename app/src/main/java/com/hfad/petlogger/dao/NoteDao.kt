@@ -9,6 +9,7 @@ import com.hfad.petlogger.entities.EventNote
 import com.hfad.petlogger.entities.Note
 import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.entities.PetNote
+import com.hfad.petlogger.entities.PetWithProfilePic
 import com.hfad.petlogger.entities.Photo
 import com.hfad.petlogger.entities.PhotoNote
 import com.hfad.petlogger.entities.WeightNote
@@ -77,4 +78,9 @@ interface NoteDao {
             "ON photo_note_table.photo_id = photo_table.photo_id " +
             "WHERE photo_note_table.note_id = :noteId")
     fun getPhotosOfNote(noteId: Long): Flow<List<Photo>>
+
+    @Query("SELECT pet_table.pet_id AS pet_id, pet_name, pet_species, pet_breed, pet_sex, pet_dob, has_dob " +
+            "FROM pet_table LEFT JOIN pet_note_table " +
+            "WHERE pet_table.pet_id = pet_note_table.pet_id AND :noteId = pet_note_table.note_id")
+    fun getPetsWithProfilePicOfNoteAsFlow(noteId: Long): Flow<List<PetWithProfilePic>>
 }

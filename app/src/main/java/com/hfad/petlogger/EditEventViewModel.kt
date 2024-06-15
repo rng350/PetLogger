@@ -3,6 +3,7 @@ package com.hfad.petlogger
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.hfad.petlogger.dao.EventDao
 import com.hfad.petlogger.dao.PetDao
@@ -10,6 +11,7 @@ import com.hfad.petlogger.entities.Event
 import com.hfad.petlogger.entities.PetWithProfilePic
 import com.hfad.petlogger.entities.Photo
 import com.hfad.petlogger.fetchers.Fetcher
+import com.hfad.petlogger.repositories.MediaRepository
 import com.hfad.petlogger.selectiontracker.EditSelectionTracker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -22,8 +24,6 @@ class EditEventViewModel(_eventID: Long, val eventDao: EventDao, petDao: PetDao)
     val pets = MutableLiveData<List<CheckableItem<PetWithProfilePic>>>()
     val eventID = MutableLiveData<Long>(_eventID)
     val eventDateTime = SelectableDateTime()
-    val initialPhotoSelection = MutableLiveData<List<Photo>>() // yuck, wanna remove this...
-    val initialPhotos = MutableLiveData<List<CheckableItem<Photo>>>()
 
     var allPetsFetched = false
     var associatedPetsFetched = false
@@ -34,7 +34,6 @@ class EditEventViewModel(_eventID: Long, val eventDao: EventDao, petDao: PetDao)
             allPets.postValue(Fetcher.fetchPetsWithProfilePhotos(petDao))
         }
         Fetcher.fetchPetsOfEventWithProfilePhotos(viewModelScope, initialPetSelection, eventDao, _eventID)
-        Fetcher.fetchPhotosOfEvent(this, initialPhotoSelection, eventDao, _eventID)
     }
 
     fun onEventFetched() {
@@ -51,16 +50,6 @@ class EditEventViewModel(_eventID: Long, val eventDao: EventDao, petDao: PetDao)
             Log.e("recyc view init", "about to initialize recyc view 2/3")
             pets.value = petList
             Log.e("recyc view init", "about to initialize recyc view 3/3 values put in. Vals:\n${petList}")
-        }
-    }
-
-    fun initAssociatedPhotoList() {
-        initialPhotoSelection.value?.let { photos ->
-            val oldPhotoList = mutableListOf<CheckableItem<Photo>>()
-            photos.map {
-                oldPhotoList.add(CheckableItem(it))
-            }
-            initialPhotos.value = oldPhotoList
         }
     }
 
@@ -81,5 +70,16 @@ class EditEventViewModel(_eventID: Long, val eventDao: EventDao, petDao: PetDao)
     // TODO: Implement
     fun deleteEvent() {
 
+    }
+
+    companion object {
+        fun provideFactory(_eventID: Long, eventDao: EventDao, petDao: PetDao): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                if (modelClass.isAssignableFrom(EditEventViewModel::class.java)) {
+                    return EditEventViewModel(_eventID, eventDao, petDao) as T
+                }
+                throw IllegalArgumentException("Unknown ViewModel")
+            }
+        }
     }
 }

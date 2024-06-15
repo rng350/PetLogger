@@ -1,8 +1,10 @@
 package com.hfad.petlogger.recyclerviews
 
 import android.content.Context
-import android.util.Log
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -10,7 +12,6 @@ import com.hfad.petlogger.R
 import com.hfad.petlogger.databinding.ItemSelectedPhotoBinding
 import com.hfad.petlogger.entities.Photo
 import com.hfad.petlogger.util.Navigator
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -19,7 +20,8 @@ class SetupAssociatedPhotosDisplayUseCase(private val photos: StateFlow<List<Pho
                                           private val photoNavigator: Navigator,
                                           private val recyclerView: RecyclerView,
                                           private val context: Context,
-                                          private val coroutineScope: CoroutineScope
+                                          private val lifecycleScope: LifecycleCoroutineScope,
+                                          private val lifecycleOwner: LifecycleOwner
 ) {
     operator fun invoke() {
         val adapter = GenericRecyclerViewAdapter<Photo, ItemSelectedPhotoBinding>(
@@ -28,9 +30,11 @@ class SetupAssociatedPhotosDisplayUseCase(private val photos: StateFlow<List<Pho
         )
         recyclerView.adapter = adapter
 
-        coroutineScope.launch {
-            photos.collectLatest {
-                adapter.submitList(it)
+        lifecycleScope.launch {
+            lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                photos.collectLatest {
+                    adapter.submitList(it)
+                }
             }
         }
     }

@@ -9,7 +9,8 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.databinding.FragmentViewNoteBinding
-import com.hfad.petlogger.photodisplay.GetPhotosOfNoteUseCase
+import com.hfad.petlogger.photodisplay.stateful.GetPetsOfNoteForDisplayUseCase
+import com.hfad.petlogger.photodisplay.stateful.GetPhotosOfNoteForDisplayUseCase
 import com.hfad.petlogger.repositories.MediaRepository
 import com.hfad.petlogger.repositories.NoteRepository
 
@@ -37,9 +38,13 @@ class ViewNoteFragment : Fragment() {
         binding.viewNoteViewModel = viewNoteViewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        val getPhotosOfNote = GetPhotosOfNoteUseCase(noteId, noteRepository)
+        val getPhotosOfNote = GetPhotosOfNoteForDisplayUseCase(noteId, noteRepository)
         val associatedPhotosViewModel = ViewModelProvider(this, AssociatedPhotosDisplayViewModel.provideFactory(getPhotosOfNote)).get(AssociatedPhotosDisplayViewModel::class.java)
         binding.associatedPhotosDisplayViewModel = associatedPhotosViewModel
+
+        val getAssociatedPets = GetPetsOfNoteForDisplayUseCase(noteId, noteRepository)
+        val associatedPetsDisplayViewModel = ViewModelProvider(this, AssociatedPetsDisplayViewModel.provideFactory(getAssociatedPets)).get(AssociatedPetsDisplayViewModel::class.java)
+        binding.associatedPetsDisplayViewModel = associatedPetsDisplayViewModel
 
         viewNoteViewModel.note.observe(viewLifecycleOwner, Observer {
             it?.let {
@@ -53,6 +58,13 @@ class ViewNoteFragment : Fragment() {
 
         binding.backButton.setOnClickListener {
             findNavController().popBackStack()
+        }
+
+        associatedPetsDisplayViewModel.navigator.navigateTo.observe(viewLifecycleOwner) {
+            it?.let {
+                associatedPetsDisplayViewModel.navigator.onNavigated()
+                findNavController().navigate(ViewNoteFragmentDirections.actionViewNoteFragmentToViewPetFragment(it))
+            }
         }
 
         associatedPhotosViewModel.navigator.navigateTo.observe(viewLifecycleOwner) {

@@ -9,6 +9,9 @@
             name="viewEventViewModel"
             type="com.hfad.petlogger.ViewEventViewModel" />
         <variable
+            name="associatedPetsDisplayViewModel"
+            type="com.hfad.petlogger.AssociatedPetsDisplayViewModel" />
+        <variable
             name="associatedPhotosDisplayViewModel"
             type="com.hfad.petlogger.AssociatedPhotosDisplayViewModel" />
     </data>
@@ -73,26 +76,12 @@
                     android:enabled="false"/>
             </com.google.android.material.textfield.TextInputLayout>
 
-            <TextView
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/associated_pets_fragment_container_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:text="@string/event_pets_involved_header" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/pets_list"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:gravity="top"
-                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                    app:spanCount="3"/>
-            </LinearLayout>
+                android:name="com.hfad.petlogger.AssociatedPetsDisplayFragment"
+                tools:layout="@layout/fragment_associated_pets_display" />
 
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/associated_photos_fragment_container_view"

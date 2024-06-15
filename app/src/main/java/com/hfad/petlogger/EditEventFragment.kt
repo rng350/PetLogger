@@ -8,19 +8,19 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
 import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.databinding.FragmentEditEventBinding
 import com.hfad.petlogger.entitylinkers.PhotoToEventLinker
+import com.hfad.petlogger.photodisplay.stateless.GetPhotosOfEventUseCase
 import com.hfad.petlogger.photoselection.*
 import com.hfad.petlogger.recyclerviews.ItemPickers
+import com.hfad.petlogger.repositories.EventRepository
+import com.hfad.petlogger.repositories.MediaRepository
 
 class EditEventFragment : Fragment() {
     private var _binding: FragmentEditEventBinding? = null
     private val binding get() = _binding!!
-    /*private var _galleryPicker: GalleryPicker? = null
-    private val galleryPicker get() = _galleryPicker!!*/
-    private var _galleryEditDisplay: GalleryEditDisplay? = null
-    private val galleryEditDisplay get() = _galleryEditDisplay
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,48 +31,30 @@ class EditEventFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
 
         val application = requireNotNull(this.activity).application
+        val database = PetLoggerDatabase.getInstance(application)
 
         val eventID = EditEventFragmentArgs.fromBundle(requireArguments()).eventId
+        val mediaRepository = MediaRepository(database, requireContext())
+        val eventRepository = EventRepository(database, mediaRepository)
 
-        val petDao = PetLoggerDatabase.getInstance(application).petDao
-        val photoDao = PetLoggerDatabase.getInstance(application).photoDao
-        val eventDao = PetLoggerDatabase.getInstance(application).eventDao
+        val petDao = database.petDao
+        val eventDao = database.eventDao
 
-        val editEventViewModelFactory = EditEventViewModelFactory(eventID, eventDao, petDao)
-        val editEventViewModel = ViewModelProvider(this, editEventViewModelFactory).get(EditEventViewModel::class.java)
+        val editEventViewModel = ViewModelProvider(this, EditEventViewModel.provideFactory(eventID, eventDao, petDao)).get(EditEventViewModel::class.java)
         binding.viewModel = editEventViewModel
 
-        val galleryEditDisplayViewModelFactory = GalleryEditDisplayViewModelFactory(
-            associatedID = editEventViewModel.eventID,
-            eventDao = eventDao,
-            choiceLimit = 10
-        )
-        val galleryEditDisplayViewModel = ViewModelProvider(this, galleryEditDisplayViewModelFactory).get((GalleryEditDisplayViewModel::class.java))
-        binding.galleryEditDisplayViewModel = galleryEditDisplayViewModel
+        val getPhotosOfEventUseCase = GetPhotosOfEventUseCase(eventID, eventRepository)
+        val mediaSelectionViewModel = ViewModelProvider(this, MediaSelectionViewModel.provideFactory(
+            mediaRepository = mediaRepository,
+            fetchInitialSelection = getPhotosOfEventUseCase,
+            maxItems = 10)).get(MediaSelectionViewModel::class.java)
+        binding.mediaSelectionViewModel = mediaSelectionViewModel
 
         editEventViewModel.event.observe(viewLifecycleOwner, Observer {
             it?.let {
                 setAppBarTitle(title = it.title, subtitle = getString(R.string.editing_event_details))
             }
         })
-
-        val galleryViewModelFactory = GalleryViewModelFactory(
-            entityLinker = PhotoToEventLinker(photoDao),
-            photoDao = photoDao,
-            photosSelected = galleryEditDisplayViewModel.newPhotosAssociatedTracker)
-        val galleryViewModel = ViewModelProvider(this, galleryViewModelFactory).get(GalleryViewModel::class.java)
-        binding.galleryViewModel = galleryViewModel
-
-        _galleryEditDisplay = GalleryEditDisplay(
-            binding.galleryEditPicker,
-            photoDao,
-            eventDao,
-            this,
-            editEventViewModel.eventID,
-            galleryEditDisplayViewModel,
-            galleryViewModel
-        )
-        galleryEditDisplay?.onCreate(savedInstanceState)
 
         ItemPickers.setupPetWithProfilePhotoEditPicker(
             editEventViewModel.pets,
@@ -96,10 +78,6 @@ class EditEventFragment : Fragment() {
         editEventViewModel.allPets.observeOnce(viewLifecycleOwner, Observer {
             editEventViewModel.allPetsFetched = true
             editEventViewModel.initRecyclerViewPetList()
-        })
-
-        editEventViewModel.initialPhotoSelection.observeOnce(viewLifecycleOwner, Observer {
-            editEventViewModel.initAssociatedPhotoList()
         })
 
         binding.inputEventDateButton.setOnClickListener {
@@ -127,16 +105,8 @@ class EditEventFragment : Fragment() {
         return view
     }
 
-    override fun onResume() {
-        super.onResume()
-        galleryEditDisplay?.onResume()
-        /*galleryPicker.onResume()*/
-    }
-
     override fun onDestroy() {
         super.onDestroy()
-        galleryEditDisplay?.onDestroy()
-        /*galleryPicker.onDestroy()*/
         _binding = null
     }
 }

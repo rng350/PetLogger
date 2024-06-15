@@ -8,12 +8,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.hfad.petlogger.entities.Photo
+import com.hfad.petlogger.photodisplay.stateless.GetAssociatedItemsUseCase
 import com.hfad.petlogger.repositories.MediaRepository
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class MediaSelectionViewModel(private val mediaRepository: MediaRepository,
-                              private val initialSelection: List<Photo> = listOf<Photo>(),
+                              private val fetchInitialSelection: GetAssociatedItemsUseCase<Photo>? = null,
                               val maxItems: Int = Int.MAX_VALUE) : ViewModel() {
+    private var initialSelection: List<Photo> = listOf<Photo>()
     private var _currentPhotoSelection = MutableLiveData<List<Photo>>(listOf<Photo>())
     val currentPhotoSelection: LiveData<List<Photo>> get() = _currentPhotoSelection
     private var _selectionToRemove = MutableLiveData<List<Photo>>(listOf<Photo>())
@@ -22,11 +25,20 @@ class MediaSelectionViewModel(private val mediaRepository: MediaRepository,
     val selectionToAdd: LiveData<List<Photo>> get() = _selectionToAdd
 
     init {
-        resetSelection()
+        if (fetchInitialSelection != null) {
+            viewModelScope.launch {
+                async {
+                    initialSelection = fetchInitialSelection!!()
+                }.await()
+                resetSelection()
+            }
+        } else {
+            resetSelection()
+        }
     }
 
     fun resetSelection() {
-        _currentPhotoSelection.value = initialSelection.toList()
+        _currentPhotoSelection.value = initialSelection
         _selectionToAdd.value = listOf<Photo>()
         _selectionToRemove.value = listOf<Photo>()
     }
@@ -59,14 +71,14 @@ class MediaSelectionViewModel(private val mediaRepository: MediaRepository,
         return selectionToAdd.value ?: listOf<Photo>()
     }
 
-    fun getPhotosToRemove() {
-
+    fun getPhotosToRemove(): List<Photo> {
+        return selectionToRemove.value ?: listOf<Photo>()
     }
     companion object {
-        fun provideFactory(mediaRepository: MediaRepository, initialSelection: List<Photo> = listOf<Photo>(), maxItems: Int = Int.MAX_VALUE): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+        fun provideFactory(mediaRepository: MediaRepository, fetchInitialSelection: GetAssociatedItemsUseCase<Photo>? = null, maxItems: Int = Int.MAX_VALUE): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(MediaSelectionViewModel::class.java)) {
-                    return MediaSelectionViewModel(mediaRepository, initialSelection, maxItems) as T
+                    return MediaSelectionViewModel(mediaRepository, fetchInitialSelection, maxItems) as T
                 }
                 throw IllegalArgumentException("Unknown ViewModel")
             }

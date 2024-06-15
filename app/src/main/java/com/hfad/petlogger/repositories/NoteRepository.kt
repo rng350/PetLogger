@@ -8,6 +8,7 @@ import com.hfad.petlogger.entities.EventNote
 import com.hfad.petlogger.entities.Note
 import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.entities.PetNote
+import com.hfad.petlogger.entities.PetWithProfilePic
 import com.hfad.petlogger.entities.Photo
 import com.hfad.petlogger.entities.PhotoNote
 import com.hfad.petlogger.entities.Weight
@@ -112,7 +113,11 @@ class NoteRepository(
         noteDao.insert(PhotoNote(photoId, noteId))
     }
 
-    fun getPhotosOfNote(noteId: Long): Flow<List<Photo>> {
+    fun getPhotosOfNoteAsFlow(noteId: Long): Flow<List<Photo>> {
         return noteDao.getPhotosOfNote(noteId)
+    }
+
+    fun getPetsWithProfilePicsOfNoteAsFlow(noteId: Long): Flow<List<PetWithProfilePic>> {
+        return noteDao.getPetsWithProfilePicOfNoteAsFlow(noteId)
     }
 }

@@ -87,10 +87,6 @@ class MediaRepository(
         }
     }
 
-    suspend fun getEventPhotos(eventID: Long): List<Photo> = withContext(Dispatchers.IO) {
-        photoDao.fetchPhotosOfEvent(eventID)
-    }
-
     suspend fun updateEventPhotos(eventID: Long, photosToAdd: List<Photo>, photosToDelete: List<Photo>) {
         withContext(Dispatchers.IO) {
             for (photoToAdd in photosToAdd) {
