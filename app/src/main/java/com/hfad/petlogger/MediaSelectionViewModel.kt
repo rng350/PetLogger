@@ -45,10 +45,15 @@ class MediaSelectionViewModel(private val mediaRepository: MediaRepository,
 
     fun retrievePhotoSelection(context: Context, uris: List<Uri>) {
         viewModelScope.launch {
-            _selectionToAdd.value = mediaRepository.retrievePhotos(context, uris).toMutableList()
-            val currentSelectionMutable = currentPhotoSelection.value?.toMutableList() ?: mutableListOf<Photo>()
+            val newAddedSelection = mediaRepository.retrievePhotos(context, uris)
+            // hashsets used to prevent duplicate additions
+            val oldAddedSelection = _selectionToAdd.value?.toHashSet() ?: HashSet<Photo>()
+            oldAddedSelection.addAll(newAddedSelection)
+            val newSelectionToAdd = oldAddedSelection.toList()
+            _selectionToAdd.value = newSelectionToAdd
+            val currentSelectionMutable = currentPhotoSelection.value?.toHashSet() ?: HashSet<Photo>()
             currentSelectionMutable.addAll(_selectionToAdd.value ?: listOf())
-            _currentPhotoSelection.value = currentSelectionMutable
+            _currentPhotoSelection.value = currentSelectionMutable.toList()
         }
     }
 
