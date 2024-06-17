@@ -3,14 +3,18 @@ package com.hfad.petlogger
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.hfad.petlogger.dao.PetDao
 import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.entities.Photo
+import com.hfad.petlogger.repositories.MediaRepository
+import com.hfad.petlogger.repositories.PetRepository
 import com.hfad.petlogger.selectiontracker.NewSelectionTracker
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-class NewPetViewModel(val dao: PetDao) : ViewModel() {
+class NewPetViewModel(private val petRepository: PetRepository) : ViewModel() {
     var petName : String = ""
     var petSpecies : String = ""
     var petBreed : String = ""
@@ -19,10 +23,9 @@ class NewPetViewModel(val dao: PetDao) : ViewModel() {
         get() = _petSex
     var petDOB : SelectableDateOptional = SelectableDateOptional()
     val petID = MutableLiveData<Long>()
-    val petPhotoSelection = NewSelectionTracker<Photo>(1)
+    val goToViewPet = MutableLiveData<Long>()
 
-    fun addPet() {
-        Log.i("PET_ADDING", "trying to add pet... name:${petName}")
+    fun addPet(petProfilePhoto: Photo? = null, petPhotos: List<Photo> = listOf<Photo>()) {
         if (petName.isNotEmpty()) {
             viewModelScope.launch {
                 val pet = Pet()
@@ -32,14 +35,26 @@ class NewPetViewModel(val dao: PetDao) : ViewModel() {
                 pet.petSex = _petSex
                 pet.petDOB = petDOB.dateTime
                 pet.hasDOB = petDOB.hasBeenSet
-                Log.i("PET_ADDING", "trying to add pet... name: ${pet.petName}, id: ${pet.petID},hasDob: ${pet.hasDOB}, dob: ${pet.petDOB.toString()}")
-                petID.value = dao.insert(pet)
-                Log.i("PET_ADDING", "Pet has been ADDED!")
+                val addedPetId = async {
+                    petRepository.addPet(pet, petPhotos, petProfilePhoto)
+                }.await()
+                goToViewPet.value = addedPetId
             }
         }
     }
 
     fun setPetSex(newPetSex: String) {
         _petSex = newPetSex
+    }
+
+    companion object {
+        fun provideFactory(petRepository: PetRepository): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                if (modelClass.isAssignableFrom(NewPetViewModel::class.java)) {
+                    return NewPetViewModel(petRepository) as T
+                }
+                throw IllegalArgumentException("Unknown ViewModel")
+            }
+        }
     }
 }

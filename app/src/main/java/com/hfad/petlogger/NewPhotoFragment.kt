@@ -44,7 +44,7 @@ class NewPhotoFragment : Fragment() {
         val database = PetLoggerDatabase.getInstance(application)
         val mediaRepository = MediaRepository(database, requireContext())
         val noteRepository = NoteRepository(database, mediaRepository)
-        val petRepository = PetRepository(database.petDao, mediaRepository)
+        val petRepository = PetRepository(database, mediaRepository)
         val eventRepository = EventRepository(database, mediaRepository)
         val weightRepository = WeightRepository(database)
 

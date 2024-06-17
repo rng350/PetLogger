@@ -14,16 +14,17 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.hfad.petlogger.databinding.FragmentNewPetBinding
 import com.hfad.petlogger.entitylinkers.PetProfilePhotoLinker
+import com.hfad.petlogger.photodisplay.stateless.GetSingleAssociatedItemUseCase
 import com.hfad.petlogger.photoselection.GalleryPicker
 import com.hfad.petlogger.photoselection.GalleryViewModel
 import com.hfad.petlogger.photoselection.GalleryViewModelFactory
+import com.hfad.petlogger.repositories.MediaRepository
+import com.hfad.petlogger.repositories.PetRepository
 
 
 class NewPetFragment : Fragment() {
     private var _binding: FragmentNewPetBinding? = null
     private val binding get() = _binding!!
-    private var _galleryPicker: GalleryPicker? = null
-    private val galleryPicker get() = _galleryPicker!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,74 +32,61 @@ class NewPetFragment : Fragment() {
     ): View? {
         _binding = FragmentNewPetBinding.inflate(inflater, container, false)
         val view = binding.root
-        val application = requireNotNull(this.activity).application
-        val petDao = PetLoggerDatabase.getInstance(application).petDao
-        val photoDao = PetLoggerDatabase.getInstance(application).photoDao
-        val viewModelFactory = NewPetViewModelFactory(petDao)
-        val viewModel = ViewModelProvider(this, viewModelFactory).get(NewPetViewModel::class.java)
-
-        val galleryViewModelFactory = GalleryViewModelFactory(
-            entityLinker = PetProfilePhotoLinker(photoDao),
-            photoDao = photoDao,
-            photosSelected = viewModel.petPhotoSelection
-            //photosSelected = viewModel.tempDELETEMEBITCH
-        )
-        val galleryViewModel = ViewModelProvider(this, galleryViewModelFactory).get(GalleryViewModel::class.java)
-        binding.galleryViewModel = galleryViewModel
-
-        _galleryPicker = GalleryPicker(this, binding.galleryPicker, galleryViewModel, associatedID = viewModel.petID)
-        galleryPicker.onCreate(savedInstanceState)
-
-        binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        setAppBarTitle(getString(R.string.new_pet_header))
+        val application = requireNotNull(this.activity).application
+        val database = PetLoggerDatabase.getInstance(application)
+        val mediaRepository = MediaRepository(database, requireContext())
+        val petRepository = PetRepository(database, mediaRepository)
+        val newPetViewModel = ViewModelProvider(this, NewPetViewModel.provideFactory(petRepository)).get(NewPetViewModel::class.java)
+        binding.newPetViewModel = newPetViewModel
 
-        galleryViewModel.photosSelected.selectionToAdd.observe(viewLifecycleOwner, Observer {
-            if (it.size > 0) {
-                Glide.with(requireContext())
-                    .load(it[0].item.contentUri)
-                    .apply(RequestOptions().placeholder(R.drawable.placeholder))
-                    .into(binding.petPhoto)
-            } else binding.petPhoto.setImageResource(R.drawable.placeholder)
-        })
+        val profilePicSelectionViewModel = ViewModelProvider(this, MediaSingleSelectionViewModel.provideFactory(mediaRepository = mediaRepository)).get(MediaSingleSelectionViewModel::class.java)
+        binding.petProfilePhotoSelectionViewModel = profilePicSelectionViewModel
+
+        val photoMultiSelectionViewModel = ViewModelProvider(this, MediaSelectionViewModel.provideFactory(mediaRepository = mediaRepository)).get(MediaSelectionViewModel::class.java)
+        binding.photoSelectionViewModel = photoMultiSelectionViewModel
+
+        setAppBarTitle(getString(R.string.new_pet_header))
         
         binding.petSexSelection.setOnCheckedChangeListener { radioGroup, i ->
             when(binding.petSexSelection.checkedRadioButtonId) {
-                binding.petSexMale.id -> viewModel.setPetSex("Male")
-                binding.petSexFemale.id -> viewModel.setPetSex("Female")
-                binding.petSexOther.id -> viewModel.setPetSex("Other")
-                -1 -> viewModel.setPetSex("")
+                binding.petSexMale.id -> newPetViewModel.setPetSex("Male")
+                binding.petSexFemale.id -> newPetViewModel.setPetSex("Female")
+                binding.petSexOther.id -> newPetViewModel.setPetSex("Other")
+                -1 -> newPetViewModel.setPetSex("")
             }
-            Log.d("pet_sex_selection", "${binding.petSexSelection.checkedRadioButtonId} : ${viewModel.petSex}")
+            Log.d("pet_sex_selection", "${binding.petSexSelection.checkedRadioButtonId} : ${newPetViewModel.petSex}")
         }
 
         binding.submit.setOnClickListener {
-            if (viewModel.petName.isNotEmpty()) {
-                viewModel.addPet()
-                galleryPicker.saveToLocalStorage()
+            if (newPetViewModel.petName.isNotEmpty()) {
+                newPetViewModel.addPet(petProfilePhoto = profilePicSelectionViewModel.currentPhoto.value,  petPhotos = photoMultiSelectionViewModel.getPhotosToAdd())
             } else Toast.makeText(requireContext(), R.string.no_pet_name_given, Toast.LENGTH_LONG).show()
         }
 
         binding.inputDOBButton.setOnClickListener {
-            DatePicker.generate(viewModel.petDOB).show(parentFragmentManager, "DATE_PICKER")
+            DatePicker.generate(newPetViewModel.petDOB).show(parentFragmentManager, "DATE_PICKER")
         }
 
         binding.back.setOnClickListener {
             findNavController().popBackStack()
         }
 
-        return view
-    }
+        newPetViewModel.goToViewPet.observe(viewLifecycleOwner) {petId ->
+            petId?.let {
+                newPetViewModel.goToViewPet.value = null
+                profilePicSelectionViewModel.resetSelection()
+                photoMultiSelectionViewModel.resetSelection()
+                findNavController().navigate(NewPetFragmentDirections.actionNewPetFragmentToViewPetFragment(it))
+            }
+        }
 
-    override fun onResume() {
-        super.onResume()
-        galleryPicker.onResume()
+        return view
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        galleryPicker.onDestroy()
         _binding = null
     }
 }

@@ -6,6 +6,12 @@ import com.hfad.petlogger.entities.*
 
 @Dao
 interface PetDao {
+    @Transaction
+    suspend fun insertPet(petToInsert: Pet): Pet {
+        val rowId = insert(petToInsert)
+        return getPetFromRow(rowId)
+    }
+
     @Insert
     suspend fun insert(pet: Pet): Long
 
@@ -56,4 +62,16 @@ interface PetDao {
 
     @Query("SELECT * FROM pet_table WHERE pet_id=:petID")
     suspend fun getPetWithProfilePic(petID: Long): PetWithProfilePic
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertPetPhoto(petPhoto: PetPhoto)
+
+    @Update
+    suspend fun updatePetPhoto(petPhoto: PetPhoto)
+
+    @Delete
+    suspend fun deletePetPhoto(petPhoto: PetPhoto)
+
+    @Query("SELECT * FROM pet_table WHERE rowid = :rowId")
+    suspend fun getPetFromRow(rowId: Long): Pet
 }

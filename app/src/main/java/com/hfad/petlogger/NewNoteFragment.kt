@@ -35,7 +35,7 @@ class NewNoteFragment : Fragment() {
         val petDao = database.petDao
         val mediaRepository = MediaRepository(database, requireContext())
         val noteRepository = NoteRepository(database, mediaRepository)
-        val petRepository = PetRepository(petDao, mediaRepository)
+        val petRepository = PetRepository(database, mediaRepository)
         val eventRepository = EventRepository(database, mediaRepository)
         val weightRepository = WeightRepository(database)
 

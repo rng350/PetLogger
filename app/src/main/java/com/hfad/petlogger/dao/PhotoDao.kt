@@ -17,9 +17,11 @@ interface PhotoDao {
     @Delete
     suspend fun delete(photo: Photo)
 
-
     @Query("SELECT * FROM photo_table WHERE photo_id=:photoId LIMIT 1")
     suspend fun getPhoto(photoId: Long): Photo
+
+    @Query("SELECT * FROM photo_table WHERE photo_id=:photoId LIMIT 1")
+    suspend fun checkPhoto(photoId: Long): Photo?
 
     @Query("SELECT * FROM photo_table")
     suspend fun getAllPhotos(): List<Photo>
@@ -42,7 +44,7 @@ interface PhotoDao {
     @Delete
     suspend fun delete(petProfilePhoto: PetProfilePhoto)
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(photoNote: PhotoNote)
 
     @Update

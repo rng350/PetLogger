@@ -137,6 +137,9 @@
             app:destination="@id/homeFragment"
             app:popUpTo="@id/homeFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_newPetFragment_to_viewPetFragment"
+            app:destination="@id/viewPetFragment" />
     </fragment>
     <fragment
         android:id="@+id/newWeightFragment"

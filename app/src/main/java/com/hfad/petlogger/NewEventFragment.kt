@@ -31,7 +31,6 @@ class NewEventFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
         val application = requireNotNull(this.activity).application
         val database = PetLoggerDatabase.getInstance(application)
-        val petDao = database.petDao
 
         val mediaRepository = MediaRepository(database, requireContext())
         val eventRepository = EventRepository(database, mediaRepository)
@@ -41,7 +40,7 @@ class NewEventFragment : Fragment() {
         val mediaSelectionViewModel = ViewModelProvider(this, MediaSelectionViewModel.provideFactory(mediaRepository=mediaRepository, maxItems=10)).get(MediaSelectionViewModel::class.java)
         binding.mediaSelectionViewModel = mediaSelectionViewModel
 
-        val petRepository = PetRepository(petDao, mediaRepository)
+        val petRepository = PetRepository(database, mediaRepository)
         val petMultiSelectionViewModel = ViewModelProvider(this, PetMultiSelectionViewModel.provideFactory(petRepository)).get(PetMultiSelectionViewModel::class.java)
         binding.petMultiSelectionViewModel = petMultiSelectionViewModel
 

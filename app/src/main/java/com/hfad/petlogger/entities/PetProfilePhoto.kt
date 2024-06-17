@@ -4,15 +4,9 @@ import androidx.room.*
 
 @Entity(tableName="pet_profile_photo_table",
     foreignKeys = [
-        ForeignKey(entity = Photo::class,
-        parentColumns = arrayOf("photo_id"),
-        childColumns = arrayOf("photo_id"),
-        onDelete = ForeignKey.CASCADE,
-        onUpdate = ForeignKey.CASCADE),
-
-        ForeignKey(entity = Pet::class,
-        parentColumns = arrayOf("pet_id"),
-        childColumns = arrayOf("pet_id"),
+        ForeignKey(entity = PetPhoto::class,
+        parentColumns = ["pet_id", "photo_id"],
+        childColumns = ["pet_id", "photo_id"],
         onDelete = ForeignKey.CASCADE,
         onUpdate = ForeignKey.CASCADE)
     ],
@@ -23,6 +17,6 @@ data class PetProfilePhoto(
     val photoID: Long,
 
     @ColumnInfo(name="pet_id")
-    @PrimaryKey()
+    @PrimaryKey
     val petID: Long
 )

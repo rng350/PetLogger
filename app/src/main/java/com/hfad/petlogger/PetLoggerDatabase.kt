@@ -19,6 +19,7 @@ import com.hfad.petlogger.util.URIConverter
 @Database(
     entities = [
         Pet::class,
+        PetPhoto::class,
 
         Event::class,
         EventPet::class,
@@ -35,7 +36,7 @@ import com.hfad.petlogger.util.URIConverter
         PhotoNote::class,
         WeightNote::class
     ],
-    version = 4,
+    version = 6,
     exportSchema = false)
 @TypeConverters(
     Converter::class,

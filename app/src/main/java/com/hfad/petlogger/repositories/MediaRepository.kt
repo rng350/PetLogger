@@ -116,15 +116,27 @@ class MediaRepository(
 
     // Inserting a photo as an attachment
     suspend fun addPhoto(photo: Photo): Photo? = withContext(Dispatchers.IO) {
-            // step 1 save photo to file storage
-        val submittedPhotoDeffered = async {
+        // Step 1: Check that photo doesn't already exist first
+        Log.d("MedRep:addPhoto", "BEFORE")
+        val checkPhoto = photoDao.checkPhoto(photo.id)
+        checkPhoto?.let {
+            Log.d("MedRep:addPhoto", "Photo already in gallery")
+            return@withContext it
+        }
+
+        Log.d("MedRep:addPhoto", "Photo not found in gallery")
+        // step 2 save photo to file storage
+        val submittedPhotoDeferred = async {
             saveToLocalStorage(photo)
         }.await()
-        // step 2 save new photo to database
-        submittedPhotoDeffered?.let {
+
+        Log.d("MedRep:addPhoto", "Photo saved to file storage... ${submittedPhotoDeferred}")
+        // step 3 save new photo to database
+        submittedPhotoDeferred?.let {
             photoDao.insert(it)
         }
-        submittedPhotoDeffered
+        Log.d("MedRep:addPhoto", "Photo inserted in DB... ${submittedPhotoDeferred}")
+        submittedPhotoDeferred
     }
 
     suspend fun addNewPhotosForEvent(photos: List<Photo>, eventId: Long) = withContext(Dispatchers.IO) {
@@ -142,17 +154,6 @@ class MediaRepository(
             }.await()
             photoAdded?.let {
                 photoDao.insert(PhotoEvent(it.id, eventID))
-            }
-        }
-    }
-
-    suspend fun addPetPhoto(photo: Photo, petID: Long) {
-        withContext(Dispatchers.IO) {
-            val photoAdded = async {
-                addPhoto(photo)
-            }.await()
-            photoAdded?.let {
-                photoDao.insert(PetProfilePhoto(photo.id, petID))
             }
         }
     }
@@ -216,12 +217,6 @@ class MediaRepository(
                         id
                     )
                     val size = cursor.getDouble(fileSizeColumn)
-//                    val date: LocalDateTime? =
-//                        if (dateTakenColumn != -1) {
-//                            LocalDateTime.ofInstant(Instant.ofEpochMilli(cursor.getLong(dateTakenColumn)), ZoneOffset.UTC)
-//                        } else if (dateAddedColumn != -1) {
-//                            LocalDateTime.ofInstant(Instant.ofEpochMilli(cursor.getLong(dateAddedColumn)), ZoneOffset.UTC)
-//                        } else null
                     val date: OffsetDateTime? =
                         if (dateTakenColumn != -1) {
                             OffsetDateTime.ofInstant(Instant.ofEpochMilli(cursor.getLong(dateTakenColumn)), ZoneId.of("UTC"))

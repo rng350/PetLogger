@@ -6,11 +6,14 @@
     tools:context=".NewPetFragment">
     <data>
         <variable
-            name="viewModel"
+            name="newPetViewModel"
             type="com.hfad.petlogger.NewPetViewModel" />
         <variable
-            name="galleryViewModel"
-            type="com.hfad.petlogger.photoselection.GalleryViewModel" />
+            name="petProfilePhotoSelectionViewModel"
+            type="com.hfad.petlogger.MediaSingleSelectionViewModel"/>
+        <variable
+            name="photoSelectionViewModel"
+            type="com.hfad.petlogger.MediaSelectionViewModel" />
     </data>
 
     <ScrollView
@@ -27,12 +30,12 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <ImageView
-                    android:id="@+id/petPhoto"
-                    android:layout_width="200dp"
-                    android:layout_height="200dp"
-                    android:adjustViewBounds="false"
-                    android:scaleType="centerCrop" />
+                <androidx.fragment.app.FragmentContainerView
+                    android:id="@+id/pet_profile_pic_selection_fragment_container_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:name="com.hfad.petlogger.MediaSingleSelectionFragment"
+                    tools:layout="@layout/fragment_media_single_selection" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/petName"
@@ -44,7 +47,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="text"
-                        android:text="@={viewModel.petName}" />
+                        android:text="@={newPetViewModel.petName}" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <LinearLayout
@@ -64,7 +67,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="text"
-                            android:text="@={viewModel.petSpecies}" />
+                            android:text="@={newPetViewModel.petSpecies}" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -78,7 +81,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="text"
-                            android:text="@={viewModel.petBreed}" />
+                            android:text="@={newPetViewModel.petBreed}" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                 </LinearLayout>
@@ -119,29 +122,16 @@
                     android:id="@+id/inputDOBButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@{@string/input_pet_dob(viewModel.petDOB.dateDisplay)}" />
+                    android:text="@{@string/input_pet_dob(newPetViewModel.petDOB.dateDisplay)}" />
 
-                <!--<EditText
-                    android:id="@+id/additionalNotes"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:inputType="text"
-                    android:hint="@string/pet_additional_notes"/>-->
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/galleryPickerSpace"
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/media_selection_fragment_container_view"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_gravity="bottom"
-                android:orientation="vertical"
-                android:layout_weight="1">
-                <include
-                    android:id="@+id/galleryPicker"
-                    layout="@layout/fragment_gallery_picker"
-                    app:viewModel="@{galleryViewModel}"/>
-            </LinearLayout>
+                android:layout_height="wrap_content"
+                android:name="com.hfad.petlogger.MediaSelectionFragment"
+                tools:layout="@layout/fragment_media_selection" />
 
             <LinearLayout
                 android:layout_width="match_parent"

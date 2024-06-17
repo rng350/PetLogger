@@ -3,6 +3,7 @@ package com.hfad.petlogger.dao
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.hfad.petlogger.entities.EventNote
@@ -37,7 +38,7 @@ interface NoteDao {
             "WHERE pet_table.pet_id = pet_note_table.pet_id AND :noteId = pet_note_table.note_id")
     suspend fun getPetsOfNote(noteId: Long): List<Pet>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(petNote: PetNote)
 
     @Update
@@ -46,7 +47,7 @@ interface NoteDao {
     @Delete
     suspend fun delete(petNote: PetNote)
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(eventNote: EventNote)
 
     @Update
@@ -55,7 +56,7 @@ interface NoteDao {
     @Delete
     suspend fun delete(eventNote: EventNote)
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(weightNote: WeightNote)
 
     @Update
@@ -64,7 +65,7 @@ interface NoteDao {
     @Delete
     suspend fun delete(weightNote: WeightNote)
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(photoNote: PhotoNote)
 
     @Update

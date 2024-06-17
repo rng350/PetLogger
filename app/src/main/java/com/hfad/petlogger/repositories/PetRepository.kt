@@ -1,13 +1,30 @@
 package com.hfad.petlogger.repositories
 
+import android.util.Log
 import com.hfad.petlogger.PetLoggerDatabase
 import com.hfad.petlogger.dao.PetDao
 import com.hfad.petlogger.entities.Pet
+import com.hfad.petlogger.entities.PetPhoto
+import com.hfad.petlogger.entities.PetProfilePhoto
 import com.hfad.petlogger.entities.PetWithProfilePic
+import com.hfad.petlogger.entities.Photo
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
 
-class PetRepository(private val petDao: PetDao, private val mediaRepository: MediaRepository) {
+class PetRepository(private val database: PetLoggerDatabase, private val mediaRepository: MediaRepository) {
+    private val petDao = database.petDao
+    private val photoDao = database.photoDao
+    suspend fun addPet(pet: Pet, photos: List<Photo> = listOf<Photo>(), profilePic: Photo? = null) = withContext(Dispatchers.IO) {
+        if (profilePic == null) {
+            addPetPhotosNoProfilePic(pet, photos)
+        }
+        else {
+            addPetPhotosWithProfilePic(pet, photos, profilePic)
+        }
+    }
+
     suspend fun getPet(petId: Long) = withContext(Dispatchers.IO) {
         petDao.get(petId)
     }
@@ -18,5 +35,76 @@ class PetRepository(private val petDao: PetDao, private val mediaRepository: Med
 
     suspend fun updatePet(pet: Pet) = withContext(Dispatchers.IO) {
         petDao.update(pet)
+    }
+
+    suspend fun setPetProfilePhoto(petId: Long, photoId: Long) = withContext(Dispatchers.IO) {
+        photoDao.insert(PetProfilePhoto(petID = petId, photoID = photoId))
+    }
+
+    suspend fun getPetProfilePhoto(petId: Long): Photo? = withContext(Dispatchers.IO) {
+        petDao.getPetProfilePhoto(petId)
+    }
+
+    private suspend fun addPetPhotosNoProfilePic(pet: Pet, photos: List<Photo> = listOf<Photo>()): Long = withContext(Dispatchers.IO){
+        val petInserted = async {
+            val rowId = petDao.insert(pet)
+            petDao.getPetFromRow(rowId)
+        }.await()
+        photos.map { photo ->
+            async {
+                addPetPhoto(petID = petInserted.petID, photo = photo)
+            }
+        }.awaitAll()
+        petInserted.petID
+    }
+
+    private suspend fun addPetPhotosWithProfilePic(pet: Pet, photos: List<Photo> = listOf<Photo>(), profilePic: Photo): Long = withContext(Dispatchers.IO){
+        val petInsertedDeferred = async {
+            val rowId = petDao.insert(pet)
+            petDao.getPetFromRow(rowId)
+        }
+        val newPhotosList = photos.toMutableList()
+        newPhotosList.remove(profilePic)
+        val combinedPhotos: List<Photo> = listOf(profilePic) + newPhotosList
+        val petInserted = petInsertedDeferred.await()
+        combinedPhotos.map { photo ->
+            async {
+                if (photo == profilePic) {
+                    addPetProfilePhoto(petInserted.petID, photo)
+                }
+                else {
+                    addPetPhoto(petInserted.petID, photo)
+                }
+            }
+        }.awaitAll()
+        petInserted.petID
+    }
+
+    suspend fun addPetPhoto(petID: Long, photo: Photo) {
+        withContext(Dispatchers.IO) {
+            val photoAdded = async {
+                mediaRepository.addPhoto(photo)
+            }.await()
+            photoAdded?.let {
+                Log.d("PetRep:addPetPhoto", "Photo about to be linked... ${it}")
+                petDao.insertPetPhoto(PetPhoto(photoId = photo.id, petId = petID))
+                Log.d("PetRep:addPetProfPhoto", "Photo linked to Pet... ${it}")
+            }
+        }
+    }
+
+    suspend fun addPetProfilePhoto(petID: Long, photo: Photo) {
+        withContext(Dispatchers.IO) {
+            val photoAdded = async {
+                mediaRepository.addPhoto(photo)
+            }.await()
+            photoAdded?.let {
+                Log.d("PetRep:addPetProfPhoto", "Photo about to be linked... ${it}")
+                petDao.insertPetPhoto(PetPhoto(photoId = photo.id, petId = petID))
+                Log.d("PetRep:addPetProfPhoto", "Photo linked to Pet... ${it}")
+                photoDao.insert(PetProfilePhoto(photoID = photo.id, petID = petID))
+                Log.d("PetRep:addPetProfPhoto", "Photo set as PetProfilePhoto... ${it}")
+            }
+        }
     }
 }
