@@ -22,8 +22,14 @@ class NewPetViewModel(private val petRepository: PetRepository) : ViewModel() {
     val petSex: String
         get() = _petSex
     var petDOB : SelectableDateOptional = SelectableDateOptional()
-    val petID = MutableLiveData<Long>()
     val goToViewPet = MutableLiveData<Long>()
+
+    fun reset() {
+        petName = ""
+        petSpecies = ""
+        petBreed = ""
+        _petSex = ""
+    }
 
     fun addPet(petProfilePhoto: Photo? = null, petPhotos: List<Photo> = listOf<Photo>()) {
         if (petName.isNotEmpty()) {
@@ -45,6 +51,10 @@ class NewPetViewModel(private val petRepository: PetRepository) : ViewModel() {
 
     fun setPetSex(newPetSex: String) {
         _petSex = newPetSex
+    }
+
+    fun clear() {
+
     }
 
     companion object {

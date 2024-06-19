@@ -39,7 +39,7 @@ class PetListFragment : Fragment() {
             viewModel.petNavigator)
 
         binding.addPetButton.setOnClickListener {
-            this.findNavController().navigate(R.id.action_petListFragment_to_newPetFragment)
+            findNavController().navigate(PetListFragmentDirections.actionPetListFragmentToNewPetFragment())
         }
         viewModel.petNavigator.navigateTo.observe(viewLifecycleOwner, Observer {
             it?.let {

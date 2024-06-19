@@ -20,11 +20,19 @@ import com.hfad.petlogger.photoselection.GalleryViewModel
 import com.hfad.petlogger.photoselection.GalleryViewModelFactory
 import com.hfad.petlogger.repositories.MediaRepository
 import com.hfad.petlogger.repositories.PetRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 class NewPetFragment : Fragment() {
     private var _binding: FragmentNewPetBinding? = null
     private val binding get() = _binding!!
+
+    lateinit var newPetViewModel: NewPetViewModel
+    lateinit var profilePicSelectionViewModel: MediaSingleSelectionViewModel
+    lateinit var photoMultiSelectionViewModel: MediaSelectionViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,13 +46,13 @@ class NewPetFragment : Fragment() {
         val database = PetLoggerDatabase.getInstance(application)
         val mediaRepository = MediaRepository(database, requireContext())
         val petRepository = PetRepository(database, mediaRepository)
-        val newPetViewModel = ViewModelProvider(this, NewPetViewModel.provideFactory(petRepository)).get(NewPetViewModel::class.java)
+        newPetViewModel = ViewModelProvider(this, NewPetViewModel.provideFactory(petRepository)).get(NewPetViewModel::class.java)
         binding.newPetViewModel = newPetViewModel
 
-        val profilePicSelectionViewModel = ViewModelProvider(this, MediaSingleSelectionViewModel.provideFactory(mediaRepository = mediaRepository)).get(MediaSingleSelectionViewModel::class.java)
+        profilePicSelectionViewModel = ViewModelProvider(this, MediaSingleSelectionViewModel.provideFactory(mediaRepository = mediaRepository)).get(MediaSingleSelectionViewModel::class.java)
         binding.petProfilePhotoSelectionViewModel = profilePicSelectionViewModel
 
-        val photoMultiSelectionViewModel = ViewModelProvider(this, MediaSelectionViewModel.provideFactory(mediaRepository = mediaRepository)).get(MediaSelectionViewModel::class.java)
+        photoMultiSelectionViewModel = ViewModelProvider(this, MediaSelectionViewModel.provideFactory(mediaRepository = mediaRepository)).get(MediaSelectionViewModel::class.java)
         binding.photoSelectionViewModel = photoMultiSelectionViewModel
 
         setAppBarTitle(getString(R.string.new_pet_header))
@@ -65,19 +73,29 @@ class NewPetFragment : Fragment() {
             } else Toast.makeText(requireContext(), R.string.no_pet_name_given, Toast.LENGTH_LONG).show()
         }
 
-        binding.inputDOBButton.setOnClickListener {
-            DatePicker.generate(newPetViewModel.petDOB).show(parentFragmentManager, "DATE_PICKER")
+        binding.addPetBirthDateButton.isEnabled = true
+        binding.addPetBirthDateButton.setOnClickListener {
+            binding.addPetBirthDateButton.isEnabled = false
+            CoroutineScope(Dispatchers.Main.immediate).launch {
+                DatePicker.generate(newPetViewModel.petDOB)
+                    .show(parentFragmentManager, "DATE_PICKER")
+                delay(200)
+                binding.addPetBirthDateButton.isEnabled = true
+            }
         }
 
         binding.back.setOnClickListener {
             findNavController().popBackStack()
         }
 
+        binding.clear.setOnClickListener{
+            resetAll()
+        }
+
         newPetViewModel.goToViewPet.observe(viewLifecycleOwner) {petId ->
             petId?.let {
                 newPetViewModel.goToViewPet.value = null
-                profilePicSelectionViewModel.resetSelection()
-                photoMultiSelectionViewModel.resetSelection()
+                resetAll()
                 findNavController().navigate(NewPetFragmentDirections.actionNewPetFragmentToViewPetFragment(it))
             }
         }
@@ -88,5 +106,11 @@ class NewPetFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun resetAll() {
+        newPetViewModel.reset()
+        profilePicSelectionViewModel.resetSelection()
+        photoMultiSelectionViewModel.resetSelection()
     }
 }
