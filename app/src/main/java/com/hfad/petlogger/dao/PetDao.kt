@@ -3,6 +3,7 @@ package com.hfad.petlogger.dao
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.hfad.petlogger.entities.*
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PetDao {
@@ -20,9 +21,6 @@ interface PetDao {
 
     @Update
     suspend fun update(pet: Pet)
-
-    @Query("SELECT * FROM pet_table WHERE pet_id=:petId")
-    fun get(petId: Long): LiveData<Pet>
 
     @Query("SELECT * FROM pet_table WHERE pet_id=:petId")
     suspend fun getPet(petId: Long): Pet
@@ -74,4 +72,19 @@ interface PetDao {
 
     @Query("SELECT * FROM pet_table WHERE rowid = :rowId")
     suspend fun getPetFromRow(rowId: Long): Pet
+
+    @Query("SELECT photo_table.photo_id, photo_date, photo_filesize, photo_width, photo_height, photo_uri, photo_filename, photo_title " +
+            "FROM photo_table LEFT JOIN pet_photo_table " +
+            "ON photo_table.photo_id = pet_photo_table.photo_id " +
+            "WHERE pet_photo_table.pet_id=:petId ")
+    fun getPetPhotos(petId: Long): Flow<List<Photo>>
+
+    @Query("SELECT weight_id, weight_pet_id, weight_datetime, weight_notes, weight_grams " +
+            "FROM weight_table WHERE weight_pet_id = :petId")
+    fun getPetWeights(petId: Long): Flow<List<Weight>>
+
+    @Query("SELECT event_table.event_id, event_title, event_date, event_details FROM event_table " +
+            "LEFT JOIN event_pet_table ON event_table.event_id = event_pet_table.event_id " +
+            "WHERE event_pet_table.pet_id = :petId")
+    fun getPetEvents(petId: Long): Flow<List<Event>>
 }

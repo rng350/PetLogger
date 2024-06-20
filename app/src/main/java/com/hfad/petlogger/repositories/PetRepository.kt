@@ -3,14 +3,17 @@ package com.hfad.petlogger.repositories
 import android.util.Log
 import com.hfad.petlogger.PetLoggerDatabase
 import com.hfad.petlogger.dao.PetDao
+import com.hfad.petlogger.entities.Event
 import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.entities.PetPhoto
 import com.hfad.petlogger.entities.PetProfilePhoto
 import com.hfad.petlogger.entities.PetWithProfilePic
 import com.hfad.petlogger.entities.Photo
+import com.hfad.petlogger.entities.Weight
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 
 class PetRepository(private val database: PetLoggerDatabase, private val mediaRepository: MediaRepository) {
@@ -26,7 +29,7 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
     }
 
     suspend fun getPet(petId: Long) = withContext(Dispatchers.IO) {
-        petDao.get(petId)
+        petDao.getPet(petId)
     }
 
     suspend fun getAllPets(): List<PetWithProfilePic> = withContext(Dispatchers.IO) {
@@ -43,6 +46,18 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
 
     suspend fun getPetProfilePhoto(petId: Long): Photo? = withContext(Dispatchers.IO) {
         petDao.getPetProfilePhoto(petId)
+    }
+
+    fun getPetPhotos(petId: Long): Flow<List<Photo>> {
+        return petDao.getPetPhotos(petId)
+    }
+
+    fun getPetEvents(petId: Long): Flow<List<Event>> {
+        return petDao.getPetEvents(petId)
+    }
+
+    fun getPetWeights(petId: Long): Flow<List<Weight>> {
+        return petDao.getPetWeights(petId)
     }
 
     private suspend fun addPetPhotosNoProfilePic(pet: Pet, photos: List<Photo> = listOf<Photo>()): Long = withContext(Dispatchers.IO){

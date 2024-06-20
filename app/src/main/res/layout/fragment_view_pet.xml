@@ -6,8 +6,17 @@
     tools:context=".ViewPetFragment">
     <data>
         <variable
-            name="viewModel"
+            name="viewPetViewModel"
             type="com.hfad.petlogger.ViewPetViewModel" />
+        <variable
+            name="associatedPhotosDisplayViewModel"
+            type="com.hfad.petlogger.AssociatedPhotosDisplayViewModel" />
+        <variable
+            name="associatedEventsDisplayViewModel"
+            type="com.hfad.petlogger.AssociatedEventsDisplayViewModel" />
+        <variable
+            name="associatedPetWeightsDisplayViewModel"
+            type="com.hfad.petlogger.AssociatedPetWeightsDisplayViewModel" />
     </data>
 
 
@@ -31,128 +40,170 @@
                 android:layout_gravity="center"
                 app:srcCompat="@drawable/placeholder" />
 
-            <TextView
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/petNameTextField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:text="@string/pet_name_header" />
-            <TextView
-                android:id="@+id/pet_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:text="@{viewModel.pet.petName}" />
+                android:hint="@string/pet_name_header">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/petNameText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{viewPetViewModel.pet.petName}"
+                    android:enabled="false"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:text="@string/pet_dob_header" />
-            <TextView
-                android:id="@+id/pet_dob"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:text='@{viewModel.pet.hasDOB? viewModel.pet.petDOB.toLocalDate().toString() : @string/not_available}' />
+                android:orientation="horizontal">
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/petDOBTextField"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/pet_dob_header">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/petDOBText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@{viewPetViewModel.petBirthdate}"
+                        android:enabled="false"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:text="@string/pet_age_header" />
-            <TextView
-                android:id="@+id/pet_age"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:text="@{viewModel.petAge}" />
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/petAgeTextField"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/pet_age_header">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/petAgeText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@{viewPetViewModel.petAge}"
+                        android:enabled="false"/>
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:text="@string/pet_sex_header" />
-            <TextView
-                android:id="@+id/pet_sex"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:text="@{viewModel.pet.petSex}" />
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:text="@string/pet_species_header" />
-            <TextView
-                android:id="@+id/pet_species"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:text="@{viewModel.pet.petSpecies}" />
+                android:orientation="horizontal">
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/petSpeciesTextField"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/pet_species_header">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/petSpeciesText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@{viewPetViewModel.pet.petSpecies}"
+                        android:enabled="false"/>
+                </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/petBreedTextField"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/pet_breed_header">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/petBreedText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@{viewPetViewModel.pet.petBreed}"
+                        android:enabled="false"/>
+                </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/petSexTextField"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/pet_sex_header">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/petSexText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@{viewPetViewModel.pet.petSex}"
+                        android:enabled="false"/>
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:text="@string/pet_breed_header" />
-            <TextView
-                android:id="@+id/pet_breed"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:text="@{viewModel.pet.petBreed}" />
+                android:orientation="horizontal">
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/petWeightAmtTextField"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:hint="@string/pet_latest_weight_header">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/petWeightAmtText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@{viewPetViewModel.mostRecentWeightAmtDisplay}"
+                        android:enabled="false"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:text="@string/pet_latest_weight_header" />
-            <TextView
-                android:id="@+id/pet_latest_weight"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:text="@{viewModel.mostRecentWeightAmtDisplay}" />
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/petWeighingDateTextField"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:hint="@string/pet_weighing_date_header">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/petWeighingDateText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@{viewPetViewModel.mostRecentWeightDateDisplay}"
+                        android:enabled="false"/>
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
 
-            <TextView
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/associated_weights_fragment_container_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:text="@string/pet_weighing_date_header" />
-            <TextView
-                android:id="@+id/pet_latest_weight_date"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:text="@{viewModel.mostRecentWeightDateDisplay}" />
+                android:name="com.hfad.petlogger.AssociatedPetWeightsDisplayFragment"
+                tools:layout="@layout/fragment_associated_pet_weights_display" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/events_list"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="top"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/weights_list"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="top"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
-
-            <Button
-                android:id="@+id/edit_pet_button"
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/associated_events_fragment_container_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/edit_pet_button"/>
-            <Button
-                android:id="@+id/back_button"
+                android:name="com.hfad.petlogger.AssociatedEventsDisplayFragment"
+                tools:layout="@layout/fragment_associated_events_display" />
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/associated_photos_fragment_container_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/back"/>
+                android:name="com.hfad.petlogger.AssociatedPhotosDisplayFragment"
+                tools:layout="@layout/fragment_associated_photos_display" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/edit_pet_button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/edit_pet_button"/>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/back_button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/back"/>
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 </layout>

@@ -38,7 +38,7 @@
     <string name="weight_unit">g</string>
     <string name="input_weight_qty">Input weight quantity</string>
     <string name="not_available">N/A</string>
-    <string name="pet_latest_weight_header">Weight</string>
+    <string name="pet_latest_weight_header">Latest Weight</string>
     <string name="pet_latest_weight">%s %s</string>
     <string name="pet_weighing_date_header">Weighing Date</string>
     <string name="amt_with_limit_selected">%s/%s selected</string>
