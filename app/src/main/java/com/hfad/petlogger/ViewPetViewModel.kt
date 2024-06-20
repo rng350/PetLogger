@@ -48,7 +48,10 @@ class ViewPetViewModel (
             }
         }
         viewModelScope.launch {
-            petProfilePhoto.value = petRepository.getPetProfilePhoto(petID)
+            val fetchedPetProfilePhoto = petRepository.getPetProfilePhoto(petID)
+            fetchedPetProfilePhoto?.let {
+                petProfilePhoto.value = it
+            }
         }
     }
 
