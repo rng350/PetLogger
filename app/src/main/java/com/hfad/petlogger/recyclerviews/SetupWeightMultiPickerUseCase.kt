@@ -14,7 +14,7 @@ class SetupWeightMultiPickerUseCase(private val eventList: MutableLiveData<List<
                                     private val selection: MutableLiveData<List<CheckableItem<WeightWithPetName>>>,
                                     private val selectionTracker: EditSelectionTracker<WeightWithPetName>,
                                     private val recyclerView: RecyclerView,
-                                    private val lifecycleOwner: LifecycleOwner,
+                                    private val lifecycleOwner: LifecycleOwner
 ) {
     operator fun invoke() {
         val adapter = GenericRecyclerViewAdapter<CheckableItem<WeightWithPetName>, CheckableWeightWNameItemBinding>(

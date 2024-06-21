@@ -36,30 +36,6 @@ object Fetcher {
        petDao.getAll()
     }
 
-    fun fetchPetsOfEvent(viewModel: ViewModel, petsList: MutableLiveData<MutableList<Pet>>, eventDao: EventDao, eventID: Long) {
-        viewModel.viewModelScope.launch {
-            var fetchedPets = async {
-                eventDao.getPetsOfEvent(eventID)
-            }
-            petsList.value = fetchedPets.await()
-        }
-    }
-
-    fun fetchWeight(coroutineScope: CoroutineScope,
-                    associatedWeight: MutableLiveData<Weight>,
-                    currentWeight: MutableLiveData<Int>,
-                    weightDao: WeightDao,
-                    weightID: Long) {
-        coroutineScope.launch {
-            val fetchedWeight = async {
-                weightDao.get(weightID)
-            }
-            val weight = fetchedWeight.await()
-            associatedWeight.value = weight
-            currentWeight.value = weight.weightGrams
-        }
-    }
-
     fun fetchWeightPrevWeightAndPet(coroutineScope: CoroutineScope,
                     associatedWeight: MutableLiveData<Weight>,
                     associatedPet: MutableLiveData<Pet>,
@@ -95,18 +71,6 @@ object Fetcher {
         }
     }
 
-    fun fetchAllWeights(viewModel: ViewModel, weightsList: MutableLiveData<MutableList<Weight>>, weightDao: WeightDao) {
-        viewModel.viewModelScope.launch {
-            val fetchedWeights = async {
-                weightDao.getAll()
-            }
-            weightsList.value =
-                fetchedWeights.await()
-                    .sortedByDescending { it.weightDateTime }
-                    .toMutableList()
-        }
-    }
-
     fun fetchAllWeightsWithPetNames(viewModel: ViewModel, weightsList: MutableLiveData<MutableList<WeightWithPetName>>, weightDao: WeightDao, petDao: PetDao) {
         viewModel.viewModelScope.launch {
             val fetchedWeights = async {
@@ -126,18 +90,6 @@ object Fetcher {
                     .sortedByDescending {it.weight.weightDateTime}
                     .toMutableList()
 
-        }
-    }
-
-    fun fetchWeightsOfPet(coroutineScope: CoroutineScope, weightsList: MutableLiveData<MutableList<Weight>>, petDao: PetDao, petID: Long) {
-        coroutineScope.launch {
-            val fetchedWeights = async {
-                petDao.getWeightsOfPet(petID)
-            }
-            weightsList.value =
-                fetchedWeights.await()
-                    .sortedByDescending { it.weightDateTime }
-                    .toMutableList()
         }
     }
 
@@ -177,18 +129,6 @@ object Fetcher {
         eventsFetched
     }
 
-    fun fetchEventsOfPet(viewModel: ViewModel, eventsList: MutableLiveData<MutableList<Event>>, petDao: PetDao, petID: Long) {
-        viewModel.viewModelScope.launch {
-            val fetchedEvents = async {
-                petDao.getEventsOfPet(petID)
-            }
-            eventsList.value =
-                fetchedEvents.await()
-                    .sortedByDescending { it.date }
-                    .toMutableList()
-        }
-    }
-
     fun fetchCheckableEventsOfPet(coroutineScope: CoroutineScope, eventsList: MutableLiveData<MutableList<CheckableItem<Event>>>, petDao: PetDao, petID: Long) {
         coroutineScope.launch {
             // fill up blank list
@@ -210,30 +150,6 @@ object Fetcher {
             eventsList.value = newList
         }
 
-    }
-
-    fun fetchPhotosOfEvent(viewModel: ViewModel, photosList: MutableLiveData<List<Photo>>, eventDao: EventDao, eventID: Long) {
-        viewModel.viewModelScope.launch {
-            val fetchedPhotos = async {
-                eventDao.fetchPhotosOfEvent(eventID)
-            }
-            photosList.value =
-                fetchedPhotos.await()
-                    .sortedByDescending { it.date }
-        }
-    }
-
-    fun fetchCheckablePhotosOfEvent(coroutineScope: CoroutineScope, checkablePhotosList: MutableLiveData<List<CheckableItem<Photo>>>, eventDao: EventDao, eventID: Long) {
-        coroutineScope.launch {
-            val fetchedPhotos = async {
-                eventDao.fetchPhotosOfEvent(eventID)
-            }
-            val checkablePhotos = mutableListOf<CheckableItem<Photo>>()
-            fetchedPhotos.await().map {
-                checkablePhotos.add(CheckableItem(it))
-            }
-            checkablePhotosList.value = checkablePhotos.toList()
-        }
     }
 
     fun fetchPetProfilePhoto(coroutineScope: CoroutineScope, profilePhoto: MutableLiveData<Photo>, petDao: PetDao, petID: Long) {

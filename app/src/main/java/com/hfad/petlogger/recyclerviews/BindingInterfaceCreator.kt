@@ -64,27 +64,6 @@ object BindingInterfaceCreator {
         }
     }
 
-    fun setupNavigatableWeightAdapter(weightNavigator: Navigator): GenericRecyclerViewAdapter<Weight, PetWeightItemBinding> {
-        return GenericRecyclerViewAdapter<Weight, PetWeightItemBinding>(
-            layoutId = R.layout.pet_weight_item,
-            bindingInterface = createWeightItemBindingInterface(weightNavigator)
-        )
-    }
-
-    private fun createWeightItemBindingInterface(weightNavigator: Navigator)
-            = object : DataItemBindingInterface<Weight, PetWeightItemBinding> {
-        override fun bind(
-            item: Weight,
-            binder: PetWeightItemBinding
-        ) {
-            binder.weight = item
-            binder.card.setOnClickListener { null }
-            binder.card.setOnClickListener {
-                weightNavigator.navigateTo(item.id)
-            }
-        }
-    }
-
     fun setupPetWithProfilePhotoAdapter(petList: LiveData<List<PetWithProfilePic>>,
                                         recyclerView: RecyclerView,
                                         lifecycleOwner: LifecycleOwner,

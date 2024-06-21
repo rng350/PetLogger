@@ -1,15 +1,19 @@
 package com.hfad.petlogger.repositories
 
 import android.util.Log
+import com.hfad.petlogger.CheckableItem
 import com.hfad.petlogger.PetLoggerDatabase
 import com.hfad.petlogger.dao.PetDao
 import com.hfad.petlogger.entities.Event
 import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.entities.PetPhoto
 import com.hfad.petlogger.entities.PetProfilePhoto
+import com.hfad.petlogger.entities.PetWeightForDisplay
 import com.hfad.petlogger.entities.PetWithProfilePic
 import com.hfad.petlogger.entities.Photo
 import com.hfad.petlogger.entities.Weight
+import com.hfad.petlogger.util.GetDateDisplayUseCase
+import com.hfad.petlogger.util.GetTimeDisplayUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -58,6 +62,25 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
 
     fun getPetWeights(petId: Long): Flow<List<Weight>> {
         return petDao.getPetWeights(petId)
+    }
+
+    suspend fun getPetWeightsAsList(petId: Long): List<Weight> = withContext(Dispatchers.IO) {
+        petDao.getWeightsOfPet(petId).toList()
+    }
+
+    suspend fun getPetWeightsWithTextFields(petId: Long): List<CheckableItem<PetWeightForDisplay>> = withContext(Dispatchers.IO) {
+        val getDateDisplay = GetDateDisplayUseCase()
+        val getTimeDisplay = GetTimeDisplayUseCase()
+        petDao.getWeightsOfPet(petId).map { weight ->
+            CheckableItem(
+                PetWeightForDisplay(
+                    weight,
+                    getDateDisplay(weight.weightDateTime),
+                    getTimeDisplay(weight.weightDateTime),
+                    "${weight.weightGrams}g"
+                )
+            )
+        }
     }
 
     private suspend fun addPetPhotosNoProfilePic(pet: Pet, photos: List<Photo> = listOf<Photo>()): Long = withContext(Dispatchers.IO){

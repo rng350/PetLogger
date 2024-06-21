@@ -9,8 +9,8 @@
             name="viewModel"
             type="com.hfad.petlogger.EditPetViewModel" />
         <variable
-            name="galleryViewModel"
-            type="com.hfad.petlogger.photoselection.GalleryViewModel" />
+            name="petWeightDeselectionViewModel"
+            type="com.hfad.petlogger.PetWeightDeselectionViewModel" />
     </data>
 
     <ScrollView
@@ -140,25 +140,12 @@
                 android:gravity="top"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
-            <TextView
-                android:id="@+id/petWeightsHeader"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/pet_weights_header"
-                android:textSize="20sp" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/weights_list"
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/associated_pet_weights_fragment_container_view"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="top"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
-
-            <include
-                android:id="@+id/galleryPicker"
-                layout="@layout/fragment_gallery_picker"
-                app:viewModel="@{galleryViewModel}"/>
+                android:layout_height="wrap_content"
+                android:name="com.hfad.petlogger.PetWeightDeselectionFragment"
+                tools:layout="@layout/fragment_pet_weight_deselection" />
 
             <LinearLayout
                 android:layout_width="match_parent"

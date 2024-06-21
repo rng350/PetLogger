@@ -7,23 +7,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.hfad.petlogger.databinding.FragmentEditPetBinding
 import com.hfad.petlogger.entitylinkers.PetProfilePhotoLinker
+import com.hfad.petlogger.photodisplay.stateless.GetWeightsOfPetUseCase
 import com.hfad.petlogger.photoselection.GalleryPicker
 import com.hfad.petlogger.photoselection.GalleryViewModel
 import com.hfad.petlogger.photoselection.GalleryViewModelFactory
 import com.hfad.petlogger.recyclerviews.ItemPickers
+import com.hfad.petlogger.repositories.MediaRepository
+import com.hfad.petlogger.repositories.PetRepository
 import java.io.File
 
 class EditPetFragment : Fragment() {
     private var _binding: FragmentEditPetBinding? = null
     private val binding get() = _binding!!
-    private var _galleryPicker: GalleryPicker? = null
-    private val galleryPicker get() = _galleryPicker!!
     lateinit var editPetViewModel: EditPetViewModel
 
     override fun onCreateView(
@@ -36,29 +38,25 @@ class EditPetFragment : Fragment() {
 
         val petID = EditPetFragmentArgs.fromBundle(requireArguments()).petId
 
-        val petDao = PetLoggerDatabase.getInstance(application).petDao
-        val photoDao = PetLoggerDatabase.getInstance(application).photoDao
-        val eventDao = PetLoggerDatabase.getInstance(application).eventDao
-        val weightDao = PetLoggerDatabase.getInstance(application).weightDao
+        val database = PetLoggerDatabase.getInstance(application)
+        val petDao = database.petDao
+        val photoDao = database.photoDao
+        val eventDao = database.eventDao
+        val weightDao = database.weightDao
 
         val editPetViewModelFactory = EditPetViewModelFactory(petID, petDao, photoDao, eventDao, weightDao)
         editPetViewModel = ViewModelProvider(this, editPetViewModelFactory).get(EditPetViewModel::class.java)
         binding.viewModel = editPetViewModel
 
-        val galleryViewModelFactory = GalleryViewModelFactory(
-            entityLinker = PetProfilePhotoLinker(photoDao),
-            photoDao = photoDao,
-            photosSelected = editPetViewModel.photoSelection)
-        val galleryViewModel = ViewModelProvider(this, galleryViewModelFactory).get(GalleryViewModel::class.java)
-        binding.galleryViewModel = galleryViewModel
-
-        _galleryPicker = GalleryPicker(this, binding.galleryPicker, galleryViewModel, associatedID = editPetViewModel._petID)
-        galleryPicker.onCreate(savedInstanceState)
-
         binding.lifecycleOwner = viewLifecycleOwner
 
+        val mediaRepository = MediaRepository(database, requireContext())
+        val petRepository = PetRepository(database, mediaRepository)
+        val getPetWeights = GetWeightsOfPetUseCase(petRepository, petID)
+        val petWeightsDeselectionViewModel = ViewModelProvider(this, PetWeightDeselectionViewModel.provideFactory(getPetWeights)).get(PetWeightDeselectionViewModel::class.java)
+        binding.petWeightDeselectionViewModel = petWeightsDeselectionViewModel
+
         ItemPickers.setupEventPicker(editPetViewModel.events, editPetViewModel.eventsToRemove, binding.eventsList, viewLifecycleOwner)
-        ItemPickers.setupWeightPicker(editPetViewModel.weights, editPetViewModel.weightsToRemove, binding.weightsList, viewLifecycleOwner)
 
         editPetViewModel.pet.observe(viewLifecycleOwner, Observer {
             it?.let {
@@ -75,22 +73,6 @@ class EditPetFragment : Fragment() {
                     .load(it.contentUri)
                     .apply(RequestOptions().placeholder(R.drawable.placeholder))
                     .into(binding.petPhoto)
-            }
-        })
-
-        galleryViewModel.photosSelected.selectionToAdd.observe(viewLifecycleOwner, Observer {
-            if (it.size > 0) {
-                Glide.with(requireContext())
-                    .load(it[0].item.contentUri)
-                    .apply(RequestOptions().placeholder(R.drawable.placeholder))
-                    .into(binding.petPhoto)
-            } else {
-                editPetViewModel.petProfilePic.value?.let {
-                    Glide.with(requireContext())
-                        .load(it.contentUri)
-                        .apply(RequestOptions().placeholder(R.drawable.placeholder))
-                        .into(binding.petPhoto)
-                }
             }
         })
 
@@ -124,17 +106,9 @@ class EditPetFragment : Fragment() {
         }
 
         binding.submit.setOnClickListener {
-            // do all the stuff
-            if (galleryViewModel.photosSelected.selectionToAdd.value!!.size > 0) {
-                Log.e("saving new pfp", "ssss")
-                galleryPicker.saveToLocalStorage()
-                // deleteProfilePicFromLocalStorage()
-            }
-            editPetViewModel.updatePet()
-
-            // TODO: make it so that background tasks are done on a different scope/context so as to be able to continue after you return to the viewpetfrag
-            // return to viewpet
-            // this.findNavController().navigate(EditPetFragmentDirections.actionEditPetFragmentToViewPetFragment(petID))
+            editPetViewModel.updatePet(
+                weightsToRemove = petWeightsDeselectionViewModel.getWeightsToRemove()
+            )
         }
 
         binding.cancel.setOnClickListener {
@@ -142,11 +116,8 @@ class EditPetFragment : Fragment() {
         }
 
         binding.delete.setOnClickListener {
-            // dialogfragment asking for confirmation
-            // if yes, delete
             deleteProfilePicFromLocalStorage()
-            // go back to home
-            this.findNavController().navigate(R.id.action_editPetFragment_to_homeFragment)
+            this.findNavController().navigate(R.id.action_editPetFragment_to_petListFragment)
         }
 
         return view
@@ -160,14 +131,8 @@ class EditPetFragment : Fragment() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        galleryPicker.onResume()
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
-        galleryPicker.onDestroy()
         _binding = null
     }
 }

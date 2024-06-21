@@ -49,11 +49,6 @@
         android:name="com.hfad.petlogger.EditPetFragment"
         android:label="fragment_edit_pet"
         tools:layout="@layout/fragment_edit_pet" >
-        <action
-            android:id="@+id/action_editPetFragment_to_homeFragment"
-            app:destination="@id/homeFragment"
-            app:popUpTo="@id/homeFragment"
-            app:popUpToInclusive="true" />
         <argument
             android:name="petId"
             app:argType="long" />
@@ -62,6 +57,9 @@
             app:destination="@id/viewPetFragment"
             app:popUpTo="@id/viewPetFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_editPetFragment_to_petListFragment"
+            app:destination="@id/petListFragment" />
     </fragment>
     <fragment
         android:id="@+id/newEventFragment"

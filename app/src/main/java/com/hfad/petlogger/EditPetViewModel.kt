@@ -18,7 +18,6 @@ class EditPetViewModel(val petID: Long, val petDao: PetDao, val photoDao: PhotoD
     val petProfilePic = MutableLiveData<Photo>()
     val newPetProfilePic = MutableLiveData<Photo>()
     val newPetProfilePicLocal = MutableLiveData<Photo>()
-    val weightsToRemove = NewSelectionTracker<Weight>(choiceLimit = null)
     val eventsToRemove = NewSelectionTracker<Event>(choiceLimit = null)
     val photoSelection = NewSelectionTracker<Photo>(1)
     val _petID = MutableLiveData<Long>(petID)
@@ -39,10 +38,6 @@ class EditPetViewModel(val petID: Long, val petDao: PetDao, val photoDao: PhotoD
         newPetDOB.set(petDOB)
     }
 
-    fun toggleWeight(checkableWeight: CheckableItem<Weight>) {
-        weightsToRemove.toggle(checkableWeight)
-    }
-
     fun toggleEvent(checkableEvent: CheckableItem<Event>) {
         eventsToRemove.toggle(checkableEvent)
     }
@@ -53,7 +48,7 @@ class EditPetViewModel(val petID: Long, val petDao: PetDao, val photoDao: PhotoD
         // go back to view pet page
     }
 
-    fun updatePet() {
+    fun updatePet(weightsToRemove: List<Weight> = listOf<Weight>()) {
         val editedPet = pet.value!!
         editedPet.petDOB = newPetDOB.dateTime
         editedPet.hasDOB = newPetDOB.hasBeenSet
@@ -66,9 +61,9 @@ class EditPetViewModel(val petID: Long, val petDao: PetDao, val photoDao: PhotoD
                 petDao.delete(EventPet(event.item.eventId, petID))
             }
         }
-        for (weight in weightsToRemove.selectionToAdd.value!!) {
+        for (weight in weightsToRemove) {
             viewModelScope.launch {
-                weightDao.delete(weight.item)
+                weightDao.delete(weight)
             }
         }
     }
