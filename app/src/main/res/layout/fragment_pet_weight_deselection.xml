@@ -33,7 +33,7 @@
                     android:id="@+id/dialogFragmentAppBar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:title="Associated Weights"
+                    app:title="@string/associated_weights"
                     app:titleCentered="true"/>
             </com.google.android.material.appbar.AppBarLayout>
 

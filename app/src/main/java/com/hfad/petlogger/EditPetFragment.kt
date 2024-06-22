@@ -1,24 +1,21 @@
 package com.hfad.petlogger
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.hfad.petlogger.databinding.FragmentEditPetBinding
-import com.hfad.petlogger.entitylinkers.PetProfilePhotoLinker
-import com.hfad.petlogger.photodisplay.stateless.GetWeightsOfPetUseCase
-import com.hfad.petlogger.photoselection.GalleryPicker
-import com.hfad.petlogger.photoselection.GalleryViewModel
-import com.hfad.petlogger.photoselection.GalleryViewModelFactory
-import com.hfad.petlogger.recyclerviews.ItemPickers
+import com.hfad.petlogger.photodisplay.stateless.GetCheckableWeightsOfPetUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetEventsOfPetUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetPhotosOfPetUseCase
+import com.hfad.petlogger.repositories.EventRepository
 import com.hfad.petlogger.repositories.MediaRepository
 import com.hfad.petlogger.repositories.PetRepository
 import java.io.File
@@ -34,29 +31,26 @@ class EditPetFragment : Fragment() {
     ): View? {
         _binding = FragmentEditPetBinding.inflate(inflater, container, false)
         val view = binding.root
-        val application = requireNotNull(this.activity).application
+        binding.lifecycleOwner = viewLifecycleOwner
 
         val petID = EditPetFragmentArgs.fromBundle(requireArguments()).petId
 
+        val application = requireNotNull(this.activity).application
         val database = PetLoggerDatabase.getInstance(application)
+
         val petDao = database.petDao
         val photoDao = database.photoDao
         val eventDao = database.eventDao
         val weightDao = database.weightDao
 
-        val editPetViewModelFactory = EditPetViewModelFactory(petID, petDao, photoDao, eventDao, weightDao)
-        editPetViewModel = ViewModelProvider(this, editPetViewModelFactory).get(EditPetViewModel::class.java)
-        binding.viewModel = editPetViewModel
-
-        binding.lifecycleOwner = viewLifecycleOwner
-
         val mediaRepository = MediaRepository(database, requireContext())
         val petRepository = PetRepository(database, mediaRepository)
-        val getPetWeights = GetWeightsOfPetUseCase(petRepository, petID)
+        editPetViewModel = ViewModelProvider(this, EditPetViewModel.provideFactory(petRepository, petID, petDao, photoDao, eventDao, weightDao)).get(EditPetViewModel::class.java)
+        binding.editPetViewModel = editPetViewModel
+
+        val getPetWeights = GetCheckableWeightsOfPetUseCase(petRepository, petID)
         val petWeightsDeselectionViewModel = ViewModelProvider(this, PetWeightDeselectionViewModel.provideFactory(getPetWeights)).get(PetWeightDeselectionViewModel::class.java)
         binding.petWeightDeselectionViewModel = petWeightsDeselectionViewModel
-
-        ItemPickers.setupEventPicker(editPetViewModel.events, editPetViewModel.eventsToRemove, binding.eventsList, viewLifecycleOwner)
 
         editPetViewModel.pet.observe(viewLifecycleOwner, Observer {
             it?.let {
@@ -65,6 +59,15 @@ class EditPetFragment : Fragment() {
                 mainActivity.setTopAppBarSubtitle(getString(R.string.editing_pet_details))
             }
         })
+
+        val getEventsOfPet = GetEventsOfPetUseCase(petRepository = petRepository, petId = petID)
+        val eventRepository = EventRepository(database, mediaRepository)
+        val eventMultiSelectionViewModel = ViewModelProvider(this, EventMultiSelectionViewModel.provideFactory(eventRepository, getEventsOfPet)).get(EventMultiSelectionViewModel::class.java)
+        binding.eventMultiSelectionViewModel = eventMultiSelectionViewModel
+
+        val getPhotosOfPet = GetPhotosOfPetUseCase(petRepository = petRepository, petId = petID)
+        val mediaSelectionViewModel = ViewModelProvider(this, MediaSelectionViewModel.provideFactory(mediaRepository, getPhotosOfPet)).get(MediaSelectionViewModel::class.java)
+        binding.mediaSelectionViewModel = mediaSelectionViewModel
 
         editPetViewModel.petProfilePic.observe(viewLifecycleOwner, Observer {
             // if new pfp hasn't been picked yet
@@ -107,7 +110,11 @@ class EditPetFragment : Fragment() {
 
         binding.submit.setOnClickListener {
             editPetViewModel.updatePet(
-                weightsToRemove = petWeightsDeselectionViewModel.getWeightsToRemove()
+                eventsToAdd = eventMultiSelectionViewModel.getEventsToAdd(),
+                eventsToRemove = eventMultiSelectionViewModel.getEventsToRemove(),
+                weightsToRemove = petWeightsDeselectionViewModel.getWeightsToRemove(),
+                photosToAdd = mediaSelectionViewModel.getPhotosToAdd(),
+                photosToRemove = mediaSelectionViewModel.getPhotosToRemove()
             )
         }
 

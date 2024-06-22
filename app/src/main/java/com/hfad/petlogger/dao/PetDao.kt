@@ -49,6 +49,9 @@ interface PetDao {
     @Query("SELECT * FROM weight_table WHERE weight_pet_id=:petId ORDER BY weight_datetime")
     suspend fun getWeightsOfPet(petId: Long): MutableList<Weight>
 
+    @Insert
+    suspend fun insert(petEvent: EventPet)
+
     @Delete
     suspend fun delete(petEvent: EventPet)
 
@@ -61,7 +64,7 @@ interface PetDao {
     @Query("SELECT * FROM pet_table WHERE pet_id=:petID")
     suspend fun getPetWithProfilePic(petID: Long): PetWithProfilePic
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertPetPhoto(petPhoto: PetPhoto)
 
     @Update
@@ -78,6 +81,13 @@ interface PetDao {
             "ON photo_table.photo_id = pet_photo_table.photo_id " +
             "WHERE pet_photo_table.pet_id=:petId ")
     fun getPetPhotos(petId: Long): Flow<List<Photo>>
+
+
+    @Query("SELECT photo_table.photo_id, photo_date, photo_filesize, photo_width, photo_height, photo_uri, photo_filename, photo_title " +
+            "FROM photo_table LEFT JOIN pet_photo_table " +
+            "ON photo_table.photo_id = pet_photo_table.photo_id " +
+            "WHERE pet_photo_table.pet_id=:petId ")
+    suspend fun getPetPhotosAsList(petId: Long): List<Photo>
 
     @Query("SELECT weight_id, weight_pet_id, weight_datetime, weight_notes, weight_grams " +
             "FROM weight_table WHERE weight_pet_id = :petId")

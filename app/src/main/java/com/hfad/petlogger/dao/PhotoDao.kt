@@ -1,6 +1,7 @@
 package com.hfad.petlogger.dao
 
 import androidx.room.*
+import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.entities.PetProfilePhoto
 import com.hfad.petlogger.entities.Photo
 import com.hfad.petlogger.entities.PhotoEvent
@@ -52,4 +53,7 @@ interface PhotoDao {
 
     @Delete
     suspend fun delete(photoNote: PhotoNote)
+
+    @Query("SELECT * FROM photo_table WHERE rowid = :rowId")
+    suspend fun getPhotoFromRow(rowId: Long): Photo
 }

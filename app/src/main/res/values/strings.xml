@@ -106,4 +106,5 @@
     <string name="editing_photo_details">Editing Photo Details</string>
     <string name="last_updated">Last Updated</string>
     <string name="selected_photo">Selected Photo</string>
+    <string name="associated_weights">Associated Weights</string>
 </resources>

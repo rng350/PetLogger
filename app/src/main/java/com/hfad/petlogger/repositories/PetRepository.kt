@@ -3,7 +3,7 @@ package com.hfad.petlogger.repositories
 import android.util.Log
 import com.hfad.petlogger.CheckableItem
 import com.hfad.petlogger.PetLoggerDatabase
-import com.hfad.petlogger.dao.PetDao
+import com.hfad.petlogger.copyOf
 import com.hfad.petlogger.entities.Event
 import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.entities.PetPhoto
@@ -56,6 +56,10 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
         return petDao.getPetPhotos(petId)
     }
 
+    suspend fun getPetPhotosAsList(petId: Long): List<Photo> = withContext(Dispatchers.IO) {
+        petDao.getPetPhotosAsList(petId)
+    }
+
     fun getPetEvents(petId: Long): Flow<List<Event>> {
         return petDao.getPetEvents(petId)
     }
@@ -68,7 +72,17 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
         petDao.getWeightsOfPet(petId).toList()
     }
 
-    suspend fun getPetWeightsWithTextFields(petId: Long): List<CheckableItem<PetWeightForDisplay>> = withContext(Dispatchers.IO) {
+    suspend fun getCheckablePetEventsAsList(petId: Long): List<CheckableItem<Event>> = withContext(Dispatchers.IO) {
+        petDao.getEventsOfPet(petId).map {event ->
+            CheckableItem(event)
+        }
+    }
+
+    suspend fun getPetEventsAsList(petId: Long): List<Event> = withContext(Dispatchers.IO) {
+        petDao.getEventsOfPet(petId)
+    }
+
+    suspend fun getCheckablePetWeightsWithTextFields(petId: Long): List<CheckableItem<PetWeightForDisplay>> = withContext(Dispatchers.IO) {
         val getDateDisplay = GetDateDisplayUseCase()
         val getTimeDisplay = GetTimeDisplayUseCase()
         petDao.getWeightsOfPet(petId).map { weight ->
@@ -81,6 +95,25 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
                 )
             )
         }
+    }
+
+    suspend fun addPetPhotos(petId: Long, photos: List<Photo> = listOf<Photo>(), profilePic: Photo? = null) = withContext(Dispatchers.IO) {
+        var photosToAdd = photos
+        val newPhotosList = photos.toMutableList()
+        profilePic?.let {
+            newPhotosList.remove(profilePic) // prevent profilePic from appearing twice in photo list
+            photosToAdd = listOf(profilePic) + newPhotosList
+        }
+        photosToAdd.map { photo ->
+            async {
+                if (photo == profilePic) {
+                    addPetProfilePhoto(petId, photo)
+                }
+                else {
+                    addPetPhoto(petId, photo)
+                }
+            }
+        }.awaitAll()
     }
 
     private suspend fun addPetPhotosNoProfilePic(pet: Pet, photos: List<Photo> = listOf<Photo>()): Long = withContext(Dispatchers.IO){
@@ -101,10 +134,10 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
             val rowId = petDao.insert(pet)
             petDao.getPetFromRow(rowId)
         }
-        val newPhotosList = photos.toMutableList()
-        newPhotosList.remove(profilePic)
-        val combinedPhotos: List<Photo> = listOf(profilePic) + newPhotosList
         val petInserted = petInsertedDeferred.await()
+        val newPhotosList = photos.toMutableList()
+        newPhotosList.remove(profilePic) // prevent profilePic from appearing twice in photo list
+        val combinedPhotos: List<Photo> = listOf(profilePic) + newPhotosList
         combinedPhotos.map { photo ->
             async {
                 if (photo == profilePic) {
@@ -118,7 +151,7 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
         petInserted.petID
     }
 
-    suspend fun addPetPhoto(petID: Long, photo: Photo) {
+    private suspend fun addPetPhoto(petID: Long, photo: Photo) {
         withContext(Dispatchers.IO) {
             val photoAdded = async {
                 mediaRepository.addPhoto(photo)
@@ -131,7 +164,7 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
         }
     }
 
-    suspend fun addPetProfilePhoto(petID: Long, photo: Photo) {
+    private suspend fun addPetProfilePhoto(petID: Long, photo: Photo) {
         withContext(Dispatchers.IO) {
             val photoAdded = async {
                 mediaRepository.addPhoto(photo)

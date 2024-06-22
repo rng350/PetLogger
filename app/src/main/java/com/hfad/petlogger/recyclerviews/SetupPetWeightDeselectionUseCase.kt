@@ -50,6 +50,7 @@ class SetupPetWeightDeselectionUseCase(
                 binder.weightCard.isChecked = it.contains(item)
             }
             selectionTracker.selectionToAdd.observe(lifecycleOwner, observer)
+            activeObservers[binder] = observer
 
             binder.weightCard.setOnClickListener { null }
             binder.weightCard.setOnClickListener {

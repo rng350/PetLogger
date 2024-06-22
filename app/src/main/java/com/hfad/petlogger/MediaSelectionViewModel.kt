@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 class MediaSelectionViewModel(private val mediaRepository: MediaRepository,
                               private val fetchInitialSelection: GetAssociatedItemsUseCase<Photo>? = null,
                               val maxItems: Int = Int.MAX_VALUE) : ViewModel() {
-    private var initialSelection: List<Photo> = listOf<Photo>()
+    private var initialSelection = HashSet<Photo>()
     private var _currentPhotoSelection = MutableLiveData<List<Photo>>(listOf<Photo>())
     val currentPhotoSelection: LiveData<List<Photo>> get() = _currentPhotoSelection
     private var _selectionToRemove = MutableLiveData<List<Photo>>(listOf<Photo>())
@@ -25,25 +25,24 @@ class MediaSelectionViewModel(private val mediaRepository: MediaRepository,
     val selectionToAdd: LiveData<List<Photo>> get() = _selectionToAdd
 
     init {
-        if (fetchInitialSelection != null) {
-            viewModelScope.launch {
-                async {
-                    initialSelection = fetchInitialSelection!!()
-                }.await()
-                resetSelection()
-            }
-        } else {
+        viewModelScope.launch {
+            async {
+                fetchInitialSelection?.let { getInitialPhotos ->
+                    val initialPhotos = getInitialPhotos()
+                    initialSelection.addAll(initialPhotos)
+                }
+            }.await()
             resetSelection()
         }
     }
 
     fun resetSelection() {
-        _currentPhotoSelection.value = initialSelection
+        _currentPhotoSelection.value = initialSelection.toList()
         _selectionToAdd.value = listOf<Photo>()
         _selectionToRemove.value = listOf<Photo>()
     }
 
-    fun retrievePhotoSelection(context: Context, uris: List<Uri>) {
+    fun retrievePhotoSelectionFromPickerResults(context: Context, uris: List<Uri>) {
         viewModelScope.launch {
             val newAddedSelection = mediaRepository.retrievePhotos(context, uris)
             // hashsets used to prevent duplicate additions

@@ -6,11 +6,17 @@
     tools:context=".EditPetFragment">
     <data>
         <variable
-            name="viewModel"
+            name="editPetViewModel"
             type="com.hfad.petlogger.EditPetViewModel" />
         <variable
             name="petWeightDeselectionViewModel"
             type="com.hfad.petlogger.PetWeightDeselectionViewModel" />
+        <variable
+            name="eventMultiSelectionViewModel"
+            type="com.hfad.petlogger.EventMultiSelectionViewModel" />
+        <variable
+            name="mediaSelectionViewModel"
+            type="com.hfad.petlogger.MediaSelectionViewModel" />
     </data>
 
     <ScrollView
@@ -47,7 +53,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="text"
-                        android:text="@={viewModel.pet.petName}" />
+                        android:text="@={editPetViewModel.pet.petName}" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <LinearLayout
@@ -67,7 +73,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="text"
-                            android:text="@={viewModel.pet.petSpecies}" />
+                            android:text="@={editPetViewModel.pet.petSpecies}" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -81,7 +87,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="text"
-                            android:text="@={viewModel.pet.petBreed}" />
+                            android:text="@={editPetViewModel.pet.petBreed}" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                 </LinearLayout>
@@ -122,7 +128,7 @@
                     android:id="@+id/inputDOBButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@{@string/input_pet_dob(viewModel.newPetDOB.dateDisplay)}" />
+                    android:text="@{@string/input_pet_dob(editPetViewModel.newPetDOB.dateDisplay)}" />
             </LinearLayout>
 
             <TextView
@@ -132,13 +138,12 @@
                 android:text="@string/pet_events_header"
                 android:textSize="20sp" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/events_list"
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/event_selection_fragment_container_view"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="top"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+                android:layout_height="wrap_content"
+                android:name="com.hfad.petlogger.EventMultiSelectionDisplayFragment"
+                tools:layout="@layout/fragment_event_multi_selection_display" />
 
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/associated_pet_weights_fragment_container_view"
@@ -146,6 +151,13 @@
                 android:layout_height="wrap_content"
                 android:name="com.hfad.petlogger.PetWeightDeselectionFragment"
                 tools:layout="@layout/fragment_pet_weight_deselection" />
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/media_selection_fragment_container_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:name="com.hfad.petlogger.MediaSelectionFragment"
+                tools:layout="@layout/fragment_media_selection" />
 
             <LinearLayout
                 android:layout_width="match_parent"
