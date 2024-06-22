@@ -44,15 +44,58 @@ class MediaSelectionViewModel(private val mediaRepository: MediaRepository,
 
     fun retrievePhotoSelectionFromPickerResults(context: Context, uris: List<Uri>) {
         viewModelScope.launch {
-            val newAddedSelection = mediaRepository.retrievePhotos(context, uris)
-            // hashsets used to prevent duplicate additions
-            val oldAddedSelection = _selectionToAdd.value?.toHashSet() ?: HashSet<Photo>()
-            oldAddedSelection.addAll(newAddedSelection)
-            val newSelectionToAdd = oldAddedSelection.toList()
-            _selectionToAdd.value = newSelectionToAdd
-            val currentSelectionMutable = currentPhotoSelection.value?.toHashSet() ?: HashSet<Photo>()
-            currentSelectionMutable.addAll(_selectionToAdd.value ?: listOf())
-            _currentPhotoSelection.value = currentSelectionMutable.toList()
+            val newAddedSelectionFetched = async {
+                mediaRepository.retrievePhotos(context, uris)
+            }
+
+            // Step #1: populate hashmap with cur selection
+            val currentPhotoSelectionHashMap = HashMap<Long, Photo>()
+            currentPhotoSelection.value?.let {currentPhotos ->
+                currentPhotos.map { photo->
+                    currentPhotoSelectionHashMap.put(photo.id, photo)
+                }
+            }
+            val currentPhotoSelectionToRemoveHashMap = HashMap<Long, Photo>()
+            selectionToRemove.value?.let {currentSelectionToRemove ->
+                currentSelectionToRemove.map {photo ->
+                    currentPhotoSelectionToRemoveHashMap.put(photo.id, photo)
+                }
+            }
+
+            // Step #2: Check for photo selection overlap
+            val newAddedSelection = newAddedSelectionFetched.await().toMutableList()
+            val newSelectionToAdd = selectionToAdd.value?.toMutableList() ?: mutableListOf()
+            val newSelectionToRemove = selectionToRemove.value?.toMutableList() ?: mutableListOf()
+
+            // checks to prevent unnecessary observer notifications and refreshing
+            var selectionToAddHasChanged = false
+            var selectionToRemoveHasChanged = false
+            var currentSelectionHasChanged = false
+
+            newAddedSelection.map { photo ->
+                // Check against selection to remove first...
+                if (currentPhotoSelectionToRemoveHashMap.contains(photo.id)) {
+                    currentPhotoSelectionToRemoveHashMap[photo.id]?.let {photoToAddBackIn ->
+                        currentPhotoSelectionHashMap[photo.id] = photoToAddBackIn
+                        newSelectionToRemove.remove(photoToAddBackIn)
+
+                        selectionToRemoveHasChanged = true
+                        currentSelectionHasChanged = true
+                    }
+                }
+                //  Check that retrieved photos don't already exist in selection
+                if (!currentPhotoSelectionToRemoveHashMap.contains(photo.id) && !currentPhotoSelectionHashMap.contains(photo.id)) {
+                    currentPhotoSelectionHashMap[photo.id] = photo
+                    newSelectionToAdd.add(photo)
+
+                    selectionToAddHasChanged = true
+                    currentSelectionHasChanged = true
+                }
+            }
+
+            if (selectionToRemoveHasChanged) _selectionToRemove.value = newSelectionToRemove
+            if (selectionToAddHasChanged) _selectionToAdd.value = newSelectionToAdd
+            if (currentSelectionHasChanged) _currentPhotoSelection.value = currentPhotoSelectionHashMap.map { mapEntry -> mapEntry.value }
         }
     }
 
