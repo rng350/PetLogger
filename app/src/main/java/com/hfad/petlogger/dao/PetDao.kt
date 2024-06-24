@@ -46,7 +46,7 @@ interface PetDao {
     suspend fun getPetProfilePhoto(petID: Long): Photo?
 
     //TODO: add "ORDER BY weight_date DESCENDING"
-    @Query("SELECT * FROM weight_table WHERE weight_pet_id=:petId ORDER BY weight_datetime")
+    @Query("SELECT * FROM weight_table WHERE weight_pet_id=:petId ORDER BY weight_datetime DESC")
     suspend fun getWeightsOfPet(petId: Long): MutableList<Weight>
 
     @Insert
@@ -90,11 +90,13 @@ interface PetDao {
     suspend fun getPetPhotosAsList(petId: Long): List<Photo>
 
     @Query("SELECT weight_id, weight_pet_id, weight_datetime, weight_notes, weight_grams " +
-            "FROM weight_table WHERE weight_pet_id = :petId")
+            "FROM weight_table WHERE weight_pet_id = :petId " +
+            "ORDER BY weight_datetime DESC")
     fun getPetWeights(petId: Long): Flow<List<Weight>>
 
     @Query("SELECT event_table.event_id, event_title, event_date, event_details FROM event_table " +
             "LEFT JOIN event_pet_table ON event_table.event_id = event_pet_table.event_id " +
-            "WHERE event_pet_table.pet_id = :petId")
+            "WHERE event_pet_table.pet_id = :petId " +
+            "ORDER BY event_date DESC")
     fun getPetEvents(petId: Long): Flow<List<Event>>
 }

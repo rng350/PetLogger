@@ -22,12 +22,9 @@ class WeightRepository(private val database: PetLoggerDatabase) {
     }
 
     suspend fun getAllWithPetNames(): List<WeightWithPetName> = withContext(Dispatchers.IO) {
-        Log.d("getAllWeights", "About to call...")
         val allWeightDetails = weightDao.getAllWeightDetails()
-
-        Log.d("getAllWeights", "List: $allWeightDetails")
-
-        allWeightDetails.map {
+        val sorted = allWeightDetails.sortedByDescending { it.weight.weightDateTime }
+        sorted.map {
             WeightWithPetName(it.weight, it.assocPet.petName)
         }
     }

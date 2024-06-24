@@ -10,7 +10,7 @@ import com.hfad.petlogger.databinding.CheckableWeightWNameItemBinding
 import com.hfad.petlogger.entities.WeightWithPetName
 import com.hfad.petlogger.selectiontracker.EditSelectionTracker
 
-class SetupWeightMultiPickerUseCase(private val eventList: MutableLiveData<List<CheckableItem<WeightWithPetName>>>,
+class SetupWeightMultiPickerUseCase(private val weightList: MutableLiveData<List<CheckableItem<WeightWithPetName>>>,
                                     private val selection: MutableLiveData<List<CheckableItem<WeightWithPetName>>>,
                                     private val selectionTracker: EditSelectionTracker<WeightWithPetName>,
                                     private val recyclerView: RecyclerView,
@@ -23,7 +23,7 @@ class SetupWeightMultiPickerUseCase(private val eventList: MutableLiveData<List<
         )
         recyclerView.adapter = adapter
 
-        eventList.observe(lifecycleOwner, Observer {
+        weightList.observe(lifecycleOwner, Observer {
             adapter.submitList(it)
         })
     }

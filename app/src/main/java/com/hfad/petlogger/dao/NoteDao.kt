@@ -21,7 +21,7 @@ interface NoteDao {
     @Query("SELECT * FROM note_table WHERE note_id=:noteId")
     suspend fun get(noteId: Long): Note
 
-    @Query("SELECT * FROM note_table")
+    @Query("SELECT * FROM note_table ORDER BY note_last_updated DESC")
     suspend fun getAll(): List<Note>
 
     @Insert
