@@ -28,13 +28,13 @@ class EventMultiSelectionViewModel(
                 getAssociatedEvents?.let { getInitialEvents ->
                     val initialEvents = getInitialEvents()
                     initialSelection.addAll(initialEvents)
-                    selectionTracker.initializeSelection(initialEvents)
                 }
             }
             fetchedAllEvents = async {
                 eventRepository.getAll()
             }.await()
             initialWeightsFetch.await()
+            selectionTracker.initializeSelection(initialSelection.toList())
             resetSelection()
         }
     }
