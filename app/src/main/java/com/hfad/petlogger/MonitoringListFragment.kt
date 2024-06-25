@@ -69,6 +69,7 @@ class MonitoringListFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        binding.weightsList.adapter = null
         _binding = null
     }
 }

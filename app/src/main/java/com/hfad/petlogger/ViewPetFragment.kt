@@ -40,7 +40,7 @@ class ViewPetFragment : Fragment() {
         val application = requireNotNull(this.activity).application
         val database = PetLoggerDatabase.getInstance(application)
         val petId = ViewPetFragmentArgs.fromBundle(requireArguments()).petId
-        val mediaRepository = MediaRepository(database, requireContext())
+        val mediaRepository = MediaRepository(database, application.applicationContext)
         val petRepository = PetRepository(database, mediaRepository)
         val getPetAgeDisplay = GetPeriodDisplayUseCase()
         val viewPetViewModel = ViewModelProvider(this, ViewPetViewModel.provideFactory(petRepository, petId, getPetAgeDisplay)).get(ViewPetViewModel::class.java)

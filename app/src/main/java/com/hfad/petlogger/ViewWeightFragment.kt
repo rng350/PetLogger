@@ -1,11 +1,10 @@
 package com.hfad.petlogger
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.ui.res.stringResource
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -35,7 +34,6 @@ class ViewWeightFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        val mainActivity = (activity as MainActivity)
         viewModel.assocPet.observe(viewLifecycleOwner, Observer {
             it?.let {
                 val topAppBarTitleRemainder = if (it.petName[it.petName.length-1].lowercaseChar() != 's') "\'s Weight" else "\' Weight"
@@ -77,5 +75,10 @@ class ViewWeightFragment : Fragment() {
         }
 
         return view
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

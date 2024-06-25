@@ -30,7 +30,7 @@ class ViewNoteFragment : Fragment() {
         val application = requireNotNull(this.activity).application
         val database = PetLoggerDatabase.getInstance(application)
 
-        val mediaRepository = MediaRepository(database, requireContext())
+        val mediaRepository = MediaRepository(database, application.applicationContext)
         val noteRepository = NoteRepository(database, mediaRepository)
         val noteId = ViewNoteFragmentArgs.fromBundle(requireArguments()).noteId
 

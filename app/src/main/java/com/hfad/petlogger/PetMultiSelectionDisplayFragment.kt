@@ -62,8 +62,9 @@ class PetMultiSelectionDisplayFragment : Fragment() {
         binding.addPetsButton.isEnabled = true
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding.petsList.adapter = null
         _binding = null
     }
 }

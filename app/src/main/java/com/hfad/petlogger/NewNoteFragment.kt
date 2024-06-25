@@ -33,7 +33,7 @@ class NewNoteFragment : Fragment() {
         val application = requireNotNull(this.activity).application
         val database = PetLoggerDatabase.getInstance(application)
         val petDao = database.petDao
-        val mediaRepository = MediaRepository(database, requireContext())
+        val mediaRepository = MediaRepository(database, application.applicationContext)
         val noteRepository = NoteRepository(database, mediaRepository)
         val petRepository = PetRepository(database, mediaRepository)
         val eventRepository = EventRepository(database, mediaRepository)

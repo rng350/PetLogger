@@ -122,6 +122,7 @@ class MediaSelectionFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        binding.photoList.adapter = null
         _binding = null
     }
 

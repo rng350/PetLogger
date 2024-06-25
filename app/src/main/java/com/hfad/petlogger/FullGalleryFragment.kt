@@ -38,7 +38,7 @@ class FullGalleryFragment : Fragment() {
             viewModel.photos,
             binding.gallery,
             viewLifecycleOwner,
-            requireContext(),
+            application.applicationContext,
             viewModel.photoNavigator)
 
         binding.addPhotoButton.setOnClickListener {
@@ -57,6 +57,7 @@ class FullGalleryFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        binding.gallery.adapter = null
         _binding = null
     }
 }

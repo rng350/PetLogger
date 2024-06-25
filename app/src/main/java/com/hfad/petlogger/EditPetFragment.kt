@@ -43,7 +43,7 @@ class EditPetFragment : Fragment() {
         val eventDao = database.eventDao
         val weightDao = database.weightDao
 
-        val mediaRepository = MediaRepository(database, requireContext())
+        val mediaRepository = MediaRepository(database, application.applicationContext)
         val petRepository = PetRepository(database, mediaRepository)
         editPetViewModel = ViewModelProvider(this, EditPetViewModel.provideFactory(petRepository, petID, petDao, photoDao, eventDao, weightDao)).get(EditPetViewModel::class.java)
         binding.editPetViewModel = editPetViewModel

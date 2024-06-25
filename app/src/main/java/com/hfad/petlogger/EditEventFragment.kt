@@ -34,7 +34,7 @@ class EditEventFragment : Fragment() {
         val database = PetLoggerDatabase.getInstance(application)
 
         val eventID = EditEventFragmentArgs.fromBundle(requireArguments()).eventId
-        val mediaRepository = MediaRepository(database, requireContext())
+        val mediaRepository = MediaRepository(database, application.applicationContext)
         val eventRepository = EventRepository(database, mediaRepository)
 
         val petDao = database.petDao
@@ -105,8 +105,8 @@ class EditEventFragment : Fragment() {
         return view
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         _binding = null
     }
 }

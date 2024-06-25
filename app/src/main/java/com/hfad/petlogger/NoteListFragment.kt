@@ -29,9 +29,6 @@ class NoteListFragment : Fragment() {
 
         setAppBarTitle(getString(R.string.note_list_header))
 
-        val noteDao = PetLoggerDatabase.getInstance(requireContext()).noteDao
-        val photoDao = PetLoggerDatabase.getInstance(requireContext()).photoDao
-
         val application = requireNotNull(this.activity).application
         val database = PetLoggerDatabase.getInstance(application)
 
@@ -66,6 +63,7 @@ class NoteListFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        binding.notesList.adapter = null
         _binding = null
     }
 }

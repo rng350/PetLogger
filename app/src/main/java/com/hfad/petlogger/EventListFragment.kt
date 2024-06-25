@@ -60,6 +60,7 @@ class EventListFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        binding.eventsList.adapter = null
         _binding = null
     }
 }

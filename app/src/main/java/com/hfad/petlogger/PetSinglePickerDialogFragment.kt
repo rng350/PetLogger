@@ -70,6 +70,7 @@ class PetSinglePickerDialogFragment : DialogFragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        binding.petsList.adapter = null
         _binding = null
     }
 }

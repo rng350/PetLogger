@@ -32,7 +32,7 @@ class NewEventFragment : Fragment() {
         val application = requireNotNull(this.activity).application
         val database = PetLoggerDatabase.getInstance(application)
 
-        val mediaRepository = MediaRepository(database, requireContext())
+        val mediaRepository = MediaRepository(database, application.applicationContext)
         val eventRepository = EventRepository(database, mediaRepository)
         val newEventViewModel = ViewModelProvider(this, NewEventViewModel.provideFactory(eventRepository)).get(NewEventViewModel::class.java)
         binding.newEventViewModel = newEventViewModel
@@ -94,8 +94,8 @@ class NewEventFragment : Fragment() {
         binding.eventTime.isEnabled = true
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         _binding = null
     }
 }

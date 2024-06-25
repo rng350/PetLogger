@@ -79,14 +79,16 @@ interface PetDao {
     @Query("SELECT photo_table.photo_id, photo_date, photo_filesize, photo_width, photo_height, photo_uri, photo_filename, photo_title " +
             "FROM photo_table LEFT JOIN pet_photo_table " +
             "ON photo_table.photo_id = pet_photo_table.photo_id " +
-            "WHERE pet_photo_table.pet_id=:petId ")
+            "WHERE pet_photo_table.pet_id=:petId " +
+            "ORDER BY photo_date DESC")
     fun getPetPhotos(petId: Long): Flow<List<Photo>>
 
 
     @Query("SELECT photo_table.photo_id, photo_date, photo_filesize, photo_width, photo_height, photo_uri, photo_filename, photo_title " +
             "FROM photo_table LEFT JOIN pet_photo_table " +
             "ON photo_table.photo_id = pet_photo_table.photo_id " +
-            "WHERE pet_photo_table.pet_id=:petId ")
+            "WHERE pet_photo_table.pet_id=:petId " +
+            "ORDER BY photo_date DESC")
     suspend fun getPetPhotosAsList(petId: Long): List<Photo>
 
     @Query("SELECT weight_id, weight_pet_id, weight_datetime, weight_notes, weight_grams " +

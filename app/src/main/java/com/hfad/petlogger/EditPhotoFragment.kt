@@ -31,7 +31,7 @@ class EditPhotoFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
         val application = requireNotNull(this.activity).application
         val database = PetLoggerDatabase.getInstance(application)
-        val mediaRepository = MediaRepository(database, requireContext())
+        val mediaRepository = MediaRepository(database, application.applicationContext)
         val photoId = EditPhotoFragmentArgs.fromBundle(requireArguments()).photoId
 
         val noteRepository = NoteRepository(database, mediaRepository)
@@ -89,8 +89,8 @@ class EditPhotoFragment : Fragment() {
         return view
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         _binding = null
     }
 }

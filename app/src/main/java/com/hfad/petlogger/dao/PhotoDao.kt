@@ -24,7 +24,7 @@ interface PhotoDao {
     @Query("SELECT * FROM photo_table WHERE photo_id=:photoId LIMIT 1")
     suspend fun checkPhoto(photoId: Long): Photo?
 
-    @Query("SELECT * FROM photo_table")
+    @Query("SELECT * FROM photo_table ORDER BY photo_date DESC")
     suspend fun getAllPhotos(): List<Photo>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)

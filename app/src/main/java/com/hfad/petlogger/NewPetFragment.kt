@@ -44,7 +44,7 @@ class NewPetFragment : Fragment() {
 
         val application = requireNotNull(this.activity).application
         val database = PetLoggerDatabase.getInstance(application)
-        val mediaRepository = MediaRepository(database, requireContext())
+        val mediaRepository = MediaRepository(database, application.applicationContext)
         val petRepository = PetRepository(database, mediaRepository)
         newPetViewModel = ViewModelProvider(this, NewPetViewModel.provideFactory(petRepository)).get(NewPetViewModel::class.java)
         binding.newPetViewModel = newPetViewModel

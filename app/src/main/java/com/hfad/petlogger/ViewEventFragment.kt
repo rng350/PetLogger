@@ -29,7 +29,7 @@ class ViewEventFragment : Fragment() {
         val application = requireNotNull(this.activity).application
         val database = PetLoggerDatabase.getInstance(application)
         val eventDao = database.eventDao
-        val mediaRepository = MediaRepository(database, requireContext())
+        val mediaRepository = MediaRepository(database, application.applicationContext)
         val eventRepository = EventRepository(database, mediaRepository)
 
         val eventId = ViewEventFragmentArgs.fromBundle(requireArguments()).eventId

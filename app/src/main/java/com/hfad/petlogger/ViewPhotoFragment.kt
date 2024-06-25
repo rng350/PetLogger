@@ -27,7 +27,7 @@ class ViewPhotoFragment : Fragment() {
 
         val application = requireActivity().application
         val database = PetLoggerDatabase.getInstance(application)
-        val mediaRepository = MediaRepository(database, requireContext())
+        val mediaRepository = MediaRepository(database, application.applicationContext)
         val photoId = ViewPhotoFragmentArgs.fromBundle(requireArguments()).photoId
         val viewPhotoViewModel = ViewModelProvider(this, ViewPhotoViewModel.provideFactory(mediaRepository, photoId)).get(ViewPhotoViewModel::class.java)
         binding.viewPhotoViewModel = viewPhotoViewModel
@@ -54,8 +54,8 @@ class ViewPhotoFragment : Fragment() {
         return view
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         _binding = null
     }
 }
