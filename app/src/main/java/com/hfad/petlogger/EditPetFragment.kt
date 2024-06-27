@@ -5,15 +5,18 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.hfad.petlogger.databinding.FragmentEditPetBinding
 import com.hfad.petlogger.photodisplay.stateless.GetCheckableWeightsOfPetUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetEventsOfPetUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetPetProfilePhotoUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetPhotosOfPetUseCase
 import com.hfad.petlogger.repositories.EventRepository
 import com.hfad.petlogger.repositories.MediaRepository
@@ -38,14 +41,9 @@ class EditPetFragment : Fragment() {
         val application = requireNotNull(this.activity).application
         val database = PetLoggerDatabase.getInstance(application)
 
-        val petDao = database.petDao
-        val photoDao = database.photoDao
-        val eventDao = database.eventDao
-        val weightDao = database.weightDao
-
         val mediaRepository = MediaRepository(database, application.applicationContext)
         val petRepository = PetRepository(database, mediaRepository)
-        editPetViewModel = ViewModelProvider(this, EditPetViewModel.provideFactory(petRepository, petID, petDao, photoDao, eventDao, weightDao)).get(EditPetViewModel::class.java)
+        editPetViewModel = ViewModelProvider(this, EditPetViewModel.provideFactory(petRepository, petID)).get(EditPetViewModel::class.java)
         binding.editPetViewModel = editPetViewModel
 
         val getPetWeights = GetCheckableWeightsOfPetUseCase(petRepository, petID)
@@ -69,15 +67,9 @@ class EditPetFragment : Fragment() {
         val mediaSelectionViewModel = ViewModelProvider(this, MediaSelectionViewModel.provideFactory(mediaRepository, getPhotosOfPet)).get(MediaSelectionViewModel::class.java)
         binding.mediaSelectionViewModel = mediaSelectionViewModel
 
-        editPetViewModel.petProfilePic.observe(viewLifecycleOwner, Observer {
-            // if new pfp hasn't been picked yet
-            if (editPetViewModel.newPetProfilePic.value == null) {
-                Glide.with(requireContext())
-                    .load(it.contentUri)
-                    .apply(RequestOptions().placeholder(R.drawable.placeholder))
-                    .into(binding.petPhoto)
-            }
-        })
+        val getPetProfilePhoto = GetPetProfilePhotoUseCase(petRepository, petID)
+        val petProfilePhotoSelectionViewModel = ViewModelProvider(this, MediaSingleSelectionViewModel.provideFactory(mediaRepository, getPetProfilePhoto)).get(MediaSingleSelectionViewModel::class.java)
+        binding.petProfilePhotoSelectionViewModel = petProfilePhotoSelectionViewModel
 
         // initialize sex pick
         editPetViewModel.pet.observeOnce(viewLifecycleOwner, Observer {
@@ -104,38 +96,55 @@ class EditPetFragment : Fragment() {
             }
         }
 
-        binding.inputDOBButton.setOnClickListener {
+        binding.addPetBirthDateButton.setOnClickListener {
             DatePicker.generate(editPetViewModel.newPetDOB).show(parentFragmentManager, "DATE_PICKER")
         }
 
         binding.submit.setOnClickListener {
-            editPetViewModel.updatePet(
-                eventsToAdd = eventMultiSelectionViewModel.getEventsToAdd(),
-                eventsToRemove = eventMultiSelectionViewModel.getEventsToRemove(),
-                weightsToRemove = petWeightsDeselectionViewModel.getWeightsToRemove(),
-                photosToAdd = mediaSelectionViewModel.getPhotosToAdd(),
-                photosToRemove = mediaSelectionViewModel.getPhotosToRemove()
-            )
+            if (editPetViewModel.petName.value!!.isNotEmpty()) {
+                editPetViewModel.updatePet(
+                    eventsToAdd = eventMultiSelectionViewModel.getEventsToAdd(),
+                    eventsToRemove = eventMultiSelectionViewModel.getEventsToRemove(),
+                    weightsToRemove = petWeightsDeselectionViewModel.getWeightsToRemove(),
+                    photosToAdd = mediaSelectionViewModel.getPhotosToAdd(),
+                    photosToRemove = mediaSelectionViewModel.getPhotosToRemove(),
+                    petProfilePhotoToAdd = if (petProfilePhotoSelectionViewModel.photoToAdd.isNotEmpty()) petProfilePhotoSelectionViewModel.photoToAdd[0] else null,
+                    petProfilePhotoToRemove = if (petProfilePhotoSelectionViewModel.photoToRemove.isNotEmpty()) petProfilePhotoSelectionViewModel.photoToRemove[0] else null
+                )
+            } else Toast.makeText(requireContext(), R.string.no_pet_name_given, Toast.LENGTH_LONG).show()
         }
 
         binding.cancel.setOnClickListener {
             this.findNavController().popBackStack()
         }
 
+        val confirmAction = ConfirmActionUseCase(
+            dialogTitle = resources.getString(R.string.confirm_pet_deletion_title),
+            dialogMessage = resources.getString(R.string.confirm_pet_deletion_message),
+            onPositiveButtonClick = { dialog, which ->
+                dialog.dismiss()
+                editPetViewModel.deletePet() },
+            context = requireContext()
+        )
         binding.delete.setOnClickListener {
-            deleteProfilePicFromLocalStorage()
-            this.findNavController().navigate(R.id.action_editPetFragment_to_petListFragment)
+            confirmAction()
+        }
+
+        editPetViewModel.doneUpdating.observe(viewLifecycleOwner) {isDoneUpdating ->
+            if (isDoneUpdating) {
+                findNavController().navigate(EditPetFragmentDirections.actionEditPetFragmentToViewPetFragment(petID))
+                editPetViewModel.wentBack()
+            }
+        }
+
+        editPetViewModel.goToPetList.observe(viewLifecycleOwner) {shouldGo ->
+            if (shouldGo) {
+                this.findNavController().navigate(EditPetFragmentDirections.actionEditPetFragmentToPetListFragment())
+                editPetViewModel.wentToPetList()
+            }
         }
 
         return view
-    }
-
-    private fun deleteProfilePicFromLocalStorage() {
-        editPetViewModel.petProfilePic.value?.let { photo ->
-            photo.contentUri.path?.let { path ->
-                File(path).delete()
-            }
-        }
     }
 
     override fun onDestroyView() {

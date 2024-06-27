@@ -11,36 +11,41 @@ import com.hfad.petlogger.photodisplay.stateless.GetAssociatedItemsUseCase
 import com.hfad.petlogger.repositories.EventRepository
 import com.hfad.petlogger.repositories.PetRepository
 import com.hfad.petlogger.selectiontracker.NewSelectionTracker
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class EditPetViewModel(
     val petRepository: PetRepository,
-    val petID: Long,
-    val petDao: PetDao,
-    val photoDao: PhotoDao,
-    val eventDao: EventDao,
-    val weightDao: WeightDao
+    val petID: Long
 ): ViewModel() {
     val pet = MutableLiveData<Pet>()
-    val events = MutableLiveData<MutableList<CheckableItem<Event>>>()
-    val weights = MutableLiveData<MutableList<CheckableItem<Weight>>>()
-    val petProfilePic = MutableLiveData<Photo>()
-    val newPetProfilePic = MutableLiveData<Photo>()
+    val petName = MutableLiveData<String>("")
+    val petSpecies = MutableLiveData<String>("")
+    val petBreed = MutableLiveData<String>("")
 
-    val newPetSex = MutableLiveData<String>("N/A")
+    val petSex = MutableLiveData<String>("N/A")
     var newPetDOB = SelectableDateOptional()
+    private val _doneUpdating = MutableLiveData(false)
+    val doneUpdating: LiveData<Boolean> get() = _doneUpdating
+    val _goToPetList = MutableLiveData(false)
+    val goToPetList: LiveData<Boolean> get() = _goToPetList
 
     init {
-        Fetcher.fetchPet(this, pet, petDao, petID)
-        Fetcher.fetchPetProfilePhoto(viewModelScope, petProfilePic, petDao, petID)
-        Fetcher.fetchCheckableEventsOfPet(viewModelScope, events, petDao, petID)
-        Fetcher.fetchCheckableWeightsOfPet(viewModelScope, weights, petDao, petID)
+        viewModelScope.launch {
+            launch {
+                val retrievedPet = petRepository.getPet(petID)
+                pet.postValue(retrievedPet)
+                petName.postValue(retrievedPet.petName)
+                petSpecies.postValue(retrievedPet.petSpecies)
+                petBreed.postValue(retrievedPet.petBreed)
+            }
+        }
     }
 
     fun onPetFetched() {
-        val (_, _, _, _, petSex, petDOB, _) = pet.value!!
-        newPetSex.value = petSex
-        newPetDOB.set(petDOB)
+        val (_, _, _, _, initPetSex, initPetDOB, _) = pet.value!!
+        petSex.postValue(initPetSex)
+        newPetDOB.set(initPetDOB)
     }
 
     fun updatePet(
@@ -48,37 +53,31 @@ class EditPetViewModel(
         eventsToAdd: List<Event> = listOf<Event>(),
         weightsToRemove: List<Weight> = listOf<Weight>(),
         photosToAdd: List<Photo> = listOf<Photo>(),
-        photosToRemove: List<Photo> = listOf<Photo>()
+        photosToRemove: List<Photo> = listOf<Photo>(),
+        petProfilePhotoToAdd: Photo? = null,
+        petProfilePhotoToRemove: Photo? = null
     ) {
-        val editedPet = pet.value!!
-        editedPet.petDOB = newPetDOB.dateTime
-        editedPet.hasDOB = newPetDOB.hasBeenSet
-
+        val editedPet = Pet(
+            petID = petID,
+            petName = petName.value!!,
+            petSpecies = petSpecies.value!!,
+            petBreed = petBreed.value!!,
+            petSex = petSex.value!!,
+            petDOB = newPetDOB.dateTime,
+            hasDOB = newPetDOB.hasBeenSet
+        )
         viewModelScope.launch {
-            petDao.update(editedPet)
-        }
-        for (event in eventsToRemove) {
-            viewModelScope.launch {
-                petDao.delete(EventPet(event.eventId, petID))
-            }
-        }
-        for (event in eventsToAdd) {
-            viewModelScope.launch {
-                petDao.insert(EventPet(event.eventId, petID))
-            }
-        }
-        for (weight in weightsToRemove) {
-            viewModelScope.launch {
-                weightDao.delete(weight)
-            }
-        }
-        viewModelScope.launch {
-            petRepository.addPetPhotos(petID, photosToAdd)
-        }
-        for (photo in photosToRemove) {
-            viewModelScope.launch {
-                petDao.deletePetPhoto(PetPhoto(petID, photo.id))
-            }
+            petRepository.updatePet(
+                pet=editedPet,
+                eventsToAdd=eventsToAdd,
+                eventsToRemove=eventsToRemove,
+                weightsToRemove=weightsToRemove,
+                photosToAdd = photosToAdd,
+                photosToRemove = photosToRemove,
+                petProfilePhotoToAdd = petProfilePhotoToAdd,
+                petProfilePhotoToRemove = petProfilePhotoToRemove
+            )
+            _doneUpdating.value = true
         }
     }
 
@@ -88,31 +87,31 @@ class EditPetViewModel(
 
     // call after "yes" on "are you sure?"
     fun deletePet() {
-        // TODO: implement
-        // delete pet
-        // delete pet photo
-        deleteProfilePhoto()
-        // go back to home screen
-    }
-
-    fun deleteProfilePhoto() {
-        petProfilePic.value?.let {
-            viewModelScope.launch {
-                photoDao.delete(PetProfilePhoto(photoID = it.id, petID = petID))
+        viewModelScope.launch {
+            pet.value?.let {
+                petRepository.deletePet(it)
             }
+            _goToPetList.value = true
         }
-        // delete photo from local storage
     }
 
-    fun setPetSex(newPetSex: String) {
-        pet.value?.petSex = newPetSex
+    fun wentBack() {
+        _doneUpdating.value = false
+    }
+
+    fun wentToPetList() {
+        _goToPetList.value = false
+    }
+
+    fun setPetSex(newSex: String) {
+        petSex.value = newSex
     }
 
     companion object {
-        fun provideFactory(petRepository: PetRepository, petID: Long, petDao: PetDao, photoDao: PhotoDao, eventDao: EventDao, weightDao: WeightDao): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+        fun provideFactory(petRepository: PetRepository, petID: Long): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(EditPetViewModel::class.java)) {
-                    return EditPetViewModel(petRepository, petID, petDao, photoDao, eventDao, weightDao) as T
+                    return EditPetViewModel(petRepository, petID) as T
                 }
                 throw IllegalArgumentException("Unknown ViewModel")
             }

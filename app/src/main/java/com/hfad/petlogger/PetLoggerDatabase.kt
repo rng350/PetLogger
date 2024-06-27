@@ -36,7 +36,7 @@ import com.hfad.petlogger.util.URIConverter
         PhotoNote::class,
         WeightNote::class
     ],
-    version = 6,
+    version = 7,
     exportSchema = false)
 @TypeConverters(
     Converter::class,

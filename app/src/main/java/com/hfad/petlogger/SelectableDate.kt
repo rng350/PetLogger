@@ -1,6 +1,7 @@
 package com.hfad.petlogger
 
 import androidx.lifecycle.MutableLiveData
+import com.hfad.petlogger.util.GetDateDisplayUseCase
 import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.ZoneId
@@ -10,10 +11,11 @@ import java.time.ZoneId
 open class SelectableDate(initDateTime: OffsetDateTime = OffsetDateTime.now()) {
     var dateTime: OffsetDateTime = initDateTime
     open val dateDisplay: MutableLiveData<String> = MutableLiveData<String>(dateTime.toLocalDate().toString())
+    val getDateDisplay = GetDateDisplayUseCase()
 
     open fun set(newDate: OffsetDateTime) {
         dateTime = newDate
-        dateDisplay.value = dateTime.toLocalDate().toString()
+        dateDisplay.value = getDateDisplay(dateTime)
     }
 
     open fun set(newDate: Instant) {

@@ -17,6 +17,9 @@
         <variable
             name="mediaSelectionViewModel"
             type="com.hfad.petlogger.MediaSelectionViewModel" />
+        <variable
+            name="petProfilePhotoSelectionViewModel"
+            type="com.hfad.petlogger.MediaSingleSelectionViewModel"/>
     </data>
 
     <ScrollView
@@ -28,115 +31,115 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/pet_profile_pic_selection_fragment_container_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:name="com.hfad.petlogger.MediaSingleSelectionFragment"
+                tools:layout="@layout/fragment_media_single_selection" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/petName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/pet_name_header">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:text="@={editPetViewModel.petName}" />
+            </com.google.android.material.textfield.TextInputLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:id="@+id/petPhoto"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:adjustViewBounds="true"
-                    android:maxWidth="200dp"
-                    android:scaleType="centerCrop"
-                    android:layout_gravity="center"
-                    app:srcCompat="@drawable/placeholder" />
+                android:orientation="horizontal"
+                android:weightSum="2">
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/petName"
+                    android:id="@+id/petSpecies"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/pet_name_header">
+                    android:hint="@string/pet_species_header"
+                    android:layout_weight="1">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="text"
-                        android:text="@={editPetViewModel.pet.petName}" />
+                        android:text="@={editPetViewModel.petSpecies}" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <LinearLayout
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/petBreed"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:weightSum="2">
+                    android:hint="@string/pet_breed_header"
+                    android:layout_weight="1">
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/petSpecies"
+                    <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/pet_species_header"
-                        android:layout_weight="1">
+                        android:inputType="text"
+                        android:text="@={editPetViewModel.petBreed}" />
+                </com.google.android.material.textfield.TextInputLayout>
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="text"
-                            android:text="@={editPetViewModel.pet.petSpecies}" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/petBreed"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/pet_breed_header"
-                        android:layout_weight="1">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="text"
-                            android:text="@={editPetViewModel.pet.petBreed}" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                </LinearLayout>
-
-                <RadioGroup
-                    android:id="@+id/petSexSelection"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <RadioButton
-                        android:id="@+id/petSexMale"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/pet_sex_male" />
-
-                    <RadioButton
-                        android:id="@+id/petSexFemale"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/pet_sex_female" />
-
-                    <RadioButton
-                        android:id="@+id/petSexOther"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/pet_sex_other" />
-                </RadioGroup>
-
-                <TextView
-                    android:id="@+id/petBirthDate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/pet_birthdate"
-                    android:textSize="20sp" />
-
-                <Button
-                    android:id="@+id/inputDOBButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@{@string/input_pet_dob(editPetViewModel.newPetDOB.dateDisplay)}" />
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/petEventsHeader"
-                android:layout_width="wrap_content"
+            <RadioGroup
+                android:id="@+id/petSexSelection"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/pet_events_header"
-                android:textSize="20sp" />
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/petSexMale"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pet_sex_male" />
+
+                <RadioButton
+                    android:id="@+id/petSexFemale"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pet_sex_female" />
+
+                <RadioButton
+                    android:id="@+id/petSexOther"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pet_sex_other" />
+            </RadioGroup>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/petBirthDateLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/pet_birthdate">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/petBirthDateDisplay"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:enabled="false"
+                        android:focusable="true"
+                        android:inputType="text"
+                        android:text="@{editPetViewModel.newPetDOB.dateDisplay}" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/addPetBirthDateButton"
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent"
+                    app:icon="@drawable/baseline_edit_24" />
+            </LinearLayout>
 
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/event_selection_fragment_container_view"
@@ -164,19 +167,19 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/submit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/submit_changes"/>
+                    android:text="@string/submit"/>
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/cancel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/cancel" />
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/delete"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

@@ -10,6 +10,9 @@ interface WeightDao {
     @Insert
     suspend fun insert(weight: Weight)
 
+    @Insert
+    suspend fun insert(weights: List<Weight>)
+
     @Update
     suspend fun update(weight: Weight)
 
@@ -17,7 +20,7 @@ interface WeightDao {
     suspend fun delete(weight: Weight)
 
     @Delete
-    suspend fun delete(weights: MutableList<Weight>)
+    suspend fun delete(weights: List<Weight>)
 
     @Query("SELECT * FROM weight_table WHERE weight_id=:weightId")
     suspend fun get(weightId: Long): Weight

@@ -52,11 +52,14 @@ interface PetDao {
     @Insert
     suspend fun insert(petEvent: EventPet)
 
+    @Insert
+    suspend fun insert(petEvents: List<EventPet>)
+
     @Delete
     suspend fun delete(petEvent: EventPet)
 
     @Delete
-    suspend fun delete(petEvents: MutableList<EventPet>)
+    suspend fun delete(petEvents: List<EventPet>)
 
     @Query("SELECT * FROM pet_table")
     suspend fun getAllPetsWithProfilePhotos(): List<PetWithProfilePic>
@@ -64,7 +67,7 @@ interface PetDao {
     @Query("SELECT * FROM pet_table WHERE pet_id=:petID")
     suspend fun getPetWithProfilePic(petID: Long): PetWithProfilePic
 
-    @Insert(onConflict = OnConflictStrategy.ABORT)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertPetPhoto(petPhoto: PetPhoto)
 
     @Update
@@ -72,6 +75,9 @@ interface PetDao {
 
     @Delete
     suspend fun deletePetPhoto(petPhoto: PetPhoto)
+
+    @Delete
+    suspend fun deletePetPhotos(petPhotos: List<PetPhoto>)
 
     @Query("SELECT * FROM pet_table WHERE rowid = :rowId")
     suspend fun getPetFromRow(rowId: Long): Pet

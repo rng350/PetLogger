@@ -13,6 +13,15 @@ import java.time.OffsetDateTime
     indices = [
         Index(value = ["weight_pet_id", "weight_datetime"]),
         Index(value = ["weight_datetime"])
+    ],
+    foreignKeys = [
+        ForeignKey(
+            entity = Pet::class,
+            parentColumns = ["pet_id"],
+            childColumns = ["weight_pet_id"],
+            onUpdate = ForeignKey.CASCADE,
+            onDelete = ForeignKey.CASCADE
+        )
     ]
 )
 data class Weight(
