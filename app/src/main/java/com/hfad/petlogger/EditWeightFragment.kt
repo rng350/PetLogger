@@ -7,17 +7,17 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.setFragmentResultListener
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.get
 import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.databinding.FragmentEditWeightBinding
 import com.hfad.petlogger.entities.Pet
+import com.hfad.petlogger.photodisplay.stateless.GetAllCheckablePetsUseCase
+import com.hfad.petlogger.repositories.MediaRepository
+import com.hfad.petlogger.repositories.PetRepository
 
 class EditWeightFragment : Fragment() {
     private var _binding: FragmentEditWeightBinding? = null
     val binding get() = _binding!!
-    lateinit var petPickerViewModel: PetSinglePickerDialogViewModel
+    lateinit var petPickerViewModel: PetSingleSelectionViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,34 +29,34 @@ class EditWeightFragment : Fragment() {
         val view = binding.root
 
         val application = requireNotNull(this.activity).application
+        val database = PetLoggerDatabase.getInstance(application)
 
-        val weightID = EditWeightFragmentArgs.fromBundle(requireArguments()).weightId
-        val weightDao = PetLoggerDatabase.getInstance(application).weightDao
+        val weightId = EditWeightFragmentArgs.fromBundle(requireArguments()).weightId
+        val weightDao = database.weightDao
 
-        val editWeightViewModelFactory = EditWeightViewModelFactory(weightID, weightDao)
+        val editWeightViewModelFactory = EditWeightViewModelFactory(weightId, weightDao)
         val editWeightViewModel = ViewModelProvider(this, editWeightViewModelFactory).get(EditWeightViewModel::class.java)
         binding.viewModel = editWeightViewModel
 
         val petDao = PetLoggerDatabase.getInstance(application).petDao
+
+        val mediaRepository = MediaRepository(database, application.applicationContext)
+        val petRepository = PetRepository(database, mediaRepository)
+        val getAllPets = GetAllCheckablePetsUseCase(petRepository, listOf(weightId))
+
         editWeightViewModel.pet.observeOnce(viewLifecycleOwner) {
             it?.let {
                 petPickerViewModel = ViewModelProvider(
                     this,
-                    PetSinglePickerDialogViewModel.provideFactory(petDao, it)
-                )[PetSinglePickerDialogViewModel::class.java]
+                    PetSingleSelectionViewModel.provideFactory(getAllPets, weightId)
+                )[PetSingleSelectionViewModel::class.java]
             }
-        }
-
-        childFragmentManager.setFragmentResultListener(PetSinglePickerDialogFragment.requestKey, viewLifecycleOwner) { _, bundle ->
-            val selectedPet = bundle.get(PetSinglePickerDialogFragment.resultBundleKey) as Pet
-            editWeightViewModel.pet.value = selectedPet
-            Log.d("EditWeightFrag", "Pet selected! ${selectedPet.toString()}")
         }
 
         setAppBarTitle(getString(R.string.edit_weight_header))
 
         binding.changeAssocPetButton.setOnClickListener{
-            PetSinglePickerDialogFragment().show(childFragmentManager, "PET_SINGLE_PICKER")
+            PetSingleSelectionDialogFragment().show(childFragmentManager, "PET_SINGLE_PICKER")
         }
 
         binding.weightDate.setOnClickListener{

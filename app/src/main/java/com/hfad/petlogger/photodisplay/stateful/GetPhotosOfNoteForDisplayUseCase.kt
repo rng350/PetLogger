@@ -5,7 +5,7 @@ import com.hfad.petlogger.repositories.NoteRepository
 import kotlinx.coroutines.flow.Flow
 
 class GetPhotosOfNoteForDisplayUseCase(private val noteId: Long, private val noteRepository: NoteRepository):
-    GetAssociatedItemsForDisplayUseCase<Photo> {
+    GetItemsForDisplayUseCase<Photo> {
     override fun invoke(): Flow<List<Photo>> {
         return noteRepository.getPhotosOfNoteAsFlow(noteId)
     }

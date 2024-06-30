@@ -1,5 +1,5 @@
 package com.hfad.petlogger.photodisplay.stateless
 
-interface GetSingleAssociatedItemUseCase<T> {
+interface GetSingleItemUseCase<T> {
     suspend operator fun invoke(): T?
 }

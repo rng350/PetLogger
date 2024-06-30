@@ -5,8 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.hfad.petlogger.entities.Event
-import com.hfad.petlogger.entities.Weight
-import com.hfad.petlogger.photodisplay.stateless.GetAssociatedItemsUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetItemsUseCase
 import com.hfad.petlogger.repositories.EventRepository
 import com.hfad.petlogger.selectiontracker.EditSelectionTracker
 import kotlinx.coroutines.async
@@ -14,7 +13,7 @@ import kotlinx.coroutines.launch
 
 class EventMultiSelectionViewModel(
     private val eventRepository: EventRepository,
-    private val getAssociatedEvents: GetAssociatedItemsUseCase<Event>?
+    private val getAssociatedEvents: GetItemsUseCase<Event>?
 ) : ViewModel() {
     private val _allEvents = MutableLiveData<List<CheckableItem<Event>>>()
     private val initialSelection = HashSet<Event>()
@@ -63,7 +62,7 @@ class EventMultiSelectionViewModel(
     }
 
     companion object {
-        fun provideFactory(eventRepository: EventRepository, getAssociatedWeights: GetAssociatedItemsUseCase<Event>? = null): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+        fun provideFactory(eventRepository: EventRepository, getAssociatedWeights: GetItemsUseCase<Event>? = null): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(EventMultiSelectionViewModel::class.java)) {
                     return EventMultiSelectionViewModel(eventRepository, getAssociatedWeights) as T

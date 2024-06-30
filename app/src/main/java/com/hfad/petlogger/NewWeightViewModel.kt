@@ -3,48 +3,61 @@ package com.hfad.petlogger
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.hfad.petlogger.dao.PetDao
 import com.hfad.petlogger.dao.WeightDao
 import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.entities.Weight
 import com.hfad.petlogger.fetchers.Fetcher
+import com.hfad.petlogger.repositories.PetRepository
+import com.hfad.petlogger.repositories.WeightRepository
+import com.hfad.petlogger.util.MeasuringUnitConverter
 import kotlinx.coroutines.launch
 
-class NewWeightViewModel(val weightDao: WeightDao, val petDao: PetDao, petId: Long?) : ViewModel(), WithSinglePetSelection {
-    override var petAssociated: MutableLiveData<Pet> = MutableLiveData<Pet>()
-    override var pets = MutableLiveData<List<Pet>>()
-    override var petPicked: MutableLiveData<Int> = MutableLiveData(0)
-    val wDateTime = SelectableDateTime()
+class NewWeightViewModel(
+    private val weightRepository: WeightRepository
+) : ViewModel() {
+    val weightDateTime = SelectableDateTime()
     var petNameDisplay: MutableLiveData<String> = MutableLiveData<String>()
-    var weightGrams: MutableLiveData<Int> = MutableLiveData<Int>()
+    var weightAmt: MutableLiveData<Int> = MutableLiveData<Int>()
     var details: MutableLiveData<String> = MutableLiveData<String>()
+    private val unitConverter = MeasuringUnitConverter()
+    private var _unitType: String? = null
 
-    init {
-        petId?.let {
-            Fetcher.fetchPet(this, petAssociated, petDao, it)
-            petNameDisplay.value = petAssociated.value?.petName
-        }
-        viewModelScope.launch {
-            pets.value = Fetcher.fetchAllPets(petDao)
-        }
-    }
-
-    fun submitWeight() {
-        Log.i("weighted_Pet:", petAssociated.value?.toString() ?: "N/A")
-        Log.i("...dateTime:", wDateTime.dateTime.toString() ?: "N/A")
-        Log.i("...weight:", weightGrams.value?.toString() ?: "N/A")
-        if (petAssociated.value != null && weightGrams.value != null) {
-            var weight = Weight()
-            weight.weightDateTime = wDateTime.dateTime
-            weight.petId = petAssociated.value!!.petID
-            weight.weightGrams = weightGrams.value!!
+    fun submitWeight(pet: Pet) {
+        if (weightAmt.value != null && _unitType != null) {
+            val weight = Weight()
+            weight.weightDateTime = weightDateTime.dateTime
+            weight.petId = pet.petID
+            val convertedWeight = when(_unitType) {
+                "grams" -> { weightAmt.value!! }
+                "kilograms" -> { unitConverter.kilogramsToGrams(weightAmt.value!!) }
+                "pounds" -> { unitConverter.poundsToGrams(weightAmt.value!!) }
+                "ounces" -> { unitConverter.ouncesToGrams(weightAmt.value!!)}
+                else -> { weightAmt.value!! }
+            }
+            weight.weightGrams = convertedWeight
             details.value?.let {
                 weight.weightNotes = it
             }
             viewModelScope.launch {
-                weightDao.insert(weight)
-                Log.i("WEIGHT:", weight.toString())
+                weightRepository.insert(weight)
+            }
+        }
+    }
+
+    fun setWeightUnitType(unitType: String) {
+        _unitType = unitType
+    }
+
+    companion object {
+        fun provideFactory(weightRepository: WeightRepository): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                if (modelClass.isAssignableFrom(NewWeightViewModel::class.java)) {
+                    return NewWeightViewModel(weightRepository) as T
+                }
+                throw IllegalArgumentException("Unknown ViewModel")
             }
         }
     }

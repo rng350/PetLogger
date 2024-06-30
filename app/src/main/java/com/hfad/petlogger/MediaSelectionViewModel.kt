@@ -8,13 +8,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.hfad.petlogger.entities.Photo
-import com.hfad.petlogger.photodisplay.stateless.GetAssociatedItemsUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetItemsUseCase
 import com.hfad.petlogger.repositories.MediaRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class MediaSelectionViewModel(private val mediaRepository: MediaRepository,
-                              private val fetchInitialSelection: GetAssociatedItemsUseCase<Photo>? = null,
+                              private val fetchInitialSelection: GetItemsUseCase<Photo>? = null,
                               val maxItems: Int = Int.MAX_VALUE) : ViewModel() {
     private var initialSelection = HashSet<Photo>()
     private var _currentPhotoSelection = MutableLiveData<List<Photo>>(listOf<Photo>())
@@ -122,7 +122,7 @@ class MediaSelectionViewModel(private val mediaRepository: MediaRepository,
         return selectionToRemove.value ?: listOf<Photo>()
     }
     companion object {
-        fun provideFactory(mediaRepository: MediaRepository, fetchInitialSelection: GetAssociatedItemsUseCase<Photo>? = null, maxItems: Int = Int.MAX_VALUE): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+        fun provideFactory(mediaRepository: MediaRepository, fetchInitialSelection: GetItemsUseCase<Photo>? = null, maxItems: Int = Int.MAX_VALUE): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(MediaSelectionViewModel::class.java)) {
                     return MediaSelectionViewModel(mediaRepository, fetchInitialSelection, maxItems) as T

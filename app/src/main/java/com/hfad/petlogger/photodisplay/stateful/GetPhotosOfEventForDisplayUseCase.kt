@@ -5,7 +5,7 @@ import com.hfad.petlogger.repositories.EventRepository
 import kotlinx.coroutines.flow.Flow
 
 class GetPhotosOfEventForDisplayUseCase(private val eventId: Long, private val eventRepository: EventRepository):
-    GetAssociatedItemsForDisplayUseCase<Photo> {
+    GetItemsForDisplayUseCase<Photo> {
     override fun invoke(): Flow<List<Photo>> {
         return eventRepository.getPhotosOfEventAsFlow(eventId)
     }

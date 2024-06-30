@@ -34,7 +34,6 @@
     <string name="pet_involved_button">+Pet Involved</string>
     <string name="add_weight">Add Weight</string>
     <string name="weight_unit">g</string>
-    <string name="input_weight_qty">Input weight quantity</string>
     <string name="not_available">N/A</string>
     <string name="pet_latest_weight_header">Latest Weight</string>
     <string name="pet_latest_weight">%s %s</string>
@@ -112,4 +111,9 @@
     <string name="accept">Accept</string>
     <string name="no">No</string>
     <string name="yes">Yes</string>
+    <string name="amount">Amount</string>
+    <string name="unit">Unit</string>
+    <string name="select">Select</string>
+    <string name="none_selected">None Selected</string>
+    <string name="details">Details</string>
 </resources>

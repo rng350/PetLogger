@@ -155,7 +155,6 @@
         <argument
             android:name="petId"
             app:argType="string"
-            android:defaultValue="@null"
             app:nullable="true" />
     </fragment>
     <fragment

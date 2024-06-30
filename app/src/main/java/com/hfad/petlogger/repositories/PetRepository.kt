@@ -1,6 +1,7 @@
 package com.hfad.petlogger.repositories
 
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import com.hfad.petlogger.CheckableItem
 import com.hfad.petlogger.PetLoggerDatabase
 import com.hfad.petlogger.copyOf
@@ -227,5 +228,44 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
                 Log.d("PetRep:addPetProfPhoto", "Photo set as PetProfilePhoto... ${it}")
             }
         }
+    }
+
+
+
+    suspend fun getCheckablePets(): List<CheckableItem<PetWithProfilePic>> = withContext(Dispatchers.IO) {
+        fetchCheckablePets()
+    }
+    suspend fun getCheckablePets(petIdSelection: HashSet<Long>?): List<CheckableItem<PetWithProfilePic>> = withContext(Dispatchers.IO) {
+        fetchCheckablePets(petIdSelection)
+    }
+
+    suspend fun getCheckablePets(petSelection: Pet): List<CheckableItem<PetWithProfilePic>> = withContext(Dispatchers.IO) {
+        fetchCheckablePets(hashSetOf(petSelection.petID))
+    }
+
+    suspend fun getCheckablePets(selectedPetId: Long? = null): List<CheckableItem<PetWithProfilePic>> = withContext(Dispatchers.IO) {
+        if (selectedPetId != null) {
+            fetchCheckablePets(hashSetOf(selectedPetId))
+        } else {
+            fetchCheckablePets()
+        }
+    }
+
+    suspend fun getCheckablePets(selectedPetIds: List<Long>): List<CheckableItem<PetWithProfilePic>> = withContext(Dispatchers.IO) {
+        fetchCheckablePets(selectedPetIds.toHashSet())
+    }
+
+    private suspend fun fetchCheckablePets(petIdSelection: HashSet<Long>? = null): List<CheckableItem<PetWithProfilePic>> = withContext(Dispatchers.IO) {
+        val allFetchedPets = async {
+            petDao.getAllPetsWithProfilePhotos()
+        }
+        val allPets = allFetchedPets.await()
+
+        val checkablePetList = allPets.map {
+            val checked = petIdSelection?.contains(it.pet.petID) ?: false
+            CheckableItem<PetWithProfilePic>(it, MutableLiveData(checked))
+        }
+
+        checkablePetList ?: listOf()
     }
 }

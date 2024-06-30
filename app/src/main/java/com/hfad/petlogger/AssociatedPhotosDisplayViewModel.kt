@@ -1,19 +1,16 @@
 package com.hfad.petlogger
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.hfad.petlogger.entities.Photo
-import com.hfad.petlogger.photodisplay.stateful.GetAssociatedItemsForDisplayUseCase
+import com.hfad.petlogger.photodisplay.stateful.GetItemsForDisplayUseCase
 import com.hfad.petlogger.util.Navigator
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 
-class AssociatedPhotosDisplayViewModel(getAssociatedPhotos: GetAssociatedItemsForDisplayUseCase<Photo>) : ViewModel() {
+class AssociatedPhotosDisplayViewModel(getAssociatedPhotos: GetItemsForDisplayUseCase<Photo>) : ViewModel() {
     val photos: StateFlow<List<Photo>> = getAssociatedPhotos()
         .stateIn(
             scope = viewModelScope,
@@ -22,7 +19,7 @@ class AssociatedPhotosDisplayViewModel(getAssociatedPhotos: GetAssociatedItemsFo
         )
     val navigator = Navigator()
     companion object {
-        fun provideFactory(getAssociatedPhotos: GetAssociatedItemsForDisplayUseCase<Photo>): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+        fun provideFactory(getAssociatedPhotos: GetItemsForDisplayUseCase<Photo>): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(AssociatedPhotosDisplayViewModel::class.java)) {
                     return AssociatedPhotosDisplayViewModel(getAssociatedPhotos) as T

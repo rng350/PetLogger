@@ -15,7 +15,7 @@ import com.hfad.petlogger.recyclerviews.SetupAssociatedPhotosDisplayUseCase
 import kotlinx.coroutines.launch
 
 class AssociatedPhotosDisplayFragment : Fragment() {
-    var _binding: FragmentAssociatedPhotosDisplayBinding? = null
+    private var _binding: FragmentAssociatedPhotosDisplayBinding? = null
     val binding: FragmentAssociatedPhotosDisplayBinding get() = _binding!!
     private val assocPhotosViewModel: AssociatedPhotosDisplayViewModel by viewModels({ requireParentFragment() })
 

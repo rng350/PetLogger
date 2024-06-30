@@ -11,7 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 
-class WeightRepository(private val database: PetLoggerDatabase) {
+class WeightRepository(database: PetLoggerDatabase) {
     private val weightDao: WeightDao = database.weightDao
     private val petDao: PetDao = database.petDao
     suspend fun get(weightId: Long): Weight = withContext(Dispatchers.IO) {

@@ -8,15 +8,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.hfad.petlogger.entities.Photo
-import com.hfad.petlogger.photodisplay.stateless.GetSingleAssociatedItemUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetSingleItemUseCase
 import com.hfad.petlogger.repositories.MediaRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class MediaSingleSelectionViewModel(
     private val mediaRepository: MediaRepository,
-    private val getInitialPhoto: GetSingleAssociatedItemUseCase<Photo>? = null
+    private val getInitialPhoto: GetSingleItemUseCase<Photo>? = null
 ) : ViewModel() {
     private val _initialPhoto = MutableLiveData<Photo>()
     private val _currentPhoto = MutableLiveData<Photo?>()
@@ -65,7 +64,7 @@ class MediaSingleSelectionViewModel(
     }
 
     companion object {
-        fun provideFactory(mediaRepository: MediaRepository, getInitialPhoto: GetSingleAssociatedItemUseCase<Photo>? = null): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+        fun provideFactory(mediaRepository: MediaRepository, getInitialPhoto: GetSingleItemUseCase<Photo>? = null): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(MediaSingleSelectionViewModel::class.java)) {
                     return MediaSingleSelectionViewModel(mediaRepository, getInitialPhoto) as T

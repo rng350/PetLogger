@@ -1,5 +1,5 @@
 package com.hfad.petlogger.photodisplay.stateless
 
-interface GetAssociatedItemsUseCase<T> {
+interface GetItemsUseCase<T> {
     suspend operator fun invoke(): List<T>
 }

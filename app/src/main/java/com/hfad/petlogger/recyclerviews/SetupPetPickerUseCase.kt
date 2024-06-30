@@ -3,6 +3,7 @@ package com.hfad.petlogger.recyclerviews
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
@@ -15,9 +16,11 @@ import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.entities.PetWithProfilePic
 import com.hfad.petlogger.mutableCopyOf
 import com.hfad.petlogger.selectiontracker.SelectionTracker
+import com.hfad.petlogger.selectiontracker.SingleSelectionTracker
 
 class SetupPetPickerUseCase(private val petList: MutableLiveData<List<CheckableItem<PetWithProfilePic>>>,
-                            private val currentSelection: MutableLiveData<CheckableItem<PetWithProfilePic>>,
+                            private val currentSelection: LiveData<CheckableItem<PetWithProfilePic>>,
+                            private val selectionTracker: SingleSelectionTracker<PetWithProfilePic>,
                             private val recyclerView: RecyclerView,
                             private val lifecycleOwner: LifecycleOwner,
                             private val context: Context
@@ -54,8 +57,7 @@ class SetupPetPickerUseCase(private val petList: MutableLiveData<List<CheckableI
 
             binder.petCard.setOnClickListener { null }
             binder.petCard.setOnClickListener {
-                //updateOldAndNew(item)
-                currentSelection.value = item
+                selectionTracker.toggle(item)
             }
 
             val observer = Observer<CheckableItem<PetWithProfilePic>> {

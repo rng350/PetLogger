@@ -6,7 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class GetPhotosOfEventUseCase(private val eventId: Long, private val eventRepository: EventRepository):
-    GetAssociatedItemsUseCase<Photo> {
+    GetItemsUseCase<Photo> {
     override suspend fun invoke(): List<Photo> = withContext(Dispatchers.IO) {
         eventRepository.getPhotosOfEvent(eventId)
     }

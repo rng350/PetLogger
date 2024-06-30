@@ -1,17 +1,8 @@
 package com.hfad.petlogger
 
 import androidx.lifecycle.*
-import com.hfad.petlogger.dao.EventDao
-import com.hfad.petlogger.dao.PetDao
-import com.hfad.petlogger.dao.PhotoDao
-import com.hfad.petlogger.dao.WeightDao
 import com.hfad.petlogger.entities.*
-import com.hfad.petlogger.fetchers.Fetcher
-import com.hfad.petlogger.photodisplay.stateless.GetAssociatedItemsUseCase
-import com.hfad.petlogger.repositories.EventRepository
 import com.hfad.petlogger.repositories.PetRepository
-import com.hfad.petlogger.selectiontracker.NewSelectionTracker
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class EditPetViewModel(
