@@ -4,11 +4,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.hfad.petlogger.dao.WeightDao
 import com.hfad.petlogger.entities.Pet
-import com.hfad.petlogger.entities.PetWithProfilePic
 import com.hfad.petlogger.entities.Weight
-import com.hfad.petlogger.fetchers.FetchWeightDetailsUseCase
 import com.hfad.petlogger.repositories.WeightRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch

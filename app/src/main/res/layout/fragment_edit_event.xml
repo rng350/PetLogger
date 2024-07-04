@@ -11,6 +11,9 @@
         <variable
             name="mediaSelectionViewModel"
             type="com.hfad.petlogger.MediaSelectionViewModel" />
+        <variable
+            name="petMultiSelectionViewModel"
+            type="com.hfad.petlogger.PetMultiSelectionViewModel" />
     </data>
 
     <ScrollView
@@ -60,20 +63,19 @@
                     android:layout_height="wrap_content"
                     android:text="@string/input_event_time" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/pet_selector"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="top"
-                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                    app:spanCount="3"/>
-
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Add details here"
                     android:text="@={viewModel.event.details}"
                     android:minHeight="48dp" />
+
+                <androidx.fragment.app.FragmentContainerView
+                    android:id="@+id/pet_selection_fragment_container_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:name="com.hfad.petlogger.PetMultiSelectionDisplayFragment"
+                    tools:layout="@layout/fragment_pet_multi_selection_display" />
 
                 <androidx.fragment.app.FragmentContainerView
                     android:id="@+id/media_selection_fragment_container_view"

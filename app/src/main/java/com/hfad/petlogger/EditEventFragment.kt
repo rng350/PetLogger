@@ -8,13 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.get
 import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.databinding.FragmentEditEventBinding
-import com.hfad.petlogger.entitylinkers.PhotoToEventLinker
 import com.hfad.petlogger.photodisplay.stateless.GetPhotosOfEventUseCase
-import com.hfad.petlogger.photoselection.*
-import com.hfad.petlogger.recyclerviews.ItemPickers
 import com.hfad.petlogger.repositories.EventRepository
 import com.hfad.petlogger.repositories.MediaRepository
 
@@ -55,13 +51,6 @@ class EditEventFragment : Fragment() {
                 setAppBarTitle(title = it.title, subtitle = getString(R.string.editing_event_details))
             }
         })
-
-        ItemPickers.setupPetWithProfilePhotoEditPicker(
-            editEventViewModel.pets,
-            editEventViewModel.petsAssociated,
-            binding.petSelector,
-            viewLifecycleOwner,
-            requireContext())
 
         editEventViewModel.event.observe(viewLifecycleOwner, Observer {
             editEventViewModel.onEventFetched()

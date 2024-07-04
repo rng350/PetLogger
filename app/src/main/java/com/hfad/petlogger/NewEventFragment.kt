@@ -6,13 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.get
 import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.databinding.FragmentNewEventBinding
-import com.hfad.petlogger.entitylinkers.PhotoToEventLinker
-import com.hfad.petlogger.photoselection.GalleryPicker
-import com.hfad.petlogger.photoselection.GalleryViewModel
-import com.hfad.petlogger.photoselection.GalleryViewModelFactory
 import com.hfad.petlogger.repositories.EventRepository
 import com.hfad.petlogger.repositories.MediaRepository
 import com.hfad.petlogger.repositories.PetRepository
