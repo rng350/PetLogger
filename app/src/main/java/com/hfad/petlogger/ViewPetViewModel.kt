@@ -38,19 +38,27 @@ class ViewPetViewModel (
     init {
         viewModelScope.launch {
             pet.value = async {
+                Log.d("viewPet", "Init1")
                 petRepository.getPet(petID)
             }.await()
+            Log.d("viewPet", "Init2, Pet: ${pet.value}")
             pet.value?.let {
                 if (it.hasDOB) {
+                    Log.d("viewPet", "Init3")
                     petBirthdate.value = getDate(it.petDOB)
+                    Log.d("viewPet", "Init4")
                     petAge.value = getPetAgeDisplay(it.petDOB)
+                    Log.d("viewPet", "Init5")
                 }
             }
         }
         viewModelScope.launch {
+            Log.d("viewPet", "InitA")
             val fetchedPetProfilePhoto = petRepository.getPetProfilePhoto(petID)
+            Log.d("viewPet", "InitB")
             fetchedPetProfilePhoto?.let {
                 petProfilePhoto.value = it
+                Log.d("viewPet", "InitC")
             }
         }
     }

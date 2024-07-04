@@ -8,6 +8,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="beigeish">#FFD9B3</color>
+    <color name="slightly_darker_beigeish">#EEC398</color>
     <color name="dark_beigeish">#FFB366</color>
     <color name="brownish">#974B00</color>
     <color name="dark_brownish">#371C00</color>

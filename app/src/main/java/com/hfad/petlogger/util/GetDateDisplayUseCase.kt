@@ -3,10 +3,11 @@ package com.hfad.petlogger.util
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
+import java.time.ZoneId
 
 class GetDateDisplayUseCase {
     operator fun invoke(date: OffsetDateTime): String {
-        return invoke(date.toLocalDate())
+        return invoke(date.atZoneSameInstant(ZoneId.systemDefault()).toLocalDate())
     }
     operator fun invoke(date: LocalDateTime): String {
         return invoke(date.toLocalDate())

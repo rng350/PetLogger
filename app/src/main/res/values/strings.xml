@@ -116,4 +116,6 @@
     <string name="select">Select</string>
     <string name="none_selected">None Selected</string>
     <string name="details">Details</string>
+    <string name="viewed_weight">Viewed Weight</string>
+    <string name="previous_weight_header">Previous Weight</string>
 </resources>
