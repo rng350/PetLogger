@@ -104,7 +104,9 @@ class ViewWeightFragment : Fragment() {
         }
 
         binding.editWeight.setOnClickListener{
-            findNavController().navigate(ViewWeightFragmentDirections.actionViewWeightFragmentToEditWeightFragment(weightId))
+            viewModel.weight.value?.let { weight ->
+                findNavController().navigate(ViewWeightFragmentDirections.actionViewWeightFragmentToEditWeightFragment(weightId = weightId, petId = weight.petId))
+            }
         }
 
         binding.back.setOnClickListener{

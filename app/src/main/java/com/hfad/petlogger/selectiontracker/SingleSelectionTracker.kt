@@ -1,5 +1,6 @@
 package com.hfad.petlogger.selectiontracker
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.hfad.petlogger.CheckableItem
@@ -23,7 +24,7 @@ class SingleSelectionTracker<T>(
         coroutineScope.launch {
             val allFetched = allOptionsFetcher()
             allOptions.postValue(allFetched)
-            allOptions.value?.first { it.isChecked.value == true }.let {
+            allFetched.firstOrNull { it.isChecked.value == true }.let {
                 it?.let {
                     _initialSelection = it
                     resetSelection()

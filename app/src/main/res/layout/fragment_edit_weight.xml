@@ -19,6 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/weightQtyTextField"
             android:layout_width="match_parent"
@@ -63,11 +64,13 @@
                 android:inputType="time"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/changeAssocPetButton"
-            android:layout_width="match_parent"
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/pet_selection_fragment_container_view"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/change_associated_pet_button"/>
+            android:layout_gravity="center_horizontal"
+            android:name="com.hfad.petlogger.PetSingleSelectionDisplayFragment"
+            tools:layout="@layout/fragment_pet_single_selection_display" />
 
         <LinearLayout
             android:layout_width="match_parent"

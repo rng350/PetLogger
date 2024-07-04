@@ -2,38 +2,48 @@ package com.hfad.petlogger
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.hfad.petlogger.dao.WeightDao
 import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.entities.PetWithProfilePic
 import com.hfad.petlogger.entities.Weight
 import com.hfad.petlogger.fetchers.FetchWeightDetailsUseCase
+import com.hfad.petlogger.repositories.WeightRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-class EditWeightViewModel(val weightId: Long,
-                          val weightDao: WeightDao): ViewModel() {
+class EditWeightViewModel(private val weightRepository: WeightRepository, private val weightId: Long): ViewModel() {
     val weight = MutableLiveData<Weight>()
-    val pet = MutableLiveData<Pet>()
     val weightDateTime = SelectableDateTime()
     init {
         viewModelScope.launch {
             val fetchedWeightDetails = async {
-                FetchWeightDetailsUseCase()(weightDao, weightId)
+                weightRepository.getWeightDetails(weightId)
             }
             val weightDetails = fetchedWeightDetails.await()
             weight.value = weightDetails.weight
-            pet.value = weightDetails.assocPet
             weight.value?.let {
                 weightDateTime.set(it.weightDateTime)
             }
         }
     }
 
-    fun submitChanges() {
+    fun submitChanges(pet: Pet) {
         weight.value?.let {
             viewModelScope.launch {
-                weightDao.update(Weight(it.id, pet.value?.petID ?: it.petId, it.weightGrams, weightDateTime.dateTime, it.weightNotes))
+                weightRepository.update(Weight(it.id, pet.petID, it.weightGrams, weightDateTime.dateTime, it.weightNotes))
+            }
+        }
+    }
+
+    companion object {
+        fun provideFactory(weightRepository: WeightRepository, weightId: Long): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                if (modelClass.isAssignableFrom(EditWeightViewModel::class.java)) {
+                    return EditWeightViewModel(weightRepository, weightId) as T
+                }
+                throw IllegalArgumentException("Unknown ViewModel")
             }
         }
     }

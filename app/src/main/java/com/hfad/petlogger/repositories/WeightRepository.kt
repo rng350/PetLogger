@@ -24,6 +24,10 @@ class WeightRepository(database: PetLoggerDatabase) {
         weightDao.get(weightId)
     }
 
+    suspend fun getWeightDetails(weightId: Long): WeightDetails = withContext(Dispatchers.IO) {
+        weightDao.getWeightDetails(weightId)
+    }
+
     fun getWeight(weightId: Long): Flow<Weight> {
         return weightDao.getWeightAsFlow(weightId)
     }

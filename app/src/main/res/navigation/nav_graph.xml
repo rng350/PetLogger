@@ -246,6 +246,9 @@
         <argument
             android:name="weightId"
             app:argType="long" />
+        <argument
+            android:name="petId"
+            app:argType="long" />
     </fragment>
     <fragment
         android:id="@+id/newNoteFragment"
