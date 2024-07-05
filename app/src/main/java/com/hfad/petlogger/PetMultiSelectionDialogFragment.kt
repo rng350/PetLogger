@@ -14,6 +14,7 @@ class PetMultiSelectionDialogFragment : DialogFragment() {
     private var _binding: FragmentPetMultiSelectionDialogBinding? = null
     val binding: FragmentPetMultiSelectionDialogBinding
         get() = _binding!!
+    val viewModel: PetMultiSelectionViewModel by viewModels({ requireParentFragment().requireParentFragment() })
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -22,24 +23,26 @@ class PetMultiSelectionDialogFragment : DialogFragment() {
         Log.d("DialogFrag", "onCreateView called...")
         _binding = FragmentPetMultiSelectionDialogBinding.inflate(inflater, container, false)
         val view = binding.root
-        val viewModel: PetMultiSelectionViewModel by viewModels({ requireParentFragment().requireParentFragment() })
 
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        viewModel.logSomething("PetMultiSelDialog", "Message from PetMultiSelectionDialogFragment... VM")
-
         SetupPetMultiPickerUseCase(
-            viewModel.allPets,
-            viewModel.currentSelection,
-            viewModel.selectionTracker,
-            binding.petsList,
-            viewLifecycleOwner,
-            requireContext()
+            petList = viewModel.selectionTracker.allOptions,
+            selection = viewModel.selectionTracker.prospectiveSelection,
+            selectionTracker = viewModel.selectionTracker,
+            recyclerView = binding.petsList,
+            lifecycleOwner = viewLifecycleOwner,
+            context = requireContext()
         )()
 
-        binding.cancelButton.setOnClickListener {
+        binding.submitButton.setOnClickListener {
+            viewModel.confirmSelection()
             requireDialog().dismiss()
+        }
+
+        binding.cancelButton.setOnClickListener {
+            requireDialog().cancel()
         }
 
         return view
@@ -50,6 +53,16 @@ class PetMultiSelectionDialogFragment : DialogFragment() {
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d("PetSingleDialog", "onStop called")
+        if (viewModel.currentSelectionChanged) {
+            viewModel.onCurrentSelectionChanged()
+        } else {
+            viewModel.cancel()
+        }
     }
 
     override fun onDestroyView() {

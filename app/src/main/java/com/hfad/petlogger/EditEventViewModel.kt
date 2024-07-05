@@ -1,82 +1,73 @@
 package com.hfad.petlogger
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.hfad.petlogger.dao.EventDao
-import com.hfad.petlogger.dao.PetDao
 import com.hfad.petlogger.entities.Event
-import com.hfad.petlogger.entities.PetWithProfilePic
+import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.entities.Photo
 import com.hfad.petlogger.fetchers.Fetcher
-import com.hfad.petlogger.repositories.MediaRepository
-import com.hfad.petlogger.selectiontracker.EditSelectionTracker
-import kotlinx.coroutines.Dispatchers
+import com.hfad.petlogger.repositories.EventRepository
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-class EditEventViewModel(_eventID: Long, val eventDao: EventDao, petDao: PetDao): ViewModel() {
+class EditEventViewModel(private val eventRepository: EventRepository, eventID: Long): ViewModel() {
     val event = MutableLiveData<Event>()
-    val allPets = MutableLiveData<List<PetWithProfilePic>>() // yuck, wanna remove this...
-    val initialPetSelection = MutableLiveData<List<PetWithProfilePic>>() // yuck, wanna remove this...
-    val petsAssociated = EditSelectionTracker<PetWithProfilePic>(null)
-    val pets = MutableLiveData<List<CheckableItem<PetWithProfilePic>>>()
-    val eventID = MutableLiveData<Long>(_eventID)
     val eventDateTime = SelectableDateTime()
-
-    var allPetsFetched = false
-    var associatedPetsFetched = false
+    val newEventTitle = MutableLiveData<String>()
+    val newEventDetails = MutableLiveData<String>()
 
     init {
-        Fetcher.fetchEvent(this, event, eventDao, _eventID)
-        viewModelScope.launch(Dispatchers.IO) {
-            allPets.postValue(Fetcher.fetchPetsWithProfilePhotos(petDao))
-        }
-        Fetcher.fetchPetsOfEventWithProfilePhotos(viewModelScope, initialPetSelection, eventDao, _eventID)
-    }
-
-    fun onEventFetched() {
-        eventDateTime.set(event.value!!.date)
-    }
-
-    fun initRecyclerViewPetList() {
-        Log.e("recyc view init", "about to initialize recyc view 1/3\nall pets fetched (${allPetsFetched}), assoc pets fetched (${associatedPetsFetched})")
-        if (allPetsFetched && associatedPetsFetched) {
-            val petList = mutableListOf<CheckableItem<PetWithProfilePic>>()
-            allPets.value?.map {
-                petList.add(CheckableItem(it, MutableLiveData(petsAssociated.inInitialSelection(it))))
+        viewModelScope.launch {
+            val eventFetched = async {
+                eventRepository.get(eventID)
             }
-            Log.e("recyc view init", "about to initialize recyc view 2/3")
-            pets.value = petList
-            Log.e("recyc view init", "about to initialize recyc view 3/3 values put in. Vals:\n${petList}")
+            event.value = eventFetched.await()
+            newEventTitle.value = event.value!!.title
+            newEventDetails.value = event.value!!.details
+            eventDateTime.set(event.value!!.date)
         }
     }
 
-    // TODO: Implement
-    fun submitChanges() {
-        event.value?.date = eventDateTime.dateTime
+    fun submitChanges(
+        petsToAdd: List<Pet> = listOf(),
+        petsToRemove: List<Pet> = listOf(),
+        photosToAdd: List<Photo> = listOf(),
+        photosToRemove: List<Photo> = listOf()
+    ) {
+        if (newEventTitle.value?.isNotEmpty() == true) {
+            event.value?.let { updatedEvent ->
+                updatedEvent.title = newEventTitle.value!!
+                updatedEvent.details = newEventDetails.value ?: ""
+                updatedEvent.date = eventDateTime.dateTime
+                viewModelScope.launch {
+                    eventRepository.update(
+                        event = updatedEvent,
+                        petsToAdd = petsToAdd,
+                        petsToRemove = petsToRemove,
+                        photosToAdd = photosToAdd,
+                        photosToRemove = photosToRemove
+                    )
+                }
+            }
+        }
+    }
+
+    fun deleteEvent() {
         event.value?.let {
             viewModelScope.launch {
-                eventDao.update(it)
+                eventRepository.delete(it)
             }
         }
-        petsAssociated.selectionToAdd.value?.let {
-        }
-        petsAssociated.selectionToRemove.value?.let {
-        }
-    }
-
-    // TODO: Implement
-    fun deleteEvent() {
-
     }
 
     companion object {
-        fun provideFactory(_eventID: Long, eventDao: EventDao, petDao: PetDao): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+        fun provideFactory(eventRepository: EventRepository, eventID: Long): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(EditEventViewModel::class.java)) {
-                    return EditEventViewModel(_eventID, eventDao, petDao) as T
+                    return EditEventViewModel(eventRepository, eventID) as T
                 }
                 throw IllegalArgumentException("Unknown ViewModel")
             }

@@ -29,14 +29,14 @@ interface PetDao {
     suspend fun getAsync(petId: Long): Pet?
 
     @Query("SELECT * FROM pet_table")
-    suspend fun getAll(): MutableList<Pet>
+    suspend fun getAll(): List<Pet>
 
     @Query("SELECT event_table.event_id AS event_id, event_title, event_details, event_date " +
             "FROM event_table, event_pet_table " +
             "WHERE event_pet_table.pet_id=:petId " +
             "AND event_table.event_id=event_pet_table.event_id " +
             "ORDER BY event_date")
-    suspend fun getEventsOfPet(petId: Long): MutableList<Event>
+    suspend fun getEventsOfPet(petId: Long): List<Event>
 
     @Query("SELECT photo_table.photo_id, photo_date, photo_filesize, photo_width, photo_height, photo_uri, photo_filename, photo_title " +
             "FROM photo_table LEFT JOIN pet_profile_photo_table " +
@@ -47,7 +47,7 @@ interface PetDao {
 
     //TODO: add "ORDER BY weight_date DESCENDING"
     @Query("SELECT * FROM weight_table WHERE weight_pet_id=:petId ORDER BY weight_datetime DESC")
-    suspend fun getWeightsOfPet(petId: Long): MutableList<Weight>
+    suspend fun getWeightsOfPet(petId: Long): List<Weight>
 
     @Insert
     suspend fun insert(petEvent: EventPet)

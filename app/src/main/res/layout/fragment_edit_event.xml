@@ -24,51 +24,73 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:weightSum="2">
+            android:orientation="vertical">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:orientation="vertical">
 
-                <EditText
-                    android:id="@+id/eventTitle"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/eventTitleTextField"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Event title"
-                    android:text="@={viewModel.event.title}"/>
+                    android:hint="@string/title">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/eventTitleTextInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:maxLines="1"
+                        android:text="@={viewModel.newEventTitle}"
+                        android:inputType="text"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
-                <TextView
-                    android:id="@+id/eventDate"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/eventDateLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@{viewModel.eventDateTime.dateDisplay}" />
+                    android:hint="@string/date">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/eventDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableEnd="@drawable/baseline_edit_24"
+                        android:text="@{viewModel.eventDateTime.dateDisplay}"
+                        android:focusable="true"
+                        android:clickable="true"
+                        android:inputType="date"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
-                <Button
-                    android:id="@+id/inputEventDateButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/input_event_date" />
-
-                <TextView
-                    android:id="@+id/eventTime"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/eventTimeLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@{viewModel.eventDateTime.timeDisplay}" />
+                    android:hint="@string/time_header">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/eventTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableEnd="@drawable/baseline_edit_24"
+                        android:text="@{viewModel.eventDateTime.timeDisplay}"
+                        android:focusable="true"
+                        android:clickable="true"
+                        android:inputType="date"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
-                <Button
-                    android:id="@+id/inputEventTimeButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/input_event_time" />
 
-                <EditText
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/eventDetailsTextField"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Add details here"
-                    android:text="@={viewModel.event.details}"
-                    android:minHeight="48dp" />
+                    android:hint="@string/event_details_header">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/eventDetailsTextInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="top"
+                        android:minLines="10"
+                        android:text="@={viewModel.newEventDetails}"
+                        android:inputType="textMultiLine|textCapSentences"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <androidx.fragment.app.FragmentContainerView
                     android:id="@+id/pet_selection_fragment_container_view"
@@ -89,19 +111,19 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <Button
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/submit_changes_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/submit"/>
 
-                    <Button
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/cancel_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/cancel" />
 
-                    <Button
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/delete_event_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

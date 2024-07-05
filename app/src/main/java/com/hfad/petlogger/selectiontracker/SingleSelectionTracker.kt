@@ -8,6 +8,16 @@ import com.hfad.petlogger.photodisplay.stateless.GetItemsUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+/**
+INITIAL SELECTION
+Pre-existing selection, prior to creation of display & dialog fragments.
+
+CURRENT SELECTION
+Items marked for becoming the new selection. Already confirmed from dialog selection. Changes not yet submitted to database.
+
+PROSPECTIVE SELECTION
+Items marked for selection in dialog, not yet confirmed
+ **/
 class SingleSelectionTracker<T>(
     private val allOptionsFetcher: GetItemsUseCase<CheckableItem<T>>,
     coroutineScope: CoroutineScope) {

@@ -9,11 +9,15 @@ import android.view.ViewGroup
 import androidx.lifecycle.get
 import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.databinding.FragmentNewNoteBinding
+import com.hfad.petlogger.entities.PetWithProfilePic
+import com.hfad.petlogger.photodisplay.stateless.GetAllCheckablePetsUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetAllPetsWithProfilePhotosUseCase
 import com.hfad.petlogger.repositories.EventRepository
 import com.hfad.petlogger.repositories.MediaRepository
 import com.hfad.petlogger.repositories.NoteRepository
 import com.hfad.petlogger.repositories.PetRepository
 import com.hfad.petlogger.repositories.WeightRepository
+import com.hfad.petlogger.selectiontracker.MultiSelectionTracker
 
 class NewNoteFragment : Fragment() {
     private var _binding: FragmentNewNoteBinding? = null
@@ -32,7 +36,6 @@ class NewNoteFragment : Fragment() {
         val view = binding.root
         val application = requireNotNull(this.activity).application
         val database = PetLoggerDatabase.getInstance(application)
-        val petDao = database.petDao
         val mediaRepository = MediaRepository(database, application.applicationContext)
         val noteRepository = NoteRepository(database, mediaRepository)
         val petRepository = PetRepository(database, mediaRepository)
@@ -42,8 +45,9 @@ class NewNoteFragment : Fragment() {
         setAppBarTitle(getString(R.string.new_note_header))
 
         newNoteViewModel = ViewModelProvider(this, NewNoteViewModel.provideFactory(noteRepository)).get(NewNoteViewModel::class.java)
-        petMultiSelectionViewModel = ViewModelProvider(this, PetMultiSelectionViewModel.provideFactory(petRepository)).get(PetMultiSelectionViewModel::class.java)
-        petMultiSelectionViewModel.logSomething("NewNoteFr", "message from NewNoteFragment... VM")
+
+        val getAllPetsUseCase = GetAllPetsWithProfilePhotosUseCase(petRepository)
+        petMultiSelectionViewModel = ViewModelProvider(this, PetMultiSelectionViewModel.provideFactory(getAllPetsUseCase)).get(PetMultiSelectionViewModel::class.java)
         eventMultiSelectionViewModel = ViewModelProvider(this, EventMultiSelectionViewModel.provideFactory(eventRepository)).get(EventMultiSelectionViewModel::class.java)
         weightMultiSelectionViewModel = ViewModelProvider(this, WeightMultiSelectionViewModel.provideFactory(weightRepository)).get(WeightMultiSelectionViewModel::class.java)
         mediaSelectionViewModel = ViewModelProvider(this, MediaSelectionViewModel.provideFactory(mediaRepository = mediaRepository, maxItems = 10)).get(MediaSelectionViewModel::class.java)

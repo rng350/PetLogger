@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.databinding.FragmentNewEventBinding
+import com.hfad.petlogger.photodisplay.stateless.GetAllPetsWithProfilePhotosUseCase
 import com.hfad.petlogger.repositories.EventRepository
 import com.hfad.petlogger.repositories.MediaRepository
 import com.hfad.petlogger.repositories.PetRepository
@@ -36,7 +37,8 @@ class NewEventFragment : Fragment() {
         binding.mediaSelectionViewModel = mediaSelectionViewModel
 
         val petRepository = PetRepository(database, mediaRepository)
-        val petMultiSelectionViewModel = ViewModelProvider(this, PetMultiSelectionViewModel.provideFactory(petRepository)).get(PetMultiSelectionViewModel::class.java)
+        val getAllPetsUseCase = GetAllPetsWithProfilePhotosUseCase(petRepository)
+        val petMultiSelectionViewModel = ViewModelProvider(this, PetMultiSelectionViewModel.provideFactory(getAllPetsUseCase)).get(PetMultiSelectionViewModel::class.java)
         binding.petMultiSelectionViewModel = petMultiSelectionViewModel
 
         setAppBarTitle(getString(R.string.new_event_header))

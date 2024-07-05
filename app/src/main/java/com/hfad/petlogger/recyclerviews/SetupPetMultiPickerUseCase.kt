@@ -3,6 +3,7 @@ package com.hfad.petlogger.recyclerviews
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
@@ -16,11 +17,12 @@ import com.hfad.petlogger.entities.PetWithProfilePic
 import com.hfad.petlogger.mutableCopyOf
 import com.hfad.petlogger.selectiontracker.EditSelectionTracker
 import com.hfad.petlogger.selectiontracker.EditSelectionTrackerMultiPick
+import com.hfad.petlogger.selectiontracker.MultiSelectionTracker
 import com.hfad.petlogger.selectiontracker.SelectionTracker
 
-class SetupPetMultiPickerUseCase(private val petList: MutableLiveData<List<CheckableItem<PetWithProfilePic>>>,
-                                 private val selection: MutableLiveData<List<CheckableItem<PetWithProfilePic>>>,
-                                 private val selectionTracker: EditSelectionTracker<PetWithProfilePic>,
+class SetupPetMultiPickerUseCase(private val petList: LiveData<List<CheckableItem<PetWithProfilePic>>>,
+                                 private val selection: LiveData<List<CheckableItem<PetWithProfilePic>>>,
+                                 private val selectionTracker: MultiSelectionTracker<PetWithProfilePic>,
                                  private val recyclerView: RecyclerView,
                                  private val lifecycleOwner: LifecycleOwner,
                                  private val context: Context
@@ -59,20 +61,7 @@ class SetupPetMultiPickerUseCase(private val petList: MutableLiveData<List<Check
 
             binder.petCard.setOnClickListener { null }
             binder.petCard.setOnClickListener {
-                val mutableList = selection.value?.toMutableList() ?: mutableListOf<CheckableItem<PetWithProfilePic>>()
-
                 selectionTracker.toggle(item)
-
-                if (mutableList.contains(item)) {
-                    mutableList.remove(item)
-                    item.isChecked.value = false
-                    binder.petCard.isChecked = false
-                } else {
-                    mutableList.add(item)
-                    item.isChecked.value = true
-                    binder.petCard.isChecked = true
-                }
-                selection.value = mutableList.toList()
             }
 
             val observer = Observer<List<CheckableItem<PetWithProfilePic>>> {

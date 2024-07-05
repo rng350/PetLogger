@@ -1,7 +1,6 @@
 package com.hfad.petlogger
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,9 +9,16 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.databinding.FragmentEditEventBinding
+import com.hfad.petlogger.photodisplay.stateless.GetAllPetsWithProfilePhotosUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetPetsOfEventUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetPhotosOfEventUseCase
 import com.hfad.petlogger.repositories.EventRepository
 import com.hfad.petlogger.repositories.MediaRepository
+import com.hfad.petlogger.repositories.PetRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class EditEventFragment : Fragment() {
     private var _binding: FragmentEditEventBinding? = null
@@ -33,11 +39,17 @@ class EditEventFragment : Fragment() {
         val mediaRepository = MediaRepository(database, application.applicationContext)
         val eventRepository = EventRepository(database, mediaRepository)
 
-        val petDao = database.petDao
-        val eventDao = database.eventDao
-
-        val editEventViewModel = ViewModelProvider(this, EditEventViewModel.provideFactory(eventID, eventDao, petDao)).get(EditEventViewModel::class.java)
+        val editEventViewModel = ViewModelProvider(this, EditEventViewModel.provideFactory(
+            eventRepository,
+            eventID
+        )).get(EditEventViewModel::class.java)
         binding.viewModel = editEventViewModel
+
+        val petRepository = PetRepository(database, mediaRepository)
+        val getAllPetsUseCase = GetAllPetsWithProfilePhotosUseCase(petRepository)
+        val getPetsOfEventUseCase = GetPetsOfEventUseCase(eventRepository, eventID)
+        val petMultiSelectionViewModel = ViewModelProvider(this, PetMultiSelectionViewModel.provideFactory(getAllPets = getAllPetsUseCase, getInitialSelection = getPetsOfEventUseCase)).get(PetMultiSelectionViewModel::class.java)
+        binding.petMultiSelectionViewModel = petMultiSelectionViewModel
 
         val getPhotosOfEventUseCase = GetPhotosOfEventUseCase(eventID, eventRepository)
         val mediaSelectionViewModel = ViewModelProvider(this, MediaSelectionViewModel.provideFactory(
@@ -52,33 +64,33 @@ class EditEventFragment : Fragment() {
             }
         })
 
-        editEventViewModel.event.observe(viewLifecycleOwner, Observer {
-            editEventViewModel.onEventFetched()
-        })
-
-        editEventViewModel.initialPetSelection.observeOnce(viewLifecycleOwner, Observer {
-            Log.e("petlist", "about to initialize shit")
-            editEventViewModel.petsAssociated.initializeSelection(it)
-            editEventViewModel.associatedPetsFetched = true
-            editEventViewModel.initRecyclerViewPetList()
-            Log.e("petlist", "recyc initialized")
-        })
-
-        editEventViewModel.allPets.observeOnce(viewLifecycleOwner, Observer {
-            editEventViewModel.allPetsFetched = true
-            editEventViewModel.initRecyclerViewPetList()
-        })
-
-        binding.inputEventDateButton.setOnClickListener {
-            DatePicker.generate(editEventViewModel.eventDateTime).show(parentFragmentManager, "DATE_PICKER")
+        binding.eventDate.setOnClickListener {
+            binding.eventDate.isEnabled = false
+            val coroutineScope = CoroutineScope(Dispatchers.Main.immediate)
+            coroutineScope.launch {
+                DatePicker.generate(editEventViewModel.eventDateTime).show(parentFragmentManager, "DATE_PICKER")
+                delay(200)
+                binding.eventDate.isEnabled = true
+            }
         }
 
-        binding.inputEventTimeButton.setOnClickListener{
-            TimePicker.generate(editEventViewModel.eventDateTime, requireContext()).show(parentFragmentManager, "TIME_PICKER")
+        binding.eventTime.setOnClickListener{
+            binding.eventTime.isEnabled = false
+            val coroutineScope = CoroutineScope(Dispatchers.Main.immediate)
+            coroutineScope.launch {
+                TimePicker.generate(editEventViewModel.eventDateTime, requireContext()).show(parentFragmentManager, "TIME_PICKER")
+                delay(200)
+                binding.eventTime.isEnabled = true
+            }
         }
 
         binding.submitChangesButton.setOnClickListener {
-            editEventViewModel.submitChanges()
+            editEventViewModel.submitChanges(
+                petsToAdd = petMultiSelectionViewModel.getPetsToAdd(),
+                petsToRemove = petMultiSelectionViewModel.getPetsToRemove(),
+                photosToAdd = mediaSelectionViewModel.getPhotosToAdd(),
+                photosToRemove = mediaSelectionViewModel.getPhotosToRemove()
+            )
             this.findNavController().navigate(EditEventFragmentDirections.actionEditEventFragmentToViewEventFragment(eventID))
         }
 
@@ -88,10 +100,16 @@ class EditEventFragment : Fragment() {
 
         binding.deleteEventButton.setOnClickListener {
             editEventViewModel.deleteEvent()
-            this.findNavController().navigate(R.id.action_editEventFragment_to_homeFragment)
+            this.findNavController().navigate(EditEventFragmentDirections.actionEditEventFragmentToEventListFragment())
         }
 
         return view
+    }
+
+    override fun onStop() {
+        super.onStop()
+        binding.eventDate.isEnabled = true
+        binding.eventTime.isEnabled = true
     }
 
     override fun onDestroyView() {

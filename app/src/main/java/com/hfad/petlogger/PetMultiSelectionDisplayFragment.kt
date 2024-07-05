@@ -29,8 +29,6 @@ class PetMultiSelectionDisplayFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
 
-        viewModel.logSomething("PetMultiSelDisplay", "Message from Pet Selection Display Fragment... VM")
-
         binding.addPetsButton.setOnClickListener {
             binding.addPetsButton.isEnabled = false
             val coroutineScope = CoroutineScope(Dispatchers.Main.immediate)
@@ -42,15 +40,15 @@ class PetMultiSelectionDisplayFragment : Fragment() {
         }
 
         binding.resetButton.setOnClickListener {
-            viewModel.resetSelection()
+            viewModel.reset()
         }
 
         SetupPetMultiPickerSelectionDisplayUseCase(
-            viewModel.currentSelection,
-            viewModel.selectionTracker,
-            binding.petsList,
-            viewLifecycleOwner,
-            requireContext()
+            selection = viewModel.selectionTracker.currentSelection,
+            selectionTracker = viewModel.selectionTracker,
+            recyclerView = binding.petsList,
+            lifecycleOwner = viewLifecycleOwner,
+            context = requireContext()
         )()
 
         return view

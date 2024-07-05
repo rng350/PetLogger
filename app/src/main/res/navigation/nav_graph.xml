@@ -32,17 +32,15 @@
         android:name="com.hfad.petlogger.EditEventFragment"
         android:label="fragment_edit_event"
         tools:layout="@layout/fragment_edit_event" >
-        <action
-            android:id="@+id/action_editEventFragment_to_homeFragment"
-            app:destination="@id/homeFragment"
-            app:popUpTo="@id/homeFragment"
-            app:popUpToInclusive="true" />
         <argument
             android:name="eventId"
             app:argType="long" />
         <action
             android:id="@+id/action_editEventFragment_to_viewEventFragment"
             app:destination="@id/viewEventFragment" />
+        <action
+            android:id="@+id/action_editEventFragment_to_eventListFragment"
+            app:destination="@id/eventListFragment" />
     </fragment>
     <fragment
         android:id="@+id/editPetFragment"
