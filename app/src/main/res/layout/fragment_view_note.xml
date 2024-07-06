@@ -12,6 +12,9 @@
             name="associatedPetsDisplayViewModel"
             type="com.hfad.petlogger.AssociatedPetsDisplayViewModel" />
         <variable
+            name="associatedEventsDisplayViewModel"
+            type="com.hfad.petlogger.AssociatedEventsDisplayViewModel" />
+        <variable
             name="associatedPhotosDisplayViewModel"
             type="com.hfad.petlogger.AssociatedPhotosDisplayViewModel" />
     </data>
@@ -68,6 +71,13 @@
                 android:layout_height="wrap_content"
                 android:name="com.hfad.petlogger.AssociatedPetsDisplayFragment"
                 tools:layout="@layout/fragment_associated_pets_display" />
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/associated_events_fragment_container_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:name="com.hfad.petlogger.AssociatedEventsDisplayFragment"
+                tools:layout="@layout/fragment_associated_events_display" />
 
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/associated_photos_fragment_container_view"

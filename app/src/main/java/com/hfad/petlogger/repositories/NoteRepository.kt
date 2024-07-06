@@ -179,4 +179,8 @@ class NoteRepository(
             .map{WeightWithPetName(weight=it.weight, petName=it.assocPet.petName)}
             .sortedByDescending { it.weight.weightDateTime }
     }
+
+    fun getEventsOfNoteAsFlow(noteId: Long): Flow<List<Event>> {
+        return noteDao.getEventsOfNoteAsFlow(noteId)
+    }
 }

@@ -104,7 +104,8 @@ interface NoteDao {
     @Query("SELECT event_table.* " +
             "FROM event_table LEFT JOIN event_note_table " +
             "ON event_table.event_id=event_note_table.event_id " +
-            "WHERE event_note_table.note_id=:noteId")
+            "WHERE event_note_table.note_id=:noteId " +
+            "ORDER BY event_table.event_date DESC")
     suspend fun getEventsOfNote(noteId: Long): List<Event>
 
     @Query("SELECT pet_table.* " +
@@ -124,4 +125,11 @@ interface NoteDao {
             "ON weight_table.weight_id=weight_note_table.weight_id " +
             "WHERE weight_note_table.note_id=:noteId")
     suspend fun getWeightsOfNote(noteId: Long): List<WeightDetails>
+
+    @Query("SELECT event_table.* " +
+            "FROM event_table LEFT JOIN event_note_table " +
+            "ON event_table.event_id=event_note_table.event_id " +
+            "WHERE event_note_table.note_id=:noteId " +
+            "ORDER BY event_table.event_date DESC")
+    fun getEventsOfNoteAsFlow(noteId: Long): Flow<List<Event>>
 }
