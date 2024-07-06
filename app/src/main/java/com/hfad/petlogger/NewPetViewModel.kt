@@ -39,8 +39,7 @@ class NewPetViewModel(private val petRepository: PetRepository) : ViewModel() {
                 pet.petSpecies = petSpecies
                 pet.petBreed = petBreed
                 pet.petSex = _petSex
-                pet.petDOB = petDOB.dateTime
-                pet.hasDOB = petDOB.hasBeenSet
+                pet.petDOB = petDOB.selectedDate
                 val addedPetId = async {
                     petRepository.addPet(pet, petPhotos, petProfilePhoto)
                 }.await()

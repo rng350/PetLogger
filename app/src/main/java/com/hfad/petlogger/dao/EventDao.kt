@@ -22,10 +22,10 @@ interface EventDao {
     suspend fun get(eventId: Long): Event
 
     // TODO: "ORDER BY event_date DESCENDING"
-    @Query("SELECT * FROM event_table ORDER BY event_date")
+    @Query("SELECT * FROM event_table ORDER BY event_date DESC")
     suspend fun getAll(): MutableList<Event>
 
-    @Query("SELECT pet_table.pet_id AS pet_id, pet_name, pet_species, pet_breed, pet_sex, pet_dob, has_dob " +
+    @Query("SELECT pet_table.* " +
             "FROM pet_table LEFT JOIN event_pet_table " +
             "WHERE event_id = :eventId AND pet_table.pet_id = event_pet_table.pet_id")
     suspend fun getPetsOfEvent(eventId: Long): List<Pet>
@@ -35,7 +35,7 @@ interface EventDao {
             "WHERE photo_event_table.event_id=:eventId AND photo_table.photo_id=photo_event_table.photo_id")
     suspend fun fetchPhotosOfEvent(eventId: Long): List<Photo>
 
-    @Query("SELECT pet_table.pet_id AS pet_id, pet_name, pet_species, pet_breed, pet_sex, pet_dob, has_dob " +
+    @Query("SELECT pet_table.* " +
             "FROM pet_table LEFT JOIN event_pet_table " +
             "WHERE event_id = :eventId AND pet_table.pet_id = event_pet_table.pet_id")
     suspend fun getPetsOfEventWithProfilePhotos(eventId: Long): List<PetWithProfilePic>
@@ -45,7 +45,7 @@ interface EventDao {
             "WHERE photo_event_table.event_id=:eventId AND photo_table.photo_id=photo_event_table.photo_id")
     fun getPhotosOfEventAsFlow(eventId: Long): Flow<List<Photo>>
 
-    @Query("SELECT pet_table.pet_id AS pet_id, pet_name, pet_species, pet_breed, pet_sex, pet_dob, has_dob " +
+    @Query("SELECT pet_table.* " +
             "FROM pet_table LEFT JOIN event_pet_table " +
             "WHERE event_id = :eventId AND pet_table.pet_id = event_pet_table.pet_id")
     fun getPetsOfEventWithProfilePhotosAsFlow(eventId: Long): Flow<List<PetWithProfilePic>>

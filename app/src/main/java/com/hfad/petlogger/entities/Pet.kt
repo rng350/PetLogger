@@ -19,17 +19,14 @@ data class Pet(
     var petName : String = "",
 
     @ColumnInfo(name="pet_species")
-    var petSpecies : String = "N/A",
+    var petSpecies : String = "",
 
     @ColumnInfo(name="pet_breed")
-    var petBreed : String = "N/A",
+    var petBreed : String = "",
 
     @ColumnInfo(name="pet_sex")
-    var petSex : String = "N/A",
+    var petSex : String = "",
 
     @ColumnInfo(name="pet_dob")
-    var petDOB : OffsetDateTime = OffsetDateTime.MIN,
-
-    @ColumnInfo(name="has_dob")
-    var hasDOB : Boolean = false
+    var petDOB : OffsetDateTime? = null
 ) : Parcelable

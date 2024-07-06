@@ -34,9 +34,11 @@ class EditPetViewModel(
     }
 
     fun onPetFetched() {
-        val (_, _, _, _, initPetSex, initPetDOB, _) = pet.value!!
+        val (_, _, _, _, initPetSex, initPetDOB) = pet.value!!
         petSex.postValue(initPetSex)
-        newPetDOB.set(initPetDOB)
+        initPetDOB?.let {
+            newPetDOB.set(it)
+        }
     }
 
     fun updatePet(
@@ -54,8 +56,7 @@ class EditPetViewModel(
             petSpecies = petSpecies.value!!,
             petBreed = petBreed.value!!,
             petSex = petSex.value!!,
-            petDOB = newPetDOB.dateTime,
-            hasDOB = newPetDOB.hasBeenSet
+            petDOB = newPetDOB.selectedDate
         )
         viewModelScope.launch {
             petRepository.updatePet(

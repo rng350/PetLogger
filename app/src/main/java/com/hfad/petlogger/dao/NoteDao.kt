@@ -36,7 +36,7 @@ interface NoteDao {
     @Delete
     suspend fun delete(note: Note)
 
-    @Query("SELECT pet_table.pet_id AS pet_id, pet_name, pet_species, pet_breed, pet_sex, pet_dob, has_dob " +
+    @Query("SELECT pet_table.* " +
             "FROM pet_table LEFT JOIN pet_note_table " +
             "WHERE pet_table.pet_id = pet_note_table.pet_id AND :noteId = pet_note_table.note_id")
     suspend fun getPetsOfNote(noteId: Long): List<Pet>
@@ -96,7 +96,7 @@ interface NoteDao {
             "WHERE photo_note_table.note_id = :noteId")
     fun getPhotosOfNote(noteId: Long): Flow<List<Photo>>
 
-    @Query("SELECT pet_table.pet_id AS pet_id, pet_name, pet_species, pet_breed, pet_sex, pet_dob, has_dob " +
+    @Query("SELECT pet_table.* " +
             "FROM pet_table LEFT JOIN pet_note_table " +
             "WHERE pet_table.pet_id = pet_note_table.pet_id AND :noteId = pet_note_table.note_id")
     fun getPetsWithProfilePicOfNoteAsFlow(noteId: Long): Flow<List<PetWithProfilePic>>
