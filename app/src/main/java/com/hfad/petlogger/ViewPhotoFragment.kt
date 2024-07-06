@@ -6,10 +6,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.get
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.hfad.petlogger.databinding.FragmentViewPhotoBinding
+import com.hfad.petlogger.photodisplay.stateful.GetEventsOfPhotoForDisplayUseCase
+import com.hfad.petlogger.photodisplay.stateful.GetPetsOfPhotoForDisplayUseCase
 import com.hfad.petlogger.repositories.MediaRepository
 
 class ViewPhotoFragment : Fragment() {
@@ -42,6 +45,14 @@ class ViewPhotoFragment : Fragment() {
                     .into(binding.photoDisplay)
             } else binding.photoDisplay.setImageResource(R.drawable.placeholder)
         }
+
+        val getPetsOfPhotoForDisplayUseCase = GetPetsOfPhotoForDisplayUseCase(mediaRepository, photoId)
+        val associatedPetsDisplayViewModel = ViewModelProvider(this, AssociatedPetsDisplayViewModel.provideFactory(getPetsOfPhotoForDisplayUseCase)).get(AssociatedPetsDisplayViewModel::class.java)
+        binding.associatedPetsDisplayViewModel = associatedPetsDisplayViewModel
+
+        val getEventsOfPhotoForDisplayUseCase = GetEventsOfPhotoForDisplayUseCase(mediaRepository, photoId)
+        val associatedEventsDisplayViewModel = ViewModelProvider(this, AssociatedEventsDisplayViewModel.provideFactory(getEventsOfPhotoForDisplayUseCase)).get(AssociatedEventsDisplayViewModel::class.java)
+        binding.associatedEventsDisplayViewModel = associatedEventsDisplayViewModel
 
         binding.editButton.setOnClickListener{
             findNavController().navigate(ViewPhotoFragmentDirections.actionViewPhotoFragmentToEditPhotoFragment(photoId))

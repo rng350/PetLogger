@@ -11,16 +11,11 @@
             name="viewPhotoViewModel"
             type="com.hfad.petlogger.ViewPhotoViewModel" />
         <variable
-            name="petSelectorViewModel"
-            type="com.hfad.petlogger.PetMultiSelectionViewModel" />
-
+            name="associatedPetsDisplayViewModel"
+            type="com.hfad.petlogger.AssociatedPetsDisplayViewModel" />
         <variable
-            name="eventSelectorViewModel"
-            type="com.hfad.petlogger.EventMultiSelectionViewModel" />
-
-        <variable
-            name="weightSelectorViewModel"
-            type="com.hfad.petlogger.WeightMultiSelectionViewModel" />
+            name="associatedEventsDisplayViewModel"
+            type="com.hfad.petlogger.AssociatedEventsDisplayViewModel" />
     </data>
 
 
@@ -137,6 +132,20 @@
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/associated_pets_fragment_container_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:name="com.hfad.petlogger.AssociatedPetsDisplayFragment"
+                tools:layout="@layout/fragment_associated_pets_display" />
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/associated_events_fragment_container_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:name="com.hfad.petlogger.AssociatedEventsDisplayFragment"
+                tools:layout="@layout/fragment_associated_events_display" />
 
             <LinearLayout
                 android:layout_width="match_parent"

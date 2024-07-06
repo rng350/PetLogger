@@ -4,8 +4,8 @@ import com.hfad.petlogger.entities.PetWithProfilePic
 import com.hfad.petlogger.repositories.MediaRepository
 import kotlinx.coroutines.flow.Flow
 
-class GetPetsOfPhotoForDisplayUseCase(private val photoId: Long, private val mediaRepository: MediaRepository): GetItemsForDisplayUseCase<PetWithProfilePic> {
+class GetPetsOfPhotoForDisplayUseCase(private val mediaRepository: MediaRepository, private val photoId: Long): GetItemsForDisplayUseCase<PetWithProfilePic> {
     override fun invoke(): Flow<List<PetWithProfilePic>> {
-        TODO("Not yet implemented")
+        return mediaRepository.getPetsOfPhoto(photoId)
     }
 }

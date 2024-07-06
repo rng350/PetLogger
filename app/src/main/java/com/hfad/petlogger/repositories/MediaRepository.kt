@@ -12,6 +12,7 @@ import com.hfad.petlogger.PetLoggerDatabase
 import com.hfad.petlogger.entities.Event
 import com.hfad.petlogger.entities.Note
 import com.hfad.petlogger.entities.Pet
+import com.hfad.petlogger.entities.PetWithProfilePic
 import com.hfad.petlogger.entities.Photo
 import com.hfad.petlogger.entities.PhotoEvent
 import com.hfad.petlogger.entities.PhotoNote
@@ -21,6 +22,7 @@ import com.hfad.petlogger.size
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -304,5 +306,13 @@ class MediaRepository(
     private suspend fun deleteFromLocalStorage(filename: String) = withContext(Dispatchers.IO) {
         val file = File(context.filesDir, filename)
         if (file.exists()) file.delete()
+    }
+
+    fun getPetsOfPhoto(photoId: Long): Flow<List<PetWithProfilePic>> {
+        return photoDao.getPetsOfPhoto(photoId)
+    }
+
+    fun getEventsOfPhoto(photoId: Long): Flow<List<Event>> {
+        return photoDao.getEventsOfPhoto(photoId)
     }
 }
