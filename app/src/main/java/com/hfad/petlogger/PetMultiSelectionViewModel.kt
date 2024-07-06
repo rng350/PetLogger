@@ -52,10 +52,6 @@ class PetMultiSelectionViewModel(
         selectionTracker.cancelProspectiveSelection()
     }
 
-    fun toggle(pet: CheckableItem<PetWithProfilePic>) {
-        selectionTracker.toggle(pet)
-    }
-
     companion object {
         fun provideFactory(getAllPets: GetItemsUseCase<PetWithProfilePic>, getInitialSelection: GetItemsUseCase<PetWithProfilePic>? = null): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {

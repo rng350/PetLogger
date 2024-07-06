@@ -8,20 +8,16 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
 import androidx.core.net.toUri
-import androidx.lifecycle.viewModelScope
 import com.hfad.petlogger.PetLoggerDatabase
-import com.hfad.petlogger.dao.PhotoDao
 import com.hfad.petlogger.entities.Event
 import com.hfad.petlogger.entities.Note
 import com.hfad.petlogger.entities.Pet
-import com.hfad.petlogger.entities.PetProfilePhoto
 import com.hfad.petlogger.entities.Photo
 import com.hfad.petlogger.entities.PhotoEvent
 import com.hfad.petlogger.entities.PhotoNote
 import com.hfad.petlogger.entities.Weight
-import com.hfad.petlogger.entitylinkers.EntityLinker
+import com.hfad.petlogger.entities.WeightWithPetName
 import com.hfad.petlogger.size
-import com.hfad.petlogger.sizeInKb
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -29,10 +25,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.time.Instant
-import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
-import java.time.ZoneOffset
 import java.util.UUID
 
 class MediaRepository(
@@ -158,7 +152,7 @@ class MediaRepository(
         }
     }
 
-    suspend fun addNewPhotoForNode(photo: Photo, noteId: Long) {
+    suspend fun addNewPhotoForNote(photo: Photo, noteId: Long) {
         withContext(Dispatchers.IO) {
             val photoAdded = async {
                 addPhoto(photo)

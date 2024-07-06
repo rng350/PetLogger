@@ -4,7 +4,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.hfad.petlogger.entities.Event
 import com.hfad.petlogger.entities.Note
+import com.hfad.petlogger.entities.Pet
+import com.hfad.petlogger.entities.Photo
 import com.hfad.petlogger.repositories.NoteRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -24,15 +27,36 @@ class EditNoteViewModel(private val noteRepository: NoteRepository, private val 
         }
     }
 
-    fun submitChanges() {
-        if (note.value?.equals(noteFetched.value) == false) {
+    fun submitChanges(
+        eventsToRemove: List<Event> = listOf<Event>(),
+        eventsToAdd: List<Event> = listOf<Event>(),
+        petsToAdd: List<Pet> = listOf(),
+        petsToRemove: List<Pet> = listOf(),
+        photosToAdd: List<Photo> = listOf(),
+        photosToRemove: List<Photo> = listOf()
+    ) {
+        note.value?.let {
+            viewModelScope.launch {
+                async {
+                    noteRepository.updateNote(
+                        note = it.copy(lastUpdated = OffsetDateTime.now()),
+                        eventsToAdd = eventsToAdd,
+                        eventsToRemove = eventsToRemove,
+                        petsToAdd = petsToAdd,
+                        petsToRemove = petsToRemove,
+                        photosToRemove = photosToRemove,
+                        photosToAdd = photosToAdd
+                    )
+                }.await()
+                goBack.value = true
+            }
+        }
+    }
+
+    fun delete() {
+        viewModelScope.launch {
             note.value?.let {
-                viewModelScope.launch {
-                    async {
-                        noteRepository.updateNote(it.copy(lastUpdated = OffsetDateTime.now()))
-                    }.await()
-                    goBack.value = true
-                }
+                noteRepository.delete(it)
             }
         }
     }

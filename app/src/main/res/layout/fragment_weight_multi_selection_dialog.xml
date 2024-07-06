@@ -26,7 +26,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:title="Select Weights"
-                app:subtitle="@{@string/amt_without_limit_selected(String.valueOf(viewModel.currentSelection.size()))}"
+                app:subtitle="@{@string/amt_without_limit_selected(String.valueOf(viewModel.selectionTracker.currentSelection.size()))}"
                 app:titleCentered="true"
                 app:subtitleCentered="true"/>
         </com.google.android.material.appbar.AppBarLayout>

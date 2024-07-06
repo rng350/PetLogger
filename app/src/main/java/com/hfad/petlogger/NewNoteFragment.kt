@@ -12,6 +12,7 @@ import com.hfad.petlogger.databinding.FragmentNewNoteBinding
 import com.hfad.petlogger.entities.PetWithProfilePic
 import com.hfad.petlogger.photodisplay.stateless.GetAllCheckablePetsUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetAllPetsWithProfilePhotosUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetAllWeightsWithPetNamesUseCase
 import com.hfad.petlogger.repositories.EventRepository
 import com.hfad.petlogger.repositories.MediaRepository
 import com.hfad.petlogger.repositories.NoteRepository
@@ -49,7 +50,9 @@ class NewNoteFragment : Fragment() {
         val getAllPetsUseCase = GetAllPetsWithProfilePhotosUseCase(petRepository)
         petMultiSelectionViewModel = ViewModelProvider(this, PetMultiSelectionViewModel.provideFactory(getAllPetsUseCase)).get(PetMultiSelectionViewModel::class.java)
         eventMultiSelectionViewModel = ViewModelProvider(this, EventMultiSelectionViewModel.provideFactory(eventRepository)).get(EventMultiSelectionViewModel::class.java)
-        weightMultiSelectionViewModel = ViewModelProvider(this, WeightMultiSelectionViewModel.provideFactory(weightRepository)).get(WeightMultiSelectionViewModel::class.java)
+
+        val getAllWeights = GetAllWeightsWithPetNamesUseCase(weightRepository)
+        weightMultiSelectionViewModel = ViewModelProvider(this, WeightMultiSelectionViewModel.provideFactory(getAllWeights)).get(WeightMultiSelectionViewModel::class.java)
         mediaSelectionViewModel = ViewModelProvider(this, MediaSelectionViewModel.provideFactory(mediaRepository = mediaRepository, maxItems = 10)).get(MediaSelectionViewModel::class.java)
 
         binding.newNoteViewModel = newNoteViewModel

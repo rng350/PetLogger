@@ -1,6 +1,7 @@
 package com.hfad.petlogger
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,19 +26,20 @@ class WeightMultiSelectionDialogFragment : DialogFragment() {
         binding.viewModel = viewModel
 
         SetupWeightMultiPickerUseCase(
-            viewModel.allWeights,
-            viewModel.currentSelection,
+            viewModel.selectionTracker.allOptions,
+            viewModel.selectionTracker.prospectiveSelection,
             viewModel.selectionTracker,
             binding.weightsList,
             viewLifecycleOwner
         )()
 
         binding.okayButton.setOnClickListener {
+            viewModel.confirmSelection()
             requireDialog().dismiss()
         }
 
         binding.cancelButton.setOnClickListener {
-            viewModel.resetSelection()
+            requireDialog().cancel()
         }
 
         return view
@@ -49,6 +51,15 @@ class WeightMultiSelectionDialogFragment : DialogFragment() {
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (viewModel.currentSelectionChanged) {
+            viewModel.onCurrentSelectionChanged()
+        } else {
+            viewModel.cancel()
+        }
     }
 
     override fun onDestroyView() {

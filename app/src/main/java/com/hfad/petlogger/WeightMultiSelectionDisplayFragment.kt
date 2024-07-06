@@ -8,6 +8,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.hfad.petlogger.databinding.FragmentWeightMultiSelectionDisplayBinding
 import com.hfad.petlogger.recyclerviews.SetupWeightMultiPickerSelectionDisplayUseCase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class WeightMultiSelectionDisplayFragment : Fragment() {
     var _binding: FragmentWeightMultiSelectionDisplayBinding? = null
@@ -23,14 +27,20 @@ class WeightMultiSelectionDisplayFragment : Fragment() {
         binding.viewModel = viewModel
 
         SetupWeightMultiPickerSelectionDisplayUseCase(
-            viewModel.currentSelection,
+            viewModel.selectionTracker.currentSelection,
             viewModel.selectionTracker,
             binding.weightsList,
             viewLifecycleOwner
         )()
 
         binding.addWeightsButton.setOnClickListener {
-            WeightMultiSelectionDialogFragment().show(childFragmentManager, "WEIGHT_DIALOG_FRAGMENT")
+            binding.addWeightsButton.isEnabled = false
+            val coroutineScope = CoroutineScope(Dispatchers.Main.immediate)
+            coroutineScope.launch {
+                WeightMultiSelectionDialogFragment().show(childFragmentManager, "WEIGHT_DIALOG_FRAGMENT")
+                delay(200)
+                binding.addWeightsButton.isEnabled = true
+            }
         }
 
         binding.resetButton.setOnClickListener {
@@ -38,6 +48,11 @@ class WeightMultiSelectionDisplayFragment : Fragment() {
         }
 
         return view
+    }
+
+    override fun onStop() {
+        super.onStop()
+        binding.addWeightsButton.isEnabled = true
     }
 
     override fun onDestroyView() {

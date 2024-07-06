@@ -6,6 +6,7 @@ import com.hfad.petlogger.entities.PetProfilePhoto
 import com.hfad.petlogger.entities.Photo
 import com.hfad.petlogger.entities.PhotoEvent
 import com.hfad.petlogger.entities.PhotoNote
+import com.hfad.petlogger.entities.WeightDetails
 
 @Dao
 interface PhotoDao {

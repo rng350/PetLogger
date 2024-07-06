@@ -23,6 +23,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.hfad.petlogger.databinding.FragmentNewNoteBinding
 import com.hfad.petlogger.databinding.FragmentNewPhotoBinding
 import com.hfad.petlogger.photodisplay.stateless.GetAllPetsWithProfilePhotosUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetAllWeightsWithPetNamesUseCase
 import com.hfad.petlogger.repositories.EventRepository
 import com.hfad.petlogger.repositories.MediaRepository
 import com.hfad.petlogger.repositories.NoteRepository
@@ -53,7 +54,9 @@ class NewPhotoFragment : Fragment() {
         val newPhotoViewModel = ViewModelProvider(this, NewPhotoViewModel.provideFactory(mediaRepository)).get(NewPhotoViewModel::class.java)
         val petSelectorViewModel = ViewModelProvider(this, PetMultiSelectionViewModel.provideFactory(getAllPetsUseCase)).get(PetMultiSelectionViewModel::class.java)
         val eventSelectionViewModel = ViewModelProvider(this, EventMultiSelectionViewModel.provideFactory(eventRepository)).get(EventMultiSelectionViewModel::class.java)
-        val weightMultiSelectionViewModel = ViewModelProvider(this, WeightMultiSelectionViewModel.provideFactory(weightRepository)).get(WeightMultiSelectionViewModel::class.java)
+
+        val getAllWeights = GetAllWeightsWithPetNamesUseCase(weightRepository)
+        val weightMultiSelectionViewModel = ViewModelProvider(this, WeightMultiSelectionViewModel.provideFactory(getAllWeights)).get(WeightMultiSelectionViewModel::class.java)
         binding.newPhotoViewModel = newPhotoViewModel
         binding.petSelectorViewModel = petSelectorViewModel
         binding.eventSelectorViewModel = eventSelectionViewModel

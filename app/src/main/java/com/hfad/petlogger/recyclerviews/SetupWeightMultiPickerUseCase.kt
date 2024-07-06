@@ -1,6 +1,7 @@
 package com.hfad.petlogger.recyclerviews
 
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
@@ -9,10 +10,11 @@ import com.hfad.petlogger.R
 import com.hfad.petlogger.databinding.CheckableWeightWNameItemBinding
 import com.hfad.petlogger.entities.WeightWithPetName
 import com.hfad.petlogger.selectiontracker.EditSelectionTracker
+import com.hfad.petlogger.selectiontracker.MultiSelectionTracker
 
-class SetupWeightMultiPickerUseCase(private val weightList: MutableLiveData<List<CheckableItem<WeightWithPetName>>>,
-                                    private val selection: MutableLiveData<List<CheckableItem<WeightWithPetName>>>,
-                                    private val selectionTracker: EditSelectionTracker<WeightWithPetName>,
+class SetupWeightMultiPickerUseCase(private val weightList: LiveData<List<CheckableItem<WeightWithPetName>>>,
+                                    private val selection: LiveData<List<CheckableItem<WeightWithPetName>>>,
+                                    private val selectionTracker: MultiSelectionTracker<WeightWithPetName>,
                                     private val recyclerView: RecyclerView,
                                     private val lifecycleOwner: LifecycleOwner
 ) {
@@ -34,20 +36,7 @@ class SetupWeightMultiPickerUseCase(private val weightList: MutableLiveData<List
 
             binder.weightCard.setOnClickListener { null }
             binder.weightCard.setOnClickListener {
-                val mutableList = selection.value?.toMutableList() ?: mutableListOf<CheckableItem<WeightWithPetName>>()
-
                 selectionTracker.toggle(item)
-
-                if (mutableList.contains(item)) {
-                    mutableList.remove(item)
-                    item.isChecked.value = false
-                    binder.weightCard.isChecked = false
-                } else {
-                    mutableList.add(item)
-                    item.isChecked.value = true
-                    binder.weightCard.isChecked = true
-                }
-                selection.value = mutableList.toList()
             }
 
             val observer = Observer<List<CheckableItem<WeightWithPetName>>> {
