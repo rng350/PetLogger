@@ -26,6 +26,7 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
     private val petDao = database.petDao
     private val photoDao = database.photoDao
     suspend fun addPet(pet: Pet, photos: List<Photo> = listOf<Photo>(), profilePic: Photo? = null) = withContext(Dispatchers.IO) {
+        Log.d("addPet", "PET BEING ADDED... Pet: ${pet.toString()}")
         if (profilePic == null) {
             addPetPhotosNoProfilePic(pet, photos)
         }
@@ -169,8 +170,7 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
 
     private suspend fun addPetPhotosNoProfilePic(pet: Pet, photos: List<Photo> = listOf<Photo>()): Long = withContext(Dispatchers.IO){
         val petInserted = async {
-            val rowId = petDao.insert(pet)
-            petDao.getPetFromRow(rowId)
+            petDao.insertPet(pet)
         }.await()
         photos.map { photo ->
             async {
@@ -182,8 +182,7 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
 
     private suspend fun addPetPhotosWithProfilePic(pet: Pet, photos: List<Photo> = listOf<Photo>(), profilePic: Photo): Long = withContext(Dispatchers.IO){
         val petInsertedDeferred = async {
-            val rowId = petDao.insert(pet)
-            petDao.getPetFromRow(rowId)
+            petDao.insertPet(pet)
         }
         val petInserted = petInsertedDeferred.await()
         val newPhotosList = photos.toMutableList()

@@ -5,12 +5,11 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
-import java.time.OffsetDateTime
+import java.time.LocalDate
 
 @Entity(tableName = "pet_table")
 @Parcelize
 data class Pet(
-
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name="pet_id")
     var petID : Long = 0L,
@@ -28,5 +27,5 @@ data class Pet(
     var petSex : String = "",
 
     @ColumnInfo(name="pet_dob")
-    var petDOB : OffsetDateTime? = null
+    var petDOB : LocalDate? = null
 ) : Parcelable

@@ -2,6 +2,7 @@ package com.hfad.petlogger.util
 
 import androidx.room.TypeConverter
 import java.time.Instant
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
@@ -22,6 +23,20 @@ object Converter {
     @JvmStatic
     fun fromOffsetDateTime(date: OffsetDateTime?): String? {
         return date?.format(formatter)
+    }
+
+    @TypeConverter
+    @JvmStatic
+    fun toLocalDate(value: String?): LocalDate? {
+        return value?.let {
+            return LocalDate.parse(it)
+        }
+    }
+
+    @TypeConverter
+    @JvmStatic
+    fun fromLocalDate(date: LocalDate?): String? {
+        return date?.toString()
     }
 
     @TypeConverter

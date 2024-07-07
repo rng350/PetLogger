@@ -44,7 +44,7 @@ class EditEventViewModel(private val eventRepository: EventRepository, eventID: 
             event.value?.let { updatedEvent ->
                 updatedEvent.title = newEventTitle.value!!
                 updatedEvent.details = newEventDetails.value ?: ""
-                updatedEvent.date = eventDateTime.dateTime
+                updatedEvent.date = eventDateTime.selectedDateTime
                 viewModelScope.launch {
                     eventRepository.update(
                         event = updatedEvent,

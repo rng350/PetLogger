@@ -29,15 +29,11 @@ class EditPetViewModel(
                 petName.postValue(retrievedPet.petName)
                 petSpecies.postValue(retrievedPet.petSpecies)
                 petBreed.postValue(retrievedPet.petBreed)
+                petSex.postValue(retrievedPet.petSex)
+                retrievedPet.petDOB?.let {
+                    newPetDOB.set(it)
+                }
             }
-        }
-    }
-
-    fun onPetFetched() {
-        val (_, _, _, _, initPetSex, initPetDOB) = pet.value!!
-        petSex.postValue(initPetSex)
-        initPetDOB?.let {
-            newPetDOB.set(it)
         }
     }
 
@@ -74,7 +70,7 @@ class EditPetViewModel(
     }
 
     fun removeDOB() {
-        newPetDOB.hasBeenSet = false
+        newPetDOB.unSet()
     }
 
     // call after "yes" on "are you sure?"

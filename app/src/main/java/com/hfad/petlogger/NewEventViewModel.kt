@@ -27,7 +27,7 @@ class NewEventViewModel(private val eventRepository: EventRepository): ViewModel
             if (eventTitle.isNotEmpty()) {
                 async {
                     eventRepository.insert(
-                        event = Event(title=eventTitle, details=eventDetails, date=eventDateTime.dateTime),
+                        event = Event(title=eventTitle, details=eventDetails, date=eventDateTime.selectedDateTime),
                         pets = pets,
                         photos = photos
                     )

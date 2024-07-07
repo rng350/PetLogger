@@ -28,7 +28,7 @@ class NewWeightViewModel(
     fun submitWeight(pet: Pet) {
         if (weightAmt.value != null && _unitType != null) {
             val weight = Weight()
-            weight.weightDateTime = weightDateTime.dateTime
+            weight.weightDateTime = weightDateTime.selectedDateTime
             weight.petId = pet.petID
             val convertedWeight = when(_unitType) {
                 "grams" -> { weightAmt.value!! }

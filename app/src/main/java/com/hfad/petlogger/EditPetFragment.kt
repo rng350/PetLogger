@@ -84,7 +84,6 @@ class EditPetFragment : Fragment() {
                     binding.petSexOther.isChecked = true
                 }
             }
-            editPetViewModel.onPetFetched()
         })
 
         binding.petSexSelection.setOnCheckedChangeListener { radioGroup, i ->

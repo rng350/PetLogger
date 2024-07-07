@@ -36,7 +36,7 @@ import com.hfad.petlogger.util.URIConverter
         PhotoNote::class,
         WeightNote::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false)
 @TypeConverters(
     Converter::class,
@@ -60,7 +60,7 @@ abstract class PetLoggerDatabase: RoomDatabase() {
                         context.applicationContext,
                         PetLoggerDatabase::class.java,
                         "pet_logger_database"
-                    ).build()
+                    ).fallbackToDestructiveMigration().build()
                     INSTANCE = instance
                     Log.i("DB", "DATABASE CREATED!!")
                 }

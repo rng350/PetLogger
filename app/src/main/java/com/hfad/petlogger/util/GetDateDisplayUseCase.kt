@@ -6,13 +6,16 @@ import java.time.OffsetDateTime
 import java.time.ZoneId
 
 class GetDateDisplayUseCase {
-    operator fun invoke(date: OffsetDateTime): String {
+    operator fun invoke(date: OffsetDateTime?): String {
+        if (date == null) return "N/A"
         return invoke(date.atZoneSameInstant(ZoneId.systemDefault()).toLocalDate())
     }
-    operator fun invoke(date: LocalDateTime): String {
+    operator fun invoke(date: LocalDateTime?): String {
+        if (date == null) return "N/A"
         return invoke(date.toLocalDate())
     }
-    operator fun invoke(date: LocalDate): String {
+    operator fun invoke(date: LocalDate?): String {
+        if (date == null) return "N/A"
         val month =
             when(date.month) {
                 java.time.Month.JANUARY -> "Jan"

@@ -1,5 +1,6 @@
 package com.hfad.petlogger.dao
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.hfad.petlogger.entities.*
@@ -9,7 +10,9 @@ import kotlinx.coroutines.flow.Flow
 interface PetDao {
     @Transaction
     suspend fun insertPet(petToInsert: Pet): Pet {
+        Log.d("petDao", "about to insert....")
         val rowId = insert(petToInsert)
+        Log.d("petDao", "inserted....")
         return getPetFromRow(rowId)
     }
 
