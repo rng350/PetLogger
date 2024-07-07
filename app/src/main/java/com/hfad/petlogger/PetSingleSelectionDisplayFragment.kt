@@ -74,8 +74,8 @@ class PetSingleSelectionDisplayFragment : Fragment() {
         binding.addPetButton.isEnabled = true
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         _binding = null
     }
 }
