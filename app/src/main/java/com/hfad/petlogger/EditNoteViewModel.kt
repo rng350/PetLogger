@@ -1,5 +1,6 @@
 package com.hfad.petlogger
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -18,6 +19,8 @@ class EditNoteViewModel(private val noteRepository: NoteRepository, private val 
     val note = MutableLiveData<Note>()
 
     val goBack = MutableLiveData(false)
+    private val _goToNotesList = MutableLiveData(false)
+    val goToNotesList: LiveData<Boolean> get() = _goToNotesList
     init {
         viewModelScope.launch {
             noteFetched.value = noteRepository.getNote(noteId)
@@ -56,7 +59,10 @@ class EditNoteViewModel(private val noteRepository: NoteRepository, private val 
     fun delete() {
         viewModelScope.launch {
             note.value?.let {
-                noteRepository.delete(it)
+                async {
+                    noteRepository.delete(it)
+                }.await()
+                _goToNotesList.value = true
             }
         }
     }
@@ -65,6 +71,10 @@ class EditNoteViewModel(private val noteRepository: NoteRepository, private val 
         noteFetched.value?.let {
             note.value = it.copy()
         }
+    }
+
+    fun onNavigateToNotesList() {
+        _goToNotesList.value = false
     }
 
     companion object {

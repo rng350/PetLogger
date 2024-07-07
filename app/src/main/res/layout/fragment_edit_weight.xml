@@ -75,7 +75,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:gravity="center">
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/submitButton"
                 android:layout_width="wrap_content"
@@ -85,7 +86,13 @@
                 android:id="@+id/cancelButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
                 android:text="@string/cancel"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/deleteButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/delete"/>
         </LinearLayout>
     </LinearLayout>
 </layout>

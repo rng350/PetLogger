@@ -57,6 +57,24 @@ class EditWeightFragment : Fragment() {
         binding.cancelButton.setOnClickListener{
             findNavController().popBackStack()
         }
+        val confirmAction = ConfirmActionUseCase(
+            dialogTitle = resources.getString(R.string.confirm_weight_deletion_title),
+            dialogMessage = resources.getString(R.string.confirm_weight_deletion_message),
+            onPositiveButtonClick = { dialog, which ->
+                dialog.dismiss()
+                editWeightViewModel.deleteWeight()
+            },
+            context = requireContext()
+        )
+        binding.deleteButton.setOnClickListener {
+            confirmAction()
+        }
+        editWeightViewModel.goToWeightsList.observe(viewLifecycleOwner) {
+            if (it == true) {
+                editWeightViewModel.onNavigateToWeightsList()
+                findNavController().navigate(EditWeightFragmentDirections.actionEditWeightFragmentToMonitoringListFragment())
+            }
+        }
 
         return view
     }

@@ -247,6 +247,9 @@
         <argument
             android:name="petId"
             app:argType="long" />
+        <action
+            android:id="@+id/action_editWeightFragment_to_monitoringListFragment"
+            app:destination="@id/monitoringListFragment" />
     </fragment>
     <fragment
         android:id="@+id/newNoteFragment"

@@ -87,9 +87,17 @@ class EditNoteFragment : Fragment() {
             editNoteViewModel.reset()
         }
 
+        val confirmAction = ConfirmActionUseCase(
+            dialogTitle = resources.getString(R.string.confirm_note_deletion_title),
+            dialogMessage = resources.getString(R.string.confirm_note_deletion_message),
+            onPositiveButtonClick = { dialog, which ->
+                dialog.dismiss()
+                editNoteViewModel.delete()
+            },
+            context = requireContext()
+        )
         binding.deleteButton.setOnClickListener {
-            editNoteViewModel.delete()
-            findNavController().navigate(EditNoteFragmentDirections.actionEditNoteFragmentToNoteListFragment())
+            confirmAction()
         }
 
         editNoteViewModel.note.observe(viewLifecycleOwner, Observer {
@@ -104,6 +112,13 @@ class EditNoteFragment : Fragment() {
                 findNavController().navigate(action)
             }
         })
+
+        editNoteViewModel.goToNotesList.observe(viewLifecycleOwner) {
+            if (it == true) {
+                editNoteViewModel.onNavigateToNotesList()
+                findNavController().navigate(EditNoteFragmentDirections.actionEditNoteFragmentToNoteListFragment())
+            }
+        }
 
         return view
     }

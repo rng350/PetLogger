@@ -82,6 +82,10 @@ class EditPhotoViewModel(private val mediaRepository: MediaRepository, private v
         }
     }
 
+    fun onNavigateToGalleryList() {
+        _goToGalleryList.value = false
+    }
+
     companion object {
         fun provideFactory(mediaRepository: MediaRepository, photoId: Long): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {

@@ -1,5 +1,6 @@
 package com.hfad.petlogger
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -18,6 +19,8 @@ class EditEventViewModel(private val eventRepository: EventRepository, eventID: 
     val eventDateTime = SelectableDateTime()
     val newEventTitle = MutableLiveData<String>()
     val newEventDetails = MutableLiveData<String>()
+    private val _goToEventsList = MutableLiveData(false)
+    val goToEventsList: LiveData<Boolean> get() = _goToEventsList
 
     init {
         viewModelScope.launch {
@@ -58,9 +61,16 @@ class EditEventViewModel(private val eventRepository: EventRepository, eventID: 
     fun deleteEvent() {
         event.value?.let {
             viewModelScope.launch {
-                eventRepository.delete(it)
+                async {
+                    eventRepository.delete(it)
+                }.await()
+                _goToEventsList.value = true
             }
         }
+    }
+
+    fun onNavigateToEventsList() {
+        _goToEventsList.value = false
     }
 
     companion object {

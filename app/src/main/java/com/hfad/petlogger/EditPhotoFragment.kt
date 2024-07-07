@@ -67,8 +67,16 @@ class EditPhotoFragment : Fragment() {
             )
         }
 
+        val confirmAction = ConfirmActionUseCase(
+            dialogTitle = resources.getString(R.string.confirm_photo_deletion_title),
+            dialogMessage = resources.getString(R.string.confirm_photo_deletion_message),
+            onPositiveButtonClick = { dialog, which ->
+                dialog.dismiss()
+                editPhotoViewModel.deletePhoto() },
+            context = requireContext()
+        )
         binding.deleteButton.setOnClickListener{
-            editPhotoViewModel.deletePhoto()
+            confirmAction()
         }
 
         binding.resetButton.setOnClickListener{
@@ -87,6 +95,7 @@ class EditPhotoFragment : Fragment() {
 
         editPhotoViewModel.goToGalleryList.observe(viewLifecycleOwner, Observer { shouldGo ->
             if (shouldGo) {
+                editPhotoViewModel.onNavigateToGalleryList()
                 findNavController().navigate(EditPhotoFragmentDirections.actionEditPhotoFragmentToFullGalleryFragment())
             }
         })

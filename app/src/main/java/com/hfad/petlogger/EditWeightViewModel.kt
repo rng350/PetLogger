@@ -1,5 +1,6 @@
 package com.hfad.petlogger
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -13,6 +14,8 @@ import kotlinx.coroutines.launch
 class EditWeightViewModel(private val weightRepository: WeightRepository, private val weightId: Long): ViewModel() {
     val weight = MutableLiveData<Weight>()
     val weightDateTime = SelectableDateTime()
+    private val _goToWeightsList = MutableLiveData(false)
+    val goToWeightsList: LiveData<Boolean> get() = _goToWeightsList
     init {
         viewModelScope.launch {
             val fetchedWeightDetails = async {
@@ -32,6 +35,21 @@ class EditWeightViewModel(private val weightRepository: WeightRepository, privat
                 weightRepository.update(Weight(it.id, pet.petID, it.weightGrams, weightDateTime.dateTime, it.weightNotes))
             }
         }
+    }
+
+    fun deleteWeight() {
+        weight.value?.let {
+            viewModelScope.launch {
+                async {
+                    weightRepository.delete(it)
+                }.await()
+                _goToWeightsList.value = true
+            }
+        }
+    }
+
+    fun onNavigateToWeightsList() {
+        _goToWeightsList.value = false
     }
 
     companion object {

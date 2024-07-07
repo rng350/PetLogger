@@ -98,9 +98,23 @@ class EditEventFragment : Fragment() {
             this.findNavController().popBackStack()
         }
 
+        val confirmAction = ConfirmActionUseCase(
+            dialogTitle = resources.getString(R.string.confirm_event_deletion_title),
+            dialogMessage = resources.getString(R.string.confirm_event_deletion_message),
+            onPositiveButtonClick = { dialog, which ->
+                dialog.dismiss()
+                editEventViewModel.deleteEvent()
+            },
+            context = requireContext()
+        )
         binding.deleteEventButton.setOnClickListener {
-            editEventViewModel.deleteEvent()
-            this.findNavController().navigate(EditEventFragmentDirections.actionEditEventFragmentToEventListFragment())
+            confirmAction()
+        }
+        editEventViewModel.goToEventsList.observe(viewLifecycleOwner) {
+            if (it == true) {
+                editEventViewModel.onNavigateToEventsList()
+                this.findNavController().navigate(EditEventFragmentDirections.actionEditEventFragmentToEventListFragment())
+            }
         }
 
         return view
