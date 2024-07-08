@@ -6,6 +6,7 @@ import com.hfad.petlogger.CheckableItem
 import com.hfad.petlogger.PetLoggerDatabase
 import com.hfad.petlogger.copyOf
 import com.hfad.petlogger.entities.Event
+import com.hfad.petlogger.entities.EventForList
 import com.hfad.petlogger.entities.EventPet
 import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.entities.PetPhoto
@@ -20,6 +21,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 class PetRepository(private val database: PetLoggerDatabase, private val mediaRepository: MediaRepository) {
@@ -108,8 +111,19 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
         petDao.getPetPhotosAsList(petId)
     }
 
-    fun getPetEvents(petId: Long): Flow<List<Event>> {
-        return petDao.getPetEvents(petId)
+    fun getPetEvents(petId: Long): Flow<List<EventForList>> {
+        val getDateDisplayUseCase = GetDateDisplayUseCase()
+        val getTimeDisplayUseCase = GetTimeDisplayUseCase()
+        return petDao
+            .getPetEvents(petId)
+            .map { it
+                .sortedByDescending { event -> event.date }
+                .map { event -> EventForList(
+                    eventId = event.eventId,
+                    eventDate = getDateDisplayUseCase(event.date),
+                    eventTime = getTimeDisplayUseCase(event.date),
+                    eventTitle = event.title) }
+            }.flowOn(Dispatchers.IO)
     }
 
     fun getPetWeights(petId: Long): Flow<List<Weight>> {

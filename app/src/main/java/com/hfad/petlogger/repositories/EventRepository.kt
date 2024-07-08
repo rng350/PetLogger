@@ -5,15 +5,21 @@ import com.hfad.petlogger.CheckableItem
 import com.hfad.petlogger.PetLoggerDatabase
 import com.hfad.petlogger.dao.EventDao
 import com.hfad.petlogger.entities.Event
+import com.hfad.petlogger.entities.EventForList
 import com.hfad.petlogger.entities.EventPet
 import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.entities.PetWithProfilePic
 import com.hfad.petlogger.entities.Photo
 import com.hfad.petlogger.entities.PhotoEvent
+import com.hfad.petlogger.util.GetDateDisplayUseCase
+import com.hfad.petlogger.util.GetTimeDisplayUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.withContext
 
 class EventRepository(private val database: PetLoggerDatabase,
@@ -109,7 +115,18 @@ class EventRepository(private val database: PetLoggerDatabase,
         return eventDao.getPetsOfEventWithProfilePhotosAsFlow(eventId)
     }
 
-    fun getAllEventsAsFlow(): Flow<List<Event>> {
-        return eventDao.getAllEventsAsFlow()
+    fun getAllEventsAsFlow(): Flow<List<EventForList>> {
+        val getDateDisplayUseCase = GetDateDisplayUseCase()
+        val getTimeDisplayUseCase = GetTimeDisplayUseCase()
+        return eventDao
+            .getAllEventsAsFlow()
+            .map { it
+                .sortedByDescending { event -> event.date }
+                .map { event -> EventForList(
+                    eventId = event.eventId,
+                    eventDate = getDateDisplayUseCase(event.date),
+                    eventTime = getTimeDisplayUseCase(event.date),
+                    eventTitle = event.title) }
+            }.flowOn(Dispatchers.IO)
     }
 }

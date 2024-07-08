@@ -3,6 +3,7 @@ package com.hfad.petlogger.repositories
 import androidx.room.withTransaction
 import com.hfad.petlogger.PetLoggerDatabase
 import com.hfad.petlogger.entities.Event
+import com.hfad.petlogger.entities.EventForList
 import com.hfad.petlogger.entities.EventNote
 import com.hfad.petlogger.entities.Note
 import com.hfad.petlogger.entities.Pet
@@ -13,10 +14,14 @@ import com.hfad.petlogger.entities.PhotoNote
 import com.hfad.petlogger.entities.Weight
 import com.hfad.petlogger.entities.WeightNote
 import com.hfad.petlogger.entities.WeightWithPetName
+import com.hfad.petlogger.util.GetDateDisplayUseCase
+import com.hfad.petlogger.util.GetTimeDisplayUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 class NoteRepository(
@@ -180,7 +185,18 @@ class NoteRepository(
             .sortedByDescending { it.weight.weightDateTime }
     }
 
-    fun getEventsOfNoteAsFlow(noteId: Long): Flow<List<Event>> {
-        return noteDao.getEventsOfNoteAsFlow(noteId)
+    fun getEventsOfNoteAsFlow(noteId: Long): Flow<List<EventForList>> {
+        val getDateDisplayUseCase = GetDateDisplayUseCase()
+        val getTimeDisplayUseCase = GetTimeDisplayUseCase()
+        return noteDao
+            .getEventsOfNoteAsFlow(noteId)
+            .map { it
+                .sortedByDescending { event -> event.date }
+                .map { event -> EventForList(
+                    eventId = event.eventId,
+                    eventDate = getDateDisplayUseCase(event.date),
+                    eventTime = getTimeDisplayUseCase(event.date),
+                    eventTitle = event.title) }
+            }.flowOn(Dispatchers.IO)
     }
 }

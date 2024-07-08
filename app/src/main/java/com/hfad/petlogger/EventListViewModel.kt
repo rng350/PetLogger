@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.hfad.petlogger.dao.EventDao
 import com.hfad.petlogger.entities.Event
+import com.hfad.petlogger.entities.EventForList
 import com.hfad.petlogger.entities.PetWithProfilePic
 import com.hfad.petlogger.fetchers.Fetcher
 import com.hfad.petlogger.photodisplay.stateful.GetAllEventsForDisplayUseCase
@@ -19,11 +20,11 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class EventListViewModel(getAllEvents: GetAllEventsForDisplayUseCase) : ViewModel() {
-    val events: StateFlow<List<Event>> = getAllEvents()
+    val events: StateFlow<List<EventForList>> = getAllEvents()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = listOf<Event>()
+            initialValue = listOf<EventForList>()
         )
     val eventNavigator = Navigator()
 

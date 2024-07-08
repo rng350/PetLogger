@@ -20,28 +20,6 @@ import com.hfad.petlogger.entities.WeightWithPetName
 import com.hfad.petlogger.util.Navigator
 
 object BindingInterfaceCreator {
-    fun setupNavigatableEventAdapter(eventNavigator: Navigator): GenericRecyclerViewAdapter<Event, EventItemBinding> {
-        return GenericRecyclerViewAdapter<Event, EventItemBinding>(
-            layoutId = R.layout.event_item,
-            bindingInterface = createEventItemBindingInterface(eventNavigator)
-        )
-    }
-
-    private fun createEventItemBindingInterface(eventNavigator: Navigator)
-            = object : DataItemBindingInterface<Event, EventItemBinding> {
-        override fun bind(
-            item: Event,
-            binder: EventItemBinding
-        ) {
-            binder.event = item
-            binder.viewEventButton.setOnClickListener {
-                eventNavigator.navigateTo(item.eventId)
-            }
-            binder.deleteEventButton.setOnClickListener {
-            }
-        }
-    }
-
     fun setupNavigatableWeightWithPetNameAdapter(weightNavigator: Navigator): GenericRecyclerViewAdapter<WeightWithPetName, WeightItemBinding> {
         return GenericRecyclerViewAdapter<WeightWithPetName, WeightItemBinding>(
             layoutId = R.layout.weight_item,

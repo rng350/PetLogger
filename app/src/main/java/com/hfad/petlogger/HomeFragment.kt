@@ -43,18 +43,9 @@ class HomeFragment : Fragment() {
             }
         })
 
-        val eventAdapter = BindingInterfaceCreator.setupNavigatableEventAdapter(viewModel.eventNavigator)
-        binding.eventsList.adapter = eventAdapter
         binding.addEventButton.setOnClickListener {
             this.findNavController().navigate(R.id.action_homeFragment_to_newEventFragment)
         }
-        viewModel.events.observe(viewLifecycleOwner, Observer {
-            it?.let {
-                println("events...")
-                eventAdapter.submitList(it)
-                println("events: ${it.toString()}")
-            }
-        })
         viewModel.eventNavigator.navigateTo.observe(viewLifecycleOwner, Observer {
             it?.let {
                 val action = HomeFragmentDirections.actionHomeFragmentToViewEventFragment(it)
