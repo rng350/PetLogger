@@ -64,50 +64,6 @@ object BindingInterfaceCreator {
         }
     }
 
-    fun setupPetWithProfilePhotoAdapter(petList: LiveData<List<PetWithProfilePic>>,
-                                        recyclerView: RecyclerView,
-                                        lifecycleOwner: LifecycleOwner,
-                                        context: Context,
-                                        navigator: Navigator?
-    ) {
-        val adapter = GenericRecyclerViewAdapter<PetWithProfilePic, PetItemBinding>(
-            layoutId = R.layout.pet_item,
-            bindingInterface = createPetWithProfilePhotoItemBindingInterface(context, navigator)
-        )
-        recyclerView.adapter = adapter
-        petList.observe(lifecycleOwner, Observer {
-            println("Pets...")
-            adapter.submitList(it)
-            println("Pets: ${it.toString()}")
-        })
-    }
-
-    private fun createPetWithProfilePhotoItemBindingInterface(context: Context, navigator: Navigator? = null)
-            = object: DataItemBindingInterface<PetWithProfilePic, PetItemBinding> {
-        override fun bind(item: PetWithProfilePic, binder: PetItemBinding) {
-            binder.pet = item
-
-            // clear previous requests on viewholder
-            //binder.petProfileImage.setImageBitmap(null)
-            Glide.with(context).clear(binder.petProfileImage)
-
-            if (item.profilePic != null) {
-                Glide.with(context)
-                    .load(item.profilePic.contentUri)
-                    .apply(RequestOptions().placeholder(R.drawable.placeholder))
-                    .into(binder.petProfileImage)
-            } else {
-                binder.petProfileImage.setImageResource(R.drawable.placeholder)
-            }
-
-            binder.petCard.setOnClickListener { null }
-
-            binder.petCard.setOnClickListener {
-                navigator?.navigateTo(item.pet.petID)
-            }
-        }
-    }
-
     fun setupGalleryPhotoItemAdapter(photoList: MutableLiveData<List<Photo>>,
                                      recyclerView: RecyclerView,
                                      lifecycleOwner: LifecycleOwner,

@@ -267,4 +267,8 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
 
         checkablePetList ?: listOf()
     }
+
+    fun getAllPetsAsFlow(): Flow<List<PetWithProfilePic>> {
+        return petDao.getAllPetsWithProfilePhotosAsFlow()
+    }
 }

@@ -110,4 +110,7 @@ interface PetDao {
             "WHERE event_pet_table.pet_id = :petId " +
             "ORDER BY event_date DESC")
     fun getPetEvents(petId: Long): Flow<List<Event>>
+
+    @Query("SELECT * FROM pet_table")
+    fun getAllPetsWithProfilePhotosAsFlow(): Flow<List<PetWithProfilePic>>
 }

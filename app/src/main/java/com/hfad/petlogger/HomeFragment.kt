@@ -31,13 +31,6 @@ class HomeFragment : Fragment() {
         val viewModel = ViewModelProvider(this, viewModelFactory).get(HomeViewModel::class.java)
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
-
-        BindingInterfaceCreator.setupPetWithProfilePhotoAdapter(
-            viewModel.pets,
-            binding.petsList,
-            viewLifecycleOwner,
-            requireContext(),
-            viewModel.petNavigator)
         
         binding.addPetButton.setOnClickListener {
             this.findNavController().navigate(R.id.action_homeFragment_to_newPetFragment)

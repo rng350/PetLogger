@@ -7,9 +7,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.databinding.FragmentPetListBinding
-import com.hfad.petlogger.recyclerviews.BindingInterfaceCreator
+import com.hfad.petlogger.photodisplay.stateful.GetAllPetsForDisplayUseCase
+import com.hfad.petlogger.recyclerviews.SetupAssociatedPetsDisplayUseCase
+import com.hfad.petlogger.repositories.MediaRepository
+import com.hfad.petlogger.repositories.PetRepository
 
 class PetListFragment : Fragment() {
     private var _binding: FragmentPetListBinding? = null
@@ -24,19 +28,23 @@ class PetListFragment : Fragment() {
         _binding = FragmentPetListBinding.inflate(inflater, container, false)
         val view = binding.root
         val application = requireNotNull(this.activity).application
-        val petDao = PetLoggerDatabase.getInstance(application).petDao
+        val database = PetLoggerDatabase.getInstance(application)
 
-        val viewModelFactory = PetListViewModelFactory(petDao)
-        viewModel = ViewModelProvider(this, viewModelFactory).get(PetListViewModel::class.java)
+        val mediaRepository = MediaRepository(database, application.applicationContext)
+        val petRepository = PetRepository(database, mediaRepository)
+        val getAllPetsForDisplayUseCase = GetAllPetsForDisplayUseCase(petRepository)
+        viewModel = ViewModelProvider(this, PetListViewModel.provideFactory(getAllPetsForDisplayUseCase)).get(PetListViewModel::class.java)
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        BindingInterfaceCreator.setupPetWithProfilePhotoAdapter(
+        SetupAssociatedPetsDisplayUseCase(
             viewModel.pets,
+            viewModel.petNavigator,
             binding.petsList,
-            viewLifecycleOwner,
-            requireContext(),
-            viewModel.petNavigator)
+            application.applicationContext,
+            lifecycleScope,
+            viewLifecycleOwner
+        )()
 
         binding.addPetButton.setOnClickListener {
             findNavController().navigate(PetListFragmentDirections.actionPetListFragmentToNewPetFragment())

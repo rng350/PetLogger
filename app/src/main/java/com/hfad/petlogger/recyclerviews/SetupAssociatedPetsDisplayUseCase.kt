@@ -9,11 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.hfad.petlogger.R
-import com.hfad.petlogger.databinding.ItemSelectedPetBinding
-import com.hfad.petlogger.databinding.ItemSelectedPhotoBinding
 import com.hfad.petlogger.databinding.PetItemBinding
 import com.hfad.petlogger.entities.PetWithProfilePic
-import com.hfad.petlogger.entities.Photo
 import com.hfad.petlogger.util.Navigator
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
