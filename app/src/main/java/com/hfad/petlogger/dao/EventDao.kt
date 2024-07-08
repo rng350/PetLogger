@@ -49,4 +49,7 @@ interface EventDao {
             "FROM pet_table LEFT JOIN event_pet_table " +
             "WHERE event_id = :eventId AND pet_table.pet_id = event_pet_table.pet_id")
     fun getPetsOfEventWithProfilePhotosAsFlow(eventId: Long): Flow<List<PetWithProfilePic>>
+
+    @Query("SELECT * FROM event_table")
+    fun getAllEventsAsFlow(): Flow<List<Event>>
 }

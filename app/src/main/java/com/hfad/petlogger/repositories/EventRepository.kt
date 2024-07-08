@@ -108,4 +108,8 @@ class EventRepository(private val database: PetLoggerDatabase,
     fun getPetsWithProfilePicOfEventAsFlow(eventId: Long): Flow<List<PetWithProfilePic>> {
         return eventDao.getPetsOfEventWithProfilePhotosAsFlow(eventId)
     }
+
+    fun getAllEventsAsFlow(): Flow<List<Event>> {
+        return eventDao.getAllEventsAsFlow()
+    }
 }
