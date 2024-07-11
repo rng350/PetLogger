@@ -18,7 +18,11 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.hfad.petlogger.databinding.FragmentViewWeightBinding
 import com.hfad.petlogger.repositories.WeightRepository
+import com.hfad.petlogger.util.GetDateTimeDisplayUseCase
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.combineLatest
 import kotlinx.coroutines.launch
 
 
@@ -47,16 +51,15 @@ class ViewWeightFragment : Fragment() {
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.assocPet.collectLatest {
-                    it?.let {
-                        // set title
-                        val topAppBarTitleRemainder = if (it.pet.petName[it.pet.petName.length-1].lowercaseChar() != 's') "\'s Weight" else "\' Weight"
-                        setAppBarTitle(title = "${it.pet.petName}${topAppBarTitleRemainder}", subtitle = "${viewModel.weight.value!!.weightDateTime}")
-                        // set profile pic
-                        it.profilePic?.let {photo ->
-                            Glide.with(context)
-                                .load(photo.contentUri)
-                                .apply(RequestOptions().placeholder(R.drawable.placeholder))
-                                .into(binding.petProfileImage)
+                    if (activity != null && isAdded) {
+                        it?.let {
+                            // set profile pic
+                            it.profilePic?.let {photo ->
+                                Glide.with(context)
+                                    .load(photo.contentUri)
+                                    .apply(RequestOptions().placeholder(R.drawable.placeholder))
+                                    .into(binding.petProfileImage)
+                            }
                         }
                     }
                 }
@@ -65,10 +68,28 @@ class ViewWeightFragment : Fragment() {
 
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.assocPet.combine(viewModel.weight) { pet, weight ->
+                    var pair = Pair("","")
+                    if (pet != null && weight != null) {
+                        val topAppBarTitleRemainder = if (pet.pet.petName[pet.pet.petName.length-1].lowercaseChar() != 's') "\'s Weight" else "\' Weight"
+                        val getDateTime = GetDateTimeDisplayUseCase()
+                        pair = Pair("${pet.pet.petName}${topAppBarTitleRemainder}", getDateTime(weight.weightDateTime))
+                    }
+                    pair
+                }.collectLatest {
+                    setAppBarTitle(title = it.first, subtitle = it.second)
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.weight.collectLatest {
                     it?.let {
-                        if (it.weightNotes.isNotEmpty()) {
-                            binding.weightNotesCard.visibility = View.VISIBLE
+                        if (activity != null && isAdded) {
+                            if (it.weightNotes.isNotEmpty()) {
+                                binding.weightNotesCard.visibility = View.VISIBLE
+                            }
                         }
                     }
                 }
@@ -78,14 +99,14 @@ class ViewWeightFragment : Fragment() {
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.prevWeight.collectLatest {
-                    if (it != null) {
-                        Log.d("prevWeight", "GOT SOMETHING: ${it}")
-                        binding.noPreviousWeightCard.visibility = View.GONE
-                        binding.previousWeightCard.visibility = View.VISIBLE
-                    } else {
-                        Log.d("prevWeight", "GOT NUTHIN!")
-                        binding.noPreviousWeightCard.visibility = View.VISIBLE
-                        binding.previousWeightCard.visibility = View.GONE
+                    if (activity != null && isAdded) {
+                        if (it != null) {
+                            binding.noPreviousWeightCard.visibility = View.GONE
+                            binding.previousWeightCard.visibility = View.VISIBLE
+                        } else {
+                            binding.noPreviousWeightCard.visibility = View.VISIBLE
+                            binding.previousWeightCard.visibility = View.GONE
+                        }
                     }
                 }
             }
@@ -99,7 +120,8 @@ class ViewWeightFragment : Fragment() {
 
         binding.previousWeightCard.setOnClickListener {
             viewModel.prevWeight.value?.let {
-                findNavController().navigate(ViewWeightFragmentDirections.actionViewWeightFragmentSelf(it.id))
+                //findNavController().navigate(ViewWeightFragmentDirections.actionViewWeightFragmentSelf(it.id))
+                findNavController().navigateSafe(ViewWeightFragmentDirections.actionViewWeightFragmentSelf(it.id))
             }
         }
 

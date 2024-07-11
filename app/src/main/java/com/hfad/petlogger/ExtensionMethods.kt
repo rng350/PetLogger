@@ -5,6 +5,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import androidx.navigation.NavController
+import androidx.navigation.NavDirections
+import androidx.navigation.NavOptions
 import java.io.File
 
 val File.size get() = if (!exists()) 0.0 else length().toDouble()
@@ -56,5 +59,11 @@ fun Fragment.setAppBarTitle(title: String, subtitle: String? = null) {
     mainActivity.disableTopAppBarSubtitle()
     subtitle?.let {
         mainActivity.setTopAppBarSubtitle(it)
+    }
+}
+
+fun NavController.navigateSafe(directions: NavDirections, navOptions: NavOptions? = null) {
+    currentDestination?.getAction(directions.actionId)?.let {
+        navigate(directions, navOptions)
     }
 }

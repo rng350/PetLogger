@@ -54,15 +54,6 @@ class HomeFragment : Fragment() {
             }
         })
 
-        val weightAdapter = BindingInterfaceCreator.setupNavigatableWeightWithPetNameAdapter(viewModel.weightNavigator)
-        viewModel.weights.observe(viewLifecycleOwner, Observer {
-            it?.let {
-                println("weights...")
-                weightAdapter.submitList(it)
-                println("weights: ${it.toString()}")
-            }
-        })
-        binding.weightsList.adapter = weightAdapter
         binding.addWeightButton.setOnClickListener {
             this.findNavController().navigate(R.id.action_homeFragment_to_newWeightFragment)
         }

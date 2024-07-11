@@ -20,27 +20,6 @@ import com.hfad.petlogger.entities.WeightWithPetName
 import com.hfad.petlogger.util.Navigator
 
 object BindingInterfaceCreator {
-    fun setupNavigatableWeightWithPetNameAdapter(weightNavigator: Navigator): GenericRecyclerViewAdapter<WeightWithPetName, WeightItemBinding> {
-        return GenericRecyclerViewAdapter<WeightWithPetName, WeightItemBinding>(
-            layoutId = R.layout.weight_item,
-            bindingInterface = createWeightWithPetNameItemBindingInterface(weightNavigator)
-        )
-    }
-
-    private fun createWeightWithPetNameItemBindingInterface(weightNavigator: Navigator)
-            = object : DataItemBindingInterface<WeightWithPetName, WeightItemBinding> {
-        override fun bind(
-            item: WeightWithPetName,
-            binder: WeightItemBinding
-        ) {
-            binder.weight = item
-            binder.viewWeightButton.setOnClickListener {
-                weightNavigator.navigateTo(item.weight.id)
-            }
-            binder.deleteWeightButton.setOnClickListener {
-            }
-        }
-    }
 
     fun setupGalleryPhotoItemAdapter(photoList: MutableLiveData<List<Photo>>,
                                      recyclerView: RecyclerView,

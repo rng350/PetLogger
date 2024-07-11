@@ -7,9 +7,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.databinding.FragmentMonitoringListBinding
+import com.hfad.petlogger.photodisplay.stateful.GetAllWeightsWithPetInfoForDisplayUseCase
 import com.hfad.petlogger.recyclerviews.BindingInterfaceCreator
+import com.hfad.petlogger.recyclerviews.SetupAssociatedWeightsDisplayUseCase
+import com.hfad.petlogger.repositories.WeightRepository
 
 class MonitoringListFragment : Fragment() {
     private var _binding: FragmentMonitoringListBinding? = null
@@ -24,44 +28,34 @@ class MonitoringListFragment : Fragment() {
         _binding = FragmentMonitoringListBinding.inflate(inflater, container, false)
         val view = binding.root
         val application = requireNotNull(this.activity).application
-        val weightDao = PetLoggerDatabase.getInstance(application).weightDao
-        val petDao = PetLoggerDatabase.getInstance(application).petDao
-
-        val viewModelFactory = MonitoringListViewModelFactory(weightDao, petDao)
-        viewModel = ViewModelProvider(this, viewModelFactory).get(MonitoringListViewModel::class.java)
+        val database = PetLoggerDatabase.getInstance(application)
+        val weightRepository = WeightRepository(database)
+        val getWeightsUseCase = GetAllWeightsWithPetInfoForDisplayUseCase(weightRepository)
+        viewModel = ViewModelProvider(this, MonitoringListViewModel.provideFactory(getWeightsUseCase)).get(MonitoringListViewModel::class.java)
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        /** BindingInterfaceCreator.setupGalleryPhotoItemAdapter(
-        viewModel.photos,
-        binding.gallery,
-        viewLifecycleOwner,
-        requireContext(),
-        viewModel.photoNavigator)
-
-        binding.addPhotoButton.setOnClickListener {
-        this.findNavController().navigate(R.id.action_petListFragment_to_newPetFragment)
-        }**/
-
         setAppBarTitle(getString(R.string.weight_list_header))
 
-        val weightAdapter = BindingInterfaceCreator.setupNavigatableWeightWithPetNameAdapter(viewModel.weightNavigator)
-        binding.weightsList.adapter = weightAdapter
-        viewModel.weights.observe(viewLifecycleOwner, Observer {
-            it?.let {
-                weightAdapter.submitList(it)
-            }
-        })
+        SetupAssociatedWeightsDisplayUseCase(
+            weights = viewModel.weights,
+            weightNavigator = viewModel.weightNavigator,
+            recyclerView = binding.weightsList,
+            context = application.applicationContext,
+            lifecycleScope = lifecycleScope,
+            lifecycleOwner = viewLifecycleOwner
+        ).invoke()
+
         viewModel.weightNavigator.navigateTo.observe(viewLifecycleOwner, Observer {
             it?.let {
                 val action = MonitoringListFragmentDirections.actionMonitoringListFragmentToViewWeightFragment(it)
-                this.findNavController().navigate(action)
+                this.findNavController().navigateSafe(action)
                 viewModel.weightNavigator.onNavigated()
             }
         })
 
         binding.addWeightButton.setOnClickListener{
-            this.findNavController().navigate(MonitoringListFragmentDirections.actionMonitoringListFragmentToNewWeightFragment(""))
+            this.findNavController().navigateSafe(MonitoringListFragmentDirections.actionMonitoringListFragmentToNewWeightFragment(""))
         }
 
         return view

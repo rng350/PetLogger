@@ -4,6 +4,7 @@ import androidx.room.*
 import com.hfad.petlogger.entities.PetWithProfilePic
 import com.hfad.petlogger.entities.Weight
 import com.hfad.petlogger.entities.WeightDetails
+import com.hfad.petlogger.entities.WeightForListFetched
 import com.hfad.petlogger.entities.WeightWithPetName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -71,4 +72,15 @@ interface WeightDao {
             "WHERE weight_pet_id IN (SELECT weight_pet_id FROM weight_table WHERE weight_id =:weightId LIMIT 1) " +
             "AND weight_datetime < (SELECT weight_datetime FROM weight_table WHERE weight_id =:weightId LIMIT 1))")
     fun getPreviousWeight(weightId: Long): Flow<Weight>
+
+    @Query("SELECT weight_table.weight_id AS weightId, " +
+                "weight_table.weight_grams AS weightGramsAmt, " +
+                "weight_table.weight_datetime AS weightDateTime, " +
+                "pet_table.pet_name AS weightPetName, " +
+                "photo_table.photo_uri AS weightPetPhotoUri " +
+            "FROM weight_table " +
+            "LEFT JOIN pet_table ON pet_table.pet_id=weight_table.weight_pet_id " +
+            "LEFT JOIN pet_profile_photo_table ON pet_profile_photo_table.pet_id=pet_table.pet_id " +
+            "LEFT JOIN photo_table ON photo_table.photo_id=pet_profile_photo_table.photo_id")
+    fun getWeightsWithPetNameAndPhoto(): Flow<List<WeightForListFetched>>
 }

@@ -76,6 +76,7 @@
                         android:id="@+id/viewedWeightHeaderField"
                         android:layout_width="match_parent"
                         android:layout_height="30dp"
+                        app:cardCornerRadius="0dp"
                         app:cardBackgroundColor="@color/dark_beigeish"
                         android:clickable="false"
                         android:focusable="false">
@@ -90,6 +91,7 @@
                         android:id="@+id/weightFields"
                         android:layout_width="match_parent"
                         android:layout_height="30dp"
+                        app:cardCornerRadius="0dp"
                         app:cardBackgroundColor="@color/beigeish"
                         android:clickable="false"
                         android:focusable="false">
@@ -127,6 +129,7 @@
                         android:id="@+id/dateTimeField"
                         android:layout_width="match_parent"
                         android:layout_height="30dp"
+                        app:cardCornerRadius="0dp"
                         app:cardBackgroundColor="@color/slightly_darker_beigeish"
                         android:clickable="false"
                         android:focusable="false">
@@ -142,6 +145,7 @@
                         android:id="@+id/weight_difference_field"
                         android:layout_width="match_parent"
                         android:layout_height="30dp"
+                        app:cardCornerRadius="0dp"
                         app:cardBackgroundColor="@color/beigeish"
                         android:clickable="false"
                         android:focusable="false">
