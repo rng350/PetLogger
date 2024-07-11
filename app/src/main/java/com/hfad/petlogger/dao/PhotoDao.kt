@@ -64,6 +64,7 @@ interface PhotoDao {
     @Query("SELECT * FROM photo_table WHERE rowid = :rowId")
     suspend fun getPhotoFromRow(rowId: Long): Photo
 
+    @Transaction
     @Query("SELECT pet_table.* " +
             "FROM pet_table LEFT JOIN pet_photo_table " +
             "ON pet_table.pet_id=pet_photo_table.pet_id " +

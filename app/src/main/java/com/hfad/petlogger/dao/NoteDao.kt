@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import com.hfad.petlogger.entities.Event
 import com.hfad.petlogger.entities.EventNote
@@ -96,6 +97,7 @@ interface NoteDao {
             "WHERE photo_note_table.note_id = :noteId")
     fun getPhotosOfNote(noteId: Long): Flow<List<Photo>>
 
+    @Transaction
     @Query("SELECT pet_table.* " +
             "FROM pet_table LEFT JOIN pet_note_table " +
             "WHERE pet_table.pet_id = pet_note_table.pet_id AND :noteId = pet_note_table.note_id")
@@ -108,6 +110,7 @@ interface NoteDao {
             "ORDER BY event_table.event_date DESC")
     suspend fun getEventsOfNote(noteId: Long): List<Event>
 
+    @Transaction
     @Query("SELECT pet_table.* " +
             "FROM pet_table LEFT JOIN pet_note_table " +
             "ON pet_table.pet_id = pet_note_table.pet_id " +
@@ -120,6 +123,7 @@ interface NoteDao {
             "WHERE photo_note_table.note_id = :noteId")
     suspend fun getPhotosOfNoteAsList(noteId: Long): List<Photo>
 
+    @Transaction
     @Query("SELECT weight_table.* " +
             "FROM weight_table LEFT JOIN weight_note_table " +
             "ON weight_table.weight_id=weight_note_table.weight_id " +

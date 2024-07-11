@@ -35,6 +35,7 @@ interface EventDao {
             "WHERE photo_event_table.event_id=:eventId AND photo_table.photo_id=photo_event_table.photo_id")
     suspend fun fetchPhotosOfEvent(eventId: Long): List<Photo>
 
+    @Transaction
     @Query("SELECT pet_table.* " +
             "FROM pet_table LEFT JOIN event_pet_table " +
             "WHERE event_id = :eventId AND pet_table.pet_id = event_pet_table.pet_id")
@@ -45,6 +46,7 @@ interface EventDao {
             "WHERE photo_event_table.event_id=:eventId AND photo_table.photo_id=photo_event_table.photo_id")
     fun getPhotosOfEventAsFlow(eventId: Long): Flow<List<Photo>>
 
+    @Transaction
     @Query("SELECT pet_table.* " +
             "FROM pet_table LEFT JOIN event_pet_table " +
             "WHERE event_id = :eventId AND pet_table.pet_id = event_pet_table.pet_id")

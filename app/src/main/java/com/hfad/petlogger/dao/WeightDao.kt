@@ -40,18 +40,22 @@ interface WeightDao {
             "LIMIT 1")
     fun getPreviousWeight(petId: Long, weightDateTimeInString: String): Flow<Weight?>
 
+    @Transaction
     @Query("SELECT * FROM weight_table WHERE weight_id = :weightID")
     suspend fun getWeightDetails(weightID: Long): WeightDetails
 
+    @Transaction
     @Query("SELECT * FROM weight_table")
     suspend fun getAllWeightDetails(): List<WeightDetails>
 
+    @Transaction
     @Query("SELECT * FROM weight_table")
     fun getAllAsFlow(): Flow<WeightDetails>
 
     @Query("SELECT * FROM weight_table WHERE weight_id = :weightId LIMIT 1")
     fun getWeightAsFlow(weightId: Long): Flow<Weight>
 
+    @Transaction
     @Query("SELECT pet_table.*, photo_table.* " +
             "FROM pet_table " +
             "LEFT JOIN weight_table " +

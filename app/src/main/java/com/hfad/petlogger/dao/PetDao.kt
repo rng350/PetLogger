@@ -64,9 +64,11 @@ interface PetDao {
     @Delete
     suspend fun delete(petEvents: List<EventPet>)
 
+    @Transaction
     @Query("SELECT * FROM pet_table")
     suspend fun getAllPetsWithProfilePhotos(): List<PetWithProfilePic>
 
+    @Transaction
     @Query("SELECT * FROM pet_table WHERE pet_id=:petID")
     suspend fun getPetWithProfilePic(petID: Long): PetWithProfilePic
 
@@ -111,6 +113,7 @@ interface PetDao {
             "ORDER BY event_date DESC")
     fun getPetEvents(petId: Long): Flow<List<Event>>
 
+    @Transaction
     @Query("SELECT * FROM pet_table")
     fun getAllPetsWithProfilePhotosAsFlow(): Flow<List<PetWithProfilePic>>
 }
