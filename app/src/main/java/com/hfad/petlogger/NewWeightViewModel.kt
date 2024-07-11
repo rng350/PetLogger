@@ -19,7 +19,6 @@ class NewWeightViewModel(
     private val weightRepository: WeightRepository
 ) : ViewModel() {
     val weightDateTime = SelectableDateTime()
-    var petNameDisplay: MutableLiveData<String> = MutableLiveData<String>()
     var weightAmt: MutableLiveData<Int> = MutableLiveData<Int>()
     var details: MutableLiveData<String> = MutableLiveData<String>()
     private val unitConverter = MeasuringUnitConverter()
@@ -27,22 +26,21 @@ class NewWeightViewModel(
 
     fun submitWeight(pet: Pet) {
         if (weightAmt.value != null && _unitType != null) {
-            val weight = Weight()
-            weight.weightDateTime = weightDateTime.selectedDateTime
-            weight.petId = pet.petID
-            val convertedWeight = when(_unitType) {
+            val weightDateTime = weightDateTime.selectedDateTime
+            val petId = pet.petID
+            val convertedWeightAmt = when(_unitType) {
                 "grams" -> { weightAmt.value!! }
                 "kilograms" -> { unitConverter.kilogramsToGrams(weightAmt.value!!) }
                 "pounds" -> { unitConverter.poundsToGrams(weightAmt.value!!) }
                 "ounces" -> { unitConverter.ouncesToGrams(weightAmt.value!!)}
                 else -> { weightAmt.value!! }
             }
-            weight.weightGrams = convertedWeight
+            var weightNotes = ""
             details.value?.let {
-                weight.weightNotes = it
+                weightNotes = it
             }
             viewModelScope.launch {
-                weightRepository.insert(weight)
+                weightRepository.insert(Weight(petId = petId, weightGrams = convertedWeightAmt, weightDateTime = weightDateTime, weightNotes = weightNotes))
             }
         }
     }

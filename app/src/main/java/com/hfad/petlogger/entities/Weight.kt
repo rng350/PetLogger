@@ -5,7 +5,6 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.hfad.petlogger.WithId
 import java.time.OffsetDateTime
 
 @Entity(
@@ -27,7 +26,7 @@ import java.time.OffsetDateTime
 data class Weight(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name="weight_id")
-    override var id: Long = 0L,
+    var id: Long = 0L,
 
     @ColumnInfo(name="weight_pet_id")
     var petId: Long = 0L,
@@ -40,4 +39,4 @@ data class Weight(
 
     @ColumnInfo(name="weight_notes")
     var weightNotes : String = ""
-): WithId
+)
