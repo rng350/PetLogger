@@ -7,6 +7,7 @@ import com.hfad.petlogger.dao.EventPetDao
 import com.hfad.petlogger.dao.PetDao
 import com.hfad.petlogger.entities.Event
 import com.hfad.petlogger.entities.EventPet
+import com.hfad.petlogger.entities.Note
 import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.entities.Photo
 import com.hfad.petlogger.repositories.EventRepository
@@ -22,14 +23,19 @@ class NewEventViewModel(private val eventRepository: EventRepository): ViewModel
     private val _carryOn = MutableLiveData(false)
     val carryOn get() = _carryOn
 
-    fun submitEvent(pets: List<Pet> = listOf<Pet>(), photos: List<Photo> = listOf<Photo>()) {
+    fun submitEvent(
+        pets: List<Pet> = listOf<Pet>(),
+        photos: List<Photo> = listOf<Photo>(),
+        notes: List<Note> = listOf<Note>()
+    ) {
         viewModelScope.launch {
             if (eventTitle.isNotEmpty()) {
                 async {
                     eventRepository.insert(
                         event = Event(title=eventTitle, details=eventDetails, date=eventDateTime.selectedDateTime),
                         pets = pets,
-                        photos = photos
+                        photos = photos,
+                        notes = notes
                     )
                 }.await()
                 _carryOn.value = true

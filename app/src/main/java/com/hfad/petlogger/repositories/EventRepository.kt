@@ -6,7 +6,9 @@ import com.hfad.petlogger.PetLoggerDatabase
 import com.hfad.petlogger.dao.EventDao
 import com.hfad.petlogger.entities.Event
 import com.hfad.petlogger.entities.EventForList
+import com.hfad.petlogger.entities.EventNote
 import com.hfad.petlogger.entities.EventPet
+import com.hfad.petlogger.entities.Note
 import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.entities.PetWithProfilePic
 import com.hfad.petlogger.entities.Photo
@@ -39,7 +41,9 @@ class EventRepository(private val database: PetLoggerDatabase,
 
     suspend fun insert(event: Event,
                        pets: List<Pet> = listOf<Pet>(),
-                       photos: List<Photo> = listOf<Photo>()) = withContext(Dispatchers.IO) {
+                       photos: List<Photo> = listOf<Photo>(),
+                       notes: List<Note> = listOf<Note>()
+    ) = withContext(Dispatchers.IO) {
         val eventId = async {
             eventDao.insert(event)
         }.await()
@@ -53,6 +57,10 @@ class EventRepository(private val database: PetLoggerDatabase,
                 mediaRepository.addNewPhotoForEvent(photo, eventId)
             }
         }
+        val attachNotes = async {
+            eventDao.attachNotes(notes.map{ note -> EventNote(eventId = eventId, noteId=note.id) })
+        }
+        attachNotes.await()
         addEventPets.awaitAll()
         addEventPhotos.awaitAll()
 
@@ -128,5 +136,9 @@ class EventRepository(private val database: PetLoggerDatabase,
                     eventTime = getTimeDisplayUseCase(event.date),
                     eventTitle = event.title) }
             }.flowOn(Dispatchers.IO)
+    }
+
+    suspend fun getNotesOfEvent(eventId: Long): List<Note> = withContext(Dispatchers.IO) {
+        eventDao.getNotesOfEvent(eventId)
     }
 }

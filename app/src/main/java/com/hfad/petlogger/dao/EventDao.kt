@@ -2,6 +2,8 @@ package com.hfad.petlogger.dao
 
 import androidx.room.*
 import com.hfad.petlogger.entities.Event
+import com.hfad.petlogger.entities.EventNote
+import com.hfad.petlogger.entities.Note
 import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.entities.PetWithProfilePic
 import com.hfad.petlogger.entities.Photo
@@ -54,4 +56,13 @@ interface EventDao {
 
     @Query("SELECT * FROM event_table")
     fun getAllEventsAsFlow(): Flow<List<Event>>
+
+    @Query("SELECT note_table.* " +
+            "FROM note_table LEFT JOIN event_note_table " +
+            "ON note_table.note_id=event_note_Table.note_id " +
+            "WHERE event_note_table.event_id=:eventId")
+    suspend fun getNotesOfEvent(eventId: Long): List<Note>
+
+    @Insert
+    suspend fun attachNotes(notes: List<EventNote>)
 }

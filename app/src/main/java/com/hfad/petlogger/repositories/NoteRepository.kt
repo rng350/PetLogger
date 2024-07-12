@@ -103,10 +103,10 @@ class NoteRepository(
             noteDao.detachPets(petsToRemove.map{ pet -> PetNote(petId=pet.petID, noteId=note.id)})
         }
         val eventsAttached = async {
-            noteDao.attachEvents(eventsToAdd.map{ event -> EventNote(eventtId = event.eventId, noteId = note.id)})
+            noteDao.attachEvents(eventsToAdd.map{ event -> EventNote(eventId = event.eventId, noteId = note.id)})
         }
         val eventsDetached = async {
-            noteDao.detachEvents(eventsToRemove.map{ event -> EventNote(eventtId = event.eventId, noteId = note.id)})
+            noteDao.detachEvents(eventsToRemove.map{ event -> EventNote(eventId = event.eventId, noteId = note.id)})
         }
         val weightsAttached = async {
             noteDao.attachWeights(weightsToAdd.map{ weight -> WeightNote(weightId=weight.id, noteId=note.id)})

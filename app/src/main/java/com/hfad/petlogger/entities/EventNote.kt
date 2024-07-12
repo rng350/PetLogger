@@ -28,7 +28,7 @@ import androidx.room.Index
 )
 data class EventNote (
     @ColumnInfo(name="event_id")
-    val eventtId: Long,
+    val eventId: Long,
     @ColumnInfo(name="note_id")
     val noteId: Long
 )

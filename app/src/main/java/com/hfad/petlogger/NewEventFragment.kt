@@ -8,9 +8,12 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.databinding.FragmentNewEventBinding
+import com.hfad.petlogger.photodisplay.stateless.GetAllNotesUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetAllPetsWithProfilePhotosUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetNotesOfEventUseCase
 import com.hfad.petlogger.repositories.EventRepository
 import com.hfad.petlogger.repositories.MediaRepository
+import com.hfad.petlogger.repositories.NoteRepository
 import com.hfad.petlogger.repositories.PetRepository
 import kotlinx.coroutines.*
 
@@ -41,6 +44,11 @@ class NewEventFragment : Fragment() {
         val petMultiSelectionViewModel = ViewModelProvider(this, PetMultiSelectionViewModel.provideFactory(getAllPetsUseCase)).get(PetMultiSelectionViewModel::class.java)
         binding.petMultiSelectionViewModel = petMultiSelectionViewModel
 
+        val noteRepository = NoteRepository(database, mediaRepository)
+        val getAllNotesUseCase = GetAllNotesUseCase(noteRepository)
+        val noteMultiSelectionViewModel = ViewModelProvider(this, NoteMultiSelectionViewModel.provideFactory(getAllNotesUseCase)).get(NoteMultiSelectionViewModel::class.java)
+        binding.noteMultiSelectionViewModel = noteMultiSelectionViewModel
+
         setAppBarTitle(getString(R.string.new_event_header))
 
         binding.eventDate.setOnClickListener {
@@ -68,7 +76,8 @@ class NewEventFragment : Fragment() {
         binding.submitEventButton.setOnClickListener {
             newEventViewModel.submitEvent(
                 pets = petMultiSelectionViewModel.getPetsToAdd(),
-                photos = mediaSelectionViewModel.getPhotosToAdd()
+                photos = mediaSelectionViewModel.getPhotosToAdd(),
+                notes = noteMultiSelectionViewModel.getNotesToAdd()
             )
         }
 
