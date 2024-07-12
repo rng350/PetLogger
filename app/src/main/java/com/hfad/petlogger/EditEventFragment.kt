@@ -102,7 +102,7 @@ class EditEventFragment : Fragment() {
                 notesToAdd = noteMultiSelectionViewModel.getNotesToAdd(),
                 notesToRemove = noteMultiSelectionViewModel.getNotesToRemove()
             )
-            this.findNavController().navigate(EditEventFragmentDirections.actionEditEventFragmentToViewEventFragment(eventID))
+            this.findNavController().navigateSafe(EditEventFragmentDirections.actionEditEventFragmentToViewEventFragment(eventID))
         }
 
         binding.cancelButton.setOnClickListener {
@@ -124,7 +124,7 @@ class EditEventFragment : Fragment() {
         editEventViewModel.goToEventsList.observe(viewLifecycleOwner) {
             if (it == true) {
                 editEventViewModel.onNavigateToEventsList()
-                this.findNavController().navigate(EditEventFragmentDirections.actionEditEventFragmentToEventListFragment())
+                this.findNavController().navigateSafe(EditEventFragmentDirections.actionEditEventFragmentToEventListFragment())
             }
         }
 

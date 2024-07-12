@@ -114,7 +114,7 @@ class ViewWeightFragment : Fragment() {
 
         binding.petCard.setOnClickListener {
             viewModel.assocPet.value?.let {
-                findNavController().navigate(ViewWeightFragmentDirections.actionViewWeightFragmentToViewPetFragment(it.pet.petID))
+                findNavController().navigateSafe(ViewWeightFragmentDirections.actionViewWeightFragmentToViewPetFragment(it.pet.petID))
             }
         }
 
@@ -127,7 +127,7 @@ class ViewWeightFragment : Fragment() {
 
         binding.editWeight.setOnClickListener{
             viewModel.weight.value?.let { weight ->
-                findNavController().navigate(ViewWeightFragmentDirections.actionViewWeightFragmentToEditWeightFragment(weightId = weightId, petId = weight.petId))
+                findNavController().navigateSafe(ViewWeightFragmentDirections.actionViewWeightFragmentToEditWeightFragment(weightId = weightId, petId = weight.petId))
             }
         }
 

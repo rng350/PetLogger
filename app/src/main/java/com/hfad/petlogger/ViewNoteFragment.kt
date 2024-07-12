@@ -58,7 +58,7 @@ class ViewNoteFragment : Fragment() {
         })
 
         binding.editButton.setOnClickListener {
-            findNavController().navigate(ViewNoteFragmentDirections.actionViewNoteFragmentToEditNoteFragment(noteId))
+            findNavController().navigateSafe(ViewNoteFragmentDirections.actionViewNoteFragmentToEditNoteFragment(noteId))
         }
 
         binding.backButton.setOnClickListener {
@@ -68,14 +68,14 @@ class ViewNoteFragment : Fragment() {
         associatedPetsDisplayViewModel.navigator.navigateTo.observe(viewLifecycleOwner) {
             it?.let {
                 associatedPetsDisplayViewModel.navigator.onNavigated()
-                findNavController().navigate(ViewNoteFragmentDirections.actionViewNoteFragmentToViewPetFragment(it))
+                findNavController().navigateSafe(ViewNoteFragmentDirections.actionViewNoteFragmentToViewPetFragment(it))
             }
         }
 
         associatedPhotosViewModel.navigator.navigateTo.observe(viewLifecycleOwner) {
             it?.let {
                 associatedPhotosViewModel.navigator.onNavigated()
-                findNavController().navigate(ViewNoteFragmentDirections.actionViewNoteFragmentToViewPhotoFragment(it))
+                findNavController().navigateSafe(ViewNoteFragmentDirections.actionViewNoteFragmentToViewPhotoFragment(it))
             }
         }
 

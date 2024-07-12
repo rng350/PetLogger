@@ -131,14 +131,14 @@ class EditPetFragment : Fragment() {
 
         editPetViewModel.doneUpdating.observe(viewLifecycleOwner) {isDoneUpdating ->
             if (isDoneUpdating) {
-                findNavController().navigate(EditPetFragmentDirections.actionEditPetFragmentToViewPetFragment(petID))
+                findNavController().navigateSafe(EditPetFragmentDirections.actionEditPetFragmentToViewPetFragment(petID))
                 editPetViewModel.wentBack()
             }
         }
 
         editPetViewModel.goToPetList.observe(viewLifecycleOwner) {shouldGo ->
             if (shouldGo) {
-                this.findNavController().navigate(EditPetFragmentDirections.actionEditPetFragmentToPetListFragment())
+                this.findNavController().navigateSafe(EditPetFragmentDirections.actionEditPetFragmentToPetListFragment())
                 editPetViewModel.wentToPetList()
             }
         }

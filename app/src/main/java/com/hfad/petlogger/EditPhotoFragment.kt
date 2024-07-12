@@ -89,14 +89,14 @@ class EditPhotoFragment : Fragment() {
 
         editPhotoViewModel.goBack.observe(viewLifecycleOwner, Observer {shouldGo ->
             if (shouldGo) {
-                findNavController().navigate(EditPhotoFragmentDirections.actionEditPhotoFragmentToViewPhotoFragment(photoId))
+                findNavController().navigateSafe(EditPhotoFragmentDirections.actionEditPhotoFragmentToViewPhotoFragment(photoId))
             }
         })
 
         editPhotoViewModel.goToGalleryList.observe(viewLifecycleOwner, Observer { shouldGo ->
             if (shouldGo) {
                 editPhotoViewModel.onNavigateToGalleryList()
-                findNavController().navigate(EditPhotoFragmentDirections.actionEditPhotoFragmentToFullGalleryFragment())
+                findNavController().navigateSafe(EditPhotoFragmentDirections.actionEditPhotoFragmentToFullGalleryFragment())
             }
         })
 

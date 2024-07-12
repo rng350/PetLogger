@@ -74,26 +74,26 @@ class ViewPetFragment : Fragment() {
         associatedEventsDisplayViewModel.eventNavigator.navigateTo.observe(viewLifecycleOwner) { eventId ->
             eventId?.let {
                 associatedEventsDisplayViewModel.eventNavigator.onNavigated()
-                findNavController().navigate(ViewPetFragmentDirections.actionViewPetFragmentToViewEventFragment(eventId))
+                findNavController().navigateSafe(ViewPetFragmentDirections.actionViewPetFragmentToViewEventFragment(eventId))
             }
         }
 
         associatedPhotosDisplayViewModel.navigator.navigateTo.observe(viewLifecycleOwner) {photoId ->
             photoId?.let {
                 associatedPhotosDisplayViewModel.navigator.onNavigated()
-                findNavController().navigate(ViewPetFragmentDirections.actionViewPetFragmentToViewPhotoFragment(photoId))
+                findNavController().navigateSafe(ViewPetFragmentDirections.actionViewPetFragmentToViewPhotoFragment(photoId))
             }
         }
 
         associatedWeightsDisplayViewModel.weightNavigator.navigateTo.observe(viewLifecycleOwner) {weightId ->
             weightId?.let {
                 associatedWeightsDisplayViewModel.weightNavigator.onNavigated()
-                findNavController().navigate(ViewPetFragmentDirections.actionViewPetFragmentToViewWeightFragment(weightId))
+                findNavController().navigateSafe(ViewPetFragmentDirections.actionViewPetFragmentToViewWeightFragment(weightId))
             }
         }
 
         binding.editPetButton.setOnClickListener {
-            findNavController().navigate(ViewPetFragmentDirections.actionViewPetFragmentToEditPetFragment(petId))
+            findNavController().navigateSafe(ViewPetFragmentDirections.actionViewPetFragmentToEditPetFragment(petId))
         }
         binding.backButton.setOnClickListener {
             findNavController().popBackStack()

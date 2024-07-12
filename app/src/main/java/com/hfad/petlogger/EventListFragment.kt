@@ -49,11 +49,11 @@ class EventListFragment : Fragment() {
         )()
 
         binding.addEventButton.setOnClickListener {
-            this.findNavController().navigate(EventListFragmentDirections.actionEventListFragmentToNewEventFragment())
+            this.findNavController().navigateSafe(EventListFragmentDirections.actionEventListFragmentToNewEventFragment())
         }
         viewModel.eventNavigator.navigateTo.observe(viewLifecycleOwner, Observer {eventID ->
             eventID?.let {
-                this.findNavController().navigate(EventListFragmentDirections.actionEventListFragmentToViewEventFragment(it))
+                this.findNavController().navigateSafe(EventListFragmentDirections.actionEventListFragmentToViewEventFragment(it))
                 viewModel.eventNavigator.onNavigated()
             }
         })

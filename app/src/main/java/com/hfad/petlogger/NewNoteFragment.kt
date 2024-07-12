@@ -83,7 +83,7 @@ class NewNoteFragment : Fragment() {
 
         newNoteViewModel.goBack.observe(viewLifecycleOwner) {
             if (it == true) {
-                findNavController().navigate(NewNoteFragmentDirections.actionNewNoteFragmentToNoteListFragment())
+                findNavController().navigateSafe(NewNoteFragmentDirections.actionNewNoteFragmentToNoteListFragment())
             }
         }
 

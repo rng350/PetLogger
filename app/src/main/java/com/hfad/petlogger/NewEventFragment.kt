@@ -87,7 +87,7 @@ class NewEventFragment : Fragment() {
 
         newEventViewModel.carryOn.observe(viewLifecycleOwner) {
             if (it == true) {
-                findNavController().navigate(NewEventFragmentDirections.actionNewEventFragmentToEventListFragment())
+                findNavController().navigateSafe(NewEventFragmentDirections.actionNewEventFragmentToEventListFragment())
             }
         }
 

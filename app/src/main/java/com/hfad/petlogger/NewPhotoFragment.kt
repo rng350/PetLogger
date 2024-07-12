@@ -140,7 +140,7 @@ class NewPhotoFragment : Fragment() {
 
         newPhotoViewModel.goBack.observe(viewLifecycleOwner) {
             if (it == true) {
-                findNavController().navigate(NewPhotoFragmentDirections.actionNewPhotoFragmentToFullGalleryFragment())
+                findNavController().navigateSafe(NewPhotoFragmentDirections.actionNewPhotoFragmentToFullGalleryFragment())
             }
         }
 

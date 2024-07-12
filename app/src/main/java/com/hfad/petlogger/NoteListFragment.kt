@@ -49,13 +49,13 @@ class NoteListFragment : Fragment() {
         viewModel.noteNavigator.navigateTo.observe(viewLifecycleOwner) {
             it?.let {
                 val action = NoteListFragmentDirections.actionNoteListFragmentToViewNoteFragment(it)
-                this.findNavController().navigate(action)
+                this.findNavController().navigateSafe(action)
                 viewModel.noteNavigator.onNavigated()
             }
         }
 
         binding.addNoteButton.setOnClickListener {
-            this.findNavController().navigate(R.id.action_noteListFragment_to_newNoteFragment)
+            this.findNavController().navigateSafe(NoteListFragmentDirections.actionNoteListFragmentToNewNoteFragment())
         }
 
         return view

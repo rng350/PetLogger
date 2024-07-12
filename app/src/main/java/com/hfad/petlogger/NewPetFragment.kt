@@ -88,7 +88,7 @@ class NewPetFragment : Fragment() {
             petId?.let {
                 newPetViewModel.goToViewPet.value = null
                 resetAll()
-                findNavController().navigate(NewPetFragmentDirections.actionNewPetFragmentToViewPetFragment(it))
+                findNavController().navigateSafe(NewPetFragmentDirections.actionNewPetFragmentToViewPetFragment(it))
             }
         }
 

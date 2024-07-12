@@ -109,14 +109,14 @@ class EditNoteFragment : Fragment() {
         editNoteViewModel.goBack.observe(viewLifecycleOwner, Observer {
             if (it == true) {
                 val action = EditNoteFragmentDirections.actionEditNoteFragmentToViewNoteFragment(noteId)
-                findNavController().navigate(action)
+                findNavController().navigateSafe(action)
             }
         })
 
         editNoteViewModel.goToNotesList.observe(viewLifecycleOwner) {
             if (it == true) {
                 editNoteViewModel.onNavigateToNotesList()
-                findNavController().navigate(EditNoteFragmentDirections.actionEditNoteFragmentToNoteListFragment())
+                findNavController().navigateSafe(EditNoteFragmentDirections.actionEditNoteFragmentToNoteListFragment())
             }
         }
 

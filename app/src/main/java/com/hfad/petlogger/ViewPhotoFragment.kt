@@ -55,7 +55,7 @@ class ViewPhotoFragment : Fragment() {
         binding.associatedEventsDisplayViewModel = associatedEventsDisplayViewModel
 
         binding.editButton.setOnClickListener{
-            findNavController().navigate(ViewPhotoFragmentDirections.actionViewPhotoFragmentToEditPhotoFragment(photoId))
+            findNavController().navigateSafe(ViewPhotoFragmentDirections.actionViewPhotoFragmentToEditPhotoFragment(photoId))
         }
 
         binding.backButton.setOnClickListener{

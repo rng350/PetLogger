@@ -57,14 +57,14 @@ class ViewEventFragment : Fragment() {
         associatedPetsDisplayViewModel.navigator.navigateTo.observe(viewLifecycleOwner) {
             it?.let {
                 associatedPetsDisplayViewModel.navigator.onNavigated()
-                this.findNavController().navigate(ViewEventFragmentDirections.actionViewEventFragmentToViewPetFragment(it))
+                this.findNavController().navigateSafe(ViewEventFragmentDirections.actionViewEventFragmentToViewPetFragment(it))
             }
         }
 
         associatedPhotosDisplayViewModel.navigator.navigateTo.observe(viewLifecycleOwner) {
             it?.let {
                 associatedPhotosDisplayViewModel.navigator.onNavigated()
-                findNavController().navigate(ViewEventFragmentDirections.actionViewEventFragmentToViewPhotoFragment(it))
+                findNavController().navigateSafe(ViewEventFragmentDirections.actionViewEventFragmentToViewPhotoFragment(it))
             }
         }
 
@@ -76,7 +76,7 @@ class ViewEventFragment : Fragment() {
         }
 
         binding.editEventButton.setOnClickListener {
-            this.findNavController().navigate(ViewEventFragmentDirections.actionViewEventFragmentToEditEventFragment(eventId))
+            this.findNavController().navigateSafe(ViewEventFragmentDirections.actionViewEventFragmentToEditEventFragment(eventId))
         }
 
         binding.backButton.setOnClickListener {

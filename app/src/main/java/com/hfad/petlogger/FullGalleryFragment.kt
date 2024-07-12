@@ -42,12 +42,12 @@ class FullGalleryFragment : Fragment() {
             viewModel.photoNavigator)
 
         binding.addPhotoButton.setOnClickListener {
-            this.findNavController().navigate(R.id.action_fullGalleryFragment_to_newPhotoFragment)
+            this.findNavController().navigateSafe(FullGalleryFragmentDirections.actionFullGalleryFragmentToNewPhotoFragment())
         }
         viewModel.photoNavigator.navigateTo.observe(viewLifecycleOwner, Observer {
             it?.let {
                 val action = FullGalleryFragmentDirections.actionFullGalleryFragmentToViewPhotoFragment(it)
-                this.findNavController().navigate(action)
+                this.findNavController().navigateSafe(action)
                 viewModel.photoNavigator.onNavigated()
             }
         })

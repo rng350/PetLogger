@@ -72,7 +72,7 @@ class EditWeightFragment : Fragment() {
         editWeightViewModel.goToWeightsList.observe(viewLifecycleOwner) {
             if (it == true) {
                 editWeightViewModel.onNavigateToWeightsList()
-                findNavController().navigate(EditWeightFragmentDirections.actionEditWeightFragmentToMonitoringListFragment())
+                findNavController().navigateSafe(EditWeightFragmentDirections.actionEditWeightFragmentToMonitoringListFragment())
             }
         }
 
