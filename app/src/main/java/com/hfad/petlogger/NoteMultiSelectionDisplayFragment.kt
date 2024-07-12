@@ -55,8 +55,9 @@ class NoteMultiSelectionDisplayFragment : Fragment() {
         super.onStop()
         binding.addNotesButton.isEnabled = true
     }
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding.notesList.adapter = null
         _binding = null
     }
 }

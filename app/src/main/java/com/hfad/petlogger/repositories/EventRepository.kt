@@ -141,4 +141,8 @@ class EventRepository(private val database: PetLoggerDatabase,
     suspend fun getNotesOfEvent(eventId: Long): List<Note> = withContext(Dispatchers.IO) {
         eventDao.getNotesOfEvent(eventId)
     }
+
+    fun getNotesOfEventAsFlow(eventId: Long): Flow<List<Note>> {
+        return eventDao.getNotesOfEventAsFlow(eventId)
+    }
 }

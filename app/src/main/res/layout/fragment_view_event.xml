@@ -14,6 +14,9 @@
         <variable
             name="associatedPhotosDisplayViewModel"
             type="com.hfad.petlogger.AssociatedPhotosDisplayViewModel" />
+        <variable
+            name="associatedNotesDisplayViewModel"
+            type="com.hfad.petlogger.AssociatedNotesDisplayViewModel" />
     </data>
 
     <ScrollView
@@ -89,6 +92,13 @@
                 android:layout_height="wrap_content"
                 android:name="com.hfad.petlogger.AssociatedPhotosDisplayFragment"
                 tools:layout="@layout/fragment_associated_photos_display" />
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/associated_notes_fragment_container_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:name="com.hfad.petlogger.AssociatedNotesDisplayFragment"
+                tools:layout="@layout/fragment_associated_notes_display" />
 
             <Button
                 android:id="@+id/edit_event_button"

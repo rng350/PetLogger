@@ -9,6 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.databinding.FragmentViewEventBinding
+import com.hfad.petlogger.photodisplay.stateful.GetNotesOfEventForDisplayUseCase
 import com.hfad.petlogger.photodisplay.stateful.GetPetsOfEventForDisplayUseCase
 import com.hfad.petlogger.photodisplay.stateful.GetPhotosOfEventForDisplayUseCase
 import com.hfad.petlogger.repositories.EventRepository
@@ -44,6 +45,9 @@ class ViewEventFragment : Fragment() {
         val associatedPetsDisplayViewModel = ViewModelProvider(this, AssociatedPetsDisplayViewModel.provideFactory(getAssociatedPets)).get(AssociatedPetsDisplayViewModel::class.java)
         binding.associatedPetsDisplayViewModel = associatedPetsDisplayViewModel
 
+        val getNotesOfEvent = GetNotesOfEventForDisplayUseCase(eventRepository, eventId)
+        val associatedNotesDisplayViewModel = ViewModelProvider(this, AssociatedNotesDisplayViewModel.provideFactory(getNotesOfEvent)).get(AssociatedNotesDisplayViewModel::class.java)
+
         viewEventViewModel.event.observe(viewLifecycleOwner, Observer {
             it?.let {
                 setAppBarTitle(title = it.title, subtitle = getString(R.string.viewing_event_details))
@@ -61,6 +65,13 @@ class ViewEventFragment : Fragment() {
             it?.let {
                 associatedPhotosDisplayViewModel.navigator.onNavigated()
                 findNavController().navigate(ViewEventFragmentDirections.actionViewEventFragmentToViewPhotoFragment(it))
+            }
+        }
+
+        associatedNotesDisplayViewModel.noteNavigator.navigateTo.observe(viewLifecycleOwner) {
+            it?.let {
+                associatedNotesDisplayViewModel.noteNavigator.onNavigated()
+                findNavController().navigateSafe(ViewEventFragmentDirections.actionViewEventFragmentToViewNoteFragment(it))
             }
         }
 
