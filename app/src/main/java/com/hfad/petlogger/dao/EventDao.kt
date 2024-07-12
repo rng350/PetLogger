@@ -66,6 +66,9 @@ interface EventDao {
     @Insert
     suspend fun attachNotes(notes: List<EventNote>)
 
+    @Delete
+    suspend fun detachNotes(notes: List<EventNote>)
+
     @Query("SELECT note_table.* " +
             "FROM note_table LEFT JOIN event_note_table " +
             "ON note_table.note_id=event_note_Table.note_id " +

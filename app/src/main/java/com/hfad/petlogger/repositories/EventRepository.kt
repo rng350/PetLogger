@@ -71,7 +71,9 @@ class EventRepository(private val database: PetLoggerDatabase,
                        petsToAdd: List<Pet> = listOf<Pet>(),
                        petsToRemove: List<Pet> = listOf<Pet>(),
                        photosToAdd: List<Photo> = listOf<Photo>(),
-                       photosToRemove: List<Photo> = listOf<Photo>())
+                       photosToRemove: List<Photo> = listOf<Photo>(),
+                       notesToAdd: List<Note> = listOf<Note>(),
+                       notesToRemove: List<Note> = listOf<Note>())
     = withContext(Dispatchers.IO) {
         val eventUpdated = async {
             eventDao.update(event)
@@ -92,7 +94,15 @@ class EventRepository(private val database: PetLoggerDatabase,
         val photosDeleted =  async {
             photoDao.delete(photosToRemove.map{ photoToRemove -> PhotoEvent(photoID = photoToRemove.id, eventID = event.eventId) })
         }
+        val notesAttached = async {
+            eventDao.attachNotes(notesToAdd.map{note -> EventNote(eventId=event.eventId, noteId=note.id)})
+        }
+        val notesDetached = async {
+            eventDao.detachNotes(notesToRemove.map{note -> EventNote(eventId=event.eventId, noteId=note.id)})
+        }
 
+        notesAttached.await()
+        notesDetached.await()
         eventUpdated.await()
         petsAdded.await()
         petsDeleted.await()

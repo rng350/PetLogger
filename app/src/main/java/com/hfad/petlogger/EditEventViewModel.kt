@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.hfad.petlogger.dao.EventDao
 import com.hfad.petlogger.entities.Event
+import com.hfad.petlogger.entities.Note
 import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.entities.Photo
 import com.hfad.petlogger.fetchers.Fetcher
@@ -38,7 +39,9 @@ class EditEventViewModel(private val eventRepository: EventRepository, eventID: 
         petsToAdd: List<Pet> = listOf(),
         petsToRemove: List<Pet> = listOf(),
         photosToAdd: List<Photo> = listOf(),
-        photosToRemove: List<Photo> = listOf()
+        photosToRemove: List<Photo> = listOf(),
+        notesToAdd: List<Note> = listOf(),
+        notesToRemove: List<Note> = listOf()
     ) {
         if (newEventTitle.value?.isNotEmpty() == true) {
             event.value?.let { updatedEvent ->
@@ -51,7 +54,9 @@ class EditEventViewModel(private val eventRepository: EventRepository, eventID: 
                         petsToAdd = petsToAdd,
                         petsToRemove = petsToRemove,
                         photosToAdd = photosToAdd,
-                        photosToRemove = photosToRemove
+                        photosToRemove = photosToRemove,
+                        notesToAdd = notesToAdd,
+                        notesToRemove = notesToRemove
                     )
                 }
             }

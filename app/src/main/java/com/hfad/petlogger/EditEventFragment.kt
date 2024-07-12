@@ -9,11 +9,14 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.databinding.FragmentEditEventBinding
+import com.hfad.petlogger.photodisplay.stateless.GetAllNotesUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetAllPetsWithProfilePhotosUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetNotesOfEventUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetPetsOfEventUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetPhotosOfEventUseCase
 import com.hfad.petlogger.repositories.EventRepository
 import com.hfad.petlogger.repositories.MediaRepository
+import com.hfad.petlogger.repositories.NoteRepository
 import com.hfad.petlogger.repositories.PetRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -58,6 +61,12 @@ class EditEventFragment : Fragment() {
             maxItems = 10)).get(MediaSelectionViewModel::class.java)
         binding.mediaSelectionViewModel = mediaSelectionViewModel
 
+        val noteRepository = NoteRepository(database, mediaRepository)
+        val getAllNotes = GetAllNotesUseCase(noteRepository)
+        val getNotesOfEvent = GetNotesOfEventUseCase(eventRepository, eventID)
+        val noteMultiSelectionViewModel = ViewModelProvider(this, NoteMultiSelectionViewModel.provideFactory(getAllNotes = getAllNotes, getInitialSelection = getNotesOfEvent)).get(NoteMultiSelectionViewModel::class.java)
+        binding.noteMultiSelectionViewModel = noteMultiSelectionViewModel
+
         editEventViewModel.event.observe(viewLifecycleOwner, Observer {
             it?.let {
                 setAppBarTitle(title = it.title, subtitle = getString(R.string.editing_event_details))
@@ -89,7 +98,9 @@ class EditEventFragment : Fragment() {
                 petsToAdd = petMultiSelectionViewModel.getPetsToAdd(),
                 petsToRemove = petMultiSelectionViewModel.getPetsToRemove(),
                 photosToAdd = mediaSelectionViewModel.getPhotosToAdd(),
-                photosToRemove = mediaSelectionViewModel.getPhotosToRemove()
+                photosToRemove = mediaSelectionViewModel.getPhotosToRemove(),
+                notesToAdd = noteMultiSelectionViewModel.getNotesToAdd(),
+                notesToRemove = noteMultiSelectionViewModel.getNotesToRemove()
             )
             this.findNavController().navigate(EditEventFragmentDirections.actionEditEventFragmentToViewEventFragment(eventID))
         }
