@@ -35,6 +35,6 @@ class GetDateDisplayUseCase {
         val day = date.dayOfMonth
         val year = date.year
 
-        return "$month $day, $year"
+        return "$month ${day.toString().padStart(2,'0')}, $year"
     }
 }
