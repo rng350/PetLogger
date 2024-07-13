@@ -136,4 +136,7 @@ interface NoteDao {
             "WHERE event_note_table.note_id=:noteId " +
             "ORDER BY event_table.event_date DESC")
     fun getEventsOfNoteAsFlow(noteId: Long): Flow<List<Event>>
+
+    @Query("SELECT * FROM note_table")
+    fun getAllNotesAsFlow(): Flow<List<Note>>
 }

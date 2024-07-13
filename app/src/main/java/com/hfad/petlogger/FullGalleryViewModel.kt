@@ -1,19 +1,29 @@
 package com.hfad.petlogger
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.hfad.petlogger.dao.PhotoDao
-import com.hfad.petlogger.entities.Photo
-import com.hfad.petlogger.fetchers.Fetcher
+import com.hfad.petlogger.photodisplay.stateful.GetAllPhotosForDisplayUseCase
 import com.hfad.petlogger.util.Navigator
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 
-class FullGalleryViewModel(photoDao: PhotoDao) : ViewModel() {
-    val photos = MutableLiveData<List<Photo>>()
+class FullGalleryViewModel(getAllPhotos: GetAllPhotosForDisplayUseCase) : ViewModel() {
+    val photos = getAllPhotos().stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = listOf()
+    )
     val photoNavigator = Navigator()
-    init {
-        Fetcher.fetchAllPhotos(viewModelScope, photos, photoDao)
+    companion object {
+        fun provideFactory(getAllPhotos: GetAllPhotosForDisplayUseCase): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                if (modelClass.isAssignableFrom(FullGalleryViewModel::class.java)) {
+                    return FullGalleryViewModel(getAllPhotos) as T
+                }
+                throw IllegalArgumentException("Unknown ViewModel")
+            }
+        }
     }
+
 }

@@ -1,24 +1,15 @@
 package com.hfad.petlogger
 
-import android.util.Log
 import androidx.lifecycle.*
-import com.hfad.petlogger.dao.PetDao
-import com.hfad.petlogger.dao.WeightDao
-import com.hfad.petlogger.entities.Event
 import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.entities.Photo
 import com.hfad.petlogger.entities.Weight
-import com.hfad.petlogger.fetchers.Fetcher
-import com.hfad.petlogger.repositories.MediaRepository
 import com.hfad.petlogger.repositories.PetRepository
 import com.hfad.petlogger.util.GetDateDisplayUseCase
 import com.hfad.petlogger.util.GetDateTimeDisplayUseCase
 import com.hfad.petlogger.util.GetPeriodDisplayUseCase
-import com.hfad.petlogger.util.Navigator
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import java.time.OffsetDateTime
-import java.time.Period
 
 class ViewPetViewModel (
     private val petRepository: PetRepository,

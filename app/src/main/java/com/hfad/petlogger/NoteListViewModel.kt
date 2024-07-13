@@ -5,26 +5,27 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.hfad.petlogger.entities.Note
+import com.hfad.petlogger.photodisplay.stateful.GetAllNotesForDisplayUseCase
 import com.hfad.petlogger.repositories.NoteRepository
 import com.hfad.petlogger.util.Navigator
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class NoteListViewModel(noteRepository: NoteRepository) : ViewModel() {
-    val notes = MutableLiveData<List<Note>>()
+class NoteListViewModel(getAllNotes: GetAllNotesForDisplayUseCase) : ViewModel() {
+    val notes = getAllNotes().stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = listOf()
+    )
     val noteNavigator = Navigator()
 
-    init {
-        viewModelScope.launch(Dispatchers.IO) {
-            notes.postValue(noteRepository.getAllNotes())
-        }
-    }
-
     companion object {
-        fun provideFactory(noteRepository: NoteRepository): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+        fun provideFactory(getAllNotes: GetAllNotesForDisplayUseCase): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(NoteListViewModel::class.java)) {
-                    return NoteListViewModel(noteRepository) as T
+                    return NoteListViewModel(getAllNotes) as T
                 }
                 throw IllegalArgumentException("Unknown ViewModel")
             }

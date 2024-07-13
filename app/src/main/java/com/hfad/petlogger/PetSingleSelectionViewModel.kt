@@ -1,20 +1,11 @@
 package com.hfad.petlogger
 
-import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.hfad.petlogger.dao.PetDao
-import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.entities.PetWithProfilePic
-import com.hfad.petlogger.fetchers.FetchPetListForEditSelectionUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetAllCheckablePetsUseCase
-import com.hfad.petlogger.photodisplay.stateless.GetSingleItemUseCase
-import com.hfad.petlogger.repositories.PetRepository
 import com.hfad.petlogger.selectiontracker.SingleSelectionTracker
-import kotlinx.coroutines.launch
 
 class PetSingleSelectionViewModel(getAllCheckablePets: GetAllCheckablePetsUseCase, val initialPetSelectedId: Long? = null) : ViewModel() {
     val selectionTracker = SingleSelectionTracker<PetWithProfilePic>(

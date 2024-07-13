@@ -10,9 +10,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.databinding.FragmentEventListBinding
-import com.hfad.petlogger.databinding.FragmentPetListBinding
 import com.hfad.petlogger.photodisplay.stateful.GetAllEventsForDisplayUseCase
-import com.hfad.petlogger.recyclerviews.BindingInterfaceCreator
 import com.hfad.petlogger.recyclerviews.SetupAssociatedEventsDisplayUseCase
 import com.hfad.petlogger.repositories.EventRepository
 import com.hfad.petlogger.repositories.MediaRepository

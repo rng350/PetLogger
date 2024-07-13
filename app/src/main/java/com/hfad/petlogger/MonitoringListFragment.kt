@@ -11,7 +11,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.databinding.FragmentMonitoringListBinding
 import com.hfad.petlogger.photodisplay.stateful.GetAllWeightsWithPetInfoForDisplayUseCase
-import com.hfad.petlogger.recyclerviews.BindingInterfaceCreator
 import com.hfad.petlogger.recyclerviews.SetupAssociatedWeightsDisplayUseCase
 import com.hfad.petlogger.repositories.WeightRepository
 

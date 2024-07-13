@@ -7,10 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.databinding.FragmentFullGalleryBinding
-import com.hfad.petlogger.databinding.FragmentPetListBinding
-import com.hfad.petlogger.recyclerviews.BindingInterfaceCreator
+import com.hfad.petlogger.photodisplay.stateful.GetAllPhotosForDisplayUseCase
+import com.hfad.petlogger.recyclerviews.SetupAssociatedPhotosDisplayUseCase
+import com.hfad.petlogger.repositories.MediaRepository
 
 class FullGalleryFragment : Fragment() {
     private var _binding: FragmentFullGalleryBinding? = null
@@ -25,21 +27,24 @@ class FullGalleryFragment : Fragment() {
         _binding = FragmentFullGalleryBinding.inflate(inflater, container, false)
         val view = binding.root
         val application = requireNotNull(this.activity).application
-        val photoDao = PetLoggerDatabase.getInstance(application).photoDao
+        val database = PetLoggerDatabase.getInstance(application)
 
-        val viewModelFactory = FullGalleryViewModelFactory(photoDao)
-        viewModel = ViewModelProvider(this, viewModelFactory).get(FullGalleryViewModel::class.java)
+        val mediaRepository = MediaRepository(database, application.applicationContext)
+        val getAllPhotos = GetAllPhotosForDisplayUseCase(mediaRepository)
+        viewModel = ViewModelProvider(this, FullGalleryViewModel.provideFactory(getAllPhotos)).get(FullGalleryViewModel::class.java)
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
         setAppBarTitle(getString(R.string.media_gallery_header))
 
-        BindingInterfaceCreator.setupGalleryPhotoItemAdapter(
-            viewModel.photos,
-            binding.gallery,
-            viewLifecycleOwner,
-            application.applicationContext,
-            viewModel.photoNavigator)
+        SetupAssociatedPhotosDisplayUseCase(
+            photos = viewModel.photos,
+            photoNavigator = viewModel.photoNavigator,
+            recyclerView = binding.gallery,
+            context = application.applicationContext,
+            lifecycleScope = lifecycleScope,
+            lifecycleOwner = viewLifecycleOwner
+        ).invoke()
 
         binding.addPhotoButton.setOnClickListener {
             this.findNavController().navigateSafe(FullGalleryFragmentDirections.actionFullGalleryFragmentToNewPhotoFragment())

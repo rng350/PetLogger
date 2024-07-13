@@ -5,12 +5,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.hfad.petlogger.dao.EventDao
 import com.hfad.petlogger.entities.Event
 import com.hfad.petlogger.entities.Note
 import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.entities.Photo
-import com.hfad.petlogger.fetchers.Fetcher
 import com.hfad.petlogger.repositories.EventRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch

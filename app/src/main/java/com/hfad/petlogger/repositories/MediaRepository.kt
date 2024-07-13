@@ -331,4 +331,8 @@ class MediaRepository(
                     eventTitle = event.title) }
             }.flowOn(Dispatchers.IO)
     }
+
+    fun getAllPhotosAsFlow(): Flow<List<Photo>> {
+        return photoDao.getAllPhotosAsFlow()
+    }
 }

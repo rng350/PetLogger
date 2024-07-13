@@ -3,10 +3,6 @@ package com.hfad.petlogger
 import androidx.lifecycle.*
 import com.hfad.petlogger.dao.EventDao
 import com.hfad.petlogger.entities.Event
-import com.hfad.petlogger.entities.PetWithProfilePic
-import com.hfad.petlogger.fetchers.Fetcher
-import com.hfad.petlogger.repositories.NoteRepository
-import com.hfad.petlogger.util.Navigator
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.time.LocalDate

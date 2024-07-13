@@ -17,7 +17,6 @@ import com.bumptech.glide.request.RequestOptions
 import com.hfad.petlogger.photodisplay.stateful.GetEventsOfPetForDisplayUseCase
 import com.hfad.petlogger.photodisplay.stateful.GetPhotosOfPetForDisplayUseCase
 import com.hfad.petlogger.photodisplay.stateful.GetWeightsOfPetForDisplayUseCase
-import com.hfad.petlogger.recyclerviews.BindingInterfaceCreator
 import com.hfad.petlogger.repositories.MediaRepository
 import com.hfad.petlogger.repositories.PetRepository
 import com.hfad.petlogger.util.GetPeriodDisplayUseCase

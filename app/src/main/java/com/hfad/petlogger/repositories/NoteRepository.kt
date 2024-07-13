@@ -199,4 +199,8 @@ class NoteRepository(
                     eventTitle = event.title) }
             }.flowOn(Dispatchers.IO)
     }
+
+    fun getAllNotesAsFlow(): Flow<List<Note>> {
+        return noteDao.getAllNotesAsFlow()
+    }
 }

@@ -1,16 +1,11 @@
 package com.hfad.petlogger
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.hfad.petlogger.dao.PetDao
-import com.hfad.petlogger.dao.WeightDao
 import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.entities.Weight
-import com.hfad.petlogger.fetchers.Fetcher
-import com.hfad.petlogger.repositories.PetRepository
 import com.hfad.petlogger.repositories.WeightRepository
 import com.hfad.petlogger.util.MeasuringUnitConverter
 import kotlinx.coroutines.launch

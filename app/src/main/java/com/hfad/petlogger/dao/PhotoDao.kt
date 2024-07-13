@@ -76,4 +76,7 @@ interface PhotoDao {
             "ON event_table.event_id=photo_event_table.event_id " +
             "WHERE photo_id=:photoId")
     fun getEventsOfPhoto(photoId: Long): Flow<List<Event>>
+
+    @Query("SELECT * FROM photo_table")
+    fun getAllPhotosAsFlow(): Flow<List<Photo>>
 }
