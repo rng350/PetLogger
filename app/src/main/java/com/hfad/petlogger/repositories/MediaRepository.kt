@@ -335,4 +335,13 @@ class MediaRepository(
     fun getAllPhotosAsFlow(): Flow<List<Photo>> {
         return photoDao.getAllPhotosAsFlow()
     }
+
+    suspend fun getPhotoEventsAsListPaginated(
+        photoId: Long,
+        lastEventDate: OffsetDateTime,
+        lastEventId: Long,
+        eventAmt: Int
+    ): List<Event> = withContext(Dispatchers.IO) {
+        photoDao.getEventsOfPhotoPaginated(photoId, lastEventDate, lastEventId, eventAmt)
+    }
 }

@@ -8,6 +8,8 @@ import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.entities.PetWithProfilePic
 import com.hfad.petlogger.entities.Photo
 import kotlinx.coroutines.flow.Flow
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 
 @Dao
 interface EventDao {
@@ -54,7 +56,7 @@ interface EventDao {
             "WHERE event_id = :eventId AND pet_table.pet_id = event_pet_table.pet_id")
     fun getPetsOfEventWithProfilePhotosAsFlow(eventId: Long): Flow<List<PetWithProfilePic>>
 
-    @Query("SELECT * FROM event_table")
+    @Query("SELECT * FROM event_table ORDER BY datetime(event_date) DESC")
     fun getAllEventsAsFlow(): Flow<List<Event>>
 
     @Query("SELECT note_table.* " +

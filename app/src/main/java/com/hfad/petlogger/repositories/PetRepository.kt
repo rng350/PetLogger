@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import java.time.OffsetDateTime
 
 class PetRepository(private val database: PetLoggerDatabase, private val mediaRepository: MediaRepository) {
     private val petDao = database.petDao
@@ -142,6 +143,17 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
 
     suspend fun getPetEventsAsList(petId: Long): List<Event> = withContext(Dispatchers.IO) {
         petDao.getEventsOfPet(petId)
+    }
+
+    suspend fun getPetEventsAsListPaginated(
+        petId: Long,
+        lastEventDate: OffsetDateTime,
+        lastEventId: Long,
+        eventAmt: Int
+    ): List<Event> = withContext(Dispatchers.IO) {
+        Log.d("PetRepository", "getPetEventsPaginated, LastEventDate: ${lastEventDate}")
+        petDao.getEventsOfPetPaginated(petId, lastEventDate, lastEventId, eventAmt)
+        //petDao.getEventsOfPetPaginatedCC(petId, lastEventDate, eventAmt)
     }
 
     suspend fun getCheckablePetWeightsWithTextFields(petId: Long): List<CheckableItem<PetWeightForDisplay>> = withContext(Dispatchers.IO) {

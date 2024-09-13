@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import java.time.OffsetDateTime
 
 class NoteRepository(
     private val database: PetLoggerDatabase,
@@ -202,5 +203,14 @@ class NoteRepository(
 
     fun getAllNotesAsFlow(): Flow<List<Note>> {
         return noteDao.getAllNotesAsFlow()
+    }
+
+    suspend fun getNoteEventsAsListPaginated(
+        noteId: Long,
+        lastEventDate: OffsetDateTime = OffsetDateTime.MAX,
+        lastEventId: Long = Long.MAX_VALUE,
+        eventAmt: Int
+    ): List<Event> = withContext(Dispatchers.IO) {
+        noteDao.getEventsOfNotePaginated(noteId, lastEventDate, lastEventId, eventAmt)
     }
 }

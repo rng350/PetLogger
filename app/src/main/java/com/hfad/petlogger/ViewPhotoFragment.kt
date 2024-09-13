@@ -13,6 +13,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.hfad.petlogger.databinding.FragmentViewPhotoBinding
 import com.hfad.petlogger.photodisplay.stateful.GetEventsOfPhotoForDisplayUseCase
 import com.hfad.petlogger.photodisplay.stateful.GetPetsOfPhotoForDisplayUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetMoreEventsOfPhotosUseCase
 import com.hfad.petlogger.repositories.MediaRepository
 
 class ViewPhotoFragment : Fragment() {
@@ -50,7 +51,7 @@ class ViewPhotoFragment : Fragment() {
         val associatedPetsDisplayViewModel = ViewModelProvider(this, AssociatedPetsDisplayViewModel.provideFactory(getPetsOfPhotoForDisplayUseCase)).get(AssociatedPetsDisplayViewModel::class.java)
         binding.associatedPetsDisplayViewModel = associatedPetsDisplayViewModel
 
-        val getEventsOfPhotoForDisplayUseCase = GetEventsOfPhotoForDisplayUseCase(mediaRepository, photoId)
+        val getEventsOfPhotoForDisplayUseCase = GetMoreEventsOfPhotosUseCase(mediaRepository, photoId, eventAmt = 10)
         val associatedEventsDisplayViewModel = ViewModelProvider(this, AssociatedEventsDisplayViewModel.provideFactory(getEventsOfPhotoForDisplayUseCase)).get(AssociatedEventsDisplayViewModel::class.java)
         binding.associatedEventsDisplayViewModel = associatedEventsDisplayViewModel
 

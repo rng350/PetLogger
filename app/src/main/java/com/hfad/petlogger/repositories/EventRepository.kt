@@ -136,10 +136,19 @@ class EventRepository(private val database: PetLoggerDatabase,
     fun getAllEventsAsFlow(): Flow<List<EventForList>> {
         val getDateDisplayUseCase = GetDateDisplayUseCase()
         val getTimeDisplayUseCase = GetTimeDisplayUseCase()
-        return eventDao
+/*        return eventDao
             .getAllEventsAsFlow()
             .map { it
                 .sortedByDescending { event -> event.date }
+                .map { event -> EventForList(
+                    eventId = event.eventId,
+                    eventDate = getDateDisplayUseCase(event.date),
+                    eventTime = getTimeDisplayUseCase(event.date),
+                    eventTitle = event.title) }
+            }.flowOn(Dispatchers.IO)*/
+        return eventDao
+            .getAllEventsAsFlow()
+            .map { it
                 .map { event -> EventForList(
                     eventId = event.eventId,
                     eventDate = getDateDisplayUseCase(event.date),

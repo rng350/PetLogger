@@ -12,6 +12,7 @@ import com.hfad.petlogger.databinding.FragmentViewNoteBinding
 import com.hfad.petlogger.photodisplay.stateful.GetEventsOfNoteForDisplayUseCase
 import com.hfad.petlogger.photodisplay.stateful.GetPetsOfNoteForDisplayUseCase
 import com.hfad.petlogger.photodisplay.stateful.GetPhotosOfNoteForDisplayUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetMoreEventsOfNoteUseCase
 import com.hfad.petlogger.repositories.MediaRepository
 import com.hfad.petlogger.repositories.NoteRepository
 
@@ -47,7 +48,7 @@ class ViewNoteFragment : Fragment() {
         val associatedPetsDisplayViewModel = ViewModelProvider(this, AssociatedPetsDisplayViewModel.provideFactory(getAssociatedPets)).get(AssociatedPetsDisplayViewModel::class.java)
         binding.associatedPetsDisplayViewModel = associatedPetsDisplayViewModel
 
-        val getEventsOfNote = GetEventsOfNoteForDisplayUseCase(noteRepository, noteId)
+        val getEventsOfNote = GetMoreEventsOfNoteUseCase(noteRepository, noteId, eventAmt = 10)
         val associatedEventsDisplayViewModel = ViewModelProvider(this, AssociatedEventsDisplayViewModel.provideFactory(getEventsOfNote)).get(AssociatedEventsDisplayViewModel::class.java)
         binding.associatedEventsDisplayViewModel = associatedEventsDisplayViewModel
 

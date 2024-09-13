@@ -10,6 +10,7 @@ import com.hfad.petlogger.entities.PhotoEvent
 import com.hfad.petlogger.entities.PhotoNote
 import com.hfad.petlogger.entities.WeightDetails
 import kotlinx.coroutines.flow.Flow
+import java.time.OffsetDateTime
 
 @Dao
 interface PhotoDao {
@@ -79,4 +80,12 @@ interface PhotoDao {
 
     @Query("SELECT * FROM photo_table")
     fun getAllPhotosAsFlow(): Flow<List<Photo>>
+
+    @Query("SELECT event_table.* " +
+            "FROM photo_event_table LEFT JOIN event_table " +
+            "ON event_table.event_id=photo_event_table.event_id " +
+            "WHERE photo_id=:photoId " +
+            "AND (datetime(event_table.event_date), event_table.event_id) < (datetime(:lastEventDate), :lastEventId) " +
+            "ORDER BY datetime(event_table.event_date) DESC, event_table.event_id DESC LIMIT :eventAmt")
+    suspend fun getEventsOfPhotoPaginated(photoId: Long, lastEventDate: OffsetDateTime, lastEventId: Long, eventAmt: Int): List<Event>
 }

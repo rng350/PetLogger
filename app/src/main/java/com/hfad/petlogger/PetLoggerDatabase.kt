@@ -11,6 +11,7 @@ import com.hfad.petlogger.dao.EventPetDao
 import com.hfad.petlogger.dao.NoteDao
 import com.hfad.petlogger.dao.PetDao
 import com.hfad.petlogger.dao.PhotoDao
+import com.hfad.petlogger.dao.TagDao
 import com.hfad.petlogger.dao.WeightDao
 import com.hfad.petlogger.entities.*
 import com.hfad.petlogger.util.Converter
@@ -34,9 +35,16 @@ import com.hfad.petlogger.util.URIConverter
         EventNote::class,
         PetNote::class,
         PhotoNote::class,
-        WeightNote::class
+        WeightNote::class,
+
+        Tag::class,
+        PetTag::class,
+        EventTag::class,
+        WeightTag::class,
+        NoteTag::class,
+        PhotoTag::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = false)
 @TypeConverters(
     Converter::class,
@@ -48,6 +56,7 @@ abstract class PetLoggerDatabase: RoomDatabase() {
     abstract val weightDao: WeightDao
     abstract val photoDao: PhotoDao
     abstract val noteDao: NoteDao
+    abstract val tagDao: TagDao
 
     companion object {
         @Volatile

@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.hfad.petlogger.entities.*
 import kotlinx.coroutines.flow.Flow
+import java.time.OffsetDateTime
 
 @Dao
 interface PetDao {
@@ -40,6 +41,14 @@ interface PetDao {
             "AND event_table.event_id=event_pet_table.event_id " +
             "ORDER BY event_date")
     suspend fun getEventsOfPet(petId: Long): List<Event>
+
+    @Query("SELECT event_table.event_id AS event_id, event_title, event_details, event_date " +
+            "FROM event_pet_table INNER JOIN event_table " +
+            "ON event_table.event_id = event_pet_table.event_id " +
+            "WHERE event_pet_table.pet_id=:petId " +
+            "AND (datetime(event_table.event_date), event_table.event_id) < (datetime(:lastEventDate), :lastEventId) " +
+            "ORDER BY datetime(event_date) DESC, event_id DESC LIMIT :amtLimit")
+    suspend fun getEventsOfPetPaginated(petId: Long, lastEventDate: OffsetDateTime, lastEventId: Long, amtLimit: Int): List<Event>
 
     @Query("SELECT photo_table.photo_id, photo_date, photo_filesize, photo_width, photo_height, photo_uri, photo_filename, photo_title " +
             "FROM photo_table LEFT JOIN pet_profile_photo_table " +
@@ -93,7 +102,6 @@ interface PetDao {
             "WHERE pet_photo_table.pet_id=:petId " +
             "ORDER BY photo_date DESC")
     fun getPetPhotos(petId: Long): Flow<List<Photo>>
-
 
     @Query("SELECT photo_table.photo_id, photo_date, photo_filesize, photo_width, photo_height, photo_uri, photo_filename, photo_title " +
             "FROM photo_table LEFT JOIN pet_photo_table " +

@@ -17,6 +17,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.hfad.petlogger.photodisplay.stateful.GetEventsOfPetForDisplayUseCase
 import com.hfad.petlogger.photodisplay.stateful.GetPhotosOfPetForDisplayUseCase
 import com.hfad.petlogger.photodisplay.stateful.GetWeightsOfPetForDisplayUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetMoreEventsOfPetUseCase
 import com.hfad.petlogger.repositories.MediaRepository
 import com.hfad.petlogger.repositories.PetRepository
 import com.hfad.petlogger.util.GetPeriodDisplayUseCase
@@ -45,7 +46,7 @@ class ViewPetFragment : Fragment() {
         val viewPetViewModel = ViewModelProvider(this, ViewPetViewModel.provideFactory(petRepository, petId, getPetAgeDisplay)).get(ViewPetViewModel::class.java)
         binding.viewPetViewModel = viewPetViewModel
 
-        val getAssociatedEvents = GetEventsOfPetForDisplayUseCase(petRepository, petId)
+        val getAssociatedEvents = GetMoreEventsOfPetUseCase(petRepository, petId, eventAmt = 10)
         val associatedEventsDisplayViewModel = ViewModelProvider(this, AssociatedEventsDisplayViewModel.provideFactory(getAssociatedEvents)).get(AssociatedEventsDisplayViewModel::class.java)
         binding.associatedEventsDisplayViewModel = associatedEventsDisplayViewModel
 

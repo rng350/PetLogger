@@ -19,6 +19,7 @@ import com.hfad.petlogger.entities.WeightDetails
 import com.hfad.petlogger.entities.WeightNote
 import com.hfad.petlogger.entities.WeightWithPetName
 import kotlinx.coroutines.flow.Flow
+import java.time.OffsetDateTime
 
 @Dao
 interface NoteDao {
@@ -139,4 +140,12 @@ interface NoteDao {
 
     @Query("SELECT * FROM note_table")
     fun getAllNotesAsFlow(): Flow<List<Note>>
+
+    @Query("SELECT event_table.* " +
+            "FROM event_table INNER JOIN event_note_table " +
+            "ON event_table.event_id=event_note_table.event_id " +
+            "WHERE event_note_table.note_id=:noteId " +
+            "AND (datetime(event_table.event_date), event_table.event_id) < (datetime(:lastEventDate), :lastEventId) " +
+            "ORDER BY datetime(event_table.event_date) DESC, event_table.event_id DESC LIMIT :amtLimit")
+    fun getEventsOfNotePaginated(noteId: Long, lastEventDate: OffsetDateTime, lastEventId: Long, amtLimit: Int): List<Event>
 }
