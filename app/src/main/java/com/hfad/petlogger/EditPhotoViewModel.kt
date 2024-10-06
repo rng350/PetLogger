@@ -37,8 +37,8 @@ class EditPhotoViewModel(private val mediaRepository: MediaRepository, private v
         photoNew.value = photoInitial.value?.copy()
     }
 
-    fun submit(petsToAdd: List<Pet> = listOf<Pet>(),
-               petsToRemove: List<Pet> = listOf<Pet>(),
+    fun submit(petsToAdd: List<Long> = listOf<Long>(),
+               petsToRemove: List<Long> = listOf<Long>(),
                eventsToAdd: List<Event> = listOf<Event>(),
                eventsToRemove: List<Event> = listOf<Event>(),
                weightsToAdd: List<Weight> = listOf<Weight>(),

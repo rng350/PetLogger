@@ -52,7 +52,7 @@ class EditWeightFragment : Fragment() {
             TimePicker.generate(editWeightViewModel.weightDateTime, requireContext()).show(parentFragmentManager, "TIMEPICKER")
         }
         binding.submitButton.setOnClickListener {
-            editWeightViewModel.submitChanges(petPickerViewModel.selectionTracker.currentSelection.value!!.item.pet)
+            editWeightViewModel.submitChanges(petPickerViewModel.selectionTracker.currentSelection.value!!.item.petId)
         }
         binding.cancelButton.setOnClickListener{
             findNavController().popBackStack()

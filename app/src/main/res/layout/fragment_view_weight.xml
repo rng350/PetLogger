@@ -8,6 +8,9 @@
         <variable
             name="viewModel"
             type="com.hfad.petlogger.ViewWeightViewModel" />
+        <variable
+            name="associatedNotesDisplayViewModel"
+            type="com.hfad.petlogger.AssociatedNotesDisplayViewModel" />
     </data>
 
     <LinearLayout
@@ -50,7 +53,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:textSize="30sp"
-                        android:text="@{viewModel.assocPet.pet.petName}"/>
+                        android:text="@{viewModel.fullWeightDetails.weightPet.petName}"/>
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -106,7 +109,7 @@
                                 android:layout_weight="1"
                                 android:layout_gravity="right"
                                 android:textSize="15sp"
-                                android:text="@{viewModel.weightAmtDisplay.weightAmt}"/>
+                                android:text="@{viewModel.curWeightAmtDisplay}"/>
                             <com.google.android.material.textfield.TextInputLayout
                                 android:theme="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                                 android:id="@+id/weightUnitTextField"
@@ -139,7 +142,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:textSize="15sp"
-                            android:text="@{viewModel.weightAmtDisplay.weightDateTime}"/>
+                            android:text="@{viewModel.fullWeightDetails.curWeight.weightDateTimeDisplay}"/>
                     </com.google.android.material.card.MaterialCardView>
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/weight_difference_field"
@@ -244,7 +247,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:textSize="15sp"
-                            android:text="@{viewModel.prevWeightAmtDisplay.weightAmt}"/>
+                            android:text="@{viewModel.prevWeightAmtDisplay}"/>
                     </com.google.android.material.card.MaterialCardView>
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/prevWeightDateTime"
@@ -260,7 +263,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:textSize="15sp"
-                            android:text="@{viewModel.prevWeightAmtDisplay.weightDateTime}"/>
+                            android:text="@{viewModel.fullWeightDetails.prevWeight.weightDateTimeDisplay}"/>
                     </com.google.android.material.card.MaterialCardView>
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -281,7 +284,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:textSize="15sp"
-                                android:text="@{viewModel.dateDifferenceDisplay}"/>
+                                android:text="@{viewModel.fullWeightDetails.prevWeight.weighingPeriodElapsed}"/>
                         </com.google.android.material.card.MaterialCardView>
                         <com.google.android.material.card.MaterialCardView
                             android:id="@+id/prevWeightTimeDifference"
@@ -298,7 +301,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:textSize="15sp"
-                                android:text="@{viewModel.timeDifferenceDisplay}"/>
+                                android:text="@{viewModel.fullWeightDetails.prevWeight.weighingTimeDifference}"/>
                         </com.google.android.material.card.MaterialCardView>
 
                     </LinearLayout>
@@ -339,9 +342,17 @@
                     app:layout_constraintTop_toBottomOf="@+id/weightNotesDivider"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
-                    android:text="@{viewModel.weight.weightNotes}" />
+                    android:text="@{viewModel.fullWeightDetails.curWeight.notes}" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/associated_notes_fragment_container_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:name="com.hfad.petlogger.AssociatedNotesDisplayFragment"
+            tools:layout="@layout/fragment_associated_notes_display" />
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/edit_weight"
             android:layout_width="wrap_content"

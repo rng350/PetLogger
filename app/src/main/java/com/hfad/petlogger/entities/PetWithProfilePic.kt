@@ -1,5 +1,8 @@
 package com.hfad.petlogger.entities
 
+import android.net.Uri
+
+/*
 import androidx.room.Embedded
 import androidx.room.Junction
 import androidx.room.Relation
@@ -19,4 +22,10 @@ data class PetWithProfilePic(
         )
     )
     val profilePic: Photo?
+)*/
+
+data class PetWithProfilePic(
+    val petName: String,
+    val petId: Long,
+    val petProfilePicUri: Uri?
 )

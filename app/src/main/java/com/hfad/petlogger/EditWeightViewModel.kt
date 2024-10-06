@@ -29,10 +29,10 @@ class EditWeightViewModel(private val weightRepository: WeightRepository, privat
         }
     }
 
-    fun submitChanges(pet: Pet) {
+    fun submitChanges(petId: Long) {
         weight.value?.let {
             viewModelScope.launch {
-                weightRepository.update(Weight(it.id, pet.petID, it.weightGrams, weightDateTime.selectedDateTime, it.weightNotes))
+                weightRepository.update(Weight(it.id, petId, it.weightGrams, weightDateTime.selectedDateTime, it.weightNotes))
             }
         }
     }

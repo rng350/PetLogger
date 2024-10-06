@@ -40,7 +40,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:maxLines="1"
-                    android:text="@={editNoteViewModel.note.title}"
+                    android:text="@={editNoteViewModel.noteTitle}"
                     android:inputType="text"/>
             </com.google.android.material.textfield.TextInputLayout>
             <com.google.android.material.textfield.TextInputLayout
@@ -54,7 +54,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="top"
                     android:minLines="10"
-                    android:text="@={editNoteViewModel.note.details}"
+                    android:text="@={editNoteViewModel.noteDetails}"
                     android:inputType="textMultiLine|textCapSentences"/>
             </com.google.android.material.textfield.TextInputLayout>
 

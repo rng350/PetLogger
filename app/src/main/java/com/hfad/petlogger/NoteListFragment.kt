@@ -1,5 +1,6 @@
 package com.hfad.petlogger
 
+import RecyclerViewPaginator
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -10,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.databinding.FragmentNoteListBinding
 import com.hfad.petlogger.photodisplay.stateful.GetAllNotesForDisplayUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetMoreOfAllNotesUseCase
 import com.hfad.petlogger.recyclerviews.SetupShortenedNotesListDisplayUseCase
 import com.hfad.petlogger.repositories.MediaRepository
 import com.hfad.petlogger.repositories.NoteRepository
@@ -38,7 +40,7 @@ class NoteListFragment : Fragment() {
 
         binding.lifecycleOwner = viewLifecycleOwner
 
-        val getAllNotes = GetAllNotesForDisplayUseCase(noteRepository)
+        val getAllNotes = GetMoreOfAllNotesUseCase(noteRepository, noteAmt = 10)
         viewModel = ViewModelProvider(this, NoteListViewModel.provideFactory(getAllNotes)).get(NoteListViewModel::class.java)
         binding.viewModel = viewModel
 
@@ -49,6 +51,13 @@ class NoteListFragment : Fragment() {
             lifecycleScope = lifecycleScope,
             lifecycleOwner = viewLifecycleOwner
         ).invoke()
+
+        RecyclerViewPaginator(
+            recyclerView = binding.notesList,
+            loadMore = {viewModel.load()},
+            isLoading = {viewModel.isLoading()},
+            onLast = {viewModel.onLastPage()}
+        )
 
         viewModel.noteNavigator.navigateTo.observe(viewLifecycleOwner) {
             it?.let {

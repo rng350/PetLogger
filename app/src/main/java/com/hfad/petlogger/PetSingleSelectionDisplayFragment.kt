@@ -47,16 +47,16 @@ class PetSingleSelectionDisplayFragment : Fragment() {
 
         petSingleSelectionViewModel.selectionTracker.currentSelection.observe(viewLifecycleOwner) {checkablePetWithPhoto ->
             if (checkablePetWithPhoto != null) {
-                val photo = checkablePetWithPhoto.item.profilePic
-                if (photo != null) {
+                val photoUri = checkablePetWithPhoto.item.petProfilePicUri
+                if (photoUri != null) {
                     Glide.with(requireContext())
-                        .load(photo.contentUri)
+                        .load(photoUri)
                         .into(binding.petProfileImage)
                 }
                 else {
                     binding.petProfileImage.setImageResource(R.drawable.placeholder)
                 }
-                binding.petName.text = checkablePetWithPhoto.item.pet.petName
+                binding.petName.text = checkablePetWithPhoto.item.petName
 
                 binding.petCard.visibility = View.VISIBLE
                 binding.noPetSelected.visibility = View.GONE

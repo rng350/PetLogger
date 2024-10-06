@@ -6,14 +6,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.get
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.hfad.petlogger.databinding.FragmentViewPhotoBinding
-import com.hfad.petlogger.photodisplay.stateful.GetEventsOfPhotoForDisplayUseCase
 import com.hfad.petlogger.photodisplay.stateful.GetPetsOfPhotoForDisplayUseCase
-import com.hfad.petlogger.photodisplay.stateless.GetMoreEventsOfPhotosUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetMoreEventsOfPhotoUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetMoreNotesOfPhotoUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetMorePetsOfPhotoUseCase
 import com.hfad.petlogger.repositories.MediaRepository
 
 class ViewPhotoFragment : Fragment() {
@@ -47,13 +47,17 @@ class ViewPhotoFragment : Fragment() {
             } else binding.photoDisplay.setImageResource(R.drawable.placeholder)
         }
 
-        val getPetsOfPhotoForDisplayUseCase = GetPetsOfPhotoForDisplayUseCase(mediaRepository, photoId)
+        val getPetsOfPhotoForDisplayUseCase = GetMorePetsOfPhotoUseCase(mediaRepository, photoId, petsAmt = 10)
         val associatedPetsDisplayViewModel = ViewModelProvider(this, AssociatedPetsDisplayViewModel.provideFactory(getPetsOfPhotoForDisplayUseCase)).get(AssociatedPetsDisplayViewModel::class.java)
         binding.associatedPetsDisplayViewModel = associatedPetsDisplayViewModel
 
-        val getEventsOfPhotoForDisplayUseCase = GetMoreEventsOfPhotosUseCase(mediaRepository, photoId, eventAmt = 10)
+        val getEventsOfPhotoForDisplayUseCase = GetMoreEventsOfPhotoUseCase(mediaRepository, photoId, eventAmt = 10)
         val associatedEventsDisplayViewModel = ViewModelProvider(this, AssociatedEventsDisplayViewModel.provideFactory(getEventsOfPhotoForDisplayUseCase)).get(AssociatedEventsDisplayViewModel::class.java)
         binding.associatedEventsDisplayViewModel = associatedEventsDisplayViewModel
+
+        val getNotesOfPhoto = GetMoreNotesOfPhotoUseCase(mediaRepository, photoId, notesAmt = 10)
+        val associatedNotesDisplayViewModel = ViewModelProvider(this, AssociatedNotesDisplayViewModel.provideFactory(getNotesOfPhoto)).get(AssociatedNotesDisplayViewModel::class.java)
+        binding.associatedNotesDisplayViewModel = associatedNotesDisplayViewModel
 
         binding.editButton.setOnClickListener{
             findNavController().navigateSafe(ViewPhotoFragmentDirections.actionViewPhotoFragmentToEditPhotoFragment(photoId))

@@ -40,9 +40,9 @@ class SetupPetMultiPickerSelectionDisplayUseCase(private val selection: LiveData
             // clear previous requests on viewholder
             Glide.with(context).clear(binder.petProfileImage)
 
-            item.item.profilePic?.let {
+            item.item.petProfilePicUri?.let {
                 Glide.with(context)
-                    .load(it.contentUri)
+                    .load(it)
                     .apply(RequestOptions().placeholder(R.drawable.placeholder))
                     .into(binder.petProfileImage)
             }

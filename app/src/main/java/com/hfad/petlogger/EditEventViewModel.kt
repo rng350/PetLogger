@@ -34,8 +34,8 @@ class EditEventViewModel(private val eventRepository: EventRepository, eventID: 
     }
 
     fun submitChanges(
-        petsToAdd: List<Pet> = listOf(),
-        petsToRemove: List<Pet> = listOf(),
+        petsToAdd: List<Long> = listOf(),
+        petsToRemove: List<Long> = listOf(),
         photosToAdd: List<Photo> = listOf(),
         photosToRemove: List<Photo> = listOf(),
         notesToAdd: List<Note> = listOf(),

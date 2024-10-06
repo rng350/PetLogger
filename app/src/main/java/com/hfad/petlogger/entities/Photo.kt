@@ -32,5 +32,5 @@ data class Photo (
     var size: Double = 0.0,
 
     @ColumnInfo(name="photo_date")
-    var date: OffsetDateTime?
+    var date: OffsetDateTime = OffsetDateTime.now()
 )

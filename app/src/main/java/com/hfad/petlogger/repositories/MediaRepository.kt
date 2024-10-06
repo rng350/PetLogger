@@ -18,7 +18,6 @@ import com.hfad.petlogger.entities.Photo
 import com.hfad.petlogger.entities.PhotoEvent
 import com.hfad.petlogger.entities.PhotoNote
 import com.hfad.petlogger.entities.Weight
-import com.hfad.petlogger.entities.WeightWithPetName
 import com.hfad.petlogger.size
 import com.hfad.petlogger.util.GetDateDisplayUseCase
 import com.hfad.petlogger.util.GetTimeDisplayUseCase
@@ -48,8 +47,8 @@ class MediaRepository(
 
     suspend fun updatePhoto(
         photo: Photo,
-        petsToAdd: List<Pet> = listOf<Pet>(),
-        petsToRemove: List<Pet> = listOf<Pet>(),
+        petsToAdd: List<Long> = listOf<Long>(),
+        petsToRemove: List<Long> = listOf<Long>(),
         eventsToAdd: List<Event> = listOf<Event>(),
         eventsToRemove: List<Event> = listOf<Event>(),
         weightsToAdd: List<Weight> = listOf<Weight>(),
@@ -108,7 +107,7 @@ class MediaRepository(
         photo: Photo,
         newAttachedNotes: List<Note> = listOf<Note>(),
         existingAttachedNotes: List<Note> = listOf<Note>(),
-        pets: List<Pet> = listOf<Pet>(),
+        pets: List<Long> = listOf<Long>(),
         events: List<Event> = listOf<Event>(),
         weights: List<Weight> = listOf<Weight>()
     ) = withContext(Dispatchers.IO) {
@@ -218,12 +217,12 @@ class MediaRepository(
                         id
                     )
                     val size = cursor.getDouble(fileSizeColumn)
-                    val date: OffsetDateTime? =
+                    val date: OffsetDateTime =
                         if (dateTakenColumn != -1) {
                             OffsetDateTime.ofInstant(Instant.ofEpochMilli(cursor.getLong(dateTakenColumn)), ZoneId.of("UTC"))
                         } else if (dateAddedColumn != -1) {
                             OffsetDateTime.ofInstant(Instant.ofEpochMilli(cursor.getLong(dateAddedColumn)), ZoneId.of("UTC"))
-                        } else null
+                        } else OffsetDateTime.now()
                     photos.add(Photo(id, "", displayName, contentUri, width, height, size, date))
                 }
             }
@@ -336,12 +335,29 @@ class MediaRepository(
         return photoDao.getAllPhotosAsFlow()
     }
 
-    suspend fun getPhotoEventsAsListPaginated(
+    suspend fun getEventsOfPhotoPaginated(
         photoId: Long,
         lastEventDate: OffsetDateTime,
         lastEventId: Long,
         eventAmt: Int
     ): List<Event> = withContext(Dispatchers.IO) {
         photoDao.getEventsOfPhotoPaginated(photoId, lastEventDate, lastEventId, eventAmt)
+    }
+
+    suspend fun getNotesOfPhotoPaginated(
+        photoId: Long,
+        lastNoteEditedDate: OffsetDateTime,
+        lastNoteId: Long,
+        notesAmt: Int)
+    : List<Note> = withContext(Dispatchers.IO) {
+        photoDao.getNotesOfPhotoPaginated(photoId, lastNoteEditedDate, lastNoteId, notesAmt)
+    }
+
+    suspend fun getAllPhotosPaginated(lastPhotoDate: OffsetDateTime, lastPhotoId: Long, photosAmt: Int): List<Photo> = withContext(Dispatchers.IO) {
+        photoDao.getAllPhotosPaginated(lastPhotoDate, lastPhotoId, photosAmt)
+    }
+
+    suspend fun getPetsOfPhotoPaginated(photoId: Long, lastPetId: Long, petsAmt: Int): List<PetWithProfilePic> = withContext(Dispatchers.IO) {
+        photoDao.getPetsOfPhotoPaginated(photoId, lastPetId, petsAmt)
     }
 }

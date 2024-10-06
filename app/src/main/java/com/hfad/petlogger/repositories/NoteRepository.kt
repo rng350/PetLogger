@@ -12,6 +12,7 @@ import com.hfad.petlogger.entities.PetWithProfilePic
 import com.hfad.petlogger.entities.Photo
 import com.hfad.petlogger.entities.PhotoNote
 import com.hfad.petlogger.entities.Weight
+import com.hfad.petlogger.entities.WeightForListFetched
 import com.hfad.petlogger.entities.WeightNote
 import com.hfad.petlogger.entities.WeightWithPetName
 import com.hfad.petlogger.util.GetDateDisplayUseCase
@@ -45,7 +46,7 @@ class NoteRepository(
     }
 
     suspend fun insertNote(note: Note,
-                           pets: List<Pet> = listOf<Pet>(),
+                           pets: List<Long> = listOf<Long>(),
                            events: List<Event> = listOf<Event>(),
                            weights: List<Weight> = listOf<Weight>(),
                            photos: List<Photo> = listOf<Photo>()): Long
@@ -57,7 +58,7 @@ class NoteRepository(
 
         val petsDeferred = pets.map {
             async {
-                insertPetNote(noteId, it.petID)
+                insertPetNote(noteId, it)
             }
         }
         val eventsDeferred = events.map {
@@ -85,8 +86,8 @@ class NoteRepository(
     }
 
     suspend fun updateNote(note: Note,
-                           petsToAdd: List<Pet> = listOf<Pet>(),
-                           petsToRemove: List<Pet> = listOf<Pet>(),
+                           petsToAdd: List<Long> = listOf<Long>(),
+                           petsToRemove: List<Long> = listOf<Long>(),
                            eventsToAdd: List<Event> = listOf<Event>(),
                            eventsToRemove: List<Event> = listOf<Event>(),
                            weightsToAdd: List<Weight> = listOf<Weight>(),
@@ -98,10 +99,10 @@ class NoteRepository(
             noteDao.update(note)
         }
         val petsAttached = async {
-            noteDao.attachPets(petsToAdd.map{ pet -> PetNote(petId=pet.petID, noteId=note.id)})
+            noteDao.attachPets(petsToAdd.map{ petID -> PetNote(petId=petID, noteId=note.id)})
         }
         val petsDetached = async {
-            noteDao.detachPets(petsToRemove.map{ pet -> PetNote(petId=pet.petID, noteId=note.id)})
+            noteDao.detachPets(petsToRemove.map{ petID -> PetNote(petId=petID, noteId=note.id)})
         }
         val eventsAttached = async {
             noteDao.attachEvents(eventsToAdd.map{ event -> EventNote(eventId = event.eventId, noteId = note.id)})
@@ -176,6 +177,10 @@ class NoteRepository(
         noteDao.getPhotosOfNoteAsList(noteId)
     }
 
+    suspend fun getPhotosOfNotePaginated(noteId: Long, lastPhotoDate: OffsetDateTime, lastPhotoId: Long, amtLimit: Int): List<Photo> = withContext(Dispatchers.IO) {
+        noteDao.getPhotosOfNotePaginated(noteId, lastPhotoDate, lastPhotoId, amtLimit)
+    }
+
     suspend fun delete(note: Note) = withContext(Dispatchers.IO) {
         noteDao.delete(note)
     }
@@ -212,5 +217,17 @@ class NoteRepository(
         eventAmt: Int
     ): List<Event> = withContext(Dispatchers.IO) {
         noteDao.getEventsOfNotePaginated(noteId, lastEventDate, lastEventId, eventAmt)
+    }
+
+    suspend fun getAllNotesPaginated(lastNoteUpdateDate: OffsetDateTime, lastNoteId: Long, noteAmt: Int): List<Note> = withContext(Dispatchers.IO) {
+        noteDao.getAllNotesPaginated(lastNoteUpdateDate, lastNoteId, noteAmt)
+    }
+
+    suspend fun getWeightsOfNotePaginated(noteId: Long, lastWeightDateTime: OffsetDateTime, lastWeightId: Long, weightsAmt: Int): List<WeightForListFetched> = withContext(Dispatchers.IO) {
+        noteDao.getWeightsOfNotePaginated(noteId, lastWeightDateTime, lastWeightId, weightsAmt)
+    }
+
+    suspend fun getPetsOfNotePaginated(noteId: Long, lastPetId: Long, petsAmt: Int): List<PetWithProfilePic> = withContext(Dispatchers.IO) {
+        noteDao.getPetsOfNotePaginated(noteId, lastPetId, petsAmt)
     }
 }

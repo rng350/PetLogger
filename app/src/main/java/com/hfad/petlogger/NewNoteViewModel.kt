@@ -20,7 +20,7 @@ class NewNoteViewModel(private val noteRepository: NoteRepository) : ViewModel()
     var noteDetails: String = ""
     private val _goBack = MutableLiveData<Boolean>(false)
     val goBack: LiveData<Boolean> = _goBack
-    fun submitNote(pets: List<Pet> = listOf(),
+    fun submitNote(pets: List<Long> = listOf(),
                    events: List<Event> = listOf(),
                    weights: List<Weight> = listOf(),
                    photos: List<Photo> = listOf()) {

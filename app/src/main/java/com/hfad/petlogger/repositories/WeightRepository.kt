@@ -4,11 +4,15 @@ import android.util.Log
 import com.hfad.petlogger.PetLoggerDatabase
 import com.hfad.petlogger.dao.PetDao
 import com.hfad.petlogger.dao.WeightDao
+import com.hfad.petlogger.entities.Note
 import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.entities.PetWithProfilePic
 import com.hfad.petlogger.entities.Weight
 import com.hfad.petlogger.entities.WeightDetails
 import com.hfad.petlogger.entities.WeightForList
+import com.hfad.petlogger.entities.WeightForListFetched
+import com.hfad.petlogger.entities.WeightFullDetailsFetched
+import com.hfad.petlogger.entities.WeightFullDetailsState
 import com.hfad.petlogger.entities.WeightWithPetName
 import com.hfad.petlogger.util.Converter
 import com.hfad.petlogger.util.GetDateDisplayUseCase
@@ -20,6 +24,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.withContext
 import java.time.OffsetDateTime
 
@@ -37,26 +42,22 @@ class WeightRepository(database: PetLoggerDatabase) {
         return weightDao.getWeightAsFlow(weightId).onEach { Log.d("getWeight", "Got Weight: ${it}") }
     }
 
+    suspend fun getWeightFullDetails(weightId: Long): WeightFullDetailsState = withContext(Dispatchers.IO) {
+        weightDao.getFullWeightDetails(weightId).toState()
+    }
+
     fun getPetOfWeight(weightId: Long): Flow<PetWithProfilePic> {
         return weightDao.getPetWithProfilePicOfWeight(weightId).flowOn(Dispatchers.IO)
     }
 
     fun getAllWeightsForDisplay(): Flow<List<WeightForList>> {
-        val getDateDisplay = GetDateDisplayUseCase()
-        val getTimeDisplay = GetTimeDisplayUseCase()
         return weightDao
             .getWeightsWithPetNameAndPhoto()
             .map { list ->
                 list.sortedByDescending { weight ->
                     weight.weightDateTime
                 }.map { weight ->
-                    WeightForList(
-                        weightId = weight.weightId,
-                        weightGramsAmt = "${weight.weightGramsAmt}g",
-                        weightDate = getDateDisplay(weight.weightDateTime),
-                        weightTime = getTimeDisplay(weight.weightDateTime),
-                        weightPetName = weight.weightPetName,
-                        weightPetPhotoUri = weight.weightPetPhotoUri)
+                    weight.toWeightForList()
                 }
             }.flowOn(Dispatchers.IO)
     }
@@ -99,5 +100,18 @@ class WeightRepository(database: PetLoggerDatabase) {
 
     suspend fun delete(weight: WeightWithPetName) {
 
+    }
+
+    suspend fun getNotesOfWeightPaginated(
+        weightId: Long,
+        lastNoteEditedDate: OffsetDateTime,
+        lastNoteId: Long,
+        amtLimit: Int
+    ): List<Note> = withContext(Dispatchers.IO) {
+        weightDao.getNotesOfWeightPaginated(weightId, lastNoteEditedDate, lastNoteId, amtLimit)
+    }
+
+    suspend fun getAllWeightsPaginated(lastWeightDateTime: OffsetDateTime, lastWeightId: Long, weightsAmt: Int): List<WeightForListFetched> = withContext(Dispatchers.IO) {
+        weightDao.getAllWeightsPaginated(lastWeightDateTime, lastWeightId, weightsAmt)
     }
 }

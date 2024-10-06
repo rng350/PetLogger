@@ -41,7 +41,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:textSize="16sp"
-                android:text="@{pet.pet.petName}"/>
+                android:text="@{pet.petName}"/>
 
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>

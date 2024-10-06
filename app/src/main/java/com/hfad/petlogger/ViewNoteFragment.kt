@@ -13,6 +13,8 @@ import com.hfad.petlogger.photodisplay.stateful.GetEventsOfNoteForDisplayUseCase
 import com.hfad.petlogger.photodisplay.stateful.GetPetsOfNoteForDisplayUseCase
 import com.hfad.petlogger.photodisplay.stateful.GetPhotosOfNoteForDisplayUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetMoreEventsOfNoteUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetMorePetsOfNoteUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetMorePhotosOfNoteUseCase
 import com.hfad.petlogger.repositories.MediaRepository
 import com.hfad.petlogger.repositories.NoteRepository
 
@@ -40,11 +42,11 @@ class ViewNoteFragment : Fragment() {
         binding.viewNoteViewModel = viewNoteViewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        val getPhotosOfNote = GetPhotosOfNoteForDisplayUseCase(noteId, noteRepository)
+        val getPhotosOfNote = GetMorePhotosOfNoteUseCase(noteRepository, noteId, photosAmt = 9)
         val associatedPhotosViewModel = ViewModelProvider(this, AssociatedPhotosDisplayViewModel.provideFactory(getPhotosOfNote)).get(AssociatedPhotosDisplayViewModel::class.java)
         binding.associatedPhotosDisplayViewModel = associatedPhotosViewModel
 
-        val getAssociatedPets = GetPetsOfNoteForDisplayUseCase(noteId, noteRepository)
+        val getAssociatedPets = GetMorePetsOfNoteUseCase(noteRepository, noteId, petsAmt = 10)
         val associatedPetsDisplayViewModel = ViewModelProvider(this, AssociatedPetsDisplayViewModel.provideFactory(getAssociatedPets)).get(AssociatedPetsDisplayViewModel::class.java)
         binding.associatedPetsDisplayViewModel = associatedPetsDisplayViewModel
 

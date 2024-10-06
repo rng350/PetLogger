@@ -1,5 +1,6 @@
 package com.hfad.petlogger
 
+import RecyclerViewPaginator
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -36,6 +37,13 @@ class AssociatedPhotosDisplayFragment : Fragment() {
             lifecycleScope,
             viewLifecycleOwner
         )()
+
+        RecyclerViewPaginator(
+            recyclerView = binding.photoList,
+            isLoading = {assocPhotosViewModel.isLoading()},
+            loadMore = {assocPhotosViewModel.load()},
+            onLast = {assocPhotosViewModel.onLastPage()}
+        )
 
         return view
     }

@@ -27,12 +27,12 @@ class PetMultiSelectionViewModel(
     private var _currentSelectionChanged = false
     val currentSelectionChanged get() = _currentSelectionChanged
 
-    fun getPetsToAdd(): List<Pet> {
-        return selectionTracker.getSelectionToAdd().map{it.pet}
+    fun getPetsToAdd(): List<Long> {
+        return selectionTracker.getSelectionToAdd().map{it.petId}
     }
 
-    fun getPetsToRemove(): List<Pet> {
-        return selectionTracker.getSelectionToRemove().map{it.pet}
+    fun getPetsToRemove(): List<Long> {
+        return selectionTracker.getSelectionToRemove().map{it.petId}
     }
 
     fun confirmSelection() {

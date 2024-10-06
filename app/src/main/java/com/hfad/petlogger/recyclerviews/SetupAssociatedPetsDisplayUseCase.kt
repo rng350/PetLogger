@@ -47,16 +47,16 @@ class SetupAssociatedPetsDisplayUseCase(private val pets: StateFlow<List<PetWith
         ) {
             binder.pet = item
             Glide.with(context).clear(binder.petProfileImage)
-            item.profilePic?.let {
+            item.petProfilePicUri?.let {
                 Glide.with(context)
-                    .load(it.contentUri)
+                    .load(it)
                     .apply(RequestOptions().placeholder(R.drawable.placeholder))
                     .into(binder.petProfileImage)
             }
 
             binder.petCard.setOnClickListener { null }
             binder.petCard.setOnClickListener {
-                petNavigator.navigateTo(item.pet.petID)
+                petNavigator.navigateTo(item.petId)
             }
         }
     }

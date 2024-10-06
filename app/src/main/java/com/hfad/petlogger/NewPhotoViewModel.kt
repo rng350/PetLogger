@@ -67,7 +67,7 @@ class NewPhotoViewModel(private val mediaRepository: MediaRepository) : ViewMode
     fun submit(
         newAttachedNotes: List<Note> = listOf<Note>(),
         existingAttachedNotes: List<Note> = listOf<Note>(),
-        pets: List<Pet> = listOf<Pet>(),
+        pets: List<Long> = listOf<Long>(),
         events: List<Event> = listOf<Event>(),
         weights: List<Weight> = listOf<Weight>()
     ) {

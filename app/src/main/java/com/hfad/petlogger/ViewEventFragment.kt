@@ -12,6 +12,9 @@ import com.hfad.petlogger.databinding.FragmentViewEventBinding
 import com.hfad.petlogger.photodisplay.stateful.GetNotesOfEventForDisplayUseCase
 import com.hfad.petlogger.photodisplay.stateful.GetPetsOfEventForDisplayUseCase
 import com.hfad.petlogger.photodisplay.stateful.GetPhotosOfEventForDisplayUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetMoreNotesOfEventUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetMorePetsOfEventUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetMorePhotosOfEventUseCase
 import com.hfad.petlogger.repositories.EventRepository
 import com.hfad.petlogger.repositories.MediaRepository
 
@@ -37,16 +40,17 @@ class ViewEventFragment : Fragment() {
         val viewEventViewModel = ViewModelProvider(this, ViewEventViewModel.provideFactory(eventDao, eventId)).get(ViewEventViewModel::class.java)
         binding.viewEventViewModel = viewEventViewModel
 
-        val getAssociatedPhotos = GetPhotosOfEventForDisplayUseCase(eventId, eventRepository)
+        val getAssociatedPhotos = GetMorePhotosOfEventUseCase(eventRepository, eventId, photosAmt = 10)
         val associatedPhotosDisplayViewModel = ViewModelProvider(this, AssociatedPhotosDisplayViewModel.provideFactory(getAssociatedPhotos)).get(AssociatedPhotosDisplayViewModel::class.java)
         binding.associatedPhotosDisplayViewModel = associatedPhotosDisplayViewModel
 
-        val getAssociatedPets = GetPetsOfEventForDisplayUseCase(eventId, eventRepository)
+        val getAssociatedPets = GetMorePetsOfEventUseCase(eventRepository, eventId, petsAmt = 10)
         val associatedPetsDisplayViewModel = ViewModelProvider(this, AssociatedPetsDisplayViewModel.provideFactory(getAssociatedPets)).get(AssociatedPetsDisplayViewModel::class.java)
         binding.associatedPetsDisplayViewModel = associatedPetsDisplayViewModel
 
-        val getNotesOfEvent = GetNotesOfEventForDisplayUseCase(eventRepository, eventId)
+        val getNotesOfEvent = GetMoreNotesOfEventUseCase(eventRepository, eventId, amtLimit = 10)
         val associatedNotesDisplayViewModel = ViewModelProvider(this, AssociatedNotesDisplayViewModel.provideFactory(getNotesOfEvent)).get(AssociatedNotesDisplayViewModel::class.java)
+        binding.associatedNotesDisplayViewModel = associatedNotesDisplayViewModel
 
         viewEventViewModel.event.observe(viewLifecycleOwner, Observer {
             it?.let {

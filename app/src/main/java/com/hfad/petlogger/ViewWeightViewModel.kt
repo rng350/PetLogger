@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.hfad.petlogger.entities.PetWithProfilePic
 import com.hfad.petlogger.entities.Weight
+import com.hfad.petlogger.entities.WeightFullDetailsState
 import com.hfad.petlogger.repositories.WeightRepository
 import com.hfad.petlogger.util.GetDateTimeDisplayUseCase
 import com.hfad.petlogger.util.GetPeriodDisplayUseCase
@@ -13,115 +14,103 @@ import com.hfad.petlogger.util.MeasuringUnitConverter
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import okhttp3.internal.notifyAll
 
 class ViewWeightViewModel(weightRepository: WeightRepository, weightId: Long): ViewModel() {
-    val weight: StateFlow<Weight?> = weightRepository.getWeight(weightId).stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = null
-    )
-    val prevWeight: StateFlow<Weight?> = weightRepository.getPreviousWeight(weightId).stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = null
-    )
-    val assocPet: StateFlow<PetWithProfilePic?> = weightRepository.getPetOfWeight(weightId).stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = null
-    )
+    private val _fullWeightDetails: MutableStateFlow<WeightFullDetailsState?> = MutableStateFlow<WeightFullDetailsState?>(null)
+    val fullWeightDetails: StateFlow<WeightFullDetailsState?> = _fullWeightDetails
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = null
+        )
     private val unitType = MutableStateFlow<WeightUnitType>(WeightUnitType.GRAMS)
-
-    val getDateTimeDisplayUseCase = GetDateTimeDisplayUseCase()
-    val weightAmtDisplay: StateFlow<WeightDisplay> = asWeightDisplay(weight)
-    val prevWeightAmtDisplay: StateFlow<WeightDisplay> = asWeightDisplay(prevWeight)
-
-    val weightDifferenceDisplay = weight.combine(prevWeight) { viewedWeight, prevWeight ->
-        if (viewedWeight!=null && prevWeight!=null) {
-            viewedWeight.weightGrams-prevWeight.weightGrams
-        } else null
-    }.combine(unitType) { difference, unit ->
-        if (difference != null) {
-            "${convertWeight(difference)}${getWeightUnitTypeDisplay()}"
-        } else ""
+    val curWeightAmtDisplay: StateFlow<String> = fullWeightDetails.combine(unitType) { weightDetails, unit ->
+        var display = ""
+        weightDetails?.let {
+            display = getWeightDisplay(weightGramsAmt=weightDetails.curWeight.weightGrams, weightUnitType = unit)
+        }
+        display
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = null
+        initialValue = ""
     )
-
-    private val getDateDifferenceUseCase = GetPeriodDisplayUseCase()
-    val dateDifferenceDisplay = weight.combine(prevWeight) { viewedWeight, prevWeight ->
-        if (viewedWeight!=null && prevWeight!=null) {
-            "${getDateDifferenceUseCase.getPeriodDisplayShort(viewedWeight.weightDateTime, prevWeight.weightDateTime)} ago"
-        } else ""
+    val prevWeightAmtDisplay: StateFlow<String> = fullWeightDetails.combine(unitType) { weightDetails, unit ->
+        var display = ""
+        weightDetails?.prevWeight?.let {
+            display = getWeightDisplay(weightGramsAmt=it.weightGrams, weightUnitType = unit)
+        }
+        display
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = ""
+    )
+    val weightDifferenceDisplay: StateFlow<String> = fullWeightDetails.combine(unitType) { weightDetails, unit ->
+        var display = ""
+        weightDetails?.prevWeight?.let {
+            val weightDifferenceQtyDisplay = getWeightDisplay(it.weightDifferenceGrams, unit)
+            display = "${if (it.weightDifferenceGrams>=0)"+" else ""}$weightDifferenceQtyDisplay"
+        }
+        display
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = ""
     )
 
-    val getTimeDifferenceUseCase = GetTimeDifferenceUseCase()
-    val timeDifferenceDisplay = weight.combine(prevWeight) { viewedWeight, prevWeight ->
-        if (viewedWeight!=null && prevWeight!=null) {
-            "${getTimeDifferenceUseCase(viewedWeight.weightDateTime, prevWeight.weightDateTime)} diff"
-        } else ""
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = ""
-    )
+    private val measuringUnitConverter = MeasuringUnitConverter()
 
-    private val _measuringUnitConverter = MeasuringUnitConverter()
-
-    private fun convertWeight(weightGrams: Int): Double {
-        return when (unitType.value) {
-            WeightUnitType.GRAMS -> weightGrams.toDouble()
-            WeightUnitType.KILOGRAMS -> _measuringUnitConverter.gramsToKilograms(weightGrams)
-            WeightUnitType.OUNCES -> _measuringUnitConverter.gramsToOunces(weightGrams)
-            else -> _measuringUnitConverter.gramsToPounds(weightGrams)
+    init {
+        viewModelScope.launch {
+            _fullWeightDetails.value = weightRepository.getWeightFullDetails(weightId)
         }
     }
 
     fun setWeightUnit(weightUnit: String) {
-        unitType.value = when (weightUnit) {
-            "g" -> WeightUnitType.GRAMS
-            "kg" -> WeightUnitType.KILOGRAMS
-            "oz" -> WeightUnitType.OUNCES
-            else -> WeightUnitType.POUNDS
+        unitType.update {
+            when (weightUnit) {
+                "g" -> WeightUnitType.GRAMS
+                "kg" -> WeightUnitType.KILOGRAMS
+                "oz" -> WeightUnitType.OUNCES
+                else -> WeightUnitType.POUNDS
+            }
         }
     }
 
-    private fun asWeightDisplay(flow: StateFlow<Weight?>): StateFlow<WeightDisplay> {
-        return flow.combine(unitType) { f1, f2 ->
-            WeightDisplay(
-                weightAmt = if (f1 != null) convertWeight(f1.weightGrams).toString() else "",
-                weightUnit = getWeightUnitTypeDisplay(),
-                weightDateTime = if (f1 != null) getDateTimeDisplayUseCase(f1.weightDateTime) else ""
-            )
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = WeightDisplay("","", "")
-        )
-    }
-
-    private fun getWeightUnitTypeDisplay(): String {
-        return when(unitType.value) {
-            WeightUnitType.GRAMS -> "g"
-            WeightUnitType.KILOGRAMS -> "kg"
-            WeightUnitType.OUNCES -> "oz"
-            else -> "lb"
+    private fun getWeightDisplay(weightGramsAmt: Int, weightUnitType: WeightUnitType): String {
+        val weightQty: String
+        val unit: String
+        when (weightUnitType) {
+            WeightUnitType.GRAMS -> {
+                weightQty = "$weightGramsAmt"
+                unit = "g"
+            }
+            WeightUnitType.KILOGRAMS ->  {
+                weightQty = "${measuringUnitConverter.gramsToKilograms(weightGramsAmt)}"
+                unit = "kg"
+            }
+            WeightUnitType.OUNCES -> {
+                weightQty = "${measuringUnitConverter.gramsToOunces(weightGramsAmt)}"
+                unit = "oz"
+            }
+            WeightUnitType.POUNDS -> {
+                weightQty = "${measuringUnitConverter.gramsToPounds(weightGramsAmt)}"
+                unit = "lb"
+            }
         }
+        return "$weightQty $unit"
     }
 
     enum class WeightUnitType {
         GRAMS, KILOGRAMS, OUNCES, POUNDS
     }
-
-    data class WeightDisplay(val weightAmt: String, val weightUnit: String, val weightDateTime: String)
 
     companion object {
         fun provideFactory(weightRepository: WeightRepository, weightId: Long): ViewModelProvider.Factory = object : ViewModelProvider.Factory {

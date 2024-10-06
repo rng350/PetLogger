@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.withContext
+import java.time.OffsetDateTime
 
 class EventRepository(private val database: PetLoggerDatabase,
                       private val mediaRepository: MediaRepository) {
@@ -40,16 +41,16 @@ class EventRepository(private val database: PetLoggerDatabase,
     }
 
     suspend fun insert(event: Event,
-                       pets: List<Pet> = listOf<Pet>(),
+                       pets: List<Long> = listOf<Long>(),
                        photos: List<Photo> = listOf<Photo>(),
                        notes: List<Note> = listOf<Note>()
     ) = withContext(Dispatchers.IO) {
         val eventId = async {
             eventDao.insert(event)
         }.await()
-        val addEventPets = pets.map {pet ->
+        val addEventPets = pets.map {petID ->
             async {
-                addEventPet(EventPet(eventId, pet.petID))
+                addEventPet(EventPet(eventId, petID))
             }
         }
         val addEventPhotos = photos.map {photo ->
@@ -68,8 +69,8 @@ class EventRepository(private val database: PetLoggerDatabase,
     }
 
     suspend fun update(event: Event,
-                       petsToAdd: List<Pet> = listOf<Pet>(),
-                       petsToRemove: List<Pet> = listOf<Pet>(),
+                       petsToAdd: List<Long> = listOf<Long>(),
+                       petsToRemove: List<Long> = listOf<Long>(),
                        photosToAdd: List<Photo> = listOf<Photo>(),
                        photosToRemove: List<Photo> = listOf<Photo>(),
                        notesToAdd: List<Note> = listOf<Note>(),
@@ -80,10 +81,10 @@ class EventRepository(private val database: PetLoggerDatabase,
         }
         val petDao = database.petDao
         val petsAdded = async {
-            petDao.insert(petsToAdd.map{pet -> EventPet(eventId=event.eventId, petId=pet.petID)})
+            petDao.insert(petsToAdd.map{petID -> EventPet(eventId=event.eventId, petId=petID)})
         }
         val petsDeleted = async {
-            petDao.delete(petsToRemove.map{pet -> EventPet(eventId=event.eventId, petId=pet.petID)})
+            petDao.delete(petsToRemove.map{petID -> EventPet(eventId=event.eventId, petId=petID)})
         }
         val photoDao = database.photoDao
         val photosAdded = photosToAdd.map { newPhoto ->
@@ -161,7 +162,23 @@ class EventRepository(private val database: PetLoggerDatabase,
         eventDao.getNotesOfEvent(eventId)
     }
 
+    suspend fun getNotesOfEventPaginated(eventId: Long, lastNoteEditedDate: OffsetDateTime, lastNoteId: Long, amtLimit: Int): List<Note> = withContext(Dispatchers.IO) {
+        eventDao.getNotesOfEventPaginated(eventId, lastNoteEditedDate, lastNoteId, amtLimit)
+    }
+
+    suspend fun getPhotosOfEventPaginated(eventId: Long, lastPhotoDate: OffsetDateTime, lastPhotoId: Long, amtLimit: Int): List<Photo> = withContext(Dispatchers.IO) {
+        eventDao.getPhotosOfEventPaginated(eventId, lastPhotoDate, lastPhotoId, amtLimit)
+    }
+
     fun getNotesOfEventAsFlow(eventId: Long): Flow<List<Note>> {
         return eventDao.getNotesOfEventAsFlow(eventId)
+    }
+
+    suspend fun getAllEventsPaginated(lastEventDate: OffsetDateTime, lastEventId: Long, amtLimit: Int): List<Event> = withContext(Dispatchers.IO) {
+        eventDao.getAllEventsPaginated(lastEventDate, lastEventId, amtLimit)
+    }
+
+    suspend fun getPetsOfEventPaginated(eventId: Long, lastPetId: Long, petsAmt: Int): List<PetWithProfilePic> = withContext(Dispatchers.IO) {
+        eventDao.getPetsOfEventPaginated(eventId, lastPetId, petsAmt)
     }
 }

@@ -19,10 +19,9 @@ class NewWeightViewModel(
     private val unitConverter = MeasuringUnitConverter()
     private var _unitType: String? = null
 
-    fun submitWeight(pet: Pet) {
+    fun submitWeight(petId: Long) {
         if (weightAmt.value != null && _unitType != null) {
             val weightDateTime = weightDateTime.selectedDateTime
-            val petId = pet.petID
             val convertedWeightAmt = when(_unitType) {
                 "grams" -> { weightAmt.value!! }
                 "kilograms" -> { unitConverter.kilogramsToGrams(weightAmt.value!!) }

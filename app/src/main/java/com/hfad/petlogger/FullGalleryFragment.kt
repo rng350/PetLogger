@@ -1,5 +1,6 @@
 package com.hfad.petlogger
 
+import RecyclerViewPaginator
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -11,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.databinding.FragmentFullGalleryBinding
 import com.hfad.petlogger.photodisplay.stateful.GetAllPhotosForDisplayUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetMoreOfAllPhotosUseCase
 import com.hfad.petlogger.recyclerviews.SetupAssociatedPhotosDisplayUseCase
 import com.hfad.petlogger.repositories.MediaRepository
 
@@ -30,7 +32,7 @@ class FullGalleryFragment : Fragment() {
         val database = PetLoggerDatabase.getInstance(application)
 
         val mediaRepository = MediaRepository(database, application.applicationContext)
-        val getAllPhotos = GetAllPhotosForDisplayUseCase(mediaRepository)
+        val getAllPhotos = GetMoreOfAllPhotosUseCase(mediaRepository, photosAmt = 10)
         viewModel = ViewModelProvider(this, FullGalleryViewModel.provideFactory(getAllPhotos)).get(FullGalleryViewModel::class.java)
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
@@ -45,6 +47,13 @@ class FullGalleryFragment : Fragment() {
             lifecycleScope = lifecycleScope,
             lifecycleOwner = viewLifecycleOwner
         ).invoke()
+
+        RecyclerViewPaginator(
+            recyclerView = binding.gallery,
+            loadMore = {viewModel.load()},
+            isLoading = {viewModel.isLoading()},
+            onLast = {viewModel.onLastPage()}
+        )
 
         binding.addPhotoButton.setOnClickListener {
             this.findNavController().navigateSafe(FullGalleryFragmentDirections.actionFullGalleryFragmentToNewPhotoFragment())

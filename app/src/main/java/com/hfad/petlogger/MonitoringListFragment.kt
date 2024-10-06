@@ -1,5 +1,6 @@
 package com.hfad.petlogger
 
+import RecyclerViewPaginator
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -11,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.databinding.FragmentMonitoringListBinding
 import com.hfad.petlogger.photodisplay.stateful.GetAllWeightsWithPetInfoForDisplayUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetMoreOfAllWeightsUseCase
 import com.hfad.petlogger.recyclerviews.SetupAssociatedWeightsDisplayUseCase
 import com.hfad.petlogger.repositories.WeightRepository
 
@@ -29,7 +31,7 @@ class MonitoringListFragment : Fragment() {
         val application = requireNotNull(this.activity).application
         val database = PetLoggerDatabase.getInstance(application)
         val weightRepository = WeightRepository(database)
-        val getWeightsUseCase = GetAllWeightsWithPetInfoForDisplayUseCase(weightRepository)
+        val getWeightsUseCase = GetMoreOfAllWeightsUseCase(weightRepository, weightsAmt = 10)
         viewModel = ViewModelProvider(this, MonitoringListViewModel.provideFactory(getWeightsUseCase)).get(MonitoringListViewModel::class.java)
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
@@ -44,6 +46,13 @@ class MonitoringListFragment : Fragment() {
             lifecycleScope = lifecycleScope,
             lifecycleOwner = viewLifecycleOwner
         ).invoke()
+
+        RecyclerViewPaginator(
+            recyclerView = binding.weightsList,
+            loadMore = {viewModel.load()},
+            isLoading = {viewModel.isLoading()},
+            onLast = {viewModel.onLastPage()}
+        )
 
         viewModel.weightNavigator.navigateTo.observe(viewLifecycleOwner, Observer {
             it?.let {

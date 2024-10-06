@@ -2,6 +2,7 @@ package com.hfad.petlogger
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -55,8 +56,10 @@ class EditNoteFragment : Fragment() {
         val petRepository = PetRepository(database, mediaRepository)
         val getAllPets = GetAllPetsWithProfilePhotosUseCase(petRepository)
         val getPetsOfNote = GetPetsOfNoteUseCase(noteRepository, noteId)
+        //val getPetsOfNote = null
         val petMultiSelectionViewModel = ViewModelProvider(this, PetMultiSelectionViewModel.provideFactory(getAllPets, getPetsOfNote)).get(PetMultiSelectionViewModel::class.java)
         binding.petMultiSelectionViewModel = petMultiSelectionViewModel
+
         val getPhotosOfNote = GetPhotosOfNoteUseCase(noteRepository, noteId)
         val mediaSelectionViewModel = ViewModelProvider(this, MediaSelectionViewModel.provideFactory(mediaRepository, getPhotosOfNote, maxItems = 10)).get(MediaSelectionViewModel::class.java)
         binding.mediaSelectionViewModel = mediaSelectionViewModel
@@ -83,10 +86,6 @@ class EditNoteFragment : Fragment() {
             )
         }
 
-        binding.resetButton.setOnClickListener {
-            editNoteViewModel.reset()
-        }
-
         val confirmAction = ConfirmActionUseCase(
             dialogTitle = resources.getString(R.string.confirm_note_deletion_title),
             dialogMessage = resources.getString(R.string.confirm_note_deletion_message),
@@ -100,7 +99,7 @@ class EditNoteFragment : Fragment() {
             confirmAction()
         }
 
-        editNoteViewModel.note.observe(viewLifecycleOwner, Observer {
+        editNoteViewModel.fetchedNote.observe(viewLifecycleOwner, Observer {
             it?.let {
                 setAppBarTitle(title = it.title.ifEmpty { getString(R.string.view_untitled_note_header) }, subtitle = getString(R.string.editing_note_details))
             }

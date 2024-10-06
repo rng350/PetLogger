@@ -21,10 +21,11 @@ class NewEventViewModel(private val eventRepository: EventRepository): ViewModel
     var eventDetails: String = ""
     var eventDateTime = SelectableDateTime()
     private val _carryOn = MutableLiveData(false)
-    val carryOn get() = _carryOn
+    val carryOn: LiveData<Boolean>
+        get() = _carryOn
 
     fun submitEvent(
-        pets: List<Pet> = listOf<Pet>(),
+        pets: List<Long> = listOf<Long>(),
         photos: List<Photo> = listOf<Photo>(),
         notes: List<Note> = listOf<Note>()
     ) {

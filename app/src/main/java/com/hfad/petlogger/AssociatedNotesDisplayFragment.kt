@@ -1,5 +1,6 @@
 package com.hfad.petlogger
 
+import RecyclerViewPaginator
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -26,12 +27,19 @@ class AssociatedNotesDisplayFragment : Fragment() {
         binding.associatedNotesDisplayViewModel = associatedNotesDisplayViewModel
 
         SetupAssociatedNotesDisplayUseCase(
-            notes = associatedNotesDisplayViewModel.events,
+            notes = associatedNotesDisplayViewModel.notes,
             noteNavigator = associatedNotesDisplayViewModel.noteNavigator,
             recyclerView = binding.notesList,
             lifecycleScope = lifecycleScope,
             lifecycleOwner = viewLifecycleOwner
         ).invoke()
+
+        RecyclerViewPaginator(
+            recyclerView = binding.notesList,
+            isLoading = {associatedNotesDisplayViewModel.isLoading()},
+            loadMore = {associatedNotesDisplayViewModel.load()},
+            onLast = {associatedNotesDisplayViewModel.onLastPage()}
+        )
 
         return view
     }

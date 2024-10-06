@@ -1,5 +1,6 @@
 package com.hfad.petlogger
 
+import RecyclerViewPaginator
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -11,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.databinding.FragmentPetListBinding
 import com.hfad.petlogger.photodisplay.stateful.GetAllPetsForDisplayUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetMoreOfAllPetsUseCase
 import com.hfad.petlogger.recyclerviews.SetupAssociatedPetsDisplayUseCase
 import com.hfad.petlogger.repositories.MediaRepository
 import com.hfad.petlogger.repositories.PetRepository
@@ -32,8 +34,8 @@ class PetListFragment : Fragment() {
 
         val mediaRepository = MediaRepository(database, application.applicationContext)
         val petRepository = PetRepository(database, mediaRepository)
-        val getAllPetsForDisplayUseCase = GetAllPetsForDisplayUseCase(petRepository)
-        viewModel = ViewModelProvider(this, PetListViewModel.provideFactory(getAllPetsForDisplayUseCase)).get(PetListViewModel::class.java)
+        val getAllPets = GetMoreOfAllPetsUseCase(petRepository, petsAmt = 10)
+        viewModel = ViewModelProvider(this, PetListViewModel.provideFactory(getAllPets)).get(PetListViewModel::class.java)
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
@@ -45,6 +47,13 @@ class PetListFragment : Fragment() {
             lifecycleScope,
             viewLifecycleOwner
         )()
+
+        RecyclerViewPaginator(
+            recyclerView = binding.petsList,
+            loadMore = {viewModel.load()},
+            isLoading = {viewModel.isLoading()},
+            onLast = {viewModel.onLastPage()}
+        )
 
         binding.addPetButton.setOnClickListener {
             findNavController().navigateSafe(PetListFragmentDirections.actionPetListFragmentToNewPetFragment())

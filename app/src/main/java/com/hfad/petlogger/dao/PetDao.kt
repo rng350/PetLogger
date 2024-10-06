@@ -1,10 +1,12 @@
 package com.hfad.petlogger.dao
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.hfad.petlogger.entities.*
 import kotlinx.coroutines.flow.Flow
+import java.time.LocalDate
 import java.time.OffsetDateTime
 
 @Dao
@@ -28,6 +30,19 @@ interface PetDao {
 
     @Query("SELECT * FROM pet_table WHERE pet_id=:petId")
     suspend fun getPet(petId: Long): Pet
+
+    @Query("SELECT pet_table.pet_id AS petId, " +
+            "pet_table.pet_name AS petName, " +
+            "pet_table.pet_dob AS petDOB, " +
+            "pet_table.pet_species AS petSpecies, " +
+            "pet_table.pet_breed AS petBreed, " +
+            "pet_table.pet_sex AS petSex," +
+            "photo_table.photo_uri AS petProfilePicUri " +
+            "FROM pet_table " +
+            "LEFT JOIN pet_profile_photo_table ON pet_table.pet_id=pet_profile_photo_table.pet_id " +
+            "LEFT JOIN photo_table ON pet_profile_photo_table.photo_id=photo_table.photo_id " +
+            "WHERE pet_table.pet_id=:petId LIMIT 1")
+    suspend fun getPetDetails(petId: Long): PetDetails
 
     @Query("SELECT * FROM pet_table WHERE pet_id=:petId")
     suspend fun getAsync(petId: Long): Pet?
@@ -61,6 +76,20 @@ interface PetDao {
     @Query("SELECT * FROM weight_table WHERE weight_pet_id=:petId ORDER BY weight_datetime DESC")
     suspend fun getWeightsOfPet(petId: Long): List<Weight>
 
+    @Query("SELECT * FROM weight_table " +
+            "WHERE weight_pet_id=:petId " +
+            "AND (datetime(weight_datetime), weight_id) < (datetime(:lastWeightDate), :lastWeightId) " +
+            "ORDER BY datetime(weight_datetime) DESC, weight_id DESC LIMIT :amtLimit")
+    suspend fun getWeightsOfPetPaginated(petId: Long, lastWeightDate: OffsetDateTime, lastWeightId: Long, amtLimit: Int): List<Weight>
+
+    @Query("SELECT note_table.* " +
+            "FROM note_table INNER JOIN pet_note_table " +
+            "ON note_table.note_id=pet_note_table.note_id " +
+            "WHERE pet_note_table.pet_id=:petId " +
+            "AND (datetime(note_last_updated), note_table.note_id) < (datetime(:lastNoteEditedDate), :lastNoteId) " +
+            "ORDER BY datetime(note_last_updated) DESC, note_table.note_id DESC LIMIT :amtLimit")
+    suspend fun getNotesOfPetPaginated(petId: Long, lastNoteEditedDate: OffsetDateTime, lastNoteId: Long, amtLimit: Int): List<Note>
+
     @Insert
     suspend fun insert(petEvent: EventPet)
 
@@ -73,12 +102,26 @@ interface PetDao {
     @Delete
     suspend fun delete(petEvents: List<EventPet>)
 
-    @Transaction
-    @Query("SELECT * FROM pet_table")
+    @Query("SELECT pet_table.pet_name AS petName, pet_table.pet_id AS petId, photo_table.photo_uri AS petProfilePicUri " +
+            "FROM pet_table " +
+            "LEFT JOIN pet_profile_photo_table ON pet_table.pet_id=pet_profile_photo_table.pet_id " +
+            "LEFT JOIN photo_table ON pet_profile_photo_table.photo_id=photo_table.photo_id " +
+            "ORDER BY pet_table.pet_id ASC")
     suspend fun getAllPetsWithProfilePhotos(): List<PetWithProfilePic>
 
-    @Transaction
-    @Query("SELECT * FROM pet_table WHERE pet_id=:petID")
+    @Query("SELECT pet_table.pet_id AS petId, pet_table.pet_name AS petName, photo_table.photo_uri AS petProfilePicUri " +
+            "FROM pet_table " +
+            "LEFT JOIN pet_profile_photo_table ON pet_table.pet_id=pet_profile_photo_table.pet_id " +
+            "LEFT JOIN photo_table ON pet_profile_photo_table.photo_id=photo_table.photo_id " +
+            "WHERE petId > :lastPetId " +
+            "ORDER BY petId ASC LIMIT :amtLimit")
+    suspend fun getAllPetsWithProfilePhotosPaginated(lastPetId: Long, amtLimit: Int): List<PetWithProfilePic>
+
+    @Query("SELECT pet_table.pet_name AS petName, pet_table.pet_id AS petId, photo_table.photo_uri AS petProfilePicUri " +
+            "FROM pet_table " +
+            "LEFT JOIN pet_profile_photo_table ON pet_table.pet_id=pet_profile_photo_table.pet_id " +
+            "LEFT JOIN photo_table ON pet_profile_photo_table.photo_id=photo_table.photo_id " +
+            "WHERE pet_table.pet_id=:petID")
     suspend fun getPetWithProfilePic(petID: Long): PetWithProfilePic
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
@@ -104,6 +147,14 @@ interface PetDao {
     fun getPetPhotos(petId: Long): Flow<List<Photo>>
 
     @Query("SELECT photo_table.photo_id, photo_date, photo_filesize, photo_width, photo_height, photo_uri, photo_filename, photo_title " +
+            "FROM photo_table INNER JOIN pet_photo_table " +
+            "ON photo_table.photo_id = pet_photo_table.photo_id " +
+            "WHERE pet_photo_table.pet_id=:petId " +
+            "AND (datetime(photo_date), photo_table.photo_id) < (datetime(:lastPhotoDate), :lastPhotoId) " +
+            "ORDER BY datetime(photo_date) DESC, photo_table.photo_id DESC LIMIT :amtLimit")
+    suspend fun getPhotosOfPetPaginated(petId: Long, lastPhotoDate: OffsetDateTime, lastPhotoId: Long, amtLimit: Int): List<Photo>
+
+    @Query("SELECT photo_table.photo_id, photo_date, photo_filesize, photo_width, photo_height, photo_uri, photo_filename, photo_title " +
             "FROM photo_table LEFT JOIN pet_photo_table " +
             "ON photo_table.photo_id = pet_photo_table.photo_id " +
             "WHERE pet_photo_table.pet_id=:petId " +
@@ -121,7 +172,10 @@ interface PetDao {
             "ORDER BY event_date DESC")
     fun getPetEvents(petId: Long): Flow<List<Event>>
 
-    @Transaction
-    @Query("SELECT * FROM pet_table")
+    @Query("SELECT pet_table.pet_name AS petName, pet_table.pet_id AS petId, photo_table.photo_uri AS petProfilePicUri " +
+            "FROM pet_table " +
+            "LEFT JOIN pet_profile_photo_table ON pet_table.pet_id=pet_profile_photo_table.pet_id " +
+            "LEFT JOIN photo_table ON pet_profile_photo_table.photo_id=photo_table.photo_id " +
+            "ORDER BY pet_table.pet_id ASC")
     fun getAllPetsWithProfilePhotosAsFlow(): Flow<List<PetWithProfilePic>>
 }

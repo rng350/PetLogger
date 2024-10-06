@@ -72,8 +72,7 @@ class NewWeightFragment : Fragment() {
         }
 
         binding.submitWeightButton.setOnClickListener {
-            val pet = petSingleSelectionViewModel.selectionTracker.currentSelection.value?.item?.pet
-            pet?.let{
+            petSingleSelectionViewModel.selectionTracker.currentSelection.value?.item?.petId?.let{
                 newWeightViewModel.submitWeight(it)
             }
         }

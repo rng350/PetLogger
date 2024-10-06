@@ -46,9 +46,9 @@ class SetupPetPickerUseCase(private val petList: MutableLiveData<List<CheckableI
             // clear previous requests on viewholder
             Glide.with(context).clear(binder.petProfileImage)
 
-            item.item.profilePic?.let {
+            item.item.petProfilePicUri?.let {
                 Glide.with(context)
-                    .load(it.contentUri)
+                    .load(it)
                     .apply(RequestOptions().placeholder(R.drawable.placeholder))
                     .into(binder.petProfileImage)
             }
@@ -61,7 +61,7 @@ class SetupPetPickerUseCase(private val petList: MutableLiveData<List<CheckableI
             }
 
             val observer = Observer<CheckableItem<PetWithProfilePic>> {
-                binder.petCard.isChecked = item.item.pet.petID==it.item.pet.petID
+                binder.petCard.isChecked = item.item.petId==it.item.petId
             }
             currentSelection.observe(lifecycleOwner, observer)
         }

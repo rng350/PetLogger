@@ -1,5 +1,6 @@
 package com.hfad.petlogger
 
+import RecyclerViewPaginator
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -11,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.databinding.FragmentEventListBinding
 import com.hfad.petlogger.photodisplay.stateful.GetAllEventsForDisplayUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetMoreOfAllEventsUseCase
 import com.hfad.petlogger.recyclerviews.SetupAssociatedEventsDisplayUseCase
 import com.hfad.petlogger.repositories.EventRepository
 import com.hfad.petlogger.repositories.MediaRepository
@@ -34,17 +36,24 @@ class EventListFragment : Fragment() {
         val database = PetLoggerDatabase.getInstance(application)
         val mediaRepository = MediaRepository(database, application.applicationContext)
         val eventRepository = EventRepository(database, mediaRepository)
-        val getAllEvents = GetAllEventsForDisplayUseCase(eventRepository)
+        val getAllEvents = GetMoreOfAllEventsUseCase(eventRepository, eventAmt=10)
         viewModel = ViewModelProvider(this, EventListViewModel.provideFactory(getAllEvents)).get(EventListViewModel::class.java)
         binding.viewModel = viewModel
 
         SetupAssociatedEventsDisplayUseCase(
-            viewModel.events,
+            viewModel.event,
             viewModel.eventNavigator,
             binding.eventsList,
             lifecycleScope,
             viewLifecycleOwner
         )()
+
+        RecyclerViewPaginator(
+            recyclerView = binding.eventsList,
+            loadMore = {viewModel.load()},
+            isLoading = {viewModel.isLoading()},
+            onLast = {viewModel.onLastPage()}
+        )
 
         binding.addEventButton.setOnClickListener {
             this.findNavController().navigateSafe(EventListFragmentDirections.actionEventListFragmentToNewEventFragment())

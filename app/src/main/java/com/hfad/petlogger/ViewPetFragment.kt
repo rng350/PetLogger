@@ -14,10 +14,11 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.hfad.petlogger.photodisplay.stateful.GetEventsOfPetForDisplayUseCase
 import com.hfad.petlogger.photodisplay.stateful.GetPhotosOfPetForDisplayUseCase
-import com.hfad.petlogger.photodisplay.stateful.GetWeightsOfPetForDisplayUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetMoreEventsOfPetUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetMoreNotesOfPetUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetMorePhotosOfPetUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetMoreWeightsOfPetUseCase
 import com.hfad.petlogger.repositories.MediaRepository
 import com.hfad.petlogger.repositories.PetRepository
 import com.hfad.petlogger.util.GetPeriodDisplayUseCase
@@ -50,13 +51,17 @@ class ViewPetFragment : Fragment() {
         val associatedEventsDisplayViewModel = ViewModelProvider(this, AssociatedEventsDisplayViewModel.provideFactory(getAssociatedEvents)).get(AssociatedEventsDisplayViewModel::class.java)
         binding.associatedEventsDisplayViewModel = associatedEventsDisplayViewModel
 
-        val getAssociatedWeights = GetWeightsOfPetForDisplayUseCase(petRepository, petId)
+        val getAssociatedWeights = GetMoreWeightsOfPetUseCase(petRepository, petId, weightsAmt = 10)
         val associatedWeightsDisplayViewModel = ViewModelProvider(this, AssociatedPetWeightsDisplayViewModel.provideFactory(getAssociatedWeights)).get(AssociatedPetWeightsDisplayViewModel::class.java)
         binding.associatedPetWeightsDisplayViewModel = associatedWeightsDisplayViewModel
 
-        val getPhotosOfPetForDisplayUseCase = GetPhotosOfPetForDisplayUseCase(petRepository, petId)
+        val getPhotosOfPetForDisplayUseCase = GetMorePhotosOfPetUseCase(petRepository, petId, photosAmt = 10)
         val associatedPhotosDisplayViewModel = ViewModelProvider(this, AssociatedPhotosDisplayViewModel.provideFactory(getPhotosOfPetForDisplayUseCase)).get(AssociatedPhotosDisplayViewModel::class.java)
         binding.associatedPhotosDisplayViewModel = associatedPhotosDisplayViewModel
+
+        val getNotesOfPet = GetMoreNotesOfPetUseCase(petRepository, petId, notesAmt = 10)
+        val associatedNotesDisplayViewModel = ViewModelProvider(this, AssociatedNotesDisplayViewModel.provideFactory(getNotesOfPet)).get(AssociatedNotesDisplayViewModel::class.java)
+        binding.associatedNotesDisplayViewModel = associatedNotesDisplayViewModel
 
         viewPetViewModel.pet.observe(viewLifecycleOwner, Observer {
             it?.let {
