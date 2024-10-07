@@ -141,8 +141,8 @@ interface WeightDao {
             cte_weight_pet_and_pet_photo AS (
                 SELECT pet_table.pet_id AS petId, pet_table.pet_name AS petName, photo_table.photo_uri AS petProfilePicUri
                 FROM pet_table 
-                JOIN pet_profile_photo_table ON pet_table.pet_id=pet_profile_photo_table.pet_id 
-                JOIN photo_table ON pet_profile_photo_table.photo_id=photo_table.photo_id 
+                LEFT JOIN pet_profile_photo_table ON pet_table.pet_id=pet_profile_photo_table.pet_id 
+                LEFT JOIN photo_table ON pet_profile_photo_table.photo_id=photo_table.photo_id 
                 WHERE pet_table.pet_id IN cte_pet_id
                 LIMIT 1
             )
