@@ -178,4 +178,11 @@ interface PetDao {
             "LEFT JOIN photo_table ON pet_profile_photo_table.photo_id=photo_table.photo_id " +
             "ORDER BY pet_table.pet_id ASC")
     fun getAllPetsWithProfilePhotosAsFlow(): Flow<List<PetWithProfilePic>>
+
+    @Query("SELECT note_table.* " +
+            "FROM note_table INNER JOIN pet_note_table " +
+            "ON note_table.note_id=pet_note_table.note_id " +
+            "WHERE pet_note_table.pet_id=:petId " +
+            "ORDER BY datetime(note_last_updated) DESC, note_table.note_id DESC")
+    fun getNotesOfPet(petId: Long): List<Note>
 }

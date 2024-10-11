@@ -10,6 +10,7 @@ import com.hfad.petlogger.entities.EventForList
 import com.hfad.petlogger.entities.EventPet
 import com.hfad.petlogger.entities.Note
 import com.hfad.petlogger.entities.Pet
+import com.hfad.petlogger.entities.PetNote
 import com.hfad.petlogger.entities.PetPhoto
 import com.hfad.petlogger.entities.PetProfilePhoto
 import com.hfad.petlogger.entities.PetWeightForDisplay
@@ -30,6 +31,7 @@ import java.time.OffsetDateTime
 class PetRepository(private val database: PetLoggerDatabase, private val mediaRepository: MediaRepository) {
     private val petDao = database.petDao
     private val photoDao = database.photoDao
+    private val noteDao = database.noteDao
     suspend fun addPet(pet: Pet, photos: List<Photo> = listOf<Photo>(), profilePic: Photo? = null) = withContext(Dispatchers.IO) {
         Log.d("addPet", "PET BEING ADDED... Pet: ${pet.toString()}")
         if (profilePic == null) {
@@ -64,6 +66,9 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
         weightsToRemove: List<Weight> = listOf<Weight>(),
         photosToAdd: List<Photo> = listOf<Photo>(),
         photosToRemove: List<Photo> = listOf<Photo>(),
+        notesToAdd: List<Note> = listOf<Note>(),
+        notesToRemove: List<Note> = listOf<Note>(),
+        notesToUpdate: List<Note> = listOf<Note>(),
         petProfilePhotoToAdd: Photo? = null,
         petProfilePhotoToRemove: Photo? = null
     ) = withContext(Dispatchers.IO) {
@@ -89,8 +94,21 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
         val petPhotosDeleted = async {
             removePetPhotos(petId=pet.petID, photosToRemove=photosToRemove)
         }
-        petProfilePhotoToRemove?.let { profilePhoto ->
-            photoDao.delete(PetProfilePhoto(petID = pet.petID, photoID = profilePhoto.id))
+        val petProfilePicDeleted = async {
+            petProfilePhotoToRemove?.let { profilePhoto ->
+                photoDao.delete(PetProfilePhoto(petID = pet.petID, photoID = profilePhoto.id))
+            }
+        }
+        val notesAdded = async {
+            noteDao.attachPets(notesToAdd.map{ note -> PetNote(petId=pet.petID, noteId = note.id) })
+        }
+        val notesRemoved = async {
+            noteDao.detachPets(notesToRemove.map{ note -> PetNote(petId=pet.petID, noteId=note.id) })
+        }
+        val notesUpdated = notesToUpdate.map { note ->
+            async {
+                noteDao.update(note)
+            }
         }
         petUpdated.await()
         petEventsInserted.await()
@@ -99,6 +117,10 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
         petWeightsDeleted.await()
         petPhotosAdded.await()
         petPhotosDeleted.await()
+        petProfilePicDeleted.await()
+        notesAdded.await()
+        notesRemoved.await()
+        notesUpdated.awaitAll()
     }
 
     suspend fun setPetProfilePhoto(petId: Long, photoId: Long) = withContext(Dispatchers.IO) {
@@ -319,5 +341,9 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
 
     suspend fun getPhotosOfPetPaginated(petId: Long, lastPhotoDate: OffsetDateTime, lastPhotoId: Long, amtLimit: Int): List<Photo> = withContext(Dispatchers.IO) {
         petDao.getPhotosOfPetPaginated(petId, lastPhotoDate, lastPhotoId, amtLimit)
+    }
+
+    suspend fun getNotesOfPet(petId: Long): List<Note> = withContext(Dispatchers.IO) {
+        petDao.getNotesOfPet(petId)
     }
 }

@@ -14,12 +14,15 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.hfad.petlogger.databinding.FragmentEditPetBinding
+import com.hfad.petlogger.photodisplay.stateless.GetAllNotesUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetCheckableWeightsOfPetUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetEventsOfPetUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetNotesOfPetUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetPetProfilePhotoUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetPhotosOfPetUseCase
 import com.hfad.petlogger.repositories.EventRepository
 import com.hfad.petlogger.repositories.MediaRepository
+import com.hfad.petlogger.repositories.NoteRepository
 import com.hfad.petlogger.repositories.PetRepository
 import java.io.File
 
@@ -71,6 +74,12 @@ class EditPetFragment : Fragment() {
         val petProfilePhotoSelectionViewModel = ViewModelProvider(this, MediaSingleSelectionViewModel.provideFactory(mediaRepository, getPetProfilePhoto)).get(MediaSingleSelectionViewModel::class.java)
         binding.petProfilePhotoSelectionViewModel = petProfilePhotoSelectionViewModel
 
+        val noteRepository = NoteRepository(database, mediaRepository)
+        val getAllNotes = GetAllNotesUseCase(noteRepository)
+        val getNotesOfPet = GetNotesOfPetUseCase(petRepository, petID)
+        val noteSelectionViewModel = ViewModelProvider(this, NoteMultiSelectionViewModel.provideFactory(getAllNotes, getNotesOfPet)).get(NoteMultiSelectionViewModel::class.java)
+        binding.noteMultiSelectionViewModel = noteSelectionViewModel
+
         // initialize sex pick
         editPetViewModel.pet.observeOnce(viewLifecycleOwner, Observer {
             when(it.petSex) {
@@ -108,7 +117,9 @@ class EditPetFragment : Fragment() {
                     photosToAdd = mediaSelectionViewModel.getPhotosToAdd(),
                     photosToRemove = mediaSelectionViewModel.getPhotosToRemove(),
                     petProfilePhotoToAdd = if (petProfilePhotoSelectionViewModel.photoToAdd.isNotEmpty()) petProfilePhotoSelectionViewModel.photoToAdd[0] else null,
-                    petProfilePhotoToRemove = if (petProfilePhotoSelectionViewModel.photoToRemove.isNotEmpty()) petProfilePhotoSelectionViewModel.photoToRemove[0] else null
+                    petProfilePhotoToRemove = if (petProfilePhotoSelectionViewModel.photoToRemove.isNotEmpty()) petProfilePhotoSelectionViewModel.photoToRemove[0] else null,
+                    notesToAdd = noteSelectionViewModel.getNotesToAdd(),
+                    notesToRemove = noteSelectionViewModel.getNotesToRemove()
                 )
             } else Toast.makeText(requireContext(), R.string.no_pet_name_given, Toast.LENGTH_LONG).show()
         }
