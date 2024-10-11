@@ -8,11 +8,13 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
 import androidx.core.net.toUri
+import androidx.room.withTransaction
 import com.hfad.petlogger.PetLoggerDatabase
 import com.hfad.petlogger.entities.Event
 import com.hfad.petlogger.entities.EventForList
 import com.hfad.petlogger.entities.Note
 import com.hfad.petlogger.entities.Pet
+import com.hfad.petlogger.entities.PetPhoto
 import com.hfad.petlogger.entities.PetWithProfilePic
 import com.hfad.petlogger.entities.Photo
 import com.hfad.petlogger.entities.PhotoEvent
@@ -40,6 +42,7 @@ class MediaRepository(
     private val context: Context
 ) {
     private val photoDao = database.photoDao
+    private val noteDao = database.noteDao
 
     suspend fun getPhoto(photoId: Long): Photo? = withContext(Dispatchers.IO) {
         photoDao.getPhoto(photoId)
@@ -51,40 +54,57 @@ class MediaRepository(
         petsToRemove: List<Long> = listOf<Long>(),
         eventsToAdd: List<Event> = listOf<Event>(),
         eventsToRemove: List<Event> = listOf<Event>(),
-        weightsToAdd: List<Weight> = listOf<Weight>(),
-        weightsToRemove: List<Weight> = listOf<Weight>(),
         notesToAdd: List<Note> = listOf<Note>(),
         notesToRemove: List<Note> = listOf<Note>(),
         notesToUpdate: List<Note> = listOf<Note>()
     ) = withContext(Dispatchers.IO) {
-        photoDao.update(photo)
-        for (pet in petsToAdd) {
-
+        val updatePhoto = async {
+            photoDao.update(photo)
         }
-        for (pet in petsToRemove) {
-
+        val addPets = petsToAdd.map { petId ->
+            async {
+                photoDao.associate(PetPhoto(petId = petId, photoId = photo.id))
+            }
         }
-        for (event in eventsToAdd) {
-
+        val removePets = petsToRemove.map { petId ->
+            async {
+                photoDao.dissociate(PetPhoto(petId = petId, photoId = photo.id))
+            }
         }
-        for (event in eventsToRemove) {
-
+        val addEvents = eventsToAdd.map { event ->
+            async {
+                photoDao.insert(PhotoEvent(eventID = event.eventId, photoID = photo.id))
+            }
         }
-        for (weight in weightsToAdd) {
-
+        val removeEvents = eventsToRemove.map { event ->
+            async {
+                photoDao.delete(PhotoEvent(eventID = event.eventId, photoID = photo.id))
+            }
         }
-        for (weight in weightsToRemove) {
-
+        val addNotes = notesToAdd.map { note ->
+            async {
+                Log.d("updatePhoto", "added note: $note")
+                photoDao.insert(PhotoNote(noteId = note.id, photoId = photo.id))
+            }
         }
-        for (note in notesToAdd) {
-
+        val removeNotes = notesToRemove.map { note ->
+            async {
+                photoDao.delete(PhotoNote(noteId = note.id, photoId = photo.id))
+            }
         }
-        for (note in notesToRemove) {
-
+        val updateNotes = notesToUpdate.map { note ->
+            async {
+                noteDao.update(note)
+            }
         }
-        for (note in notesToUpdate) {
-
-        }
+        updatePhoto.await()
+        addPets.awaitAll()
+        removePets.awaitAll()
+        addEvents.awaitAll()
+        removeEvents.awaitAll()
+        addNotes.awaitAll()
+        removeNotes.awaitAll()
+        updateNotes.awaitAll()
     }
 
     suspend fun updateEventPhotos(eventID: Long, photosToAdd: List<Photo>, photosToDelete: List<Photo>) {
@@ -312,23 +332,12 @@ class MediaRepository(
         if (file.exists()) file.delete()
     }
 
-    fun getPetsOfPhoto(photoId: Long): Flow<List<PetWithProfilePic>> {
-        return photoDao.getPetsOfPhoto(photoId)
+    suspend fun getPetsOfPhoto(photoId: Long): List<PetWithProfilePic> = withContext(Dispatchers.IO){
+        photoDao.getPetsOfPhoto(photoId)
     }
 
-    fun getEventsOfPhoto(photoId: Long): Flow<List<EventForList>> {
-        val getDateDisplayUseCase = GetDateDisplayUseCase()
-        val getTimeDisplayUseCase = GetTimeDisplayUseCase()
-        return photoDao
-            .getEventsOfPhoto(photoId)
-            .map { it
-                .sortedByDescending { event -> event.date }
-                .map { event -> EventForList(
-                    eventId = event.eventId,
-                    eventDate = getDateDisplayUseCase(event.date),
-                    eventTime = getTimeDisplayUseCase(event.date),
-                    eventTitle = event.title) }
-            }.flowOn(Dispatchers.IO)
+    suspend fun getEventsOfPhoto(photoId: Long): List<Event> = withContext(Dispatchers.IO) {
+        photoDao.getEventsOfPhoto(photoId)
     }
 
     fun getAllPhotosAsFlow(): Flow<List<Photo>> {
@@ -359,5 +368,9 @@ class MediaRepository(
 
     suspend fun getPetsOfPhotoPaginated(photoId: Long, lastPetId: Long, petsAmt: Int): List<PetWithProfilePic> = withContext(Dispatchers.IO) {
         photoDao.getPetsOfPhotoPaginated(photoId, lastPetId, petsAmt)
+    }
+
+    suspend fun getNotesOfPhoto(photoId: Long): List<Note> = withContext(Dispatchers.IO) {
+        photoDao.getNotesOfPhoto(photoId)
     }
 }

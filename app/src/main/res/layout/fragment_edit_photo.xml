@@ -13,14 +13,12 @@
         <variable
             name="petSelectorViewModel"
             type="com.hfad.petlogger.PetMultiSelectionViewModel" />
-
         <variable
             name="eventSelectorViewModel"
             type="com.hfad.petlogger.EventMultiSelectionViewModel" />
-
         <variable
-            name="weightSelectorViewModel"
-            type="com.hfad.petlogger.WeightMultiSelectionViewModel" />
+            name="noteMultiSelectionViewModel"
+            type="com.hfad.petlogger.NoteMultiSelectionViewModel" />
     </data>
 
 
@@ -137,6 +135,27 @@
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/pet_selection_fragment_container_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:name="com.hfad.petlogger.PetMultiSelectionDisplayFragment"
+                tools:layout="@layout/fragment_pet_multi_selection_display" />
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/event_selection_fragment_container_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:name="com.hfad.petlogger.EventMultiSelectionDisplayFragment"
+                tools:layout="@layout/fragment_event_multi_selection_display" />
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/note_selection_fragment_container_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:name="com.hfad.petlogger.NoteMultiSelectionDisplayFragment"
+                tools:layout="@layout/fragment_note_multi_selection_display" />
 
             <LinearLayout
                 android:layout_width="match_parent"

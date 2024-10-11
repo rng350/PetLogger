@@ -41,13 +41,20 @@ class EditPhotoViewModel(private val mediaRepository: MediaRepository, private v
                petsToRemove: List<Long> = listOf<Long>(),
                eventsToAdd: List<Event> = listOf<Event>(),
                eventsToRemove: List<Event> = listOf<Event>(),
-               weightsToAdd: List<Weight> = listOf<Weight>(),
-               weightsToRemove: List<Weight> = listOf<Weight>(),
                notesToAdd: List<Note> = listOf<Note>(),
                notesToRemove: List<Note> = listOf<Note>(),
                notesToUpdate: List<Note> = listOf<Note>()) {
         photoNew.value?.let {photo ->
-            if (!photo.equals(photoInitial.value)) {
+            if (
+                    !photo.equals(photoInitial.value)
+                    || petsToAdd.isNotEmpty()
+                    || petsToRemove.isNotEmpty()
+                    || eventsToAdd.isNotEmpty()
+                    || eventsToRemove.isNotEmpty()
+                    || notesToAdd.isNotEmpty()
+                    || notesToRemove.isNotEmpty()
+                    || notesToUpdate.isNotEmpty()
+                ) {
                 viewModelScope.launch {
                     async {
                         mediaRepository.updatePhoto(
@@ -56,8 +63,6 @@ class EditPhotoViewModel(private val mediaRepository: MediaRepository, private v
                             petsToRemove = petsToRemove,
                             eventsToAdd = eventsToAdd,
                             eventsToRemove = eventsToRemove,
-                            weightsToAdd = weightsToAdd,
-                            weightsToRemove = weightsToRemove,
                             notesToAdd = notesToAdd,
                             notesToRemove = notesToRemove,
                             notesToUpdate = notesToUpdate
@@ -65,6 +70,8 @@ class EditPhotoViewModel(private val mediaRepository: MediaRepository, private v
                     }.await()
                     _goBack.value = true
                 }
+            } else {
+                _goBack.value = true
             }
         }
     }

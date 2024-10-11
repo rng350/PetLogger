@@ -10,8 +10,13 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.get
 import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.databinding.FragmentEditPhotoBinding
+import com.hfad.petlogger.photodisplay.stateless.GetAllNotesUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetAllPetsWithProfilePhotosUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetAllWeightsWithPetNamesUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetEventsOfPhotoUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetNotesOfPhotoUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetPetsOfPhotoUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetPhotosOfNoteUseCase
 import com.hfad.petlogger.repositories.EventRepository
 import com.hfad.petlogger.repositories.MediaRepository
 import com.hfad.petlogger.repositories.NoteRepository
@@ -41,18 +46,26 @@ class EditPhotoFragment : Fragment() {
         val eventRepository = EventRepository(database, mediaRepository)
         val weightRepository = WeightRepository(database)
 
+
         val getAllPetsUseCase = GetAllPetsWithProfilePhotosUseCase(petRepository)
-        val petSelectorViewModel = ViewModelProvider(this, PetMultiSelectionViewModel.provideFactory(getAllPetsUseCase)).get(PetMultiSelectionViewModel::class.java)
-        val eventSelectionViewModel = ViewModelProvider(this, EventMultiSelectionViewModel.provideFactory(eventRepository)).get(EventMultiSelectionViewModel::class.java)
+        val getPetsOfPhoto = GetPetsOfPhotoUseCase(mediaRepository, photoId)
+        val petSelectorViewModel = ViewModelProvider(this, PetMultiSelectionViewModel.provideFactory(getAllPetsUseCase, getPetsOfPhoto)).get(PetMultiSelectionViewModel::class.java)
+
+        val getEventsOfPhoto = GetEventsOfPhotoUseCase(mediaRepository, photoId)
+        val eventSelectionViewModel = ViewModelProvider(this, EventMultiSelectionViewModel.provideFactory(eventRepository, getEventsOfPhoto)).get(EventMultiSelectionViewModel::class.java)
 
         val getAllWeights = GetAllWeightsWithPetNamesUseCase(weightRepository)
         val weightMultiSelectionViewModel = ViewModelProvider(this, WeightMultiSelectionViewModel.provideFactory(getAllWeights)).get(WeightMultiSelectionViewModel::class.java)
+
+        val getAllNotes = GetAllNotesUseCase(noteRepository)
+        val getNotesOfPhoto = GetNotesOfPhotoUseCase(mediaRepository, photoId)
+        val noteSelectionViewModel = ViewModelProvider(this, NoteMultiSelectionViewModel.provideFactory(getAllNotes = getAllNotes, getInitialSelection = getNotesOfPhoto)).get(NoteMultiSelectionViewModel::class.java)
 
         editPhotoViewModel = ViewModelProvider(this, EditPhotoViewModel.provideFactory(mediaRepository, photoId)).get(EditPhotoViewModel::class.java)
         binding.editPhotoViewModel = editPhotoViewModel
         binding.petSelectorViewModel = petSelectorViewModel
         binding.eventSelectorViewModel = eventSelectionViewModel
-        binding.weightSelectorViewModel = weightMultiSelectionViewModel
+        binding.noteMultiSelectionViewModel = noteSelectionViewModel
 
         setAppBarTitle(getString(R.string.editing_photo_details))
 
@@ -62,8 +75,8 @@ class EditPhotoFragment : Fragment() {
                 petsToRemove = petSelectorViewModel.getPetsToRemove(),
                 eventsToAdd = eventSelectionViewModel.getEventsToAdd(),
                 eventsToRemove = eventSelectionViewModel.getEventsToRemove(),
-                weightsToAdd = weightMultiSelectionViewModel.getWeightsToAdd(),
-                weightsToRemove = weightMultiSelectionViewModel.getWeightsToRemove()
+                notesToAdd = noteSelectionViewModel.getNotesToAdd(),
+                notesToRemove = noteSelectionViewModel.getNotesToRemove()
             )
         }
 
