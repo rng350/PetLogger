@@ -180,4 +180,11 @@ interface WeightDao {
             "AND (datetime(note_table.note_last_updated), note_table.note_id) < (datetime(:lastNoteEditedDate), :lastNoteId) " +
             "ORDER BY note_table.note_last_updated DESC, note_table.note_id DESC LIMIT :amtLimit ")
     suspend fun getNotesOfWeightPaginated(weightId: Long, lastNoteEditedDate: OffsetDateTime, lastNoteId: Long, amtLimit: Int): List<Note>
+
+    @Query("SELECT note_table.* " +
+            "FROM note_table INNER JOIN weight_note_table " +
+            "ON note_table.note_id=weight_note_table.note_id " +
+            "WHERE weight_note_table.weight_id=:weightId " +
+            "ORDER BY note_table.note_last_updated DESC, note_table.note_id DESC")
+    suspend fun getNotesOfWeight(weightId: Long): List<Note>
 }

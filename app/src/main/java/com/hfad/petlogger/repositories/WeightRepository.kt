@@ -21,6 +21,7 @@ import com.hfad.petlogger.util.GetDateDisplayUseCase
 import com.hfad.petlogger.util.GetTimeDisplayUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
@@ -97,8 +98,29 @@ class WeightRepository(database: PetLoggerDatabase) {
         weightDao.insert(weight.weight)
     }
 
-    suspend fun update(weight: Weight) {
-
+    suspend fun update(
+        weight: Weight,
+        notesToAdd: List<Note> = listOf<Note>(),
+        notesToRemove: List<Note> = listOf<Note>(),
+        notesToUpdate: List<Note> = listOf<Note>())
+    = withContext(Dispatchers.IO) {
+        val weightUpdated = async {
+            weightDao.update(weight)
+        }
+        val notesAttached = async {
+            noteDao.attachWeights(notesToAdd.map { note -> WeightNote(weightId=weight.id, noteId = note.id) })
+        }
+        val notesDetached = async {
+            noteDao.detachWeights(notesToRemove.map { note -> WeightNote(weightId = weight.id, noteId = note.id) })
+        }
+        notesToUpdate.map { note ->
+            async {
+                noteDao.update(note)
+            }
+        }.awaitAll()
+        notesAttached.await()
+        notesDetached.await()
+        weightUpdated.await()
     }
 
     suspend fun update(weight: WeightWithPetName) {
@@ -124,5 +146,9 @@ class WeightRepository(database: PetLoggerDatabase) {
 
     suspend fun getAllWeightsPaginated(lastWeightDateTime: OffsetDateTime, lastWeightId: Long, weightsAmt: Int): List<WeightForListFetched> = withContext(Dispatchers.IO) {
         weightDao.getAllWeightsPaginated(lastWeightDateTime, lastWeightId, weightsAmt)
+    }
+
+    suspend fun getNotesOfWeight(weightId: Long): List<Note> = withContext(Dispatchers.IO) {
+        weightDao.getNotesOfWeight(weightId)
     }
 }

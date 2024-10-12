@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.hfad.petlogger.entities.Note
 import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.entities.Weight
 import com.hfad.petlogger.repositories.WeightRepository
@@ -29,10 +30,20 @@ class EditWeightViewModel(private val weightRepository: WeightRepository, privat
         }
     }
 
-    fun submitChanges(petId: Long) {
+    fun submitChanges(
+        petId: Long,
+        notesToAdd: List<Note> = listOf<Note>(),
+        notesToRemove: List<Note> = listOf<Note>(),
+        notesToUpdate: List<Note> = listOf<Note>()
+    ) {
         weight.value?.let {
             viewModelScope.launch {
-                weightRepository.update(Weight(it.id, petId, it.weightGrams, weightDateTime.selectedDateTime, it.weightNotes))
+                weightRepository.update(
+                    weight = Weight(it.id, petId, it.weightGrams, weightDateTime.selectedDateTime, it.weightNotes),
+                    notesToAdd = notesToAdd,
+                    notesToRemove = notesToRemove,
+                    notesToUpdate = notesToUpdate
+                )
             }
         }
     }

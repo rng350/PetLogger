@@ -11,7 +11,10 @@ import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.databinding.FragmentEditWeightBinding
 import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.photodisplay.stateless.GetAllCheckablePetsUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetAllNotesUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetNotesOfWeightUseCase
 import com.hfad.petlogger.repositories.MediaRepository
+import com.hfad.petlogger.repositories.NoteRepository
 import com.hfad.petlogger.repositories.PetRepository
 import com.hfad.petlogger.repositories.WeightRepository
 
@@ -42,6 +45,12 @@ class EditWeightFragment : Fragment() {
         val petPickerViewModel = ViewModelProvider(this, PetSingleSelectionViewModel.provideFactory(getAllPets, petId)).get(PetSingleSelectionViewModel::class.java)
         binding.petPickerViewModel = petPickerViewModel
 
+        val noteRepository = NoteRepository(database, mediaRepository)
+        val getAllNotes = GetAllNotesUseCase(noteRepository)
+        val getNotesOfWeight = GetNotesOfWeightUseCase(weightRepository, weightId)
+        val noteMultiPickerViewModel = ViewModelProvider(this, NoteMultiSelectionViewModel.provideFactory(getAllNotes = getAllNotes, getInitialSelection = getNotesOfWeight)).get(NoteMultiSelectionViewModel::class.java)
+        binding.noteMultiSelectionViewModel = noteMultiPickerViewModel
+
         setAppBarTitle(getString(R.string.edit_weight_header))
 
         binding.weightDate.setOnClickListener{
@@ -52,7 +61,13 @@ class EditWeightFragment : Fragment() {
             TimePicker.generate(editWeightViewModel.weightDateTime, requireContext()).show(parentFragmentManager, "TIMEPICKER")
         }
         binding.submitButton.setOnClickListener {
-            editWeightViewModel.submitChanges(petPickerViewModel.selectionTracker.currentSelection.value!!.item.petId)
+            petPickerViewModel.selectionTracker.currentSelection.value?.item?.petId?.let { petId ->
+                editWeightViewModel.submitChanges(
+                    petId = petId,
+                    notesToAdd = noteMultiPickerViewModel.getNotesToAdd(),
+                    notesToRemove = noteMultiPickerViewModel.getNotesToRemove()
+                )
+            }
         }
         binding.cancelButton.setOnClickListener{
             findNavController().popBackStack()
