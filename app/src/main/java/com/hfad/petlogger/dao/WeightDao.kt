@@ -12,8 +12,17 @@ import java.time.OffsetDateTime
 
 @Dao
 interface WeightDao {
+
+    @Transaction
+    suspend fun addWeight(weight: Weight): Weight {
+        val weightRow = insert(weight)
+        return getWeightFromRow(weightRow)
+    }
     @Insert
-    suspend fun insert(weight: Weight)
+    suspend fun insert(weight: Weight): Long
+
+    @Query("SELECT * FROM weight_table WHERE rowid = :rowId")
+    suspend fun getWeightFromRow(rowId: Long): Weight
 
     @Insert
     suspend fun insert(weights: List<Weight>)

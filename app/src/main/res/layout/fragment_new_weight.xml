@@ -13,6 +13,9 @@
         <variable
             name="petSingleSelectionViewModel"
             type="com.hfad.petlogger.PetSingleSelectionViewModel" />
+        <variable
+            name="noteMultiSelectionViewModel"
+            type="com.hfad.petlogger.NoteMultiSelectionViewModel" />
     </data>
 
     <ScrollView
@@ -125,6 +128,13 @@
                     android:text="@={newWeightViewModel.details}"
                     android:inputType="textMultiLine|textCapSentences"/>
             </com.google.android.material.textfield.TextInputLayout>
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/note_selection_fragment_container_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:name="com.hfad.petlogger.NoteMultiSelectionDisplayFragment"
+                tools:layout="@layout/fragment_note_multi_selection_display" />
 
             <LinearLayout
                 android:layout_width="match_parent"

@@ -14,7 +14,9 @@ import androidx.lifecycle.get
 import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.databinding.FragmentNewWeightBinding
 import com.hfad.petlogger.photodisplay.stateless.GetAllCheckablePetsUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetAllNotesUseCase
 import com.hfad.petlogger.repositories.MediaRepository
+import com.hfad.petlogger.repositories.NoteRepository
 import com.hfad.petlogger.repositories.PetRepository
 import com.hfad.petlogger.repositories.WeightRepository
 import kotlinx.coroutines.CoroutineScope
@@ -49,6 +51,11 @@ class NewWeightFragment : Fragment() {
         val petSingleSelectionViewModel =  ViewModelProvider(this, PetSingleSelectionViewModel.provideFactory(getCheckablePets, petId)).get(PetSingleSelectionViewModel::class.java)
         binding.petSingleSelectionViewModel = petSingleSelectionViewModel
 
+        val noteRepository = NoteRepository(database, mediaRepository)
+        val getAllNotesUseCase = GetAllNotesUseCase(noteRepository)
+        val noteMultiSelectionViewModel = ViewModelProvider(this, NoteMultiSelectionViewModel.provideFactory(getAllNotesUseCase)).get(NoteMultiSelectionViewModel::class.java)
+        binding.noteMultiSelectionViewModel = noteMultiSelectionViewModel
+
         setAppBarTitle(getString(R.string.new_weight_header))
 
         binding.dateFieldText.setOnClickListener { button ->
@@ -72,8 +79,8 @@ class NewWeightFragment : Fragment() {
         }
 
         binding.submitWeightButton.setOnClickListener {
-            petSingleSelectionViewModel.selectionTracker.currentSelection.value?.item?.petId?.let{
-                newWeightViewModel.submitWeight(it)
+            petSingleSelectionViewModel.selectionTracker.currentSelection.value?.item?.petId?.let{ petId ->
+                newWeightViewModel.submitWeight(petId = petId, notes = noteMultiSelectionViewModel.getNotesToAdd())
             }
         }
 

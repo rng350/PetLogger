@@ -2,6 +2,7 @@ package com.hfad.petlogger.repositories
 
 import android.util.Log
 import com.hfad.petlogger.PetLoggerDatabase
+import com.hfad.petlogger.dao.NoteDao
 import com.hfad.petlogger.dao.PetDao
 import com.hfad.petlogger.dao.WeightDao
 import com.hfad.petlogger.entities.Note
@@ -13,6 +14,7 @@ import com.hfad.petlogger.entities.WeightForList
 import com.hfad.petlogger.entities.WeightForListFetched
 import com.hfad.petlogger.entities.WeightFullDetailsFetched
 import com.hfad.petlogger.entities.WeightFullDetailsState
+import com.hfad.petlogger.entities.WeightNote
 import com.hfad.petlogger.entities.WeightWithPetName
 import com.hfad.petlogger.util.Converter
 import com.hfad.petlogger.util.GetDateDisplayUseCase
@@ -30,6 +32,7 @@ import java.time.OffsetDateTime
 
 class WeightRepository(database: PetLoggerDatabase) {
     private val weightDao: WeightDao = database.weightDao
+    private val noteDao: NoteDao = database.noteDao
     suspend fun get(weightId: Long): Weight = withContext(Dispatchers.IO) {
         weightDao.get(weightId)
     }
@@ -78,12 +81,20 @@ class WeightRepository(database: PetLoggerDatabase) {
         return weightDao.getPreviousWeight(weightId).flowOn(Dispatchers.IO)
     }
 
-    suspend fun insert(weight: Weight) = withContext(Dispatchers.IO) {
-        weightDao.insert(weight)
+    suspend fun addWeight(weight: Weight, notes: List<Note> = listOf<Note>()): Weight = withContext(Dispatchers.IO) {
+        val weightAdded = async {
+            weightDao.addWeight(weight)
+        }.await()
+
+        val notesAdded = async {
+            noteDao.attachWeights(notes.map { note -> WeightNote(weightId=weightAdded.id, noteId=note.id) })
+        }.await()
+
+        weightAdded
     }
 
     suspend fun insert(weight: WeightWithPetName) = withContext(Dispatchers.IO) {
-        insert(weight.weight)
+        weightDao.insert(weight.weight)
     }
 
     suspend fun update(weight: Weight) {
