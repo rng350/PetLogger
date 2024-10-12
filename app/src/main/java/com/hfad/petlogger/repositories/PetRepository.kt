@@ -32,14 +32,27 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
     private val petDao = database.petDao
     private val photoDao = database.photoDao
     private val noteDao = database.noteDao
-    suspend fun addPet(pet: Pet, photos: List<Photo> = listOf<Photo>(), profilePic: Photo? = null) = withContext(Dispatchers.IO) {
+    suspend fun addPet(
+        pet: Pet,
+        photos: List<Photo> = listOf<Photo>(),
+        profilePic: Photo? = null,
+        notes: List<Note> = listOf<Note>()
+    ): Long = withContext(Dispatchers.IO) {
         Log.d("addPet", "PET BEING ADDED... Pet: ${pet.toString()}")
-        if (profilePic == null) {
-            addPetPhotosNoProfilePic(pet, photos)
+        val photosAdded = async {
+            if (profilePic == null) {
+                addPetPhotosNoProfilePic(pet, photos)
+            }
+            else {
+                addPetPhotosWithProfilePic(pet, photos, profilePic)
+            }
         }
-        else {
-            addPetPhotosWithProfilePic(pet, photos, profilePic)
+        val petId = photosAdded.await()
+        val notesAdded = async {
+            noteDao.attachPets(notes.map{ note -> PetNote(petId=petId, noteId=note.id)})
         }
+        notesAdded.await()
+        petId
     }
 
     suspend fun deletePet(pet: Pet) = withContext(Dispatchers.IO) {

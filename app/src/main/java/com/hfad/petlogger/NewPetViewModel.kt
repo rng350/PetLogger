@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.hfad.petlogger.dao.PetDao
+import com.hfad.petlogger.entities.Note
 import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.entities.Photo
 import com.hfad.petlogger.repositories.MediaRepository
@@ -31,7 +32,11 @@ class NewPetViewModel(private val petRepository: PetRepository) : ViewModel() {
         _petSex = ""
     }
 
-    fun addPet(petProfilePhoto: Photo? = null, petPhotos: List<Photo> = listOf<Photo>()) {
+    fun addPet(
+        petProfilePhoto: Photo? = null,
+        petPhotos: List<Photo> = listOf<Photo>(),
+        notes: List<Note> = listOf<Note>()
+    ) {
         if (petName.isNotEmpty()) {
             viewModelScope.launch {
                 val pet = Pet()
@@ -41,7 +46,7 @@ class NewPetViewModel(private val petRepository: PetRepository) : ViewModel() {
                 pet.petSex = _petSex
                 pet.petDOB = petDOB.selectedDate
                 val addedPetId = async {
-                    petRepository.addPet(pet, petPhotos, petProfilePhoto)
+                    petRepository.addPet(pet, petPhotos, petProfilePhoto, notes = notes)
                 }.await()
                 goToViewPet.value = addedPetId
             }
