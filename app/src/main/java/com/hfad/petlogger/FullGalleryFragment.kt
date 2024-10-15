@@ -32,7 +32,7 @@ class FullGalleryFragment : Fragment() {
         val database = PetLoggerDatabase.getInstance(application)
 
         val mediaRepository = MediaRepository(database, application.applicationContext)
-        val getAllPhotos = GetMoreOfAllPhotosUseCase(mediaRepository, photosAmt = 10)
+        val getAllPhotos = GetMoreOfAllPhotosUseCase(mediaRepository, photosAmt = 18)
         viewModel = ViewModelProvider(this, FullGalleryViewModel.provideFactory(getAllPhotos)).get(FullGalleryViewModel::class.java)
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner

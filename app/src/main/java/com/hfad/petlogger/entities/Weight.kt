@@ -10,8 +10,8 @@ import java.time.OffsetDateTime
 @Entity(
     tableName = "weight_table",
     indices = [
-        Index(value = ["weight_pet_id", "weight_datetime"]),
-        Index(value = ["weight_datetime"])
+        Index(value = ["weight_pet_id", "weight_datetime", "weight_id"]),
+        Index(value = ["weight_datetime", "weight_id"])
     ],
     foreignKeys = [
         ForeignKey(

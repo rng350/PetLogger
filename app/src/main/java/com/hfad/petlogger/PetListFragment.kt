@@ -34,7 +34,7 @@ class PetListFragment : Fragment() {
 
         val mediaRepository = MediaRepository(database, application.applicationContext)
         val petRepository = PetRepository(database, mediaRepository)
-        val getAllPets = GetMoreOfAllPetsUseCase(petRepository, petsAmt = 10)
+        val getAllPets = GetMoreOfAllPetsUseCase(petRepository, petsAmt = 18)
         viewModel = ViewModelProvider(this, PetListViewModel.provideFactory(getAllPets)).get(PetListViewModel::class.java)
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner

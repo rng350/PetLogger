@@ -3,11 +3,17 @@ package com.hfad.petlogger.entities
 import android.net.Uri
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 
-@Entity(tableName = "photo_table")
+@Entity(
+    tableName = "photo_table",
+    indices = [
+        Index(value = ["photo_date", "photo_id"])
+    ]
+)
 data class Photo (
     @ColumnInfo(name="photo_id")
     @PrimaryKey(autoGenerate = false)

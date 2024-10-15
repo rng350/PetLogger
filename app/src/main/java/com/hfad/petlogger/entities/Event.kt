@@ -11,7 +11,7 @@ import java.time.OffsetDateTime
 @Entity(
     tableName="event_table",
     indices = [
-        Index("event_date")
+        Index("event_date", "event_id")
     ]
 )
 data class Event(

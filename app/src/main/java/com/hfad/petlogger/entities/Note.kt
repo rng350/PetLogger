@@ -9,7 +9,7 @@ import java.time.OffsetDateTime
 @Entity(
     tableName = "note_table",
     indices = [
-        Index("note_last_updated")
+        Index("note_last_updated", "note_id")
     ]
 )
 data class Note(

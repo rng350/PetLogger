@@ -44,7 +44,7 @@ import com.hfad.petlogger.util.URIConverter
         NoteTag::class,
         PhotoTag::class
     ],
-    version = 4,
+    version = 1,
     exportSchema = false)
 @TypeConverters(
     Converter::class,
