@@ -10,6 +10,5 @@ data class WeightForList(
     val weightDate: String,
     val weightTime: String,
     val weightPetName: String,
-    val weightPetPhotoUri: Uri?,
     val prevWeightDifference: String
 )

@@ -3,6 +3,8 @@ package com.hfad.petlogger.entities
 import android.net.Uri
 import com.hfad.petlogger.util.GetDateDisplayUseCase
 import com.hfad.petlogger.util.GetTimeDisplayUseCase
+import com.hfad.petlogger.util.GetWeightDifferenceDisplayUseCase
+import com.hfad.petlogger.util.GetWeightGramsDisplayUseCase
 import java.time.OffsetDateTime
 
 data class WeightForListFetched(
@@ -10,25 +12,23 @@ data class WeightForListFetched(
     val weightGramsAmt: Int,
     val weightDateTime: OffsetDateTime,
     val weightPetName: String,
-    val weightPetPhotoUri: Uri?,
     val prevWeightGramsAmt: Int?
 ) {
         fun toWeightForList(): WeightForList {
             val dateDisplay = GetDateDisplayUseCase()
             val timeDisplay = GetTimeDisplayUseCase()
-            val weightDiffAmt = weightGramsAmt - (prevWeightGramsAmt ?: 0)
-            val prevWeightDifferenceDisplay: String =
-                if (prevWeightGramsAmt!=null)
-                    "${if (weightDiffAmt>0) "+" else ""}${weightDiffAmt}g"
-                else "---"
+            val weightGramsDisplayUseCase = GetWeightGramsDisplayUseCase()
+            val weightDifferenceDisplay = GetWeightDifferenceDisplayUseCase()
             return WeightForList(
                 weightId = weightId,
-                weightGramsAmt = "${weightGramsAmt}g",
+                weightGramsAmt = weightGramsDisplayUseCase(weightGramsAmt),
                 weightDate = dateDisplay(weightDateTime),
                 weightTime = timeDisplay(weightDateTime),
                 weightPetName = weightPetName,
-                weightPetPhotoUri = weightPetPhotoUri,
-                prevWeightDifference = prevWeightDifferenceDisplay
+                prevWeightDifference = weightDifferenceDisplay(
+                    curWeightGramsAmt = weightGramsAmt,
+                    prevWeightGramsAmt = prevWeightGramsAmt
+                )
             )
     }
 }

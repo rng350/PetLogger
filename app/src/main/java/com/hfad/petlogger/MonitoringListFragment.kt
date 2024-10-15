@@ -31,7 +31,7 @@ class MonitoringListFragment : Fragment() {
         val application = requireNotNull(this.activity).application
         val database = PetLoggerDatabase.getInstance(application)
         val weightRepository = WeightRepository(database)
-        val getWeightsUseCase = GetMoreOfAllWeightsUseCase(weightRepository, weightsAmt = 10)
+        val getWeightsUseCase = GetMoreOfAllWeightsUseCase(weightRepository, weightsAmt = 15)
         viewModel = ViewModelProvider(this, MonitoringListViewModel.provideFactory(getWeightsUseCase)).get(MonitoringListViewModel::class.java)
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner

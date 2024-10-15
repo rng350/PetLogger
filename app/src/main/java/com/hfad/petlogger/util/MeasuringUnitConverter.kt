@@ -1,5 +1,6 @@
 package com.hfad.petlogger.util
 
+import com.hfad.petlogger.round
 import kotlin.math.round
 
 class MeasuringUnitConverter {
@@ -8,7 +9,7 @@ class MeasuringUnitConverter {
     }
 
     fun gramsToKilograms(weightInGrams: Int): Double {
-        return weightInGrams * 0.001
+        return (weightInGrams * 0.001).round(2)
     }
 
     fun poundsToGrams(weightInLbs: Int): Int {
@@ -16,7 +17,7 @@ class MeasuringUnitConverter {
     }
 
     fun gramsToPounds(weightInGrams: Int): Double {
-        return weightInGrams / 453.59237
+        return (weightInGrams / 453.59237).round(2)
     }
 
     fun ouncesToGrams(weightInOz: Int): Int {
@@ -24,6 +25,6 @@ class MeasuringUnitConverter {
     }
 
     fun gramsToOunces(weightInGrams: Int): Double {
-        return weightInGrams / 28.34952312
+        return (weightInGrams / 28.34952312).round(2)
     }
 }

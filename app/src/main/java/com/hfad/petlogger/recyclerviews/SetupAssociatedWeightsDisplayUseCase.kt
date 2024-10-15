@@ -1,6 +1,7 @@
 package com.hfad.petlogger.recyclerviews
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.LifecycleOwner
@@ -49,14 +50,6 @@ class SetupAssociatedWeightsDisplayUseCase(
             binder: WeightItemBinding
         ) {
             binder.weight = item
-
-            Glide.with(context).clear(binder.petProfileImage)
-            item.let {
-                Glide.with(context)
-                    .load(it.weightPetPhotoUri)
-                    .apply(RequestOptions().placeholder(R.drawable.placeholder))
-                    .into(binder.petProfileImage)
-            }
 
             binder.weightCard.setOnClickListener {
                 null

@@ -55,28 +55,11 @@ interface WeightDao {
     fun getWeightsWithPetNameAndPhoto(): Flow<List<WeightForListFetched>>
 
     @Query("""
-        SELECT 
-            weight_table.weight_id AS weightId, 
-            weight_table.weight_grams AS weightGramsAmt, 
-            weight_table.weight_datetime AS weightDateTime, 
-            pet_table.pet_name AS weightPetName, 
-            photo_table.photo_uri AS weightPetProfilePhotoUri
-        FROM weight_table 
-        LEFT JOIN pet_table ON weight_table.weight_pet_id=pet_table.pet_id 
-        LEFT JOIN pet_profile_photo_table ON pet_table.pet_id=pet_profile_photo_table.pet_id 
-        LEFT JOIN photo_table ON pet_profile_photo_table.photo_id=photo_table.photo_id 
-        WHERE (datetime(weight_datetime), weight_id) < (datetime(:lastWeightDateTime), :lastWeightId) 
-        ORDER BY datetime(weight_datetime) DESC, weight_id DESC LIMIT :amtLimit
-    """)
-    suspend fun getAllWeightsPaginatedORIG(lastWeightDateTime: OffsetDateTime, lastWeightId: Long, amtLimit: Int): List<WeightForListFetched>
-
-    @Query("""
-        SELECT 
+            SELECT 
             wt_1.weight_id AS weightId,
             wt_1.weight_grams AS weightGramsAmt,
             wt_1.weight_datetime AS weightDateTime,
-            pet_table.pet_name AS weightPetName,
-            photo_table.photo_uri AS weightPetProfilePhotoUri,
+            pet_table.pet_name AS weightPetName, 
             (
                 SELECT wt_2.weight_grams 
                 FROM weight_table wt_2 
@@ -86,8 +69,6 @@ interface WeightDao {
             ) AS prevWeightGramsAmt 
         FROM weight_table wt_1 
         LEFT JOIN pet_table ON wt_1.weight_pet_id=pet_table.pet_id 
-        LEFT JOIN pet_profile_photo_table ON pet_profile_photo_table.pet_id=wt_1.weight_pet_id 
-        LEFT JOIN photo_table ON photo_table.photo_id=pet_profile_photo_table.photo_id 
         WHERE (datetime(wt_1.weight_datetime), wt_1.weight_id) < (datetime(:lastWeightDateTime), :lastWeightId) 
         ORDER BY datetime(wt_1.weight_datetime) DESC, wt_1.weight_id DESC LIMIT :amtLimit
     """)

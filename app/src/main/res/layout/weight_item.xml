@@ -19,74 +19,11 @@
         app:cardCornerRadius="4dp">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="horizontal">
             <com.google.android.material.card.MaterialCardView
-                android:layout_width="wrap_content"
-                android:minWidth="30dp"
-                android:layout_height="match_parent"
-                app:cardCornerRadius="0dp"
-                app:cardBackgroundColor="@color/beigeish"
-                android:clickable="false"
-                android:focusable="false">
-                <TextView
-                    android:id="@+id/weight_date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@{weight.weightDate}"
-                    android:layout_gravity="center"
-                    android:textAppearance="?attr/textAppearanceBody2"
-                    android:textColor="?android:attr/textColorSecondary" />
-            </com.google.android.material.card.MaterialCardView>
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@color/black"/>
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="wrap_content"
-                android:minWidth="30dp"
-                android:layout_height="match_parent"
-                app:cardCornerRadius="0dp"
-                app:cardBackgroundColor="@color/beigeish"
-                android:clickable="false"
-                android:focusable="false">
-                <TextView
-                    android:id="@+id/weight_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@{weight.weightTime}"
-                    android:layout_gravity="center"
-                    android:textAppearance="?attr/textAppearanceBody2"
-                    android:textColor="?android:attr/textColorSecondary" />
-            </com.google.android.material.card.MaterialCardView>
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@color/black"/>
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="wrap_content"
-                android:minWidth="30dp"
-                android:layout_height="match_parent"
-                app:cardCornerRadius="0dp"
-                app:cardBackgroundColor="@color/beigeish"
-                android:clickable="false"
-                android:focusable="false">
-                <TextView
-                    android:id="@+id/weight_grams"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@{weight.weightGramsAmt}"
-                    android:layout_gravity="center"
-                    android:textAppearance="?attr/textAppearanceBody2"
-                    android:textColor="?android:attr/textColorSecondary" />
-            </com.google.android.material.card.MaterialCardView>
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@color/black"/>
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="wrap_content"
-                android:minWidth="30dp"
+                android:layout_width="0dp"
+                android:layout_weight="6"
                 android:layout_height="match_parent"
                 app:cardCornerRadius="0dp"
                 app:cardBackgroundColor="@color/beigeish"
@@ -104,15 +41,77 @@
                         android:text="@{weight.weightPetName}"
                         android:layout_gravity="left|center_vertical"
                         android:textAppearance="?attr/textAppearanceBody2"
-                        android:textColor="?android:attr/textColorSecondary" />
-                    <com.google.android.material.imageview.ShapeableImageView
-                        android:id="@+id/pet_profile_image"
-                        app:shapeAppearanceOverlay="@style/circleImageView"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_gravity="right|center_vertical"
-                        android:scaleType="fitCenter"/>
+                        android:textColor="?android:attr/textColorSecondary"
+                        android:maxLines="1" />
                 </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="0dp"
+                android:layout_weight="5"
+                android:layout_height="match_parent"
+                app:cardCornerRadius="0dp"
+                app:cardBackgroundColor="@color/dark_beigeish"
+                android:clickable="false"
+                android:focusable="false">
+                <TextView
+                    android:id="@+id/weight_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{weight.weightDate}"
+                    android:layout_gravity="center"
+                    android:textAppearance="?attr/textAppearanceBody2"
+                    android:textColor="?android:attr/textColorSecondary" />
+            </com.google.android.material.card.MaterialCardView>
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="0dp"
+                android:layout_weight="3"
+                android:layout_height="match_parent"
+                app:cardCornerRadius="0dp"
+                app:cardBackgroundColor="@color/dark_beigeish"
+                android:clickable="false"
+                android:focusable="false">
+                <TextView
+                    android:id="@+id/weight_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{weight.weightTime}"
+                    android:layout_gravity="center"
+                    android:textAppearance="?attr/textAppearanceBody2"
+                    android:textColor="?android:attr/textColorSecondary" />
+            </com.google.android.material.card.MaterialCardView>
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="0dp"
+                android:layout_weight="4"
+                android:layout_height="match_parent"
+                app:cardCornerRadius="0dp"
+                app:cardBackgroundColor="@color/beigeish"
+                android:clickable="false"
+                android:focusable="false">
+                <TextView
+                    android:id="@+id/weight_grams"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{weight.weightGramsAmt}"
+                    android:layout_gravity="center"
+                    android:textAppearance="?attr/textAppearanceBody2"
+                    android:textColor="?android:attr/textColorSecondary" />
+            </com.google.android.material.card.MaterialCardView>
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="0dp"
+                android:layout_weight="4"
+                android:layout_height="match_parent"
+                app:cardCornerRadius="0dp"
+                app:cardBackgroundColor="@color/dark_beigeish"
+                android:clickable="false"
+                android:focusable="false">
+                <TextView
+                    android:id="@+id/weight_difference_grams"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{weight.prevWeightDifference}"
+                    android:layout_gravity="center"
+                    android:textAppearance="?attr/textAppearanceBody2"
+                    android:textColor="?android:attr/textColorSecondary" />
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
