@@ -9,4 +9,8 @@ class GetNotesOfPhotoUseCase(private val mediaRepository: MediaRepository, priva
     override suspend fun invoke(): List<Note> {
         return mediaRepository.getNotesOfPhoto(photoId)
     }
+
+    override fun resetCurrentPoint() {
+        TODO("Not yet implemented")
+    }
 }

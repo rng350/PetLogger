@@ -8,4 +8,8 @@ class GetPetsOfNoteUseCase(private val noteRepository: NoteRepository, private v
     override suspend fun invoke(): List<PetWithProfilePic> {
         return noteRepository.getPetsWithProfilePicsOfNote(noteId)
     }
+
+    override fun resetCurrentPoint() {
+        TODO("Not yet implemented")
+    }
 }

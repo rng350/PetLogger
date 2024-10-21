@@ -8,4 +8,8 @@ class GetPhotosOfPetUseCase(private val petRepository: PetRepository, private va
     override suspend fun invoke(): List<Photo> {
         return petRepository.getPetPhotosAsList(petId)
     }
+
+    override fun resetCurrentPoint() {
+        TODO("Not yet implemented")
+    }
 }

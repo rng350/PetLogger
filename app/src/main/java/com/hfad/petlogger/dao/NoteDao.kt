@@ -208,4 +208,15 @@ interface NoteDao {
         ORDER BY datetime(wt_1.weight_datetime) DESC, wt_1.weight_id DESC LIMIT :amtLimit
     """)
     suspend fun getWeightsOfNotePaginated(noteId: Long, lastWeightDateTime: OffsetDateTime, lastWeightId: Long, amtLimit: Int): List<WeightForListFetched>
+
+
+    @Query("""
+        SELECT note_table.* 
+        FROM note_table JOIN note_table_fts 
+        ON note_table.note_id=note_table_fts.note_id 
+        WHERE note_table_fts MATCH :query 
+        AND (datetime(note_table.note_last_updated), note_table.note_id) < (datetime(:lastNoteUpdateDate), :lastNoteId) 
+        ORDER BY datetime(note_table.note_last_updated) DESC, note_table.note_id DESC LIMIT :noteAmt
+    """)
+    suspend fun getSearchedNotesFromAllPaginated(query: String, lastNoteUpdateDate: OffsetDateTime, lastNoteId: Long, noteAmt: Int): List<Note>
 }

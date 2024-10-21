@@ -36,6 +36,7 @@ import com.hfad.petlogger.util.URIConverter
         PetNote::class,
         PhotoNote::class,
         WeightNote::class,
+        NoteFts::class,
 
         Tag::class,
         PetTag::class,
@@ -44,7 +45,7 @@ import com.hfad.petlogger.util.URIConverter
         NoteTag::class,
         PhotoTag::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false)
 @TypeConverters(
     Converter::class,

@@ -10,4 +10,8 @@ class GetPetsOfEventUseCase(private val eventRepository: EventRepository, privat
     override suspend operator fun invoke(): List<PetWithProfilePic> = withContext(Dispatchers.IO) {
         eventRepository.getPetsOfEvent(eventId)
     }
+
+    override fun resetCurrentPoint() {
+        TODO("Not yet implemented")
+    }
 }

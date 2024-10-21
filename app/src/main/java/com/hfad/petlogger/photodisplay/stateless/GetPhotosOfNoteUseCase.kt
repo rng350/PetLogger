@@ -8,4 +8,8 @@ class GetPhotosOfNoteUseCase(private val noteRepository: NoteRepository, private
     override suspend fun invoke(): List<Photo> {
         return noteRepository.getPhotosOfNote(noteId)
     }
+
+    override fun resetCurrentPoint() {
+        TODO("Not yet implemented")
+    }
 }

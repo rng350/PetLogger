@@ -10,4 +10,8 @@ class GetAllPetsWithProfilePhotosUseCase(private val petRepository: PetRepositor
     override suspend fun invoke(): List<PetWithProfilePic> = withContext(Dispatchers.IO) {
         petRepository.getAllPets()
     }
+
+    override fun resetCurrentPoint() {
+        TODO("Not yet implemented")
+    }
 }

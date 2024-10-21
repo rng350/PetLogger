@@ -8,4 +8,8 @@ class GetEventsOfPetUseCase(private val petRepository: PetRepository, private va
     override suspend fun invoke(): List<Event> {
         return petRepository.getPetEventsAsList(petId)
     }
+
+    override fun resetCurrentPoint() {
+        TODO("Not yet implemented")
+    }
 }

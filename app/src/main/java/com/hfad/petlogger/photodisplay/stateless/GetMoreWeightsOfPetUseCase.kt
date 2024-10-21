@@ -21,4 +21,10 @@ class GetMoreWeightsOfPetUseCase(private val petRepository: PetRepository,
         _onLastPage = weights.size < weightsAmt
         return weights
     }
+
+    override fun resetCurrentPoint() {
+        lastWeightDate = Constants.OFFSET_DATE_TIME_MAX_ALLOWED
+        lastWeightId = Long.MAX_VALUE
+        _onLastPage = false
+    }
 }

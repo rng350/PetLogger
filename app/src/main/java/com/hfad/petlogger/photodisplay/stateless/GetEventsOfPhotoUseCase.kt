@@ -8,4 +8,8 @@ class GetEventsOfPhotoUseCase(private val mediaRepository: MediaRepository, priv
     override suspend fun invoke(): List<Event> {
         return mediaRepository.getEventsOfPhoto(photoId)
     }
+
+    override fun resetCurrentPoint() {
+        TODO("Not yet implemented")
+    }
 }

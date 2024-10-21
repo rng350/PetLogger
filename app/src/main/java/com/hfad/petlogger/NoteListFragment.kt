@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -40,8 +41,7 @@ class NoteListFragment : Fragment() {
 
         binding.lifecycleOwner = viewLifecycleOwner
 
-        val getAllNotes = GetMoreOfAllNotesUseCase(noteRepository, noteAmt = 10)
-        viewModel = ViewModelProvider(this, NoteListViewModel.provideFactory(getAllNotes)).get(NoteListViewModel::class.java)
+        viewModel = ViewModelProvider(this, NoteListViewModel.provideFactory(noteRepository, notesAmt=10)).get(NoteListViewModel::class.java)
         binding.viewModel = viewModel
 
         SetupShortenedNotesListDisplayUseCase(
@@ -70,6 +70,18 @@ class NoteListFragment : Fragment() {
         binding.addNoteButton.setOnClickListener {
             this.findNavController().navigateSafe(NoteListFragmentDirections.actionNoteListFragmentToNewNoteFragment())
         }
+
+        binding.searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                viewModel.onQueryTextSubmit(query)
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                viewModel.onQueryTextChanged(newText)
+                return true
+            }
+        })
 
         return view
     }

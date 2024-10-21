@@ -230,4 +230,8 @@ class NoteRepository(
     suspend fun getPetsOfNotePaginated(noteId: Long, lastPetId: Long, petsAmt: Int): List<PetWithProfilePic> = withContext(Dispatchers.IO) {
         noteDao.getPetsOfNotePaginated(noteId, lastPetId, petsAmt)
     }
+
+    suspend fun getSearchedNotesFromAllPaginated(query: String, lastNoteUpdateDate: OffsetDateTime, lastNoteId: Long, noteAmt: Int): List<Note> = withContext(Dispatchers.IO) {
+        noteDao.getSearchedNotesFromAllPaginated(query, lastNoteUpdateDate, lastNoteId, noteAmt)
+    }
 }

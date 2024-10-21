@@ -8,4 +8,8 @@ class GetWeightsOfNoteUseCase(private val noteRepository: NoteRepository, privat
     override suspend fun invoke(): List<WeightWithPetName> {
         return noteRepository.getWeightsOfNote(noteId)
     }
+
+    override fun resetCurrentPoint() {
+        TODO("Not yet implemented")
+    }
 }

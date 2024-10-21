@@ -22,4 +22,10 @@ class GetMoreOfAllEventsUseCase(
         _onLastPage = events.size < eventAmt
         return events.map { it.toEventForList() }
     }
+
+    override fun resetCurrentPoint() {
+        lastEventDate = Constants.OFFSET_DATE_TIME_MAX_ALLOWED
+        lastEventId = Long.MAX_VALUE
+        _onLastPage = false
+    }
 }

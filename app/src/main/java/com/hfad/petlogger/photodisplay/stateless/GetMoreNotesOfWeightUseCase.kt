@@ -21,4 +21,10 @@ class GetMoreNotesOfWeightUseCase(private val weightRepository: WeightRepository
         _onLastPage = notes.size < notesAmt
         return notes
     }
+
+    override fun resetCurrentPoint() {
+        lastNoteEditedDate = Constants.OFFSET_DATE_TIME_MAX_ALLOWED
+        lastNoteId = Long.MAX_VALUE
+        _onLastPage = false
+    }
 }

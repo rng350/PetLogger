@@ -8,4 +8,8 @@ class GetAllNotesUseCase(private val noteRepository: NoteRepository): GetItemsUs
     override suspend fun invoke(): List<Note> {
         return noteRepository.getAllNotes()
     }
+
+    override fun resetCurrentPoint() {
+        TODO("Not yet implemented")
+    }
 }

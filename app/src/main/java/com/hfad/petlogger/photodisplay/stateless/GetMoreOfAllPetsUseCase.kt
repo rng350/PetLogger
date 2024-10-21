@@ -18,4 +18,9 @@ class GetMoreOfAllPetsUseCase(
         _onLastPage = pets.size < petsAmt
         return pets
     }
+
+    override fun resetCurrentPoint() {
+        lastPetId = Long.MIN_VALUE
+        _onLastPage = false
+    }
 }

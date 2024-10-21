@@ -27,4 +27,10 @@ class GetMoreWeightsOfNoteUseCase(
             weight.toWeightForList()
         }
     }
+
+    override fun resetCurrentPoint() {
+        lastWeightDateTime = Constants.OFFSET_DATE_TIME_MAX_ALLOWED
+        lastWeightId = Long.MAX_VALUE
+        _onLastPage = false
+    }
 }

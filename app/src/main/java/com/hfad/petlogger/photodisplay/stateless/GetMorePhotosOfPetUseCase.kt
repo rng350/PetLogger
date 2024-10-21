@@ -21,4 +21,10 @@ class GetMorePhotosOfPetUseCase(private val petRepository: PetRepository,
         _onLastPage = photos.size < photosAmt
         return photos
     }
+
+    override fun resetCurrentPoint() {
+        lastPhotoDate = Constants.OFFSET_DATE_TIME_MAX_ALLOWED
+        lastPhotoId = Long.MAX_VALUE
+        _onLastPage = false
+    }
 }

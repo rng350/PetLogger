@@ -8,4 +8,8 @@ class GetEventsOfNoteUseCase(private val noteRepository: NoteRepository, private
     override suspend fun invoke(): List<Event> {
         return noteRepository.getEventsOfNote(noteId)
     }
+
+    override fun resetCurrentPoint() {
+        TODO("Not yet implemented")
+    }
 }

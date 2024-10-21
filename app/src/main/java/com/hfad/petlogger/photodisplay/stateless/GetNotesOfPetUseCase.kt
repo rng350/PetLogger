@@ -9,4 +9,8 @@ class GetNotesOfPetUseCase(private val petRepository: PetRepository, private val
     override suspend fun invoke(): List<Note> {
         return petRepository.getNotesOfPet(petId)
     }
+
+    override fun resetCurrentPoint() {
+        TODO("Not yet implemented")
+    }
 }

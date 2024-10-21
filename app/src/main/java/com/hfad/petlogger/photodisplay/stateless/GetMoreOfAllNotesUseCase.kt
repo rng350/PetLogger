@@ -21,4 +21,10 @@ class GetMoreOfAllNotesUseCase(
         _onLastPage = notes.size < noteAmt
         return notes
     }
+
+    override fun resetCurrentPoint() {
+        lastNoteUpdateDate = Constants.OFFSET_DATE_TIME_MAX_ALLOWED
+        lastNoteId = Long.MAX_VALUE
+        _onLastPage = false
+    }
 }

@@ -10,4 +10,8 @@ class GetPhotosOfEventUseCase(private val eventId: Long, private val eventReposi
     override suspend fun invoke(): List<Photo> = withContext(Dispatchers.IO) {
         eventRepository.getPhotosOfEvent(eventId)
     }
+
+    override fun resetCurrentPoint() {
+        TODO("Not yet implemented")
+    }
 }

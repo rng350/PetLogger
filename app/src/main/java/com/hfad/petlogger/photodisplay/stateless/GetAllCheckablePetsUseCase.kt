@@ -9,4 +9,8 @@ class GetAllCheckablePetsUseCase(private val petRepository: PetRepository, priva
     override suspend operator fun invoke(): List<CheckableItem<PetWithProfilePic>> {
         return petRepository.getCheckablePets(initialPetSelection)
     }
+
+    override fun resetCurrentPoint() {
+        TODO("Not yet implemented")
+    }
 }

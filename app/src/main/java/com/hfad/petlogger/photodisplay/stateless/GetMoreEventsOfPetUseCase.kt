@@ -26,4 +26,10 @@ class GetMoreEventsOfPetUseCase(
         _onLastPage = events.size < eventAmt
         return events
     }
+
+    override fun resetCurrentPoint() {
+        lastEventDate = Constants.OFFSET_DATE_TIME_MAX_ALLOWED
+        lastEventId = Long.MAX_VALUE
+        _onLastPage = false
+    }
 }

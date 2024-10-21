@@ -9,4 +9,8 @@ class GetNotesOfWeightUseCase(private val weightRepository: WeightRepository, pr
     override suspend fun invoke(): List<Note> {
         return weightRepository.getNotesOfWeight(weightId)
     }
+
+    override fun resetCurrentPoint() {
+        TODO("Not yet implemented")
+    }
 }

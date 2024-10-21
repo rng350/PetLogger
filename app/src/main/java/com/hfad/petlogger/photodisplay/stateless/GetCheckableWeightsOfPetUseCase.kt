@@ -9,4 +9,8 @@ class GetCheckableWeightsOfPetUseCase(private val petRepository: PetRepository, 
     override suspend fun invoke(): List<CheckableItem<PetWeightForDisplay>> {
         return petRepository.getCheckablePetWeightsWithTextFields(petId)
     }
+
+    override fun resetCurrentPoint() {
+        TODO("Not yet implemented")
+    }
 }

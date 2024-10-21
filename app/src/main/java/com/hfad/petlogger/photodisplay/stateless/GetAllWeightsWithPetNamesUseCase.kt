@@ -8,4 +8,8 @@ class GetAllWeightsWithPetNamesUseCase(private val weightRepository: WeightRepos
     override suspend fun invoke(): List<WeightWithPetName> {
         return weightRepository.getAllWithPetNames()
     }
+
+    override fun resetCurrentPoint() {
+        TODO("Not yet implemented")
+    }
 }

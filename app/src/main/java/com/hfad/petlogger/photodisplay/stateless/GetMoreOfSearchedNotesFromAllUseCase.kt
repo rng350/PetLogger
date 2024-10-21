@@ -1,13 +1,14 @@
 package com.hfad.petlogger.photodisplay.stateless
 
 import com.hfad.petlogger.entities.Note
-import com.hfad.petlogger.entities.Weight
-import com.hfad.petlogger.repositories.PetRepository
+import com.hfad.petlogger.repositories.NoteRepository
 import com.hfad.petlogger.util.Constants
+import java.time.OffsetDateTime
 
-class GetMoreNotesOfPetUseCase(private val petRepository: PetRepository,
-                               private val petId: Long,
-                               private val notesAmt: Int
+class GetMoreOfSearchedNotesFromAllUseCase(
+    private val noteRepository: NoteRepository,
+    private val noteAmt: Int,
+    private val query: String
 ): GetItemsUseCase<Note> {
     private var lastNoteUpdateDate = Constants.OFFSET_DATE_TIME_MAX_ALLOWED
     private var lastNoteId = Long.MAX_VALUE
@@ -16,10 +17,10 @@ class GetMoreNotesOfPetUseCase(private val petRepository: PetRepository,
         get() = _onLastPage
 
     override suspend fun invoke(): List<Note> {
-        val notes = petRepository.getPetNotesPaginated(petId, lastNoteUpdateDate, lastNoteId, notesAmt)
-        lastNoteId = notes.lastOrNull()?.id ?: Long.MAX_VALUE
-        lastNoteUpdateDate = notes.lastOrNull()?.lastUpdated ?: Constants.OFFSET_DATE_TIME_MAX_ALLOWED
-        _onLastPage = notes.size < notesAmt
+        val notes = noteRepository.getSearchedNotesFromAllPaginated(query, lastNoteUpdateDate, lastNoteId, noteAmt)
+        lastNoteUpdateDate = notes.lastOrNull()?.lastUpdated ?: OffsetDateTime.MIN
+        lastNoteId = notes.lastOrNull()?.id ?: Long.MIN_VALUE
+        _onLastPage = notes.size < noteAmt
         return notes
     }
 

@@ -9,4 +9,8 @@ class GetPetsOfPhotoUseCase(private val mediaRepository: MediaRepository, privat
     override suspend fun invoke(): List<PetWithProfilePic> {
         return mediaRepository.getPetsOfPhoto(photoId)
     }
+
+    override fun resetCurrentPoint() {
+        TODO("Not yet implemented")
+    }
 }
