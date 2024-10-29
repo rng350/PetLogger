@@ -28,7 +28,7 @@ class PetMultiSelectionDialogFragment : DialogFragment() {
         binding.lifecycleOwner = viewLifecycleOwner
 
         SetupPetMultiPickerUseCase(
-            petList = viewModel.selectionTracker.allOptions,
+            petList = viewModel.selectionTracker.visibleOptions,
             selection = viewModel.selectionTracker.prospectiveSelection,
             selectionTracker = viewModel.selectionTracker,
             recyclerView = binding.petsList,

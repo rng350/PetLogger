@@ -13,7 +13,7 @@ import com.hfad.petlogger.selectiontracker.EditSelectionTracker
 import com.hfad.petlogger.selectiontracker.MultiSelectionTracker
 
 class SetupWeightMultiPickerUseCase(private val weightList: LiveData<List<CheckableItem<WeightWithPetName>>>,
-                                    private val selection: LiveData<List<CheckableItem<WeightWithPetName>>>,
+                                    private val selection: LiveData<List<WeightWithPetName>>,
                                     private val selectionTracker: MultiSelectionTracker<WeightWithPetName>,
                                     private val recyclerView: RecyclerView,
                                     private val lifecycleOwner: LifecycleOwner
@@ -39,8 +39,8 @@ class SetupWeightMultiPickerUseCase(private val weightList: LiveData<List<Checka
                 selectionTracker.toggle(item)
             }
 
-            val observer = Observer<List<CheckableItem<WeightWithPetName>>> {
-                binder.weightCard.isChecked = selection.value?.contains(item) ?: false
+            val observer = Observer<List<WeightWithPetName>> {
+                binder.weightCard.isChecked = selection.value?.contains(item.item) ?: false
             }
             selection.observe(lifecycleOwner, observer)
         }

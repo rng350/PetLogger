@@ -26,7 +26,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:title="Select Weights"
-                app:subtitle="@{@string/amt_without_limit_selected(String.valueOf(viewModel.selectionTracker.currentSelection.size()))}"
+                app:subtitle="@{@string/amt_without_limit_selected(String.valueOf(viewModel.selectionTracker.prospectiveSelection.size()))}"
                 app:titleCentered="true"
                 app:subtitleCentered="true"/>
         </com.google.android.material.appbar.AppBarLayout>
@@ -40,8 +40,7 @@
                 android:id="@+id/weights_list"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:gravity="top"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+                android:gravity="top"/>
         </ScrollView>
 
         <LinearLayout
@@ -49,6 +48,12 @@
             android:layout_height="wrap_content"
             android:gravity="end"
             android:orientation="horizontal">
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/search_view"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:queryHint="@string/enter_tag"/>
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/cancel_button"
                 android:layout_width="wrap_content"

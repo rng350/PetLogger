@@ -3,10 +3,12 @@ package com.hfad.petlogger.entities
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import com.hfad.petlogger.util.Constants.Companion.noteTagTableHeader
+import com.hfad.petlogger.util.Constants.Companion.tagIdField
 
 @Entity(
-    tableName = "note_tag_table",
-    primaryKeys = ["note_id", "tag_id"],
+    tableName = noteTagTableHeader,
+    primaryKeys = ["note_id", tagIdField],
     foreignKeys = [
         ForeignKey(
             entity = Note::class,
@@ -17,8 +19,8 @@ import androidx.room.ForeignKey
         ),
         ForeignKey(
             entity = Tag::class,
-            parentColumns = ["tag_id"],
-            childColumns = ["tag_id"],
+            parentColumns = [tagIdField],
+            childColumns = [tagIdField],
             onDelete = ForeignKey.CASCADE,
             onUpdate = ForeignKey.CASCADE
         )
@@ -27,6 +29,6 @@ import androidx.room.ForeignKey
 data class NoteTag(
     @ColumnInfo(name = "note_id", index = true)
     var noteId: Long,
-    @ColumnInfo(name = "tag_id", index = true)
+    @ColumnInfo(name = tagIdField, index = true)
     var tagId: Long
 )

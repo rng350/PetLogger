@@ -13,7 +13,7 @@ import com.hfad.petlogger.databinding.ItemSelectedPetBinding
 import com.hfad.petlogger.entities.PetWithProfilePic
 import com.hfad.petlogger.selectiontracker.MultiSelectionTracker
 
-class SetupPetMultiPickerSelectionDisplayUseCase(private val selection: LiveData<List<CheckableItem<PetWithProfilePic>>>,
+class SetupPetMultiPickerSelectionDisplayUseCase(private val selection: LiveData<List<PetWithProfilePic>>,
                                                  private val selectionTracker: MultiSelectionTracker<PetWithProfilePic>,
                                                  private val recyclerView: RecyclerView,
                                                  private val lifecycleOwner: LifecycleOwner,
@@ -21,7 +21,7 @@ class SetupPetMultiPickerSelectionDisplayUseCase(private val selection: LiveData
 ) {
 
     operator fun invoke() {
-        val adapter = GenericRecyclerViewAdapter<CheckableItem<PetWithProfilePic>, ItemSelectedPetBinding>(
+        val adapter = GenericRecyclerViewAdapter<PetWithProfilePic, ItemSelectedPetBinding>(
             layoutId = R.layout.item_selected_pet,
             bindingInterface = createCheckablePetWithProfilePhotoItemBindingInterface()
         )
@@ -33,14 +33,14 @@ class SetupPetMultiPickerSelectionDisplayUseCase(private val selection: LiveData
     }
 
     private fun createCheckablePetWithProfilePhotoItemBindingInterface() = object:
-        DataItemBindingInterface<CheckableItem<PetWithProfilePic>, ItemSelectedPetBinding> {
-        override fun bind(item: CheckableItem<PetWithProfilePic>, binder: ItemSelectedPetBinding) {
-            binder.pet = item.item
+        DataItemBindingInterface<PetWithProfilePic, ItemSelectedPetBinding> {
+        override fun bind(item: PetWithProfilePic, binder: ItemSelectedPetBinding) {
+            binder.pet = item
 
             // clear previous requests on viewholder
             Glide.with(context).clear(binder.petProfileImage)
 
-            item.item.petProfilePicUri?.let {
+            item.petProfilePicUri?.let {
                 Glide.with(context)
                     .load(it)
                     .apply(RequestOptions().placeholder(R.drawable.placeholder))

@@ -7,6 +7,7 @@ import com.hfad.petlogger.copyOf
 import com.hfad.petlogger.photodisplay.stateless.GetItemsUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 /**
@@ -22,19 +23,20 @@ Items marked for selection in dialog, not yet confirmed
 class MultiSelectionTracker<T>(
     allOptionsFetcher: GetItemsUseCase<T>,
     initialSelectionFetcher: GetItemsUseCase<T>? = null,
-    coroutineScope: CoroutineScope,
+    private val coroutineScope: CoroutineScope,
     private val choiceLimit: Int = Int.MAX_VALUE
 ) {
     private val initialSelection = HashSet<T>()
     // for dialog
-    private val _allOptions = MutableLiveData<List<CheckableItem<T>>>()
-    val allOptions: LiveData<List<CheckableItem<T>>> get() = _allOptions
+    private val _visibleOptions = MutableLiveData<List<CheckableItem<T>>>()
+    val visibleOptions: LiveData<List<CheckableItem<T>>> get() = _visibleOptions
+    private lateinit var visibleOptionsMap: Map<T, CheckableItem<T>>
     // for displaying
-    private val _currentSelection = MutableLiveData<List<CheckableItem<T>>>()
-    val currentSelection: LiveData<List<CheckableItem<T>>> get() = _currentSelection
+    private val _currentSelection = MutableLiveData<List<T>>()
+    val currentSelection: LiveData<List<T>> get() = _currentSelection
     // in-between
-    private val _prospectiveSelection = MutableLiveData<List<CheckableItem<T>>>()
-    val prospectiveSelection: LiveData<List<CheckableItem<T>>> get() = _prospectiveSelection
+    private val _prospectiveSelection = MutableLiveData<List<T>>()
+    val prospectiveSelection: LiveData<List<T>> get() = _prospectiveSelection
 
     init {
         coroutineScope.launch {
@@ -48,31 +50,51 @@ class MultiSelectionTracker<T>(
                 val initialPicks = initialPicksDeferred.await()
                 initialSelection.addAll(initialPicks)
             }
-            val currentSelectionTemp = mutableListOf<CheckableItem<T>>()
-            _allOptions.value = allOptionsDeferred.await().map {
+            val currentSelectionTemp = mutableListOf<T>()
+            val visibleOptionsFetched = allOptionsDeferred.await().map {
                 if (initialSelection.contains(it)) {
                     val checkableItem = CheckableItem(it, MutableLiveData(true))
-                    currentSelectionTemp.add(checkableItem)
+                    currentSelectionTemp.add(checkableItem.item)
                     checkableItem
                 } else {
                     CheckableItem(it, MutableLiveData(false))
                 }
             }
+            _visibleOptions.value = visibleOptionsFetched
+            visibleOptionsMap = visibleOptionsFetched.associateBy { it.item }
+
             _currentSelection.value = currentSelectionTemp
             _prospectiveSelection.value = currentSelectionTemp
+        }
+    }
+
+    // call whenever search box is interacted with
+    fun setVisibleSelectionOptions(visibleOptionsFetcher: GetItemsUseCase<T>) {
+        coroutineScope.launch {
+            val visibleOptionsFetched = async {
+                visibleOptionsFetcher()
+            }.await().map {
+                CheckableItem(it, MutableLiveData(prospectiveSelection.value?.contains(it)))
+            }
+            _visibleOptions.value = visibleOptionsFetched
+            visibleOptionsMap = visibleOptionsFetched.associateBy { it.item }
         }
     }
 
     // call when pressing "Cancel" in dialog
     fun cancelProspectiveSelection() {
         // set prospective to current
-        currentSelection.value?.let { currentSelectionList ->
+
+        _visibleOptions.value = _visibleOptions.value?.onEach { it.isChecked.value = currentSelection.value?.contains(it.item) ?: false } ?: listOf()
+        _prospectiveSelection.value = currentSelection.value
+
+        /*currentSelection.value?.let { currentSelectionList ->
             currentSelectionList.onEach { it -> it.isChecked.value = true }
             prospectiveSelection.value?.let { prospectiveSelectionList ->
                 prospectiveSelectionList.onEach { it -> it.isChecked.value = currentSelectionList.contains(it) }
             }
             _prospectiveSelection.value = currentSelection.value
-        }
+        }*/
     }
 
     // call when pressing "Ok" in dialog
@@ -85,17 +107,17 @@ class MultiSelectionTracker<T>(
     fun toggle(checkableItem: CheckableItem<T>) {
         _prospectiveSelection.value?.let {
             // if in prospective, remove from it
-            if (it.contains(checkableItem)) {
+            if (it.contains(checkableItem.item)) {
                 checkableItem.isChecked.value = false
                 val listCopy = it.toMutableList()
-                listCopy.remove(checkableItem)
+                listCopy.remove(checkableItem.item)
                 _prospectiveSelection.value = listCopy
             } else {
                 // if not in prospective, add to it
                 if (prospectiveSelection.value!=null && prospectiveSelection.value!!.size<choiceLimit) {
                     checkableItem.isChecked.value = true
                     val listCopy = it.toMutableList()
-                    listCopy.add(checkableItem)
+                    listCopy.add(checkableItem.item)
                     _prospectiveSelection.value = listCopy
                 }
             }
@@ -107,7 +129,7 @@ class MultiSelectionTracker<T>(
         // anything in current that's not in initial selection
         val selectionTemp = mutableListOf<T>()
         currentSelection.value?.let { currentSelectionList ->
-            selectionTemp.addAll(currentSelectionList.map{it.item}.filterNot{initialSelection.contains(it)})
+            selectionTemp.addAll(currentSelectionList.map{it}.filterNot{initialSelection.contains(it)})
         }
         return selectionTemp.toList()
     }
@@ -118,16 +140,17 @@ class MultiSelectionTracker<T>(
         val selectionTemp = mutableListOf<T>()
         val initialSelectionAsList = initialSelection.toList()
         currentSelection.value?.let { currentSelectionList ->
-            val currentSelectionHash = currentSelectionList.map{it.item}.toHashSet()
+            val currentSelectionHash = currentSelectionList.map{it}.toHashSet()
             selectionTemp.addAll(initialSelectionAsList.filterNot { currentSelectionHash.contains(it) })
         }
         return selectionTemp
     }
 
     // call when clicking on item from display fragment
-    fun remove(item: CheckableItem<T>) {
+    fun remove(item: T) {
         // remove from both current & prospective selection lists
-        item.isChecked.value = false
+        val checkedItem = visibleOptionsMap.get(item)
+        checkedItem?.isChecked?.value = false
         _prospectiveSelection.value?.let {
             val listCopy = it.toMutableList()
             listCopy.remove(item)
@@ -142,12 +165,13 @@ class MultiSelectionTracker<T>(
 
     // call when resetting in display fragment
     fun resetSelection() {
-        val currentSelectionTemp = mutableListOf<CheckableItem<T>>()
+        val currentSelectionTemp = mutableListOf<T>()
+        val initialSelectionHash = initialSelection.toHashSet()
 
-        _allOptions.value = allOptions.value?.onEach {
-            if (initialSelection.contains(it.item)) {
+        _visibleOptions.value = visibleOptions.value?.onEach {
+            if (initialSelectionHash.contains(it.item)) {
                 it.isChecked.value = true
-                currentSelectionTemp.add(it)
+                currentSelectionTemp.add(it.item)
             } else {
                 it.isChecked.value = false
             }

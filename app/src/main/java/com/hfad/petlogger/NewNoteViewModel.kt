@@ -9,6 +9,7 @@ import com.hfad.petlogger.entities.Event
 import com.hfad.petlogger.entities.Note
 import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.entities.Photo
+import com.hfad.petlogger.entities.Tag
 import com.hfad.petlogger.entities.Weight
 import com.hfad.petlogger.repositories.NoteRepository
 import kotlinx.coroutines.async
@@ -23,12 +24,13 @@ class NewNoteViewModel(private val noteRepository: NoteRepository) : ViewModel()
     fun submitNote(pets: List<Long> = listOf(),
                    events: List<Event> = listOf(),
                    weights: List<Weight> = listOf(),
-                   photos: List<Photo> = listOf()) {
+                   photos: List<Photo> = listOf(),
+                   tags: List<Tag> = listOf()) {
         if (noteTitle.isNotEmpty() || noteDetails.isNotEmpty()) {
             val note = Note(title = noteTitle, details = noteDetails)
             viewModelScope.launch {
                 val inserted = async {
-                    noteRepository.insertNote(note, pets, events, weights, photos)
+                    noteRepository.insertNote(note, pets, events, weights, photos, tags)
                 }
                 inserted.await()
                 _goBack.value = true

@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
+import androidx.lifecycle.get
 import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.databinding.FragmentViewNoteBinding
 import com.hfad.petlogger.photodisplay.stateful.GetEventsOfNoteForDisplayUseCase
@@ -15,8 +16,10 @@ import com.hfad.petlogger.photodisplay.stateful.GetPhotosOfNoteForDisplayUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetMoreEventsOfNoteUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetMorePetsOfNoteUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetMorePhotosOfNoteUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetTagsOfNoteUseCase
 import com.hfad.petlogger.repositories.MediaRepository
 import com.hfad.petlogger.repositories.NoteRepository
+import com.hfad.petlogger.repositories.TagRepository
 
 class ViewNoteFragment : Fragment() {
     private var _binding: FragmentViewNoteBinding? = null
@@ -53,6 +56,11 @@ class ViewNoteFragment : Fragment() {
         val getEventsOfNote = GetMoreEventsOfNoteUseCase(noteRepository, noteId, eventAmt = 10)
         val associatedEventsDisplayViewModel = ViewModelProvider(this, AssociatedEventsDisplayViewModel.provideFactory(getEventsOfNote)).get(AssociatedEventsDisplayViewModel::class.java)
         binding.associatedEventsDisplayViewModel = associatedEventsDisplayViewModel
+
+        val tagRepository = TagRepository(database)
+        val getTagsOfNote = GetTagsOfNoteUseCase(tagRepository, noteId)
+        val associatedTagsViewModel = ViewModelProvider(this, AssociatedTagsDisplayViewModel.provideFactory(getTagsOfNote)).get(AssociatedTagsDisplayViewModel::class.java)
+        binding.associatedTagsDisplayViewModel = associatedTagsViewModel
 
         viewNoteViewModel.note.observe(viewLifecycleOwner, Observer {
             it?.let {

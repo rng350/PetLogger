@@ -21,7 +21,7 @@ import com.hfad.petlogger.selectiontracker.MultiSelectionTracker
 import com.hfad.petlogger.selectiontracker.SelectionTracker
 
 class SetupPetMultiPickerUseCase(private val petList: LiveData<List<CheckableItem<PetWithProfilePic>>>,
-                                 private val selection: LiveData<List<CheckableItem<PetWithProfilePic>>>,
+                                 private val selection: LiveData<List<PetWithProfilePic>>,
                                  private val selectionTracker: MultiSelectionTracker<PetWithProfilePic>,
                                  private val recyclerView: RecyclerView,
                                  private val lifecycleOwner: LifecycleOwner,
@@ -64,8 +64,8 @@ class SetupPetMultiPickerUseCase(private val petList: LiveData<List<CheckableIte
                 selectionTracker.toggle(item)
             }
 
-            val observer = Observer<List<CheckableItem<PetWithProfilePic>>> {
-                binder.petCard.isChecked = selection.value?.contains(item) ?: false
+            val observer = Observer<List<PetWithProfilePic>> {
+                binder.petCard.isChecked = selection.value?.contains(item.item) ?: false
             }
             selection.observe(lifecycleOwner, observer)
         }

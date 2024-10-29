@@ -1,14 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     tools:context=".TagMultiSelectionDialogFragment">
+    <data>
+        <variable
+            name="tagMultiSelectionViewModel"
+            type="com.hfad.petlogger.TagMultiSelectionViewModel" />
+    </data>
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/dialogFragmentAppBarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/dialogFragmentAppBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:title="Select Tags"
+                app:subtitle="@{@string/amt_without_limit_selected(String.valueOf(tagMultiSelectionViewModel.selectionTracker.prospectiveSelection.size()))}"
+                app:titleCentered="true"
+                app:subtitleCentered="true"/>
+        </com.google.android.material.appbar.AppBarLayout>
 
-</FrameLayout>
+        <ScrollView
+            android:id="@+id/tags_list_scroll_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/tags_list"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:gravity="top" />
+        </ScrollView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:orientation="horizontal">
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/search_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:queryHint="@string/enter_tag"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/cancel_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="10dp"
+                android:text="@string/cancel"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/confirm_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="@string/confirm" />
+        </LinearLayout>
+    </LinearLayout>
+</layout>

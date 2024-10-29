@@ -12,11 +12,13 @@ import com.hfad.petlogger.databinding.FragmentNewNoteBinding
 import com.hfad.petlogger.entities.PetWithProfilePic
 import com.hfad.petlogger.photodisplay.stateless.GetAllCheckablePetsUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetAllPetsWithProfilePhotosUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetAllTagsUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetAllWeightsWithPetNamesUseCase
 import com.hfad.petlogger.repositories.EventRepository
 import com.hfad.petlogger.repositories.MediaRepository
 import com.hfad.petlogger.repositories.NoteRepository
 import com.hfad.petlogger.repositories.PetRepository
+import com.hfad.petlogger.repositories.TagRepository
 import com.hfad.petlogger.repositories.WeightRepository
 import com.hfad.petlogger.selectiontracker.MultiSelectionTracker
 
@@ -28,6 +30,7 @@ class NewNoteFragment : Fragment() {
     private lateinit var eventMultiSelectionViewModel: EventMultiSelectionViewModel
     private lateinit var weightMultiSelectionViewModel: WeightMultiSelectionViewModel
     private lateinit var mediaSelectionViewModel: MediaSelectionViewModel
+    private lateinit var tagMultiSelectionViewModel: TagMultiSelectionViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -55,11 +58,16 @@ class NewNoteFragment : Fragment() {
         weightMultiSelectionViewModel = ViewModelProvider(this, WeightMultiSelectionViewModel.provideFactory(getAllWeights)).get(WeightMultiSelectionViewModel::class.java)
         mediaSelectionViewModel = ViewModelProvider(this, MediaSelectionViewModel.provideFactory(mediaRepository = mediaRepository, maxItems = 10)).get(MediaSelectionViewModel::class.java)
 
+        val tagRepository = TagRepository(database)
+        val getAllTags = GetAllTagsUseCase(tagRepository)
+        tagMultiSelectionViewModel = ViewModelProvider(this, TagMultiSelectionViewModel.provideFactory(tagRepository, getAllTags)).get(TagMultiSelectionViewModel::class.java)
+
         binding.newNoteViewModel = newNoteViewModel
         binding.petMultiSelectionViewModel = petMultiSelectionViewModel
         binding.eventMultiSelectionViewModel = eventMultiSelectionViewModel
         binding.weightMultiSelectionViewModel = weightMultiSelectionViewModel
         binding.mediaSelectionViewModel = mediaSelectionViewModel
+        binding.tagMultiSelectionViewModel = tagMultiSelectionViewModel
 
 
         binding.lifecycleOwner = viewLifecycleOwner
@@ -69,7 +77,8 @@ class NewNoteFragment : Fragment() {
                 pets = petMultiSelectionViewModel.getPetsToAdd(),
                 events = eventMultiSelectionViewModel.getEventsToAdd(),
                 weights = weightMultiSelectionViewModel.getWeightsToAdd(),
-                photos = mediaSelectionViewModel.getPhotosToAdd()
+                photos = mediaSelectionViewModel.getPhotosToAdd(),
+                tags = tagMultiSelectionViewModel.getTagsToAdd()
             )
         }
 

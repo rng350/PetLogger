@@ -10,13 +10,13 @@ import com.hfad.petlogger.databinding.NoteShortItemBinding
 import com.hfad.petlogger.entities.Note
 import com.hfad.petlogger.selectiontracker.MultiSelectionTracker
 
-class SetupNoteMultiPickerSelectionDisplayUseCase(private val selection: LiveData<List<CheckableItem<Note>>>,
+class SetupNoteMultiPickerSelectionDisplayUseCase(private val selection: LiveData<List<Note>>,
                                                   private val selectionTracker: MultiSelectionTracker<Note>,
                                                   private val recyclerView: RecyclerView,
                                                   private val lifecycleOwner: LifecycleOwner
 ) {
     operator fun invoke() {
-        val adapter = GenericRecyclerViewAdapter<CheckableItem<Note>, NoteShortItemBinding>(
+        val adapter = GenericRecyclerViewAdapter<Note, NoteShortItemBinding>(
             layoutId = R.layout.note_short_item,
             bindingInterface = createNoteItemBindingInterface()
         )
@@ -28,9 +28,9 @@ class SetupNoteMultiPickerSelectionDisplayUseCase(private val selection: LiveDat
     }
 
     private fun createNoteItemBindingInterface() = object:
-        DataItemBindingInterface<CheckableItem<Note>, NoteShortItemBinding> {
-        override fun bind(item: CheckableItem<Note>, binder: NoteShortItemBinding) {
-            binder.note = item.item
+        DataItemBindingInterface<Note, NoteShortItemBinding> {
+        override fun bind(item: Note, binder: NoteShortItemBinding) {
+            binder.note = item
 
             binder.noteCard.setOnClickListener { null }
             binder.noteCard.setOnClickListener {

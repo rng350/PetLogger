@@ -26,7 +26,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:title="Select Notes"
-                app:subtitle="@{@string/amt_without_limit_selected(String.valueOf(noteMultiSelectionViewModel.selectionTracker.currentSelection.size()))}"
+                app:subtitle="@{@string/amt_without_limit_selected(String.valueOf(noteMultiSelectionViewModel.selectionTracker.prospectiveSelection.size()))}"
                 app:titleCentered="true"
                 app:subtitleCentered="true"/>
         </com.google.android.material.appbar.AppBarLayout>

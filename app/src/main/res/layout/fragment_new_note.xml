@@ -21,6 +21,9 @@
         <variable
             name="mediaSelectionViewModel"
             type="com.hfad.petlogger.MediaSelectionViewModel" />
+        <variable
+            name="tagMultiSelectionViewModel"
+            type="com.hfad.petlogger.TagMultiSelectionViewModel" />
     </data>
 
     <ScrollView
@@ -86,6 +89,13 @@
                 android:layout_height="wrap_content"
                 android:name="com.hfad.petlogger.MediaSelectionFragment"
                 tools:layout="@layout/fragment_media_selection" />
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/tag_selection_fragment_container_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:name="com.hfad.petlogger.TagMultiSelectionDisplayFragment"
+                tools:layout="@layout/fragment_tag_multi_selection_display"/>
 
             <LinearLayout
                 android:layout_width="match_parent"

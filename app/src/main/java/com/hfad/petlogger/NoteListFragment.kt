@@ -36,7 +36,7 @@ class NoteListFragment : Fragment() {
         val application = requireNotNull(this.activity).application
         val database = PetLoggerDatabase.getInstance(application)
 
-        val mediaRepository = MediaRepository(database, requireContext())
+        val mediaRepository = MediaRepository(database, application.applicationContext)
         val noteRepository = NoteRepository(PetLoggerDatabase.getInstance(requireContext()), mediaRepository)
 
         binding.lifecycleOwner = viewLifecycleOwner

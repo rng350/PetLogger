@@ -11,10 +11,12 @@ import com.hfad.petlogger.entities.PetNote
 import com.hfad.petlogger.entities.PetWithProfilePic
 import com.hfad.petlogger.entities.Photo
 import com.hfad.petlogger.entities.PhotoNote
+import com.hfad.petlogger.entities.Tag
 import com.hfad.petlogger.entities.Weight
 import com.hfad.petlogger.entities.WeightForListFetched
 import com.hfad.petlogger.entities.WeightNote
 import com.hfad.petlogger.entities.WeightWithPetName
+import com.hfad.petlogger.util.Constants.Companion.newTagPlaceholderId
 import com.hfad.petlogger.util.GetDateDisplayUseCase
 import com.hfad.petlogger.util.GetTimeDisplayUseCase
 import kotlinx.coroutines.Dispatchers
@@ -49,7 +51,8 @@ class NoteRepository(
                            pets: List<Long> = listOf<Long>(),
                            events: List<Event> = listOf<Event>(),
                            weights: List<Weight> = listOf<Weight>(),
-                           photos: List<Photo> = listOf<Photo>()): Long
+                           photos: List<Photo> = listOf<Photo>(),
+                           tags: List<Tag> = listOf<Tag>()): Long
     = withContext(Dispatchers.IO) {
 
         val noteId = database.withTransaction {
@@ -76,11 +79,21 @@ class NoteRepository(
                 mediaRepository.addNewPhotoForNote(it, noteId)
             }
         }
+        val tagRepository = TagRepository(database)
+        val tagsDeferred = tags.map { tag ->
+            async {
+                if (tag.tagId == newTagPlaceholderId) {
+                    tagRepository.attachNoteToNewTag(noteId, tag)
+                }
+                else tagRepository.attachNoteToExistingTag(noteId, tag)
+            }
+        }
 
         petsDeferred.awaitAll()
         eventsDeferred.awaitAll()
         weightsDeferred.awaitAll()
         photosDeferred.awaitAll()
+        tagsDeferred.awaitAll()
 
         noteId
     }

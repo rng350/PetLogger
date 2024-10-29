@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable
+            name="tag"
+            type="com.hfad.petlogger.entities.Tag" />
+    </data>
+    <com.google.android.material.chip.Chip
+        android:id="@+id/tag_chip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/Widget.MaterialComponents.Chip.Entry"
+        android:checkable="true"
+        android:text="@{tag.tagName}"/>
+</layout>

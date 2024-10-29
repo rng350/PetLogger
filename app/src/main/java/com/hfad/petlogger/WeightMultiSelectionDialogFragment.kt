@@ -26,7 +26,7 @@ class WeightMultiSelectionDialogFragment : DialogFragment() {
         binding.viewModel = viewModel
 
         SetupWeightMultiPickerUseCase(
-            viewModel.selectionTracker.allOptions,
+            viewModel.selectionTracker.visibleOptions,
             viewModel.selectionTracker.prospectiveSelection,
             viewModel.selectionTracker,
             binding.weightsList,

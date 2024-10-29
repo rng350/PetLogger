@@ -1,14 +1,49 @@
 package com.hfad.petlogger.repositories
 
 import androidx.room.withTransaction
+import com.hfad.petlogger.CheckableItem
 import com.hfad.petlogger.PetLoggerDatabase
+import com.hfad.petlogger.entities.Event
+import com.hfad.petlogger.entities.Note
+import com.hfad.petlogger.entities.NoteTag
 import com.hfad.petlogger.entities.PetTag
+import com.hfad.petlogger.entities.PetWithProfilePic
+import com.hfad.petlogger.entities.Photo
 import com.hfad.petlogger.entities.Tag
+import com.hfad.petlogger.entities.WeightWithPetName
+import com.hfad.petlogger.util.Constants.Companion.newTagPlaceholderId
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 
 class TagRepository(private val database: PetLoggerDatabase) {
     private val tagDao = database.tagDao
+
+    suspend fun getTagByName(tagName: String): Tag? = withContext(Dispatchers.IO) {
+        tagDao.getTagByName(tagName)
+    }
+
+    suspend fun getAllTags(): List<Tag> = withContext(Dispatchers.IO) {
+        tagDao.getAllTagsOrderedByFrequency()
+    }
+
+    suspend fun getTagsOfNote(noteId: Long): List<Tag> = withContext(Dispatchers.IO) {
+        tagDao.getAllTagsOfNote(noteId)
+    }
+
+    suspend fun getTagsOfNoteAlphabeticalOrder(noteId: Long): List<Tag> = withContext(Dispatchers.IO) {
+        tagDao.getAllTagsOfNoteAlphabeticalOrder(noteId)
+    }
+
+    suspend fun updateTag(
+        associatedPets: List<PetWithProfilePic> = listOf<PetWithProfilePic>(),
+        associatedEvents: List<Event> = listOf<Event>(),
+        associatedNotes: List<Note> = listOf<Note>(),
+        associatedWeights: List<WeightWithPetName> = listOf<WeightWithPetName>(),
+        associatedPhotos: List<Photo> = listOf<Photo>()
+    ) = withContext(Dispatchers.IO) {
+
+    }
     suspend fun attachPetToTag(petId: Long, tagName: String) = withContext(Dispatchers.IO) {
         database.withTransaction {
             val tag = tagDao.getTagByName(tagName)
@@ -22,14 +57,75 @@ class TagRepository(private val database: PetLoggerDatabase) {
         }
     }
 
+    suspend fun attachNoteToExistingTag(noteId: Long, tag: Tag) = withContext(Dispatchers.IO) {
+        tagDao.attachNote(NoteTag(noteId = noteId, tagId = tag.tagId))
+    }
+
+    suspend fun attachNoteToNewTag(noteId: Long, tag: Tag) = withContext(Dispatchers.IO) {
+        database.withTransaction {
+            val insertedTag = insertNewTag(tag)
+            tagDao.attachNote(NoteTag(noteId = noteId, tagId = insertedTag.tagId))
+        }
+    }
+
+    private suspend fun insertNewTag(tag: Tag): Tag {
+        val rowId = tagDao.insert(Tag(tagName = tag.tagName))
+        return tagDao.getTagFromRowId(rowId)
+    }
+
+    suspend fun attachNoteToTag(noteId: Long, tagName: String) = withContext(Dispatchers.IO) {
+        database.withTransaction {
+            val tag = tagDao.getTagByName(tagName)
+            if (tag != null) {
+                tagDao.attachNote(NoteTag(noteId = noteId, tagId = tag.tagId))
+            } else {
+                val rowId = tagDao.insert(Tag(tagName = tagName))
+                val insertedTag = tagDao.getTagFromRowId(rowId)
+                tagDao.attachNote(NoteTag(noteId = noteId, tagId = insertedTag.tagId))
+            }
+        }
+    }
+
+    suspend fun detachNoteFromTag(noteId: Long, tag: Tag) = withContext(Dispatchers.IO) {
+        val tagInstancesAmt = async {
+            countTagInstances(tag.tagId)
+        }.await()
+        if (tagInstancesAmt < 2) {
+            tagDao.delete(tag)
+        }
+        tagDao.detachNote(NoteTag(noteId = noteId, tagId = tag.tagId))
+    }
+
+    suspend fun searchTagsByQuery(query: String): List<Tag> = withContext(Dispatchers.IO) {
+        var searchResults = tagDao.searchTagsByQuery(query)
+        if (searchResults.isNotEmpty()) {
+            if (searchResults[0].tagName != query) {
+                searchResults = listOf(Tag(tagName = query, tagId = newTagPlaceholderId)) + searchResults
+            }
+        } else {
+            searchResults = listOf(Tag(tagName = query, tagId = newTagPlaceholderId))
+        }
+        searchResults
+    }
+
+    suspend fun getCheckedTagSelectionOptionsOfNote(noteId: Long?): List<CheckableItem<Tag>> = withContext(Dispatchers.IO) {
+        if (noteId != null) {
+            tagDao.getCheckedTagSelectionOptionsOfNote(noteId).map { it.toCheckableItem() }
+        } else {
+            tagDao.getAllCheckedTags().map { it.toCheckableItem() }
+        }
+    }
+
+    private suspend fun countTagInstances(tagId: Long): Int = withContext(Dispatchers.IO) {
+        tagDao.countTagInstances(tagId)
+    }
+
     // TODO: attachEventToTag
-    // TODO: attachNoteToTag
     // TODO: attachWeightToTag
     // TODO: attachPhotoToTag
 
     // TODO: detachPetFromTag
     // TODO: detachEventFromTag
-    // TODO: detachNoteFromTag
     // TODO: detachWeightFromTag
     // TODO: detachPhotoFromTag
 }

@@ -34,7 +34,7 @@ class NoteMultiSelectionDialogFragment : DialogFragment() {
         }
 
         SetupNoteMultiPickerUseCase(
-            noteList = noteMultiSelectionViewModel.selectionTracker.allOptions,
+            noteList = noteMultiSelectionViewModel.selectionTracker.visibleOptions,
             selection = noteMultiSelectionViewModel.selectionTracker.prospectiveSelection,
             selectionTracker = noteMultiSelectionViewModel.selectionTracker,
             recyclerView = binding.notesList,

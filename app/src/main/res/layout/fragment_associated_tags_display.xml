@@ -3,11 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".TagMultiSelectionDisplayFragment">
+    tools:context=".AssociatedTagsDisplayFragment">
+
     <data>
         <variable
-            name="tagMultiSelectionViewModel"
-            type="com.hfad.petlogger.TagMultiSelectionViewModel" />
+            name="associatedTagsDisplayViewModel"
+            type="com.hfad.petlogger.AssociatedTagsDisplayViewModel" />
     </data>
 
     <com.google.android.material.card.MaterialCardView
@@ -22,14 +23,14 @@
             android:orientation="vertical">
 
             <com.google.android.material.appbar.AppBarLayout
-                android:id="@+id/dialogFragmentAppBarLayout"
+                android:id="@+id/appBarLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent">
                 <com.google.android.material.appbar.MaterialToolbar
-                    android:id="@+id/dialogFragmentAppBar"
+                    android:id="@+id/appBar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:title="@string/associated_tags"
@@ -37,35 +38,16 @@
             </com.google.android.material.appbar.AppBarLayout>
 
             <androidx.core.widget.NestedScrollView
-                android:id="@+id/tag_list_scroll_view"
+                android:id="@+id/tags_list_scroll_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/tag_list"
+                    android:id="@+id/tags_list"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:gravity="top" />
             </androidx.core.widget.NestedScrollView>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="horizontal">
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/addTagsButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="10dp"
-                    android:text="@string/add_tags" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/resetButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="10dp"
-                    android:text="@string/reset" />
-            </LinearLayout>
         </LinearLayout>
 
     </com.google.android.material.card.MaterialCardView>
