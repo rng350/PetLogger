@@ -40,6 +40,10 @@ class TagMultiSelectionDisplayFragment : Fragment() {
             }
         }
 
+        binding.resetButton.setOnClickListener {
+            tagMultiSelectionViewModel.reset()
+        }
+
         binding.tagList.layoutManager = FlexboxLayoutManager(requireContext()).apply {
             flexDirection = FlexDirection.ROW
             flexWrap = FlexWrap.WRAP

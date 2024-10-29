@@ -106,7 +106,9 @@ class NoteRepository(
                            weightsToAdd: List<Weight> = listOf<Weight>(),
                            weightsToRemove: List<Weight> = listOf<Weight>(),
                            photosToAdd: List<Photo> = listOf<Photo>(),
-                           photosToRemove: List<Photo> = listOf<Photo>())
+                           photosToRemove: List<Photo> = listOf<Photo>(),
+                           tagsToAdd: List<Tag> = listOf<Tag>(),
+                           tagsToRemove: List<Tag> = listOf<Tag>())
     = withContext(Dispatchers.IO) {
         val noteUpdated = async {
             noteDao.update(note)
@@ -137,6 +139,20 @@ class NoteRepository(
         val photosDetached = async {
             noteDao.detachPhotos(photosToRemove.map{ photo -> PhotoNote(photoId = photo.id, noteId=note.id)})
         }
+        val tagRepository = TagRepository(database)
+        val tagsAddedDeferred = tagsToAdd.map { tag ->
+            async {
+                if (tag.tagId == newTagPlaceholderId) {
+                    tagRepository.attachNoteToNewTag(note.id, tag)
+                }
+                else tagRepository.attachNoteToExistingTag(note.id, tag)
+            }
+        }
+        val tagsRemovedDeferred = tagsToRemove.map { tag ->
+            async {
+                tagRepository.detachNoteFromTag(note.id, tag)
+            }
+        }
         noteUpdated.await()
         petsAttached.await()
         petsDetached.await()
@@ -146,6 +162,8 @@ class NoteRepository(
         weightsDetached.await()
         photosDetached.await()
         photosAttached.awaitAll()
+        tagsAddedDeferred.awaitAll()
+        tagsRemovedDeferred.awaitAll()
     }
 
     suspend fun insertPetNote(noteId: Long, petId: Long) {

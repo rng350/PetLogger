@@ -12,15 +12,18 @@ import androidx.lifecycle.ViewModel
 import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.databinding.FragmentEditNoteBinding
 import com.hfad.petlogger.photodisplay.stateless.GetAllPetsWithProfilePhotosUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetAllTagsUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetAllWeightsWithPetNamesUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetEventsOfNoteUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetPetsOfNoteUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetPhotosOfNoteUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetTagsOfNoteUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetWeightsOfNoteUseCase
 import com.hfad.petlogger.repositories.EventRepository
 import com.hfad.petlogger.repositories.MediaRepository
 import com.hfad.petlogger.repositories.NoteRepository
 import com.hfad.petlogger.repositories.PetRepository
+import com.hfad.petlogger.repositories.TagRepository
 import com.hfad.petlogger.repositories.WeightRepository
 
 class EditNoteFragment : Fragment() {
@@ -70,6 +73,11 @@ class EditNoteFragment : Fragment() {
         val weightMultiSelectionViewModel = ViewModelProvider(this, WeightMultiSelectionViewModel.provideFactory(getAllWeights, getWeightsOfNote)).get(WeightMultiSelectionViewModel::class.java)
         binding.weightMultiSelectionViewModel = weightMultiSelectionViewModel
 
+        val tagRepository = TagRepository(database)
+        val getAllTags = GetAllTagsUseCase(tagRepository)
+        val getTagsOfNote = GetTagsOfNoteUseCase(tagRepository, noteId)
+        val tagMultiSelectionViewModel = ViewModelProvider(this, TagMultiSelectionViewModel.provideFactory(tagRepository, getAllTags = getAllTags, getInitialSelection = getTagsOfNote)).get(TagMultiSelectionViewModel::class.java)
+        binding.tagMultiSelectionViewModel = tagMultiSelectionViewModel
 
         binding.backButton.setOnClickListener {
             findNavController().popBackStack()
@@ -82,7 +90,9 @@ class EditNoteFragment : Fragment() {
                 petsToAdd = petMultiSelectionViewModel.getPetsToAdd(),
                 petsToRemove = petMultiSelectionViewModel.getPetsToRemove(),
                 photosToAdd = mediaSelectionViewModel.getPhotosToAdd(),
-                photosToRemove = mediaSelectionViewModel.getPhotosToRemove()
+                photosToRemove = mediaSelectionViewModel.getPhotosToRemove(),
+                tagsToAdd = tagMultiSelectionViewModel.getTagsToAdd(),
+                tagsToRemove = tagMultiSelectionViewModel.getTagsToRemove()
             )
         }
 

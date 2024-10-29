@@ -10,6 +10,7 @@ import com.hfad.petlogger.entities.Event
 import com.hfad.petlogger.entities.Note
 import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.entities.Photo
+import com.hfad.petlogger.entities.Tag
 import com.hfad.petlogger.repositories.NoteRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -47,7 +48,9 @@ class EditNoteViewModel(private val noteRepository: NoteRepository, private val 
         petsToAdd: List<Long> = listOf(),
         petsToRemove: List<Long> = listOf(),
         photosToAdd: List<Photo> = listOf(),
-        photosToRemove: List<Photo> = listOf()
+        photosToRemove: List<Photo> = listOf(),
+        tagsToAdd: List<Tag> = listOf(),
+        tagsToRemove: List<Tag> = listOf()
     ) {
         if (noteTitle.value!=null && noteDetails.value!=null) {
             viewModelScope.launch {
@@ -64,7 +67,9 @@ class EditNoteViewModel(private val noteRepository: NoteRepository, private val 
                         petsToAdd = petsToAdd,
                         petsToRemove = petsToRemove,
                         photosToRemove = photosToRemove,
-                        photosToAdd = photosToAdd
+                        photosToAdd = photosToAdd,
+                        tagsToAdd = tagsToAdd,
+                        tagsToRemove = tagsToRemove
                     )
                 }.await()
                 goBack.value = true
