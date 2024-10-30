@@ -9,12 +9,14 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import com.hfad.petlogger.databinding.FragmentViewPetBinding
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.hfad.petlogger.photodisplay.stateful.GetPhotosOfPetForDisplayUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetAllTagsOfPetAlphabeticalOrderUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetMoreEventsOfPetUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetMoreNotesOfPetUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetMorePhotosOfPetUseCase
@@ -62,6 +64,10 @@ class ViewPetFragment : Fragment() {
         val getNotesOfPet = GetMoreNotesOfPetUseCase(petRepository, petId, notesAmt = 10)
         val associatedNotesDisplayViewModel = ViewModelProvider(this, AssociatedNotesDisplayViewModel.provideFactory(getNotesOfPet)).get(AssociatedNotesDisplayViewModel::class.java)
         binding.associatedNotesDisplayViewModel = associatedNotesDisplayViewModel
+
+        val getTagsOfPet = GetAllTagsOfPetAlphabeticalOrderUseCase(petRepository, petId)
+        val associatedTagsDisplayViewModel = ViewModelProvider(this, AssociatedTagsDisplayViewModel.provideFactory(getTagsOfPet)).get(AssociatedTagsDisplayViewModel::class.java)
+        binding.associatedTagsDisplayViewModel = associatedTagsDisplayViewModel
 
         viewPetViewModel.pet.observe(viewLifecycleOwner, Observer {
             it?.let {

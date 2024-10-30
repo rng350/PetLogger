@@ -15,15 +15,18 @@ import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.hfad.petlogger.databinding.FragmentEditPetBinding
 import com.hfad.petlogger.photodisplay.stateless.GetAllNotesUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetAllTagsUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetCheckableWeightsOfPetUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetEventsOfPetUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetNotesOfPetUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetPetProfilePhotoUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetPhotosOfPetUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetTagsOfPetUseCase
 import com.hfad.petlogger.repositories.EventRepository
 import com.hfad.petlogger.repositories.MediaRepository
 import com.hfad.petlogger.repositories.NoteRepository
 import com.hfad.petlogger.repositories.PetRepository
+import com.hfad.petlogger.repositories.TagRepository
 import java.io.File
 
 class EditPetFragment : Fragment() {
@@ -80,6 +83,12 @@ class EditPetFragment : Fragment() {
         val noteSelectionViewModel = ViewModelProvider(this, NoteMultiSelectionViewModel.provideFactory(getAllNotes, getNotesOfPet)).get(NoteMultiSelectionViewModel::class.java)
         binding.noteMultiSelectionViewModel = noteSelectionViewModel
 
+        val tagRepository = TagRepository(database)
+        val getAllTags = GetAllTagsUseCase(tagRepository)
+        val getTagsOfPet = GetTagsOfPetUseCase(petRepository, petID)
+        val tagMultiSelectionViewModel = ViewModelProvider(this, TagMultiSelectionViewModel.provideFactory(tagRepository, getAllTags, getTagsOfPet)).get(TagMultiSelectionViewModel::class.java)
+        binding.tagMultiSelectionViewModel = tagMultiSelectionViewModel
+
         // initialize sex pick
         editPetViewModel.pet.observeOnce(viewLifecycleOwner, Observer {
             when(it.petSex) {
@@ -119,7 +128,9 @@ class EditPetFragment : Fragment() {
                     petProfilePhotoToAdd = if (petProfilePhotoSelectionViewModel.photoToAdd.isNotEmpty()) petProfilePhotoSelectionViewModel.photoToAdd[0] else null,
                     petProfilePhotoToRemove = if (petProfilePhotoSelectionViewModel.photoToRemove.isNotEmpty()) petProfilePhotoSelectionViewModel.photoToRemove[0] else null,
                     notesToAdd = noteSelectionViewModel.getNotesToAdd(),
-                    notesToRemove = noteSelectionViewModel.getNotesToRemove()
+                    notesToRemove = noteSelectionViewModel.getNotesToRemove(),
+                    tagsToAdd = tagMultiSelectionViewModel.getTagsToAdd(),
+                    tagsToRemove = tagMultiSelectionViewModel.getTagsToRemove()
                 )
             } else Toast.makeText(requireContext(), R.string.no_pet_name_given, Toast.LENGTH_LONG).show()
         }

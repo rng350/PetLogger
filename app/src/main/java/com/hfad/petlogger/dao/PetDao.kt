@@ -185,4 +185,21 @@ interface PetDao {
             "WHERE pet_note_table.pet_id=:petId " +
             "ORDER BY datetime(note_last_updated) DESC, note_table.note_id DESC")
     fun getNotesOfPet(petId: Long): List<Note>
+
+    @Query("""
+        SELECT tag_table.* 
+        FROM tag_table LEFT JOIN pet_tag_table  
+        ON pet_tag_table.tag_id=tag_table.tag_id 
+        WHERE pet_tag_table.pet_id=:petId
+    """)
+    suspend fun getAllTagsOfPet(petId: Long): List<Tag>
+
+    @Query("""
+        SELECT tag_table.* 
+        FROM tag_table LEFT JOIN pet_tag_table  
+        ON pet_tag_table.tag_id=tag_table.tag_id 
+        WHERE pet_tag_table.pet_id=:petId 
+        ORDER BY tag_table.tag_name ASC
+    """)
+    suspend fun getAllTagsOfPetAlphabeticalOrder(petId: Long): List<Tag>
 }

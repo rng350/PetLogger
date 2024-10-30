@@ -12,9 +12,11 @@ import androidx.lifecycle.get
 import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.databinding.FragmentNewPetBinding
 import com.hfad.petlogger.photodisplay.stateless.GetAllNotesUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetAllTagsUseCase
 import com.hfad.petlogger.repositories.MediaRepository
 import com.hfad.petlogger.repositories.NoteRepository
 import com.hfad.petlogger.repositories.PetRepository
+import com.hfad.petlogger.repositories.TagRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -29,6 +31,7 @@ class NewPetFragment : Fragment() {
     lateinit var profilePicSelectionViewModel: MediaSingleSelectionViewModel
     lateinit var photoMultiSelectionViewModel: MediaSelectionViewModel
     lateinit var noteMultiSelectionViewModel: NoteMultiSelectionViewModel
+    lateinit var tagMultiSelectionViewModel: TagMultiSelectionViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -56,6 +59,11 @@ class NewPetFragment : Fragment() {
         noteMultiSelectionViewModel = ViewModelProvider(this, NoteMultiSelectionViewModel.provideFactory(getAllNotes)).get(NoteMultiSelectionViewModel::class.java)
         binding.noteMultiSelectionViewModel = noteMultiSelectionViewModel
 
+        val tagRepository = TagRepository(database)
+        val getAllTags = GetAllTagsUseCase(tagRepository)
+        tagMultiSelectionViewModel = ViewModelProvider(this, TagMultiSelectionViewModel.provideFactory(tagRepository, getAllTags)).get(TagMultiSelectionViewModel::class.java)
+        binding.tagMultiSelectionViewModel = tagMultiSelectionViewModel
+
         setAppBarTitle(getString(R.string.new_pet_header))
         
         binding.petSexSelection.setOnCheckedChangeListener { radioGroup, i ->
@@ -73,7 +81,8 @@ class NewPetFragment : Fragment() {
                 newPetViewModel.addPet(
                     petProfilePhoto = profilePicSelectionViewModel.currentPhoto.value,
                     petPhotos = photoMultiSelectionViewModel.getPhotosToAdd(),
-                    notes = noteMultiSelectionViewModel.getNotesToAdd()
+                    notes = noteMultiSelectionViewModel.getNotesToAdd(),
+                    tags = tagMultiSelectionViewModel.getTagsToAdd()
                 )
             } else Toast.makeText(requireContext(), R.string.no_pet_name_given, Toast.LENGTH_LONG).show()
         }
@@ -118,5 +127,6 @@ class NewPetFragment : Fragment() {
         profilePicSelectionViewModel.resetSelection()
         photoMultiSelectionViewModel.resetSelection()
         noteMultiSelectionViewModel.resetSelection()
+        tagMultiSelectionViewModel.reset()
     }
 }

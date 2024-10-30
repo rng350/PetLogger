@@ -16,7 +16,9 @@ import com.hfad.petlogger.entities.PetProfilePhoto
 import com.hfad.petlogger.entities.PetWeightForDisplay
 import com.hfad.petlogger.entities.PetWithProfilePic
 import com.hfad.petlogger.entities.Photo
+import com.hfad.petlogger.entities.Tag
 import com.hfad.petlogger.entities.Weight
+import com.hfad.petlogger.util.Constants.Companion.newTagPlaceholderId
 import com.hfad.petlogger.util.GetDateDisplayUseCase
 import com.hfad.petlogger.util.GetTimeDisplayUseCase
 import kotlinx.coroutines.Dispatchers
@@ -36,7 +38,8 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
         pet: Pet,
         photos: List<Photo> = listOf<Photo>(),
         profilePic: Photo? = null,
-        notes: List<Note> = listOf<Note>()
+        notes: List<Note> = listOf<Note>(),
+        tags: List<Tag> = listOf<Tag>()
     ): Long = withContext(Dispatchers.IO) {
         Log.d("addPet", "PET BEING ADDED... Pet: ${pet.toString()}")
         val photosAdded = async {
@@ -51,7 +54,14 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
         val notesAdded = async {
             noteDao.attachPets(notes.map{ note -> PetNote(petId=petId, noteId=note.id)})
         }
+        val tagRepository = TagRepository(database)
+        val tagsAdded = tags.map { tag ->
+            async {
+                attachPetToTag(tagRepository, pet.petID, tag)
+            }
+        }
         notesAdded.await()
+        tagsAdded.awaitAll()
         petId
     }
 
@@ -82,6 +92,8 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
         notesToAdd: List<Note> = listOf<Note>(),
         notesToRemove: List<Note> = listOf<Note>(),
         notesToUpdate: List<Note> = listOf<Note>(),
+        tagsToAdd: List<Tag> = listOf<Tag>(),
+        tagsToRemove: List<Tag> = listOf<Tag>(),
         petProfilePhotoToAdd: Photo? = null,
         petProfilePhotoToRemove: Photo? = null
     ) = withContext(Dispatchers.IO) {
@@ -123,6 +135,17 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
                 noteDao.update(note)
             }
         }
+        val tagRepository = TagRepository(database)
+        val tagsAdded = tagsToAdd.map { tag ->
+            async {
+                attachPetToTag(tagRepository, pet.petID, tag)
+            }
+        }
+        val tagsRemoved = tagsToRemove.map { tag ->
+            async {
+                tagRepository.detachPetFromTag(petId = pet.petID, tag)
+            }
+        }
         petUpdated.await()
         petEventsInserted.await()
         petEventsDeleted.await()
@@ -134,6 +157,8 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
         notesAdded.await()
         notesRemoved.await()
         notesUpdated.awaitAll()
+        tagsAdded.awaitAll()
+        tagsRemoved.awaitAll()
     }
 
     suspend fun setPetProfilePhoto(petId: Long, photoId: Long) = withContext(Dispatchers.IO) {
@@ -300,7 +325,9 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
         }
     }
 
-
+    suspend fun getTagsOfPetAlphabeticalOrder(petId: Long) = withContext(Dispatchers.IO) {
+        petDao.getAllTagsOfPetAlphabeticalOrder(petId)
+    }
 
     suspend fun getCheckablePets(): List<CheckableItem<PetWithProfilePic>> = withContext(Dispatchers.IO) {
         fetchCheckablePets()
@@ -358,5 +385,17 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
 
     suspend fun getNotesOfPet(petId: Long): List<Note> = withContext(Dispatchers.IO) {
         petDao.getNotesOfPet(petId)
+    }
+
+    private suspend fun attachPetToTag(tagRepository: TagRepository, petId: Long, tag: Tag) {
+        if (tag.tagId == newTagPlaceholderId) {
+            tagRepository.attachPetToNewTag(petId, tag)
+        } else {
+            tagRepository.attachPetToExistingTag(petId, tag)
+        }
+    }
+
+    suspend fun getTagsOfPet(petId: Long): List<Tag> = withContext(Dispatchers.IO) {
+        petDao.getAllTagsOfPet(petId)
     }
 }

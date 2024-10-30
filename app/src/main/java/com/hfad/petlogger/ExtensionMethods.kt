@@ -62,6 +62,7 @@ fun Fragment.setAppBarTitle(title: String, subtitle: String? = null) {
     }
 }
 
+// prevent a crash that occurs when quick successive calls to Navigation functions are made
 fun NavController.navigateSafe(directions: NavDirections, navOptions: NavOptions? = null) {
     currentDestination?.getAction(directions.actionId)?.let {
         navigate(directions, navOptions)

@@ -47,7 +47,9 @@ class EditPetViewModel(
         petProfilePhotoToRemove: Photo? = null,
         notesToAdd: List<Note> = listOf<Note>(),
         notesToRemove: List<Note> = listOf<Note>(),
-        notesToUpdate: List<Note> = listOf<Note>()
+        notesToUpdate: List<Note> = listOf<Note>(),
+        tagsToAdd: List<Tag> = listOf<Tag>(),
+        tagsToRemove: List<Tag> = listOf<Tag>()
     ) {
         val editedPet = Pet(
             petID = petID,
@@ -69,7 +71,9 @@ class EditPetViewModel(
                 petProfilePhotoToRemove = petProfilePhotoToRemove,
                 notesToAdd = notesToAdd,
                 notesToRemove = notesToRemove,
-                notesToUpdate = notesToUpdate
+                notesToUpdate = notesToUpdate,
+                tagsToAdd = tagsToAdd,
+                tagsToRemove = tagsToRemove
             )
             _doneUpdating.value = true
         }

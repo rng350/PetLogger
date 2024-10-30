@@ -57,6 +57,18 @@ class TagRepository(private val database: PetLoggerDatabase) {
         }
     }
 
+    suspend fun attachPetToNewTag(petId: Long, tag: Tag) = withContext(Dispatchers.IO) {
+        database.withTransaction {
+            val rowId = tagDao.insert(Tag(tagName = tag.tagName))
+            val insertedTag = tagDao.getTagFromRowId(rowId)
+            tagDao.attachPet(PetTag(petId = petId, tagId = insertedTag.tagId))
+        }
+    }
+
+    suspend fun attachPetToExistingTag(petId: Long, tag: Tag) = withContext(Dispatchers.IO) {
+        tagDao.attachPet(PetTag(petId = petId, tagId = tag.tagId))
+    }
+
     suspend fun attachNoteToExistingTag(noteId: Long, tag: Tag) = withContext(Dispatchers.IO) {
         tagDao.attachNote(NoteTag(noteId = noteId, tagId = tag.tagId))
     }
@@ -87,13 +99,21 @@ class TagRepository(private val database: PetLoggerDatabase) {
     }
 
     suspend fun detachNoteFromTag(noteId: Long, tag: Tag) = withContext(Dispatchers.IO) {
-        val tagInstancesAmt = async {
-            countTagInstances(tag.tagId)
-        }.await()
-        if (tagInstancesAmt < 2) {
+        if (!shouldDeleteTag(tag))
+            tagDao.detachNote(NoteTag(noteId = noteId, tagId = tag.tagId))
+    }
+
+    suspend fun detachPetFromTag(petId: Long, tag: Tag) = withContext(Dispatchers.IO) {
+        if (!shouldDeleteTag(tag))
+            tagDao.detachPet(PetTag(petId = petId, tagId = tag.tagId))
+    }
+
+    private suspend fun shouldDeleteTag(tag: Tag): Boolean {
+        val tagInstancesAmt = tagDao.countTagInstances(tag.tagId)
+        return if (tagInstancesAmt < 2) {
             tagDao.delete(tag)
-        }
-        tagDao.detachNote(NoteTag(noteId = noteId, tagId = tag.tagId))
+            true
+        } else false
     }
 
     suspend fun searchTagsByQuery(query: String): List<Tag> = withContext(Dispatchers.IO) {
@@ -114,10 +134,6 @@ class TagRepository(private val database: PetLoggerDatabase) {
         } else {
             tagDao.getAllCheckedTags().map { it.toCheckableItem() }
         }
-    }
-
-    private suspend fun countTagInstances(tagId: Long): Int = withContext(Dispatchers.IO) {
-        tagDao.countTagInstances(tagId)
     }
 
     // TODO: attachEventToTag

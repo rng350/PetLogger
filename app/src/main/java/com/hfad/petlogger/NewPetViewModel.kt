@@ -9,6 +9,7 @@ import com.hfad.petlogger.dao.PetDao
 import com.hfad.petlogger.entities.Note
 import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.entities.Photo
+import com.hfad.petlogger.entities.Tag
 import com.hfad.petlogger.repositories.MediaRepository
 import com.hfad.petlogger.repositories.PetRepository
 import com.hfad.petlogger.selectiontracker.NewSelectionTracker
@@ -35,7 +36,8 @@ class NewPetViewModel(private val petRepository: PetRepository) : ViewModel() {
     fun addPet(
         petProfilePhoto: Photo? = null,
         petPhotos: List<Photo> = listOf<Photo>(),
-        notes: List<Note> = listOf<Note>()
+        notes: List<Note> = listOf<Note>(),
+        tags: List<Tag> = listOf<Tag>()
     ) {
         if (petName.isNotEmpty()) {
             viewModelScope.launch {
@@ -46,7 +48,7 @@ class NewPetViewModel(private val petRepository: PetRepository) : ViewModel() {
                 pet.petSex = _petSex
                 pet.petDOB = petDOB.selectedDate
                 val addedPetId = async {
-                    petRepository.addPet(pet, petPhotos, petProfilePhoto, notes = notes)
+                    petRepository.addPet(pet, petPhotos, petProfilePhoto, notes=notes, tags=tags)
                 }.await()
                 goToViewPet.value = addedPetId
             }

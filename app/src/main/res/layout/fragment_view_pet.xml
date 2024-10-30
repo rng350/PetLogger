@@ -20,6 +20,9 @@
         <variable
             name="associatedNotesDisplayViewModel"
             type="com.hfad.petlogger.AssociatedNotesDisplayViewModel" />
+        <variable
+            name="associatedTagsDisplayViewModel"
+            type="com.hfad.petlogger.AssociatedTagsDisplayViewModel" />
     </data>
 
 
@@ -196,6 +199,13 @@
                 android:layout_height="wrap_content"
                 android:name="com.hfad.petlogger.AssociatedNotesDisplayFragment"
                 tools:layout="@layout/fragment_associated_notes_display" />
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/associated_tags_fragment_container_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:name="com.hfad.petlogger.AssociatedTagsDisplayFragment"
+                tools:layout="@layout/fragment_associated_tags_display" />
 
             <LinearLayout
                 android:layout_width="match_parent"
