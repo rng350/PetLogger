@@ -6,15 +6,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
 import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.databinding.FragmentNewEventBinding
 import com.hfad.petlogger.photodisplay.stateless.GetAllNotesUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetAllPetsWithProfilePhotosUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetAllTagsUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetNotesOfEventUseCase
 import com.hfad.petlogger.repositories.EventRepository
 import com.hfad.petlogger.repositories.MediaRepository
 import com.hfad.petlogger.repositories.NoteRepository
 import com.hfad.petlogger.repositories.PetRepository
+import com.hfad.petlogger.repositories.TagRepository
 import kotlinx.coroutines.*
 
 class NewEventFragment : Fragment() {
@@ -49,6 +52,11 @@ class NewEventFragment : Fragment() {
         val noteMultiSelectionViewModel = ViewModelProvider(this, NoteMultiSelectionViewModel.provideFactory(getAllNotesUseCase)).get(NoteMultiSelectionViewModel::class.java)
         binding.noteMultiSelectionViewModel = noteMultiSelectionViewModel
 
+        val tagRepository = TagRepository(database)
+        val getAllTags = GetAllTagsUseCase(tagRepository)
+        val tagMultiSelectionViewModel = ViewModelProvider(this, TagMultiSelectionViewModel.provideFactory(tagRepository, getAllTags)).get(TagMultiSelectionViewModel::class.java)
+        binding.tagMultiSelectionViewModel = tagMultiSelectionViewModel
+
         setAppBarTitle(getString(R.string.new_event_header))
 
         binding.eventDate.setOnClickListener {
@@ -77,7 +85,8 @@ class NewEventFragment : Fragment() {
             newEventViewModel.submitEvent(
                 pets = petMultiSelectionViewModel.getPetsToAdd(),
                 photos = mediaSelectionViewModel.getPhotosToAdd(),
-                notes = noteMultiSelectionViewModel.getNotesToAdd()
+                notes = noteMultiSelectionViewModel.getNotesToAdd(),
+                tags = tagMultiSelectionViewModel.getTagsToAdd()
             )
         }
 

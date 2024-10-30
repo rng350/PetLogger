@@ -10,6 +10,7 @@ import com.hfad.petlogger.entities.EventPet
 import com.hfad.petlogger.entities.Note
 import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.entities.Photo
+import com.hfad.petlogger.entities.Tag
 import com.hfad.petlogger.repositories.EventRepository
 import com.hfad.petlogger.repositories.NoteRepository
 import com.hfad.petlogger.selectiontracker.NewSelectionTracker
@@ -27,7 +28,8 @@ class NewEventViewModel(private val eventRepository: EventRepository): ViewModel
     fun submitEvent(
         pets: List<Long> = listOf<Long>(),
         photos: List<Photo> = listOf<Photo>(),
-        notes: List<Note> = listOf<Note>()
+        notes: List<Note> = listOf<Note>(),
+        tags: List<Tag> = listOf<Tag>()
     ) {
         viewModelScope.launch {
             if (eventTitle.isNotEmpty()) {
@@ -36,7 +38,8 @@ class NewEventViewModel(private val eventRepository: EventRepository): ViewModel
                         event = Event(title=eventTitle, details=eventDetails, date=eventDateTime.selectedDateTime),
                         pets = pets,
                         photos = photos,
-                        notes = notes
+                        notes = notes,
+                        tags = tags
                     )
                 }.await()
                 _carryOn.value = true

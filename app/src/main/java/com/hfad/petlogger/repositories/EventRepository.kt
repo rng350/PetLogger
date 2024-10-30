@@ -13,6 +13,8 @@ import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.entities.PetWithProfilePic
 import com.hfad.petlogger.entities.Photo
 import com.hfad.petlogger.entities.PhotoEvent
+import com.hfad.petlogger.entities.Tag
+import com.hfad.petlogger.util.Constants
 import com.hfad.petlogger.util.GetDateDisplayUseCase
 import com.hfad.petlogger.util.GetTimeDisplayUseCase
 import kotlinx.coroutines.Dispatchers
@@ -43,7 +45,8 @@ class EventRepository(private val database: PetLoggerDatabase,
     suspend fun insert(event: Event,
                        pets: List<Long> = listOf<Long>(),
                        photos: List<Photo> = listOf<Photo>(),
-                       notes: List<Note> = listOf<Note>()
+                       notes: List<Note> = listOf<Note>(),
+                       tags: List<Tag> = listOf<Tag>(),
     ) = withContext(Dispatchers.IO) {
         val eventId = async {
             eventDao.insert(event)
@@ -61,9 +64,16 @@ class EventRepository(private val database: PetLoggerDatabase,
         val attachNotes = async {
             eventDao.attachNotes(notes.map{ note -> EventNote(eventId = eventId, noteId=note.id) })
         }
+        val tagRepository = TagRepository(database)
+        val attachTags = tags.map { tag ->
+            async {
+                attachTagToEvent(tagRepository, eventId, tag)
+            }
+        }
         attachNotes.await()
         addEventPets.awaitAll()
         addEventPhotos.awaitAll()
+        attachTags.awaitAll()
 
         eventId
     }
@@ -74,7 +84,9 @@ class EventRepository(private val database: PetLoggerDatabase,
                        photosToAdd: List<Photo> = listOf<Photo>(),
                        photosToRemove: List<Photo> = listOf<Photo>(),
                        notesToAdd: List<Note> = listOf<Note>(),
-                       notesToRemove: List<Note> = listOf<Note>())
+                       notesToRemove: List<Note> = listOf<Note>(),
+                       tagsToAdd: List<Tag> = listOf<Tag>(),
+                       tagsToRemove: List<Tag> = listOf<Tag>())
     = withContext(Dispatchers.IO) {
         val eventUpdated = async {
             eventDao.update(event)
@@ -102,6 +114,18 @@ class EventRepository(private val database: PetLoggerDatabase,
             eventDao.detachNotes(notesToRemove.map{note -> EventNote(eventId=event.eventId, noteId=note.id)})
         }
 
+        val tagRepository = TagRepository(database)
+        val tagsAdded = tagsToAdd.map { tag ->
+            async {
+                attachTagToEvent(tagRepository, event.eventId, tag)
+            }
+        }
+        val tagsRemoved = tagsToRemove.map { tag ->
+            async {
+                tagRepository.detachEventFromTag(event.eventId, tag)
+            }
+        }
+
         notesAttached.await()
         notesDetached.await()
         eventUpdated.await()
@@ -109,6 +133,15 @@ class EventRepository(private val database: PetLoggerDatabase,
         petsDeleted.await()
         photosDeleted.await()
         photosAdded.awaitAll()
+        tagsAdded.awaitAll()
+        tagsRemoved.awaitAll()
+    }
+
+    private suspend fun attachTagToEvent(tagRepository: TagRepository, eventId: Long, tag: Tag) {
+        if (tag.tagId == Constants.newTagPlaceholderId) {
+            tagRepository.attachEventToNewTag(eventId, tag)
+        }
+        else tagRepository.attachEventToExistingTag(eventId, tag)
     }
 
     suspend fun delete(event: Event) {
@@ -180,5 +213,13 @@ class EventRepository(private val database: PetLoggerDatabase,
 
     suspend fun getPetsOfEventPaginated(eventId: Long, lastPetId: Long, petsAmt: Int): List<PetWithProfilePic> = withContext(Dispatchers.IO) {
         eventDao.getPetsOfEventPaginated(eventId, lastPetId, petsAmt)
+    }
+
+    suspend fun getAllTagsOfEventAlphabeticalOrder(eventId: Long): List<Tag> = withContext(Dispatchers.IO) {
+        eventDao.getAllTagsOfEventAlphabeticalOrder(eventId)
+    }
+
+    suspend fun getTagsOfEvent(eventId: Long): List<Tag> = withContext(Dispatchers.IO) {
+        eventDao.getAllTagsOfEvent(eventId)
     }
 }

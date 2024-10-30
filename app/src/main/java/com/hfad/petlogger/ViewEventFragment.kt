@@ -12,6 +12,7 @@ import com.hfad.petlogger.databinding.FragmentViewEventBinding
 import com.hfad.petlogger.photodisplay.stateful.GetNotesOfEventForDisplayUseCase
 import com.hfad.petlogger.photodisplay.stateful.GetPetsOfEventForDisplayUseCase
 import com.hfad.petlogger.photodisplay.stateful.GetPhotosOfEventForDisplayUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetAllTagsOfEventAlphabeticalOrderUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetMoreNotesOfEventUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetMorePetsOfEventUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetMorePhotosOfEventUseCase
@@ -51,6 +52,10 @@ class ViewEventFragment : Fragment() {
         val getNotesOfEvent = GetMoreNotesOfEventUseCase(eventRepository, eventId, amtLimit = 10)
         val associatedNotesDisplayViewModel = ViewModelProvider(this, AssociatedNotesDisplayViewModel.provideFactory(getNotesOfEvent)).get(AssociatedNotesDisplayViewModel::class.java)
         binding.associatedNotesDisplayViewModel = associatedNotesDisplayViewModel
+
+        val getTagsOfEvent = GetAllTagsOfEventAlphabeticalOrderUseCase(eventRepository, eventId)
+        val associatedTagsDisplayViewModel = ViewModelProvider(this, AssociatedTagsDisplayViewModel.provideFactory(getTagsOfEvent)).get(AssociatedTagsDisplayViewModel::class.java)
+        binding.associatedTagsDisplayViewModel = associatedTagsDisplayViewModel
 
         viewEventViewModel.event.observe(viewLifecycleOwner, Observer {
             it?.let {

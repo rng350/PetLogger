@@ -9,6 +9,7 @@ import com.hfad.petlogger.entities.Event
 import com.hfad.petlogger.entities.Note
 import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.entities.Photo
+import com.hfad.petlogger.entities.Tag
 import com.hfad.petlogger.repositories.EventRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -39,7 +40,9 @@ class EditEventViewModel(private val eventRepository: EventRepository, eventID: 
         photosToAdd: List<Photo> = listOf(),
         photosToRemove: List<Photo> = listOf(),
         notesToAdd: List<Note> = listOf(),
-        notesToRemove: List<Note> = listOf()
+        notesToRemove: List<Note> = listOf(),
+        tagsToAdd: List<Tag> = listOf(),
+        tagsToRemove: List<Tag> = listOf()
     ) {
         if (newEventTitle.value?.isNotEmpty() == true) {
             event.value?.let { updatedEvent ->
@@ -54,7 +57,9 @@ class EditEventViewModel(private val eventRepository: EventRepository, eventID: 
                         photosToAdd = photosToAdd,
                         photosToRemove = photosToRemove,
                         notesToAdd = notesToAdd,
-                        notesToRemove = notesToRemove
+                        notesToRemove = notesToRemove,
+                        tagsToAdd = tagsToAdd,
+                        tagsToRemove = tagsToRemove
                     )
                 }
             }

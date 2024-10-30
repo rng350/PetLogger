@@ -4,12 +4,11 @@ import androidx.room.*
 import com.hfad.petlogger.entities.Event
 import com.hfad.petlogger.entities.EventNote
 import com.hfad.petlogger.entities.Note
-import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.entities.PetWithProfilePic
 import com.hfad.petlogger.entities.Photo
+import com.hfad.petlogger.entities.Tag
 import kotlinx.coroutines.flow.Flow
 import java.time.OffsetDateTime
-import java.time.ZoneOffset
 
 @Dao
 interface EventDao {
@@ -115,4 +114,21 @@ interface EventDao {
             "ON note_table.note_id=event_note_Table.note_id " +
             "WHERE event_note_table.event_id=:eventId")
     fun getNotesOfEventAsFlow(eventId: Long): Flow<List<Note>>
+
+    @Query("""
+        SELECT tag_table.* 
+        FROM tag_table LEFT JOIN event_tag_table 
+        ON tag_table.tag_id=event_tag_table.tag_id 
+        WHERE event_tag_table.event_id=:eventId 
+        ORDER BY tag_table.tag_name ASC
+    """)
+    suspend fun getAllTagsOfEventAlphabeticalOrder(eventId: Long): List<Tag>
+
+    @Query("""
+        SELECT tag_table.* 
+        FROM tag_table LEFT JOIN event_tag_table 
+        ON tag_table.tag_id=event_tag_table.tag_id 
+        WHERE event_tag_table.event_id=:eventId
+    """)
+    suspend fun getAllTagsOfEvent(eventId: Long): List<Tag>
 }

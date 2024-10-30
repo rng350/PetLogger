@@ -7,17 +7,21 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
 import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.databinding.FragmentEditEventBinding
 import com.hfad.petlogger.photodisplay.stateless.GetAllNotesUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetAllPetsWithProfilePhotosUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetAllTagsUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetNotesOfEventUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetPetsOfEventUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetPhotosOfEventUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetTagsOfEventUseCase
 import com.hfad.petlogger.repositories.EventRepository
 import com.hfad.petlogger.repositories.MediaRepository
 import com.hfad.petlogger.repositories.NoteRepository
 import com.hfad.petlogger.repositories.PetRepository
+import com.hfad.petlogger.repositories.TagRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -67,6 +71,12 @@ class EditEventFragment : Fragment() {
         val noteMultiSelectionViewModel = ViewModelProvider(this, NoteMultiSelectionViewModel.provideFactory(getAllNotes = getAllNotes, getInitialSelection = getNotesOfEvent)).get(NoteMultiSelectionViewModel::class.java)
         binding.noteMultiSelectionViewModel = noteMultiSelectionViewModel
 
+        val tagRepository = TagRepository(database)
+        val getAllTags = GetAllTagsUseCase(tagRepository)
+        val getTagsOfEvent = GetTagsOfEventUseCase(eventRepository, eventID)
+        val tagMultiSelectionViewModel = ViewModelProvider(this, TagMultiSelectionViewModel.provideFactory(tagRepository, getAllTags, getTagsOfEvent)).get(TagMultiSelectionViewModel::class.java)
+        binding.tagMultiSelectionViewModel = tagMultiSelectionViewModel
+
         editEventViewModel.event.observe(viewLifecycleOwner, Observer {
             it?.let {
                 setAppBarTitle(title = it.title, subtitle = getString(R.string.editing_event_details))
@@ -100,7 +110,9 @@ class EditEventFragment : Fragment() {
                 photosToAdd = mediaSelectionViewModel.getPhotosToAdd(),
                 photosToRemove = mediaSelectionViewModel.getPhotosToRemove(),
                 notesToAdd = noteMultiSelectionViewModel.getNotesToAdd(),
-                notesToRemove = noteMultiSelectionViewModel.getNotesToRemove()
+                notesToRemove = noteMultiSelectionViewModel.getNotesToRemove(),
+                tagsToAdd = tagMultiSelectionViewModel.getTagsToAdd(),
+                tagsToRemove = tagMultiSelectionViewModel.getTagsToRemove()
             )
             this.findNavController().navigateSafe(EditEventFragmentDirections.actionEditEventFragmentToViewEventFragment(eventID))
         }

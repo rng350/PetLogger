@@ -55,9 +55,7 @@ class NoteRepository(
                            tags: List<Tag> = listOf<Tag>()): Long
     = withContext(Dispatchers.IO) {
 
-        val noteId = database.withTransaction {
-            noteDao.insert(note)
-        }
+        val noteId = noteDao.insertNewNote(note).id
 
         val petsDeferred = pets.map {
             async {
@@ -82,10 +80,7 @@ class NoteRepository(
         val tagRepository = TagRepository(database)
         val tagsDeferred = tags.map { tag ->
             async {
-                if (tag.tagId == newTagPlaceholderId) {
-                    tagRepository.attachNoteToNewTag(noteId, tag)
-                }
-                else tagRepository.attachNoteToExistingTag(noteId, tag)
+                attachTagToNote(tagRepository, noteId, tag)
             }
         }
 
@@ -142,10 +137,7 @@ class NoteRepository(
         val tagRepository = TagRepository(database)
         val tagsAddedDeferred = tagsToAdd.map { tag ->
             async {
-                if (tag.tagId == newTagPlaceholderId) {
-                    tagRepository.attachNoteToNewTag(note.id, tag)
-                }
-                else tagRepository.attachNoteToExistingTag(note.id, tag)
+                attachTagToNote(tagRepository, note.id, tag)
             }
         }
         val tagsRemovedDeferred = tagsToRemove.map { tag ->
@@ -164,6 +156,13 @@ class NoteRepository(
         photosAttached.awaitAll()
         tagsAddedDeferred.awaitAll()
         tagsRemovedDeferred.awaitAll()
+    }
+
+    private suspend fun attachTagToNote(tagRepository: TagRepository, noteId: Long, tag: Tag) = withContext(Dispatchers.IO) {
+        if (tag.tagId == newTagPlaceholderId) {
+            tagRepository.attachNoteToNewTag(noteId, tag)
+        }
+        else tagRepository.attachNoteToExistingTag(noteId, tag)
     }
 
     suspend fun insertPetNote(noteId: Long, petId: Long) {

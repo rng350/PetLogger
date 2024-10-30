@@ -57,7 +57,7 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
         val tagRepository = TagRepository(database)
         val tagsAdded = tags.map { tag ->
             async {
-                attachPetToTag(tagRepository, pet.petID, tag)
+                attachPetToTag(tagRepository, petId, tag)
             }
         }
         notesAdded.await()

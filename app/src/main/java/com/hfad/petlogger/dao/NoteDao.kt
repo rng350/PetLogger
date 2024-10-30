@@ -18,7 +18,6 @@ import com.hfad.petlogger.entities.PhotoNote
 import com.hfad.petlogger.entities.WeightDetails
 import com.hfad.petlogger.entities.WeightForListFetched
 import com.hfad.petlogger.entities.WeightNote
-import com.hfad.petlogger.entities.WeightWithPetName
 import kotlinx.coroutines.flow.Flow
 import java.time.OffsetDateTime
 
@@ -37,8 +36,17 @@ interface NoteDao {
     """)
     suspend fun getAllNotesPaginated(lastNoteEditedDate: OffsetDateTime, lastNoteId: Long, amtLimit: Int): List<Note>
 
+    @Transaction
+    suspend fun insertNewNote(note: Note): Note {
+        val rowId = insert(note)
+        return getNoteFromRowId(rowId)
+    }
+
     @Insert
     suspend fun insert(note: Note): Long
+
+    @Query("SELECT * FROM note_table WHERE rowid = :rowId")
+    suspend fun getNoteFromRowId(rowId: Long): Note
 
     @Update
     suspend fun update(note: Note)
