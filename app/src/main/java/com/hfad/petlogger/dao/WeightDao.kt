@@ -3,6 +3,7 @@ package com.hfad.petlogger.dao
 import androidx.room.*
 import com.hfad.petlogger.entities.Note
 import com.hfad.petlogger.entities.PetWithProfilePic
+import com.hfad.petlogger.entities.Tag
 import com.hfad.petlogger.entities.Weight
 import com.hfad.petlogger.entities.WeightDetails
 import com.hfad.petlogger.entities.WeightFullDetailsFetched
@@ -168,4 +169,21 @@ interface WeightDao {
             "WHERE weight_note_table.weight_id=:weightId " +
             "ORDER BY note_table.note_last_updated DESC, note_table.note_id DESC")
     suspend fun getNotesOfWeight(weightId: Long): List<Note>
+
+    @Query("""
+        SELECT tag_table.* 
+        FROM tag_table LEFT JOIN weight_tag_table 
+        ON tag_table.tag_id=weight_tag_table.tag_id 
+        WHERE weight_tag_table.weight_id=:weightId
+    """)
+    suspend fun getTagsOfWeight(weightId: Long): List<Tag>
+
+    @Query("""
+        SELECT tag_table.* 
+        FROM tag_table LEFT JOIN weight_tag_table 
+        ON tag_table.tag_id=weight_tag_table.tag_id 
+        WHERE weight_tag_table.weight_id=:weightId 
+        ORDER BY tag_table.tag_name ASC
+    """)
+    suspend fun getTagsOfWeightAlphabeticalOrder(weightId: Long): List<Tag>
 }

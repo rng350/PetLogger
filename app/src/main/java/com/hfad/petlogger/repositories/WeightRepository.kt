@@ -8,6 +8,7 @@ import com.hfad.petlogger.dao.WeightDao
 import com.hfad.petlogger.entities.Note
 import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.entities.PetWithProfilePic
+import com.hfad.petlogger.entities.Tag
 import com.hfad.petlogger.entities.Weight
 import com.hfad.petlogger.entities.WeightDetails
 import com.hfad.petlogger.entities.WeightForList
@@ -16,6 +17,7 @@ import com.hfad.petlogger.entities.WeightFullDetailsFetched
 import com.hfad.petlogger.entities.WeightFullDetailsState
 import com.hfad.petlogger.entities.WeightNote
 import com.hfad.petlogger.entities.WeightWithPetName
+import com.hfad.petlogger.util.Constants.Companion.newTagPlaceholderId
 import com.hfad.petlogger.util.Converter
 import com.hfad.petlogger.util.GetDateDisplayUseCase
 import com.hfad.petlogger.util.GetTimeDisplayUseCase
@@ -31,7 +33,7 @@ import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.withContext
 import java.time.OffsetDateTime
 
-class WeightRepository(database: PetLoggerDatabase) {
+class WeightRepository(private val database: PetLoggerDatabase) {
     private val weightDao: WeightDao = database.weightDao
     private val noteDao: NoteDao = database.noteDao
     suspend fun get(weightId: Long): Weight = withContext(Dispatchers.IO) {
@@ -82,15 +84,26 @@ class WeightRepository(database: PetLoggerDatabase) {
         return weightDao.getPreviousWeight(weightId).flowOn(Dispatchers.IO)
     }
 
-    suspend fun addWeight(weight: Weight, notes: List<Note> = listOf<Note>()): Weight = withContext(Dispatchers.IO) {
+    suspend fun addWeight(
+        weight: Weight,
+        notes: List<Note> = listOf<Note>(),
+        tags: List<Tag> = listOf<Tag>()
+    ): Weight = withContext(Dispatchers.IO) {
         val weightAdded = async {
             weightDao.addWeight(weight)
         }.await()
 
         val notesAdded = async {
             noteDao.attachWeights(notes.map { note -> WeightNote(weightId=weightAdded.id, noteId=note.id) })
-        }.await()
-
+        }
+        val tagRepository = TagRepository(database)
+        val tagsAdded = tags.map { tag ->
+            async {
+                attachWeightToTag(tagRepository, weightAdded.id, tag)
+            }
+        }
+        notesAdded.await()
+        tagsAdded.awaitAll()
         weightAdded
     }
 
@@ -102,7 +115,10 @@ class WeightRepository(database: PetLoggerDatabase) {
         weight: Weight,
         notesToAdd: List<Note> = listOf<Note>(),
         notesToRemove: List<Note> = listOf<Note>(),
-        notesToUpdate: List<Note> = listOf<Note>())
+        notesToUpdate: List<Note> = listOf<Note>(),
+        tagsToAdd: List<Tag> = listOf<Tag>(),
+        tagsToRemove: List<Tag> = listOf<Tag>()
+    )
     = withContext(Dispatchers.IO) {
         val weightUpdated = async {
             weightDao.update(weight)
@@ -113,14 +129,28 @@ class WeightRepository(database: PetLoggerDatabase) {
         val notesDetached = async {
             noteDao.detachWeights(notesToRemove.map { note -> WeightNote(weightId = weight.id, noteId = note.id) })
         }
-        notesToUpdate.map { note ->
+        val notesUpdated = notesToUpdate.map { note ->
             async {
                 noteDao.update(note)
             }
-        }.awaitAll()
+        }
+        val tagRepository = TagRepository(database)
+        val tagsAttached = tagsToAdd.map { tag ->
+            async {
+                attachWeightToTag(tagRepository, weight.id, tag)
+            }
+        }
+        val tagsDetached = tagsToRemove.map { tag ->
+            async {
+                tagRepository.detachWeightFromTag(weight.id, tag)
+            }
+        }
+        weightUpdated.await()
         notesAttached.await()
         notesDetached.await()
-        weightUpdated.await()
+        notesUpdated.awaitAll()
+        tagsAttached.awaitAll()
+        tagsDetached.awaitAll()
     }
 
     suspend fun update(weight: WeightWithPetName) {
@@ -128,11 +158,11 @@ class WeightRepository(database: PetLoggerDatabase) {
     }
 
     suspend fun delete(weight: Weight) {
-
+        weightDao.delete(weight)
     }
 
     suspend fun delete(weight: WeightWithPetName) {
-
+        weightDao.delete(weight.weight)
     }
 
     suspend fun getNotesOfWeightPaginated(
@@ -150,5 +180,19 @@ class WeightRepository(database: PetLoggerDatabase) {
 
     suspend fun getNotesOfWeight(weightId: Long): List<Note> = withContext(Dispatchers.IO) {
         weightDao.getNotesOfWeight(weightId)
+    }
+
+    private suspend fun attachWeightToTag(tagRepository: TagRepository, weightId: Long, tag: Tag) {
+        if (tag.tagId == newTagPlaceholderId) {
+            tagRepository.attachWeightToNewTag(weightId, tag)
+        } else tagRepository.attachWeightToExistingTag(weightId, tag)
+    }
+
+    suspend fun getTagsOfWeight(weightId: Long): List<Tag> = withContext(Dispatchers.IO) {
+        weightDao.getTagsOfWeight(weightId)
+    }
+
+    suspend fun getTagsOfWeightAlphabeticalOrder(weightId: Long): List<Tag> = withContext(Dispatchers.IO) {
+        weightDao.getTagsOfWeightAlphabeticalOrder(weightId)
     }
 }

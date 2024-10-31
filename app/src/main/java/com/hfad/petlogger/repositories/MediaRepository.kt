@@ -19,8 +19,10 @@ import com.hfad.petlogger.entities.PetWithProfilePic
 import com.hfad.petlogger.entities.Photo
 import com.hfad.petlogger.entities.PhotoEvent
 import com.hfad.petlogger.entities.PhotoNote
+import com.hfad.petlogger.entities.Tag
 import com.hfad.petlogger.entities.Weight
 import com.hfad.petlogger.size
+import com.hfad.petlogger.util.Constants
 import com.hfad.petlogger.util.GetDateDisplayUseCase
 import com.hfad.petlogger.util.GetTimeDisplayUseCase
 import kotlinx.coroutines.Dispatchers
@@ -38,7 +40,7 @@ import java.time.ZoneId
 import java.util.UUID
 
 class MediaRepository(
-    database: PetLoggerDatabase,
+    private val database: PetLoggerDatabase,
     private val context: Context
 ) {
     private val photoDao = database.photoDao
@@ -56,7 +58,9 @@ class MediaRepository(
         eventsToRemove: List<Event> = listOf<Event>(),
         notesToAdd: List<Note> = listOf<Note>(),
         notesToRemove: List<Note> = listOf<Note>(),
-        notesToUpdate: List<Note> = listOf<Note>()
+        notesToUpdate: List<Note> = listOf<Note>(),
+        tagsToAdd: List<Tag> = listOf<Tag>(),
+        tagsToRemove: List<Tag> = listOf<Tag>()
     ) = withContext(Dispatchers.IO) {
         val updatePhoto = async {
             photoDao.update(photo)
@@ -97,6 +101,17 @@ class MediaRepository(
                 noteDao.update(note)
             }
         }
+        val tagRepository = TagRepository(database)
+        val tagsAttached = tagsToAdd.map { tag ->
+            async {
+                attachPhotoToTag(tagRepository, photo.id, tag)
+            }
+        }
+        val tagsDetached = tagsToRemove.map { tag ->
+            async {
+                tagRepository.detachPhotoFromTag(photoId = photo.id, tag)
+            }
+        }
         updatePhoto.await()
         addPets.awaitAll()
         removePets.awaitAll()
@@ -105,6 +120,8 @@ class MediaRepository(
         addNotes.awaitAll()
         removeNotes.awaitAll()
         updateNotes.awaitAll()
+        tagsAttached.awaitAll()
+        tagsDetached.awaitAll()
     }
 
     suspend fun updateEventPhotos(eventID: Long, photosToAdd: List<Photo>, photosToDelete: List<Photo>) {
@@ -122,16 +139,45 @@ class MediaRepository(
         }
     }
 
-    // Inserting a 'stand-alone' photo
+    // Inserting a 'stand-alone' photo (from the NewPhoto screen)
     suspend fun insertNewPhoto(
         photo: Photo,
         newAttachedNotes: List<Note> = listOf<Note>(),
         existingAttachedNotes: List<Note> = listOf<Note>(),
         pets: List<Long> = listOf<Long>(),
         events: List<Event> = listOf<Event>(),
-        weights: List<Weight> = listOf<Weight>()
-    ) = withContext(Dispatchers.IO) {
-        val photo = addPhoto(photo)
+        tags: List<Tag> = listOf<Tag>()
+    ): Photo? = withContext(Dispatchers.IO) {
+        val photoAdded = addPhoto(photo)
+        photoAdded?.let {
+            val existingNotesAttached = existingAttachedNotes.map { note ->
+                async {
+                    noteDao.attachPhoto(PhotoNote(photoId=photoAdded.id, noteId = note.id))
+                }
+            }
+            val petDao = database.petDao
+            val petsAttached = pets.map { petId ->
+                async {
+                    petDao.insertPetPhoto(PetPhoto(petId = petId, photoId = photoAdded.id))
+                }
+            }
+            val eventsAttached = events.map { event ->
+                async {
+                    photoDao.insert(PhotoEvent(photoID = photoAdded.id, eventID = event.eventId))
+                }
+            }
+            val tagRepository = TagRepository(database)
+            val tagsAttached = tags.map { tag ->
+                async {
+                    attachPhotoToTag(tagRepository, photoId = photoAdded.id, tag)
+                }
+            }
+            existingNotesAttached.awaitAll()
+            petsAttached.awaitAll()
+            eventsAttached.awaitAll()
+            tagsAttached.awaitAll()
+        }
+        photoAdded
     }
 
     // Inserting a photo as an attachment
@@ -372,5 +418,19 @@ class MediaRepository(
 
     suspend fun getNotesOfPhoto(photoId: Long): List<Note> = withContext(Dispatchers.IO) {
         photoDao.getNotesOfPhoto(photoId)
+    }
+
+    private suspend fun attachPhotoToTag(tagRepository: TagRepository, photoId: Long, tag: Tag) {
+        if (tag.tagId == Constants.newTagPlaceholderId) {
+            tagRepository.attachPhotoToNewTag(photoId, tag)
+        } else tagRepository.attachPhotoToExistingTag(photoId, tag)
+    }
+
+    suspend fun getTagsOfPhoto(photoId: Long): List<Tag> = withContext(Dispatchers.IO) {
+        photoDao.getTagsOfPhoto(photoId)
+    }
+
+    suspend fun getTagsOfPhotoAlphabeticalOrder(photoId: Long): List<Tag> = withContext(Dispatchers.IO) {
+        photoDao.getTagsOfPhotoAlphabeticalOrder(photoId)
     }
 }

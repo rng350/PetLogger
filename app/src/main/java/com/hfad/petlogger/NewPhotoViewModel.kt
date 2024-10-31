@@ -11,6 +11,7 @@ import com.hfad.petlogger.entities.Event
 import com.hfad.petlogger.entities.Note
 import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.entities.Photo
+import com.hfad.petlogger.entities.Tag
 import com.hfad.petlogger.entities.Weight
 import com.hfad.petlogger.repositories.MediaRepository
 import kotlinx.coroutines.async
@@ -69,7 +70,7 @@ class NewPhotoViewModel(private val mediaRepository: MediaRepository) : ViewMode
         existingAttachedNotes: List<Note> = listOf<Note>(),
         pets: List<Long> = listOf<Long>(),
         events: List<Event> = listOf<Event>(),
-        weights: List<Weight> = listOf<Weight>()
+        tags: List<Tag> = listOf<Tag>()
     ) {
         photo.value?.let { photo ->
             viewModelScope.launch {
@@ -77,7 +78,13 @@ class NewPhotoViewModel(private val mediaRepository: MediaRepository) : ViewMode
                     photoTitle.value?.isNotEmpty()?.let {
                         photo.title = photoTitle.value!!
                     }
-                    mediaRepository.insertNewPhoto(photo)
+                    mediaRepository.insertNewPhoto(
+                        photo,
+                        pets=pets,
+                        existingAttachedNotes = existingAttachedNotes,
+                        events=events,
+                        tags=tags
+                    )
                 }.await()
                 resetPhotoSelection()
                 _goBack.value = true

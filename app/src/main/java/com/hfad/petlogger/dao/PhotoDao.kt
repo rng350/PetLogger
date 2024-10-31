@@ -10,6 +10,7 @@ import com.hfad.petlogger.entities.PetWithProfilePic
 import com.hfad.petlogger.entities.Photo
 import com.hfad.petlogger.entities.PhotoEvent
 import com.hfad.petlogger.entities.PhotoNote
+import com.hfad.petlogger.entities.Tag
 import com.hfad.petlogger.entities.WeightDetails
 import kotlinx.coroutines.flow.Flow
 import java.time.OffsetDateTime
@@ -136,4 +137,21 @@ interface PhotoDao {
             "WHERE photo_note_table.photo_id=:photoId " +
             "ORDER BY datetime(note_last_updated) DESC, note_table.note_id DESC")
     suspend fun getNotesOfPhoto(photoId: Long): List<Note>
+
+    @Query("""
+        SELECT tag_table.* 
+        FROM tag_table LEFT JOIN photo_tag_table 
+        ON tag_table.tag_id=photo_tag_table.tag_id 
+        WHERE photo_tag_table.photo_id=:photoId
+    """)
+    suspend fun getTagsOfPhoto(photoId: Long): List<Tag>
+
+    @Query("""
+        SELECT tag_table.* 
+        FROM tag_table LEFT JOIN photo_tag_table 
+        ON tag_table.tag_id=photo_tag_table.tag_id 
+        WHERE photo_tag_table.photo_id=:photoId 
+        ORDER BY tag_table.tag_name ASC
+    """)
+    suspend fun getTagsOfPhotoAlphabeticalOrder(photoId: Long): List<Tag>
 }

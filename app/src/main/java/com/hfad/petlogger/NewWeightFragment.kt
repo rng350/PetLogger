@@ -15,9 +15,11 @@ import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.databinding.FragmentNewWeightBinding
 import com.hfad.petlogger.photodisplay.stateless.GetAllCheckablePetsUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetAllNotesUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetAllTagsUseCase
 import com.hfad.petlogger.repositories.MediaRepository
 import com.hfad.petlogger.repositories.NoteRepository
 import com.hfad.petlogger.repositories.PetRepository
+import com.hfad.petlogger.repositories.TagRepository
 import com.hfad.petlogger.repositories.WeightRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -56,6 +58,11 @@ class NewWeightFragment : Fragment() {
         val noteMultiSelectionViewModel = ViewModelProvider(this, NoteMultiSelectionViewModel.provideFactory(getAllNotesUseCase)).get(NoteMultiSelectionViewModel::class.java)
         binding.noteMultiSelectionViewModel = noteMultiSelectionViewModel
 
+        val tagRepository = TagRepository(database)
+        val getAllTags = GetAllTagsUseCase(tagRepository)
+        val tagMultiSelectionViewModel = ViewModelProvider(this, TagMultiSelectionViewModel.provideFactory(tagRepository, getAllTags)).get(TagMultiSelectionViewModel::class.java)
+        binding.tagMultiSelectionViewModel = tagMultiSelectionViewModel
+
         setAppBarTitle(getString(R.string.new_weight_header))
 
         binding.dateFieldText.setOnClickListener { button ->
@@ -80,7 +87,11 @@ class NewWeightFragment : Fragment() {
 
         binding.submitWeightButton.setOnClickListener {
             petSingleSelectionViewModel.selectionTracker.currentSelection.value?.item?.petId?.let{ petId ->
-                newWeightViewModel.submitWeight(petId = petId, notes = noteMultiSelectionViewModel.getNotesToAdd())
+                newWeightViewModel.submitWeight(
+                    petId = petId,
+                    notes = noteMultiSelectionViewModel.getNotesToAdd(),
+                    tags = tagMultiSelectionViewModel.getTagsToAdd()
+                )
             }
         }
 

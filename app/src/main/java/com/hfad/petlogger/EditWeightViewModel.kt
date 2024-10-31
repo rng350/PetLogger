@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.hfad.petlogger.entities.Note
 import com.hfad.petlogger.entities.Pet
+import com.hfad.petlogger.entities.Tag
 import com.hfad.petlogger.entities.Weight
 import com.hfad.petlogger.repositories.WeightRepository
 import kotlinx.coroutines.async
@@ -34,7 +35,9 @@ class EditWeightViewModel(private val weightRepository: WeightRepository, privat
         petId: Long,
         notesToAdd: List<Note> = listOf<Note>(),
         notesToRemove: List<Note> = listOf<Note>(),
-        notesToUpdate: List<Note> = listOf<Note>()
+        notesToUpdate: List<Note> = listOf<Note>(),
+        tagsToAdd: List<Tag> = listOf<Tag>(),
+        tagsToRemove: List<Tag> = listOf<Tag>()
     ) {
         weight.value?.let {
             viewModelScope.launch {
@@ -42,7 +45,9 @@ class EditWeightViewModel(private val weightRepository: WeightRepository, privat
                     weight = Weight(it.id, petId, it.weightGrams, weightDateTime.selectedDateTime, it.weightNotes),
                     notesToAdd = notesToAdd,
                     notesToRemove = notesToRemove,
-                    notesToUpdate = notesToUpdate
+                    notesToUpdate = notesToUpdate,
+                    tagsToAdd = tagsToAdd,
+                    tagsToRemove = tagsToRemove
                 )
             }
         }

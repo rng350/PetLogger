@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.hfad.petlogger.databinding.FragmentViewPhotoBinding
+import com.hfad.petlogger.photodisplay.stateless.GetAllTagsOfPhotoAlphabeticalOrderUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetMoreEventsOfPhotoUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetMoreNotesOfPhotoUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetMorePetsOfPhotoUseCase
@@ -57,6 +58,10 @@ class ViewPhotoFragment : Fragment() {
         val getNotesOfPhoto = GetMoreNotesOfPhotoUseCase(mediaRepository, photoId, notesAmt = 10)
         val associatedNotesDisplayViewModel = ViewModelProvider(this, AssociatedNotesDisplayViewModel.provideFactory(getNotesOfPhoto)).get(AssociatedNotesDisplayViewModel::class.java)
         binding.associatedNotesDisplayViewModel = associatedNotesDisplayViewModel
+
+        val getTagsOfPhotoAlphabeticalOrder = GetAllTagsOfPhotoAlphabeticalOrderUseCase(mediaRepository, photoId)
+        val associatedTagsDisplayViewModel = ViewModelProvider(this, AssociatedTagsDisplayViewModel.provideFactory(getTagsOfPhotoAlphabeticalOrder)).get(AssociatedTagsDisplayViewModel::class.java)
+        binding.associatedTagsDisplayViewModel = associatedTagsDisplayViewModel
 
         binding.editButton.setOnClickListener{
             findNavController().navigateSafe(ViewPhotoFragmentDirections.actionViewPhotoFragmentToEditPhotoFragment(photoId))

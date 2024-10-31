@@ -19,11 +19,6 @@ class ViewPhotoViewModel(private val mediaRepository: MediaRepository, private v
     private val _photoDate: MutableLiveData<String> = MutableLiveData<String>("N/A")
     val photoDate: LiveData<String> get() = _photoDate
 
-    val noteNavigator = Navigator()
-    val eventNavigator = Navigator()
-    val weightNavigator = Navigator()
-    val petNavigator = Navigator()
-
     init {
         viewModelScope.launch {
             photo.value = mediaRepository.getPhoto(photoId)

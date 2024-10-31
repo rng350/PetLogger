@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.hfad.petlogger.entities.Note
 import com.hfad.petlogger.entities.Pet
+import com.hfad.petlogger.entities.Tag
 import com.hfad.petlogger.entities.Weight
 import com.hfad.petlogger.repositories.WeightRepository
 import com.hfad.petlogger.util.MeasuringUnitConverter
@@ -20,7 +21,11 @@ class NewWeightViewModel(
     private val unitConverter = MeasuringUnitConverter()
     private var _unitType: String? = null
 
-    fun submitWeight(petId: Long, notes: List<Note> = listOf<Note>()) {
+    fun submitWeight(
+        petId: Long,
+        notes: List<Note> = listOf<Note>(),
+        tags: List<Tag> = listOf<Tag>()
+    ) {
         if (weightAmt.value != null && _unitType != null) {
             val weightDateTime = weightDateTime.selectedDateTime
             val convertedWeightAmt = when(_unitType) {
@@ -37,7 +42,8 @@ class NewWeightViewModel(
             viewModelScope.launch {
                 weightRepository.addWeight(
                     weight = Weight(petId = petId, weightGrams = convertedWeightAmt, weightDateTime = weightDateTime, weightNotes = weightNotes),
-                    notes = notes
+                    notes = notes,
+                    tags = tags
                 )
             }
         }

@@ -12,15 +12,18 @@ import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.databinding.FragmentEditPhotoBinding
 import com.hfad.petlogger.photodisplay.stateless.GetAllNotesUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetAllPetsWithProfilePhotosUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetAllTagsUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetAllWeightsWithPetNamesUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetEventsOfPhotoUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetNotesOfPhotoUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetPetsOfPhotoUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetPhotosOfNoteUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetTagsOfPhotoUseCase
 import com.hfad.petlogger.repositories.EventRepository
 import com.hfad.petlogger.repositories.MediaRepository
 import com.hfad.petlogger.repositories.NoteRepository
 import com.hfad.petlogger.repositories.PetRepository
+import com.hfad.petlogger.repositories.TagRepository
 import com.hfad.petlogger.repositories.WeightRepository
 
 class EditPhotoFragment : Fragment() {
@@ -61,11 +64,17 @@ class EditPhotoFragment : Fragment() {
         val getNotesOfPhoto = GetNotesOfPhotoUseCase(mediaRepository, photoId)
         val noteSelectionViewModel = ViewModelProvider(this, NoteMultiSelectionViewModel.provideFactory(getAllNotes = getAllNotes, getInitialSelection = getNotesOfPhoto)).get(NoteMultiSelectionViewModel::class.java)
 
+        val tagRepository = TagRepository(database)
+        val getAllTags = GetAllTagsUseCase(tagRepository)
+        val getTagsOfPhoto = GetTagsOfPhotoUseCase(mediaRepository, photoId)
+        val tagMultiSelectionViewModel = ViewModelProvider(this, TagMultiSelectionViewModel.provideFactory(tagRepository, getAllTags, getTagsOfPhoto)).get(TagMultiSelectionViewModel::class.java)
+
         editPhotoViewModel = ViewModelProvider(this, EditPhotoViewModel.provideFactory(mediaRepository, photoId)).get(EditPhotoViewModel::class.java)
         binding.editPhotoViewModel = editPhotoViewModel
         binding.petSelectorViewModel = petSelectorViewModel
         binding.eventSelectorViewModel = eventSelectionViewModel
         binding.noteMultiSelectionViewModel = noteSelectionViewModel
+        binding.tagMultiSelectionViewModel = tagMultiSelectionViewModel
 
         setAppBarTitle(getString(R.string.editing_photo_details))
 
@@ -76,7 +85,9 @@ class EditPhotoFragment : Fragment() {
                 eventsToAdd = eventSelectionViewModel.getEventsToAdd(),
                 eventsToRemove = eventSelectionViewModel.getEventsToRemove(),
                 notesToAdd = noteSelectionViewModel.getNotesToAdd(),
-                notesToRemove = noteSelectionViewModel.getNotesToRemove()
+                notesToRemove = noteSelectionViewModel.getNotesToRemove(),
+                tagsToAdd = tagMultiSelectionViewModel.getTagsToAdd(),
+                tagsToRemove = tagMultiSelectionViewModel.getTagsToRemove()
             )
         }
 

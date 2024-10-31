@@ -17,17 +17,21 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
 import androidx.lifecycle.Observer
+import androidx.lifecycle.get
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.hfad.petlogger.databinding.FragmentNewNoteBinding
 import com.hfad.petlogger.databinding.FragmentNewPhotoBinding
+import com.hfad.petlogger.photodisplay.stateless.GetAllNotesUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetAllPetsWithProfilePhotosUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetAllTagsUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetAllWeightsWithPetNamesUseCase
 import com.hfad.petlogger.repositories.EventRepository
 import com.hfad.petlogger.repositories.MediaRepository
 import com.hfad.petlogger.repositories.NoteRepository
 import com.hfad.petlogger.repositories.PetRepository
+import com.hfad.petlogger.repositories.TagRepository
 import com.hfad.petlogger.repositories.WeightRepository
 
 class NewPhotoFragment : Fragment() {
@@ -45,22 +49,27 @@ class NewPhotoFragment : Fragment() {
         val application = requireNotNull(this.activity).application
         val database = PetLoggerDatabase.getInstance(application)
         val mediaRepository = MediaRepository(database, application.applicationContext)
-        val noteRepository = NoteRepository(database, mediaRepository)
         val petRepository = PetRepository(database, mediaRepository)
         val eventRepository = EventRepository(database, mediaRepository)
-        val weightRepository = WeightRepository(database)
 
         val getAllPetsUseCase = GetAllPetsWithProfilePhotosUseCase(petRepository)
         val newPhotoViewModel = ViewModelProvider(this, NewPhotoViewModel.provideFactory(mediaRepository)).get(NewPhotoViewModel::class.java)
         val petSelectorViewModel = ViewModelProvider(this, PetMultiSelectionViewModel.provideFactory(getAllPetsUseCase)).get(PetMultiSelectionViewModel::class.java)
         val eventSelectionViewModel = ViewModelProvider(this, EventMultiSelectionViewModel.provideFactory(eventRepository)).get(EventMultiSelectionViewModel::class.java)
 
-        val getAllWeights = GetAllWeightsWithPetNamesUseCase(weightRepository)
-        val weightMultiSelectionViewModel = ViewModelProvider(this, WeightMultiSelectionViewModel.provideFactory(getAllWeights)).get(WeightMultiSelectionViewModel::class.java)
+        val tagRepository = TagRepository(database)
+        val getAllTags = GetAllTagsUseCase(tagRepository)
+        val tagMultiSelectionViewModel = ViewModelProvider(this, TagMultiSelectionViewModel.provideFactory(tagRepository, getAllTags)).get(TagMultiSelectionViewModel::class.java)
+
+        val noteRepository = NoteRepository(database, mediaRepository)
+        val getAllNotes = GetAllNotesUseCase(noteRepository)
+        val noteMultiSelectionViewModel = ViewModelProvider(this, NoteMultiSelectionViewModel.provideFactory(getAllNotes)).get(NoteMultiSelectionViewModel::class.java)
+
         binding.newPhotoViewModel = newPhotoViewModel
         binding.petSelectorViewModel = petSelectorViewModel
         binding.eventSelectorViewModel = eventSelectionViewModel
-        binding.weightSelectorViewModel = weightMultiSelectionViewModel
+        binding.noteMultiSelectionViewModel = noteMultiSelectionViewModel
+        binding.tagMultiSelectionViewModel = tagMultiSelectionViewModel
 
         newPhotoViewModel.photo.observe(viewLifecycleOwner) {
             if (it != null) {
@@ -134,7 +143,8 @@ class NewPhotoFragment : Fragment() {
             newPhotoViewModel.submit(
                 pets=petSelectorViewModel.getPetsToAdd(),
                 events=eventSelectionViewModel.getEventsToAdd(),
-                weights = weightMultiSelectionViewModel.getWeightsToAdd()
+                existingAttachedNotes = noteMultiSelectionViewModel.getNotesToAdd(),
+                tags = tagMultiSelectionViewModel.getTagsToAdd()
             )
         }
 

@@ -9,6 +9,7 @@ import com.hfad.petlogger.entities.Event
 import com.hfad.petlogger.entities.Note
 import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.entities.Photo
+import com.hfad.petlogger.entities.Tag
 import com.hfad.petlogger.entities.Weight
 import com.hfad.petlogger.repositories.MediaRepository
 import kotlinx.coroutines.async
@@ -43,7 +44,10 @@ class EditPhotoViewModel(private val mediaRepository: MediaRepository, private v
                eventsToRemove: List<Event> = listOf<Event>(),
                notesToAdd: List<Note> = listOf<Note>(),
                notesToRemove: List<Note> = listOf<Note>(),
-               notesToUpdate: List<Note> = listOf<Note>()) {
+               notesToUpdate: List<Note> = listOf<Note>(),
+               tagsToAdd: List<Tag> = listOf<Tag>(),
+               tagsToRemove: List<Tag> = listOf<Tag>()
+    ) {
         photoNew.value?.let {photo ->
             if (
                     !photo.equals(photoInitial.value)
@@ -54,6 +58,8 @@ class EditPhotoViewModel(private val mediaRepository: MediaRepository, private v
                     || notesToAdd.isNotEmpty()
                     || notesToRemove.isNotEmpty()
                     || notesToUpdate.isNotEmpty()
+                    || tagsToAdd.isNotEmpty()
+                    || tagsToRemove.isNotEmpty()
                 ) {
                 viewModelScope.launch {
                     async {
@@ -65,7 +71,9 @@ class EditPhotoViewModel(private val mediaRepository: MediaRepository, private v
                             eventsToRemove = eventsToRemove,
                             notesToAdd = notesToAdd,
                             notesToRemove = notesToRemove,
-                            notesToUpdate = notesToUpdate
+                            notesToUpdate = notesToUpdate,
+                            tagsToAdd = tagsToAdd,
+                            tagsToRemove = tagsToRemove
                         )
                     }.await()
                     _goBack.value = true

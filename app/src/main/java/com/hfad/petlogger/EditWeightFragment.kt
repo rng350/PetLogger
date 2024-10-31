@@ -12,10 +12,13 @@ import com.hfad.petlogger.databinding.FragmentEditWeightBinding
 import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.photodisplay.stateless.GetAllCheckablePetsUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetAllNotesUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetAllTagsUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetNotesOfWeightUseCase
+import com.hfad.petlogger.photodisplay.stateless.GetTagsOfWeightUseCase
 import com.hfad.petlogger.repositories.MediaRepository
 import com.hfad.petlogger.repositories.NoteRepository
 import com.hfad.petlogger.repositories.PetRepository
+import com.hfad.petlogger.repositories.TagRepository
 import com.hfad.petlogger.repositories.WeightRepository
 
 class EditWeightFragment : Fragment() {
@@ -51,6 +54,12 @@ class EditWeightFragment : Fragment() {
         val noteMultiPickerViewModel = ViewModelProvider(this, NoteMultiSelectionViewModel.provideFactory(getAllNotes = getAllNotes, getInitialSelection = getNotesOfWeight)).get(NoteMultiSelectionViewModel::class.java)
         binding.noteMultiSelectionViewModel = noteMultiPickerViewModel
 
+        val tagRepository = TagRepository(database)
+        val getAllTags = GetAllTagsUseCase(tagRepository)
+        val getTagsOfWeight = GetTagsOfWeightUseCase(weightRepository, weightId)
+        val tagMultiSelectionViewModel = ViewModelProvider(this, TagMultiSelectionViewModel.provideFactory(tagRepository, getAllTags, getTagsOfWeight)).get(TagMultiSelectionViewModel::class.java)
+        binding.tagMultiSelectionViewModel = tagMultiSelectionViewModel
+
         setAppBarTitle(getString(R.string.edit_weight_header))
 
         binding.weightDate.setOnClickListener{
@@ -65,7 +74,9 @@ class EditWeightFragment : Fragment() {
                 editWeightViewModel.submitChanges(
                     petId = petId,
                     notesToAdd = noteMultiPickerViewModel.getNotesToAdd(),
-                    notesToRemove = noteMultiPickerViewModel.getNotesToRemove()
+                    notesToRemove = noteMultiPickerViewModel.getNotesToRemove(),
+                    tagsToAdd = tagMultiSelectionViewModel.getTagsToAdd(),
+                    tagsToRemove = tagMultiSelectionViewModel.getTagsToRemove()
                 )
             }
         }

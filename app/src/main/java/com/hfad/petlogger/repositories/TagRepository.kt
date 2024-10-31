@@ -96,6 +96,28 @@ class TagRepository(private val database: PetLoggerDatabase) {
         }
     }
 
+    suspend fun attachWeightToExistingTag(weightId: Long, tag: Tag) {
+        tagDao.attachWeight(WeightTag(weightId = weightId, tagId = tag.tagId))
+    }
+
+    suspend fun attachWeightToNewTag(weightId: Long, tag: Tag) {
+        database.withTransaction {
+            val insertedTag = insertNewTag(tag)
+            tagDao.attachWeight(WeightTag(weightId = weightId, tagId = insertedTag.tagId))
+        }
+    }
+
+    suspend fun attachPhotoToExistingTag(photoId: Long, tag: Tag) {
+        tagDao.attachPhoto(PhotoTag(photoId = photoId, tagId = tag.tagId))
+    }
+
+    suspend fun attachPhotoToNewTag(photoId: Long, tag: Tag) {
+        database.withTransaction {
+            val insertedTag = insertNewTag(tag)
+            tagDao.attachPhoto(PhotoTag(photoId = photoId, tagId = insertedTag.tagId))
+        }
+    }
+
     private suspend fun insertNewTag(tag: Tag): Tag {
         val rowId = tagDao.insert(Tag(tagName = tag.tagName))
         return tagDao.getTagFromRowId(rowId)
@@ -166,8 +188,4 @@ class TagRepository(private val database: PetLoggerDatabase) {
             tagDao.getAllCheckedTags().map { it.toCheckableItem() }
         }
     }
-
-    // TODO: attachEventToTag
-    // TODO: attachWeightToTag
-    // TODO: attachPhotoToTag
 }

@@ -17,6 +17,7 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.hfad.petlogger.databinding.FragmentViewWeightBinding
+import com.hfad.petlogger.photodisplay.stateless.GetAllTagsOfWeightAlphabeticalOrderUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetMoreNotesOfWeightUseCase
 import com.hfad.petlogger.repositories.WeightRepository
 import com.hfad.petlogger.util.GetDateTimeDisplayUseCase
@@ -103,6 +104,10 @@ class ViewWeightFragment : Fragment() {
         val getNotesOfWeight = GetMoreNotesOfWeightUseCase(weightRepository, weightId, notesAmt = 10)
         val associatedNotesDisplayViewModel = ViewModelProvider(this, AssociatedNotesDisplayViewModel.provideFactory(getNotesOfWeight)).get(AssociatedNotesDisplayViewModel::class.java)
         binding.associatedNotesDisplayViewModel = associatedNotesDisplayViewModel
+
+        val getTagsOfWeight = GetAllTagsOfWeightAlphabeticalOrderUseCase(weightRepository, weightId)
+        val associatedTagsDisplayViewModel = ViewModelProvider(this, AssociatedTagsDisplayViewModel.provideFactory(getTagsOfWeight)).get(AssociatedTagsDisplayViewModel::class.java)
+        binding.associatedTagsDisplayViewModel = associatedTagsDisplayViewModel
 
         binding.editWeight.setOnClickListener{
             viewModel.fullWeightDetails.value?.let { weight ->
