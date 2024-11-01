@@ -133,4 +133,12 @@
     <string name="enter_tag">Enter Tag</string>
     <string name="add_tags">Add Tags</string>
     <string name="associated_tags">Associated Tags</string>
+    <string name="pets">Pets</string>
+    <string name="monitor">Monitor</string>
+    <string name="events">Events</string>
+    <string name="notes">Notes</string>
+    <string name="gallery">Gallery</string>
+    <string name="weights">Weights</string>
+    <string name="media">Media</string>
+    <string name="viewing_tagged_content">Viewing Tagged Content</string>
 </resources>

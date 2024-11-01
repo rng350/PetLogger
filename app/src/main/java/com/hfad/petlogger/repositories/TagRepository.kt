@@ -1,10 +1,10 @@
 package com.hfad.petlogger.repositories
 
-import android.util.Log
 import androidx.room.withTransaction
 import com.hfad.petlogger.CheckableItem
 import com.hfad.petlogger.PetLoggerDatabase
 import com.hfad.petlogger.entities.Event
+import com.hfad.petlogger.entities.EventForList
 import com.hfad.petlogger.entities.EventTag
 import com.hfad.petlogger.entities.Note
 import com.hfad.petlogger.entities.NoteTag
@@ -13,15 +13,43 @@ import com.hfad.petlogger.entities.PetWithProfilePic
 import com.hfad.petlogger.entities.Photo
 import com.hfad.petlogger.entities.PhotoTag
 import com.hfad.petlogger.entities.Tag
+import com.hfad.petlogger.entities.WeightForList
 import com.hfad.petlogger.entities.WeightTag
 import com.hfad.petlogger.entities.WeightWithPetName
 import com.hfad.petlogger.util.Constants.Companion.newTagPlaceholderId
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 class TagRepository(private val database: PetLoggerDatabase) {
     private val tagDao = database.tagDao
+
+    suspend fun getTag(tagId: Long): Tag = withContext(Dispatchers.IO) {
+        tagDao.getTag(tagId)
+    }
+
+    fun getPetsOfTagAsFlow(tagId: Long): Flow<List<PetWithProfilePic>> {
+        return tagDao.getPetsOfTag(tagId)
+    }
+
+    fun getEventsOfTagAsFlow(tagId: Long): Flow<List<EventForList>> {
+        return tagDao.getEventsOfTag(tagId).map { it.map { event -> event.toEventForList() }}
+    }
+
+    fun getWeightsOfTagAsFlow(tagId: Long): Flow<List<WeightForList>> {
+        return tagDao.getWeightsOfTag(tagId).map { it.map { weight -> weight.toWeightForList() } }
+    }
+
+    fun getNotesOfTagAsFlow(tagId: Long): Flow<List<Note>> {
+        return tagDao.getNotesOfTag(tagId)
+    }
+
+    fun getPhotosOfTagAsFlow(tagId: Long): Flow<List<Photo>> {
+        return tagDao.getPhotosOfTag(tagId)
+    }
 
     suspend fun getTagByName(tagName: String): Tag? = withContext(Dispatchers.IO) {
         tagDao.getTagByName(tagName)

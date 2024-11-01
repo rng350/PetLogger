@@ -4,25 +4,25 @@
         android:id="@+id/petListFragment"
         android:icon="@drawable/pets"
         android:menuCategory="secondary"
-        android:title="Pets" />
+        android:title="@string/pets" />
     <item
         android:id="@+id/monitoringListFragment"
         android:icon="@drawable/monitoring"
         android:menuCategory="secondary"
-        android:title="Monitor" />
+        android:title="@string/monitor" />
     <item
         android:id="@+id/eventListFragment"
         android:icon="@drawable/event_note"
         android:menuCategory="secondary"
-        android:title="Events" />
+        android:title="@string/events" />
     <item
         android:id="@+id/noteListFragment"
         android:icon="@drawable/note_stack"
         android:menuCategory="secondary"
-        android:title="Notes" />
+        android:title="@string/notes" />
     <item
         android:id="@+id/fullGalleryFragment"
         android:icon="@drawable/photo_library"
         android:menuCategory="secondary"
-        android:title="Gallery" />
+        android:title="@string/gallery" />
 </menu>

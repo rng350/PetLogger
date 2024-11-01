@@ -9,20 +9,29 @@ import androidx.room.Update
 import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteQuery
 import com.hfad.petlogger.entities.CheckableTagFetched
+import com.hfad.petlogger.entities.Event
 import com.hfad.petlogger.entities.EventTag
+import com.hfad.petlogger.entities.Note
 import com.hfad.petlogger.entities.NoteTag
 import com.hfad.petlogger.entities.PetTag
+import com.hfad.petlogger.entities.PetWithProfilePic
+import com.hfad.petlogger.entities.Photo
 import com.hfad.petlogger.entities.PhotoTag
 import com.hfad.petlogger.entities.Tag
+import com.hfad.petlogger.entities.WeightForListFetched
 import com.hfad.petlogger.entities.WeightTag
 import com.hfad.petlogger.util.Constants.Companion.noteIdField
 import com.hfad.petlogger.util.Constants.Companion.noteTagTableHeader
 import com.hfad.petlogger.util.Constants.Companion.tagIdField
 import com.hfad.petlogger.util.Constants.Companion.tagNameField
 import com.hfad.petlogger.util.Constants.Companion.tagTableHeader
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TagDao {
+    @Query("SELECT * FROM tag_table WHERE tag_id=:tagId")
+    suspend fun getTag(tagId: Long): Tag
+
     @Insert
     suspend fun insert(tag: Tag): Long
 
@@ -200,4 +209,55 @@ interface TagDao {
     }
     @RawQuery
     suspend fun getCheckedTagSelectionOptionsOfEntityByQuery(query: SupportSQLiteQuery): List<CheckableTagFetched>
+
+    @Query("""
+        SELECT pet_table.pet_id AS petId, pet_table.pet_name AS petName, photo_table.photo_uri AS petProfilePicUri 
+        FROM pet_table 
+        LEFT JOIN pet_profile_photo_table ON pet_table.pet_id=pet_profile_photo_table.pet_id 
+        LEFT JOIN photo_table ON pet_profile_photo_table.photo_id=photo_table.photo_id 
+        LEFT JOIN pet_tag_table ON pet_table.pet_id=pet_tag_table.pet_id 
+        WHERE pet_tag_table.tag_id=:tagId 
+        ORDER BY pet_table.pet_id ASC
+    """)
+    fun getPetsOfTag(tagId: Long): Flow<List<PetWithProfilePic>>
+
+    @Query("""
+        SELECT event_table.* 
+        FROM event_table 
+        LEFT JOIN event_tag_table ON event_table.event_id=event_tag_table.event_id 
+        WHERE event_tag_table.tag_id=:tagId 
+        ORDER BY datetime(event_table.event_date) DESC, event_table.event_id DESC
+    """)
+    fun getEventsOfTag(tagId: Long): Flow<List<Event>>
+
+    @Query("""
+        SELECT note_table.* 
+        FROM note_table 
+        LEFT JOIN note_tag_table ON note_table.note_id=note_tag_table.note_id 
+        WHERE note_tag_table.tag_id=:tagId 
+        ORDER BY datetime(note_table.note_last_updated) DESC, note_table.note_id DESC
+    """)
+    fun getNotesOfTag(tagId: Long): Flow<List<Note>>
+
+    @Query("""
+        SELECT photo_table.* 
+        FROM photo_table 
+        LEFT JOIN photo_tag_table ON photo_table.photo_id=photo_tag_table.photo_id 
+        WHERE photo_tag_table.tag_id=:tagId 
+        ORDER BY datetime(photo_table.photo_date) DESC, photo_table.photo_id DESC
+    """)
+    fun getPhotosOfTag(tagId: Long): Flow<List<Photo>>
+
+    @Query("""
+        SELECT weight_table.weight_id AS weightId, 
+            weight_table.weight_grams AS weightGramsAmt, 
+            weight_table.weight_datetime AS weightDateTime, 
+            pet_table.pet_name AS weightPetName 
+        FROM weight_table 
+        LEFT JOIN weight_tag_table ON weight_table.weight_id=weight_tag_table.weight_id 
+        LEFT JOIN pet_table ON weight_table.weight_pet_id=pet_table.pet_id
+        WHERE weight_tag_table.tag_id=:tagId 
+        ORDER BY datetime(weight_table.weight_datetime) DESC, weight_table.weight_id DESC
+    """)
+    fun getWeightsOfTag(tagId: Long): Flow<List<WeightForListFetched>>
 }

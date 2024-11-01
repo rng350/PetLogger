@@ -90,6 +90,13 @@ class ViewNoteFragment : Fragment() {
             }
         }
 
+        associatedTagsViewModel.navigator.navigateTo.observe(viewLifecycleOwner) {
+            it?.let {
+                associatedTagsViewModel.navigator.onNavigated()
+                findNavController().navigateSafe(ViewNoteFragmentDirections.actionViewNoteFragmentToViewTagFragment(it))
+            }
+        }
+
         return view
     }
 
