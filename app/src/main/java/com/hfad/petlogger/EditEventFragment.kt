@@ -114,13 +114,10 @@ class EditEventFragment : Fragment() {
                 tagsToAdd = tagMultiSelectionViewModel.getTagsToAdd(),
                 tagsToRemove = tagMultiSelectionViewModel.getTagsToRemove()
             )
-            this.findNavController().navigateSafe(EditEventFragmentDirections.actionEditEventFragmentToViewEventFragment(eventID))
         }
-
         binding.cancelButton.setOnClickListener {
             this.findNavController().popBackStack()
         }
-
         val confirmAction = ConfirmActionUseCase(
             dialogTitle = resources.getString(R.string.confirm_event_deletion_title),
             dialogMessage = resources.getString(R.string.confirm_event_deletion_message),
@@ -137,6 +134,12 @@ class EditEventFragment : Fragment() {
             if (it == true) {
                 editEventViewModel.onNavigateToEventsList()
                 this.findNavController().navigateSafe(EditEventFragmentDirections.actionEditEventFragmentToEventListFragment())
+            }
+        }
+        editEventViewModel.goToViewEvent.observe(viewLifecycleOwner) {
+            if (it == true) {
+                editEventViewModel.onNavigateToViewEvent()
+                this.findNavController().navigateSafe(EditEventFragmentDirections.actionEditEventFragmentToViewEventFragment(eventID))
             }
         }
 

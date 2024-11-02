@@ -22,96 +22,42 @@
             type="com.hfad.petlogger.AssociatedTagsDisplayViewModel" />
     </data>
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:orientation="vertical">
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabMode="fixed"
+            app:tabGravity="fill"/>
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fillViewport="true">
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewPager"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fillViewport="true"/>
+        </ScrollView>
         <LinearLayout
-                android:layout_width="match_parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/editButton"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/noteTitleTextField"
-                android:layout_width="match_parent"
+                android:text="@string/edit_note_button"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/backButton"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="@string/title">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/noteTitleText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@{viewNoteViewModel.note.title}"
-                    android:enabled="false"/>
-            </com.google.android.material.textfield.TextInputLayout>
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/noteDetailsTextField"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/note_details">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/noteDetailsText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@{viewNoteViewModel.note.details}"
-                    android:enabled="false"/>
-            </com.google.android.material.textfield.TextInputLayout>
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/noteLastUpdatedTextField"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/last_updated">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/noteLastUpdatedText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:minLines="1"
-                    android:text="@{viewNoteViewModel.lastUpdatedDateDisplay}"
-                    android:enabled="false"/>
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/associated_pets_fragment_container_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:name="com.hfad.petlogger.AssociatedPetsDisplayFragment"
-                tools:layout="@layout/fragment_associated_pets_display" />
-
-            <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/associated_events_fragment_container_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:name="com.hfad.petlogger.AssociatedEventsDisplayFragment"
-                tools:layout="@layout/fragment_associated_events_display" />
-
-            <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/associated_photos_fragment_container_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:name="com.hfad.petlogger.AssociatedPhotosDisplayFragment"
-                tools:layout="@layout/fragment_associated_photos_display" />
-
-            <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/associated_tags_fragment_container_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:name="com.hfad.petlogger.AssociatedTagsDisplayFragment"
-                tools:layout="@layout/fragment_associated_tags_display" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/editButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/edit_note_button"/>
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/backButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/back"/>
-            </LinearLayout>
+                android:text="@string/back"/>
         </LinearLayout>
-    </ScrollView>
-
+    </LinearLayout>
 </layout>

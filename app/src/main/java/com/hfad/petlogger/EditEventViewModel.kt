@@ -22,6 +22,9 @@ class EditEventViewModel(private val eventRepository: EventRepository, eventID: 
     private val _goToEventsList = MutableLiveData(false)
     val goToEventsList: LiveData<Boolean> get() = _goToEventsList
 
+    private val _goToViewEvent = MutableLiveData(false)
+    val goToViewEvent: LiveData<Boolean> get() = _goToViewEvent
+
     init {
         viewModelScope.launch {
             val eventFetched = async {
@@ -50,17 +53,20 @@ class EditEventViewModel(private val eventRepository: EventRepository, eventID: 
                 updatedEvent.details = newEventDetails.value ?: ""
                 updatedEvent.date = eventDateTime.selectedDateTime
                 viewModelScope.launch {
-                    eventRepository.update(
-                        event = updatedEvent,
-                        petsToAdd = petsToAdd,
-                        petsToRemove = petsToRemove,
-                        photosToAdd = photosToAdd,
-                        photosToRemove = photosToRemove,
-                        notesToAdd = notesToAdd,
-                        notesToRemove = notesToRemove,
-                        tagsToAdd = tagsToAdd,
-                        tagsToRemove = tagsToRemove
-                    )
+                    async {
+                        eventRepository.update(
+                            event = updatedEvent,
+                            petsToAdd = petsToAdd,
+                            petsToRemove = petsToRemove,
+                            photosToAdd = photosToAdd,
+                            photosToRemove = photosToRemove,
+                            notesToAdd = notesToAdd,
+                            notesToRemove = notesToRemove,
+                            tagsToAdd = tagsToAdd,
+                            tagsToRemove = tagsToRemove
+                        )
+                    }.await()
+                    _goToViewEvent.value = true
                 }
             }
         }
@@ -79,6 +85,10 @@ class EditEventViewModel(private val eventRepository: EventRepository, eventID: 
 
     fun onNavigateToEventsList() {
         _goToEventsList.value = false
+    }
+
+    fun onNavigateToViewEvent() {
+        _goToViewEvent.value = false
     }
 
     companion object {
