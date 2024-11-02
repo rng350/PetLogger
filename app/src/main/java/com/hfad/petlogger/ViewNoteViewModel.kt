@@ -17,9 +17,6 @@ class ViewNoteViewModel(private val noteRepository: NoteRepository, private val 
 
     init {
         viewModelScope.launch {
-            val notePetsTempDELETE = async {
-                noteRepository.getPetsOfNote(noteId)
-            }
             val fetchedNote = async {
                 noteRepository.getNote(noteId)
             }
@@ -28,8 +25,6 @@ class ViewNoteViewModel(private val noteRepository: NoteRepository, private val 
                 val dateTimeDisplayUseCase = GetDateTimeDisplayUseCase()
                 lastUpdatedDateDisplay.value = dateTimeDisplayUseCase(it.lastUpdated)
             }
-            val petsOfNoteDELETE = notePetsTempDELETE.await()
-            Log.d("ViewNoteVM", "Pets_of_Note: ${petsOfNoteDELETE}")
         }
     }
 

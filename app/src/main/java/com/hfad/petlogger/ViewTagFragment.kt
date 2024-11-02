@@ -55,7 +55,7 @@ class ViewTagFragment : Fragment() {
             }
         })
 
-        binding.viewPager.adapter = ViewTagTabViewPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
+        binding.viewPager.adapter = ViewTagViewPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
         mediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = when(position) {
                 0 -> getString(R.string.pets)
@@ -279,7 +279,7 @@ class TaggedMediaListFragment : Fragment() {
     }
 }
 
-class ViewTagTabViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle): FragmentStateAdapter(fragmentManager, lifecycle) {
+class ViewTagViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle): FragmentStateAdapter(fragmentManager, lifecycle) {
     override fun getItemCount(): Int = 5
 
     override fun createFragment(position: Int): Fragment {

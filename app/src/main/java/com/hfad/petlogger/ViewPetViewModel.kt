@@ -15,7 +15,7 @@ class ViewPetViewModel (
     private val petRepository: PetRepository,
     private val petID: Long,
     private val getPetAgeDisplay: GetPeriodDisplayUseCase,
-    private val notAvailableString: String
+    notAvailableString: String
 ): ViewModel() {
     val pet : MutableLiveData<Pet> = MutableLiveData<Pet>()
     val petProfilePhoto = MutableLiveData<Photo>()

@@ -141,4 +141,5 @@
     <string name="weights">Weights</string>
     <string name="media">Media</string>
     <string name="viewing_tagged_content">Viewing Tagged Content</string>
+    <string name="profile">Profile</string>
 </resources>

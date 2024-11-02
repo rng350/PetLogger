@@ -76,6 +76,9 @@
         <action
             android:id="@+id/action_viewPetFragment_to_viewTagFragment"
             app:destination="@id/viewTagFragment" />
+        <action
+            android:id="@+id/action_viewPetFragment_to_viewNoteFragment"
+            app:destination="@id/viewNoteFragment" />
     </fragment>
     <fragment
         android:id="@+id/viewEventFragment"
