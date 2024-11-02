@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ViewPetFragment">
+    tools:context=".ViewEventFragment">
     <data>
         <variable
             name="viewEventViewModel"
@@ -22,105 +22,42 @@
             type="com.hfad.petlogger.AssociatedTagsDisplayViewModel" />
     </data>
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabMode="fixed"
+            app:tabGravity="fill"/>
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fillViewport="true">
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewPager"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fillViewport="true"/>
+        </ScrollView>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/eventTitleTextField"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/event_title_header" >
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/eventTitleText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@{viewEventViewModel.event.title}"
-                    android:enabled="false"/>
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/eventDateTextField"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/event_date_header">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/eventDateText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@{viewEventViewModel.eventDate.toString()}"
-                    android:enabled="false"/>
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/eventTimeTextField"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/time_header">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/eventTimeText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@{viewEventViewModel.eventTime.toString()}"
-                    android:enabled="false"/>
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/eventDetailsTextField"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/event_details_header">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/eventDetailsText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@{viewEventViewModel.event.details}"
-                    android:enabled="false"/>
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/associated_pets_fragment_container_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:name="com.hfad.petlogger.AssociatedPetsDisplayFragment"
-                tools:layout="@layout/fragment_associated_pets_display" />
-
-            <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/associated_photos_fragment_container_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:name="com.hfad.petlogger.AssociatedPhotosDisplayFragment"
-                tools:layout="@layout/fragment_associated_photos_display" />
-
-            <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/associated_notes_fragment_container_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:name="com.hfad.petlogger.AssociatedNotesDisplayFragment"
-                tools:layout="@layout/fragment_associated_notes_display" />
-
-            <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/associated_tags_fragment_container_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:name="com.hfad.petlogger.AssociatedTagsDisplayFragment"
-                tools:layout="@layout/fragment_associated_tags_display" />
-
-
+            android:gravity="right"
+            android:orientation="horizontal">
             <Button
                 android:id="@+id/edit_event_button"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/edit_event_button"/>
             <Button
                 android:id="@+id/back_button"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/back"/>
         </LinearLayout>
-    </ScrollView>
+    </LinearLayout>
 </layout>

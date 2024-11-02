@@ -5,10 +5,16 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.google.android.material.tabs.TabLayoutMediator
 import com.hfad.petlogger.databinding.FragmentViewEventBinding
+import com.hfad.petlogger.databinding.FragmentViewEventDetailsBinding
 import com.hfad.petlogger.photodisplay.stateful.GetNotesOfEventForDisplayUseCase
 import com.hfad.petlogger.photodisplay.stateful.GetPetsOfEventForDisplayUseCase
 import com.hfad.petlogger.photodisplay.stateful.GetPhotosOfEventForDisplayUseCase
@@ -22,6 +28,7 @@ import com.hfad.petlogger.repositories.MediaRepository
 class ViewEventFragment : Fragment() {
     private var _binding: FragmentViewEventBinding? = null
     private val binding get() = _binding!!
+    private var mediator: TabLayoutMediator? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -57,6 +64,17 @@ class ViewEventFragment : Fragment() {
         val associatedTagsDisplayViewModel = ViewModelProvider(this, AssociatedTagsDisplayViewModel.provideFactory(getTagsOfEvent)).get(AssociatedTagsDisplayViewModel::class.java)
         binding.associatedTagsDisplayViewModel = associatedTagsDisplayViewModel
 
+        binding.viewPager.adapter = ViewEventViewPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
+        mediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+            tab.text = when(position) {
+                0 -> getString(R.string.details)
+                1 -> getString(R.string.notes)
+                2 -> getString(R.string.photos_header)
+                else -> null
+            }
+        }
+        mediator?.attach()
+
         viewEventViewModel.event.observe(viewLifecycleOwner, Observer {
             it?.let {
                 setAppBarTitle(title = it.title, subtitle = getString(R.string.viewing_event_details))
@@ -91,6 +109,44 @@ class ViewEventFragment : Fragment() {
         binding.backButton.setOnClickListener {
             this.findNavController().popBackStack()
         }
+
+        return view
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        mediator?.detach()
+        mediator = null
+        _binding?.viewPager?.adapter = null
+        _binding = null
+    }
+
+    private class ViewEventViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle): FragmentStateAdapter(fragmentManager, lifecycle) {
+        override fun getItemCount(): Int = 3
+        override fun createFragment(position: Int): Fragment {
+            return when(position) {
+                0 -> ViewEventDetailsFragment()
+                1 -> AssociatedNotesDisplayFragment()
+                2 -> AssociatedPhotosDisplayFragment()
+                else -> throw IllegalStateException("Invalid position $position")
+            }
+        }
+    }
+}
+
+class ViewEventDetailsFragment() : Fragment() {
+    private var _binding: FragmentViewEventDetailsBinding? = null
+    val binding: FragmentViewEventDetailsBinding get() = _binding!!
+    private val viewEventViewModel: ViewEventViewModel by viewModels({requireParentFragment()})
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentViewEventDetailsBinding.inflate(inflater, container, false)
+        val view = binding.root
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.viewEventViewModel = viewEventViewModel
 
         return view
     }
