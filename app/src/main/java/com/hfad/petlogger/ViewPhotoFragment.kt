@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.bumptech.glide.Glide
@@ -74,6 +75,32 @@ class ViewPhotoFragment : Fragment() {
             }
         }
         mediator?.attach()
+
+        associatedPetsDisplayViewModel.navigator.navigateTo.observe(viewLifecycleOwner, Observer { petId ->
+            petId?.let {
+                associatedPetsDisplayViewModel.navigator.onNavigated()
+                findNavController().navigateSafe(ViewPhotoFragmentDirections.actionViewPhotoFragmentToViewPetFragment(petId))
+            }
+        })
+        associatedEventsDisplayViewModel.eventNavigator.navigateTo.observe(viewLifecycleOwner, Observer { eventId ->
+            eventId?.let {
+                associatedEventsDisplayViewModel.eventNavigator.onNavigated()
+                findNavController().navigateSafe(ViewPhotoFragmentDirections.actionViewPhotoFragmentToViewEventFragment(eventId))
+            }
+        })
+        associatedNotesDisplayViewModel.noteNavigator.navigateTo.observe(viewLifecycleOwner, Observer { noteId ->
+            noteId?.let {
+                associatedNotesDisplayViewModel.noteNavigator.onNavigated()
+                findNavController().navigateSafe(ViewPhotoFragmentDirections.actionViewPhotoFragmentToViewNoteFragment(noteId))
+            }
+        })
+        associatedTagsDisplayViewModel.navigator.navigateTo.observe(viewLifecycleOwner, Observer { tagId ->
+            tagId?.let {
+                associatedTagsDisplayViewModel.navigator.onNavigated()
+                findNavController().navigateSafe(ViewPhotoFragmentDirections.actionViewPhotoFragmentToViewTagFragment(tagId))
+            }
+
+        })
 
         binding.editButton.setOnClickListener{
             findNavController().navigateSafe(ViewPhotoFragmentDirections.actionViewPhotoFragmentToEditPhotoFragment(photoId))

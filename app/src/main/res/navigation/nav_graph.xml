@@ -207,6 +207,9 @@
         <action
             android:id="@+id/action_viewWeightFragment_to_viewTagFragment"
             app:destination="@id/viewTagFragment" />
+        <action
+            android:id="@+id/action_viewWeightFragment_to_viewNoteFragment"
+            app:destination="@id/viewNoteFragment" />
     </fragment>
     <fragment
         android:id="@+id/editWeightFragment"
@@ -253,14 +256,14 @@
             android:id="@+id/action_viewNoteFragment_to_viewPhotoFragment"
             app:destination="@id/viewPhotoFragment" />
         <action
-            android:id="@+id/action_viewNoteFragment_to_viewPhotoFragment2"
-            app:destination="@id/viewPhotoFragment" />
-        <action
             android:id="@+id/action_viewNoteFragment_to_viewPetFragment"
             app:destination="@id/viewPetFragment" />
         <action
             android:id="@+id/action_viewNoteFragment_to_viewTagFragment"
             app:destination="@id/viewTagFragment" />
+        <action
+            android:id="@+id/action_viewNoteFragment_to_viewEventFragment"
+            app:destination="@id/viewEventFragment" />
     </fragment>
     <fragment
         android:id="@+id/editNoteFragment"
@@ -306,6 +309,9 @@
         <action
             android:id="@+id/action_viewPhotoFragment_to_viewTagFragment"
             app:destination="@id/viewTagFragment" />
+        <action
+            android:id="@+id/action_viewPhotoFragment_to_viewEventFragment"
+            app:destination="@id/viewEventFragment" />
     </fragment>
     <fragment
         android:id="@+id/editPhotoFragment"

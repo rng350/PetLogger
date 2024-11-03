@@ -89,6 +89,19 @@ class ViewWeightFragment : Fragment() {
             findNavController().popBackStack()
         }
 
+        associatedNotesDisplayViewModel.noteNavigator.navigateTo.observe(viewLifecycleOwner, Observer { noteId ->
+            noteId?.let {
+                associatedNotesDisplayViewModel.noteNavigator.onNavigated()
+                findNavController().navigateSafe(ViewWeightFragmentDirections.actionViewWeightFragmentToViewNoteFragment(noteId))
+            }
+        })
+        associatedTagsDisplayViewModel.navigator.navigateTo.observe(viewLifecycleOwner, Observer { tagId ->
+            tagId?.let {
+                associatedTagsDisplayViewModel.navigator.onNavigated()
+                findNavController().navigateSafe(ViewWeightFragmentDirections.actionViewWeightFragmentToViewTagFragment(tagId))
+            }
+        })
+
         binding.viewPager.adapter = ViewWeightViewPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
         mediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = when(position) {

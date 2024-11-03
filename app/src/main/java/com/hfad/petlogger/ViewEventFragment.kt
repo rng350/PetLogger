@@ -87,18 +87,22 @@ class ViewEventFragment : Fragment() {
                 this.findNavController().navigateSafe(ViewEventFragmentDirections.actionViewEventFragmentToViewPetFragment(it))
             }
         }
-
         associatedPhotosDisplayViewModel.navigator.navigateTo.observe(viewLifecycleOwner) {
             it?.let {
                 associatedPhotosDisplayViewModel.navigator.onNavigated()
                 findNavController().navigateSafe(ViewEventFragmentDirections.actionViewEventFragmentToViewPhotoFragment(it))
             }
         }
-
         associatedNotesDisplayViewModel.noteNavigator.navigateTo.observe(viewLifecycleOwner) {
             it?.let {
                 associatedNotesDisplayViewModel.noteNavigator.onNavigated()
                 findNavController().navigateSafe(ViewEventFragmentDirections.actionViewEventFragmentToViewNoteFragment(it))
+            }
+        }
+        associatedTagsDisplayViewModel.navigator.navigateTo.observe(viewLifecycleOwner) { tagId ->
+            tagId?.let {
+                associatedTagsDisplayViewModel.navigator.onNavigated()
+                findNavController().navigateSafe(ViewEventFragmentDirections.actionViewEventFragmentToViewTagFragment(tagId))
             }
         }
 

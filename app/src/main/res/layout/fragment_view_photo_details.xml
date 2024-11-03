@@ -101,5 +101,12 @@
                 android:text="@{viewPhotoViewModel.photoDate}"
                 android:enabled="false"/>
         </com.google.android.material.textfield.TextInputLayout>
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/associated_tags_fragment_container_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:name="com.hfad.petlogger.AssociatedTagsDisplayFragment"
+            tools:layout="@layout/fragment_associated_tags_display" />
     </LinearLayout>
 </layout>

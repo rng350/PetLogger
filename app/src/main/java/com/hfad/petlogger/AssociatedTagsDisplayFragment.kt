@@ -18,7 +18,7 @@ import com.hfad.petlogger.recyclerviews.SetupAssociatedTagsDisplayUseCase
 class AssociatedTagsDisplayFragment : Fragment() {
     private var _binding: FragmentAssociatedTagsDisplayBinding? = null
     val binding: FragmentAssociatedTagsDisplayBinding get() = _binding!!
-    private val associatedTagsDisplayViewModel: AssociatedTagsDisplayViewModel by viewModels({requireParentFragment()})
+    private val associatedTagsDisplayViewModel: AssociatedTagsDisplayViewModel by viewModels({requireParentFragment().requireParentFragment()})
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

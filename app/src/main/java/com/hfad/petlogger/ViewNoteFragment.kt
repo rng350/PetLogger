@@ -99,6 +99,12 @@ class ViewNoteFragment : Fragment() {
                 findNavController().navigateSafe(ViewNoteFragmentDirections.actionViewNoteFragmentToViewPetFragment(it))
             }
         }
+        associatedEventsDisplayViewModel.eventNavigator.navigateTo.observe(viewLifecycleOwner) { eventId ->
+            eventId?.let {
+                associatedEventsDisplayViewModel.eventNavigator.onNavigated()
+                findNavController().navigateSafe(ViewNoteFragmentDirections.actionViewNoteFragmentToViewEventFragment(eventId))
+            }
+        }
         associatedPhotosViewModel.navigator.navigateTo.observe(viewLifecycleOwner) {
             it?.let {
                 associatedPhotosViewModel.navigator.onNavigated()

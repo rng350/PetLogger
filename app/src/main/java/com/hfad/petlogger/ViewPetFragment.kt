@@ -103,6 +103,12 @@ class ViewPetFragment : Fragment() {
                 findNavController().navigateSafe(ViewPetFragmentDirections.actionViewPetFragmentToViewPhotoFragment(photoId))
             }
         }
+        associatedTagsDisplayViewModel.navigator.navigateTo.observe(viewLifecycleOwner) {tagId ->
+            tagId?.let {
+                associatedTagsDisplayViewModel.navigator.onNavigated()
+                findNavController().navigateSafe(ViewPetFragmentDirections.actionViewPetFragmentToViewTagFragment(tagId))
+            }
+        }
 
         binding.editPetButton.setOnClickListener {
             findNavController().navigateSafe(ViewPetFragmentDirections.actionViewPetFragmentToEditPetFragment(petId))

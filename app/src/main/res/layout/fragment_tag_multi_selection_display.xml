@@ -32,7 +32,7 @@
                     android:id="@+id/dialogFragmentAppBar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:title="@string/associated_tags"
+                    app:title="@string/tags"
                     app:titleCentered="true"/>
             </com.google.android.material.appbar.AppBarLayout>
 
