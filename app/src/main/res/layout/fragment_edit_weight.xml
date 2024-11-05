@@ -21,103 +21,48 @@
             type="com.hfad.petlogger.TagMultiSelectionViewModel" />
     </data>
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:orientation="vertical">
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabMode="fixed"
+            app:tabGravity="fill"/>
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fillViewport="true">
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewPager"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fillViewport="true"/>
+        </ScrollView>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/weightQtyTextField"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/weight">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/weightQtyInput"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@={DataBindingConverter.intToStringMaterial(viewModel.weight.weightGrams)}"
-                    android:inputType="number"/>
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/weightDateLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/date">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/weightDate"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:drawableEnd="@drawable/baseline_edit_24"
-                    android:text="@{viewModel.weightDateTime.dateDisplay}"
-                    android:focusable="true"
-                    android:clickable="true"
-                    android:inputType="date"/>
-            </com.google.android.material.textfield.TextInputLayout>
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/weightTimeLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/time_header">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/weightTime"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:drawableEnd="@drawable/baseline_edit_24"
-                    android:text="@{viewModel.weightDateTime.timeDisplay}"
-                    android:focusable="true"
-                    android:clickable="true"
-                    android:inputType="time"/>
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/pet_selection_fragment_container_view"
+            android:gravity="center"
+            android:orientation="horizontal">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/submitButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:name="com.hfad.petlogger.PetSingleSelectionDisplayFragment"
-                tools:layout="@layout/fragment_pet_single_selection_display" />
-
-            <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/note_selection_fragment_container_view"
-                android:layout_width="match_parent"
+                android:text="@string/submit"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/cancelButton"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:name="com.hfad.petlogger.NoteMultiSelectionDisplayFragment"
-                tools:layout="@layout/fragment_note_multi_selection_display" />
-
-            <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/tag_selection_fragment_container_view"
-                android:layout_width="match_parent"
+                android:layout_marginHorizontal="10dp"
+                android:text="@string/cancel"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/deleteButton"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:name="com.hfad.petlogger.TagMultiSelectionDisplayFragment"
-                tools:layout="@layout/fragment_tag_multi_selection_display"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center">
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/submitButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/submit"/>
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/cancelButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="10dp"
-                    android:text="@string/cancel"/>
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/deleteButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/delete"/>
-            </LinearLayout>
+                android:text="@string/delete"/>
         </LinearLayout>
-    </ScrollView>
+    </LinearLayout>
 </layout>

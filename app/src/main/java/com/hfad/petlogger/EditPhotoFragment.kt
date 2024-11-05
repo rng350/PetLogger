@@ -6,10 +6,16 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.get
 import androidx.navigation.fragment.findNavController
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.google.android.material.tabs.TabLayoutMediator
 import com.hfad.petlogger.databinding.FragmentEditPhotoBinding
+import com.hfad.petlogger.databinding.FragmentEditPhotoDetailsBinding
 import com.hfad.petlogger.photodisplay.stateless.GetAllNotesUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetAllPetsWithProfilePhotosUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetAllTagsUseCase
@@ -30,6 +36,7 @@ class EditPhotoFragment : Fragment() {
 
     private var _binding: FragmentEditPhotoBinding? = null
     private val binding get() = _binding!!
+    private var mediator: TabLayoutMediator? = null
     private lateinit var editPhotoViewModel: EditPhotoViewModel
 
     override fun onCreateView(
@@ -78,6 +85,18 @@ class EditPhotoFragment : Fragment() {
 
         setAppBarTitle(getString(R.string.editing_photo_details))
 
+        binding.viewPager.adapter = EditPhotoViewPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
+        mediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+            tab.text = when(position) {
+                0 -> getString(R.string.details)
+                1 -> getString(R.string.pets)
+                2 -> getString(R.string.events)
+                3 -> getString(R.string.notes)
+                else -> null
+            }
+        }
+        mediator?.attach()
+
         binding.submitButton.setOnClickListener{
             editPhotoViewModel.submit(
                 petsToAdd = petSelectorViewModel.getPetsToAdd(),
@@ -103,10 +122,6 @@ class EditPhotoFragment : Fragment() {
             confirmAction()
         }
 
-        binding.resetButton.setOnClickListener{
-            editPhotoViewModel.reset()
-        }
-
         binding.backButton.setOnClickListener{
             findNavController().popBackStack()
         }
@@ -124,6 +139,46 @@ class EditPhotoFragment : Fragment() {
             }
         })
 
+        return view
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        mediator?.detach()
+        mediator = null
+        _binding?.viewPager?.adapter = null
+        _binding = null
+    }
+
+    private class EditPhotoViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle): FragmentStateAdapter(fragmentManager, lifecycle) {
+        override fun getItemCount(): Int = 4
+        override fun createFragment(position: Int): Fragment {
+            return when(position) {
+                0 -> EditPhotoDetailsFragment()
+                1 -> PetMultiSelectionDisplayFragment()
+                2 -> EventMultiSelectionDisplayFragment()
+                3 -> NoteMultiSelectionDisplayFragment()
+                else -> throw IllegalStateException("Invalid position $position")
+            }
+        }
+    }
+}
+
+class EditPhotoDetailsFragment() : Fragment() {
+    private var _binding: FragmentEditPhotoDetailsBinding? = null
+    val binding: FragmentEditPhotoDetailsBinding get() = _binding!!
+    private val editPhotoViewModel: EditPhotoViewModel by viewModels({requireParentFragment()})
+    private val tagMultiSelectionViewModel: TagMultiSelectionViewModel by viewModels({requireParentFragment()})
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentEditPhotoDetailsBinding.inflate(inflater, container, false)
+        val view = binding.root
+        binding.editPhotoViewModel = editPhotoViewModel
+        binding.tagMultiSelectionViewModel = tagMultiSelectionViewModel
         return view
     }
 

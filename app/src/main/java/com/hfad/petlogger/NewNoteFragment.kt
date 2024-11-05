@@ -6,9 +6,15 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.get
 import androidx.navigation.fragment.findNavController
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.google.android.material.tabs.TabLayoutMediator
 import com.hfad.petlogger.databinding.FragmentNewNoteBinding
+import com.hfad.petlogger.databinding.FragmentNewNoteDetailsBinding
 import com.hfad.petlogger.entities.PetWithProfilePic
 import com.hfad.petlogger.photodisplay.stateless.GetAllCheckablePetsUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetAllPetsWithProfilePhotosUseCase
@@ -31,6 +37,7 @@ class NewNoteFragment : Fragment() {
     private lateinit var weightMultiSelectionViewModel: WeightMultiSelectionViewModel
     private lateinit var mediaSelectionViewModel: MediaSelectionViewModel
     private lateinit var tagMultiSelectionViewModel: TagMultiSelectionViewModel
+    private var mediator: TabLayoutMediator? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,6 +54,18 @@ class NewNoteFragment : Fragment() {
         val weightRepository = WeightRepository(database)
 
         setAppBarTitle(getString(R.string.new_note_header))
+
+        binding.viewPager.adapter = NewNoteViewPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
+        mediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+            tab.text = when(position) {
+                0 -> getString(R.string.details)
+                1 -> getString(R.string.pets)
+                2 -> getString(R.string.events)
+                3 -> getString(R.string.photos_header)
+                else -> null
+            }
+        }
+        mediator?.attach()
 
         newNoteViewModel = ViewModelProvider(this, NewNoteViewModel.provideFactory(noteRepository)).get(NewNoteViewModel::class.java)
 
@@ -96,6 +115,46 @@ class NewNoteFragment : Fragment() {
             }
         }
 
+        return view
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        mediator?.detach()
+        mediator = null
+        _binding?.viewPager?.adapter = null
+        _binding = null
+    }
+
+    private class NewNoteViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle): FragmentStateAdapter(fragmentManager, lifecycle) {
+        override fun getItemCount(): Int = 4
+        override fun createFragment(position: Int): Fragment {
+            return when(position) {
+                0 -> NewNoteDetailsFragment()
+                1 -> PetMultiSelectionDisplayFragment()
+                2 -> EventMultiSelectionDisplayFragment()
+                3 -> MediaSelectionFragment()
+                else -> throw IllegalStateException("Invalid position $position")
+            }
+        }
+    }
+}
+
+class NewNoteDetailsFragment() : Fragment() {
+    private var _binding: FragmentNewNoteDetailsBinding? = null
+    val binding: FragmentNewNoteDetailsBinding get() = _binding!!
+    private val newNoteViewModel: NewNoteViewModel by viewModels({requireParentFragment()})
+    private val tagMultiSelectionViewModel: TagMultiSelectionViewModel by viewModels({requireParentFragment()})
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentNewNoteDetailsBinding.inflate(inflater, container, false)
+        val view = binding.root
+        binding.newNoteViewModel = newNoteViewModel
+        binding.tagMultiSelectionViewModel = tagMultiSelectionViewModel
         return view
     }
 

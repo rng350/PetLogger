@@ -24,7 +24,7 @@ import com.hfad.petlogger.databinding.FragmentMediaSingleSelectionBinding
 class MediaSingleSelectionFragment : Fragment() {
     private var _binding: FragmentMediaSingleSelectionBinding? = null
     val binding: FragmentMediaSingleSelectionBinding get() = _binding!!
-    val mediaSingleSelectionViewModel: MediaSingleSelectionViewModel by viewModels({requireParentFragment()})
+    val mediaSingleSelectionViewModel: MediaSingleSelectionViewModel by viewModels({requireParentFragment().requireParentFragment()})
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

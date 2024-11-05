@@ -17,7 +17,7 @@ import com.hfad.petlogger.recyclerviews.SetupPetPickerUseCase
 class PetSingleSelectionDialogFragment : DialogFragment() {
     private var _binding: FragmentPetSingleSelectionDialogBinding? = null
     val binding: FragmentPetSingleSelectionDialogBinding get() = _binding!!
-    val petSingleSelectionViewModel: PetSingleSelectionViewModel by viewModels ({requireParentFragment().requireParentFragment()})
+    val petSingleSelectionViewModel: PetSingleSelectionViewModel by viewModels ({requireParentFragment().requireParentFragment().requireParentFragment()})
 
     override fun onCreateView(
         inflater: LayoutInflater,

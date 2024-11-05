@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".NewPetDetailsFragment">
+    <data>
+        <variable
+            name="newPetViewModel"
+            type="com.hfad.petlogger.NewPetViewModel" />
+        <variable
+            name="petProfilePhotoSelectionViewModel"
+            type="com.hfad.petlogger.MediaSingleSelectionViewModel"/>
+        <variable
+            name="tagMultiSelectionViewModel"
+            type="com.hfad.petlogger.TagMultiSelectionViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/pet_profile_pic_selection_fragment_container_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:name="com.hfad.petlogger.MediaSingleSelectionFragment"
+            tools:layout="@layout/fragment_media_single_selection" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/petName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/pet_name_header">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:text="@={newPetViewModel.petName}" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/petSpecies"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/pet_species_header"
+                android:layout_weight="1">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:text="@={newPetViewModel.petSpecies}" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/petBreed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/pet_breed_header"
+                android:layout_weight="1">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:text="@={newPetViewModel.petBreed}" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
+
+        <RadioGroup
+            android:id="@+id/petSexSelection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/petSexMale"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/pet_sex_male" />
+
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/petSexFemale"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/pet_sex_female" />
+
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/petSexOther"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/pet_sex_other" />
+        </RadioGroup>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/petBirthDateLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/pet_birthdate">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/petBirthDateDisplay"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:enabled="false"
+                    android:focusable="true"
+                    android:inputType="text"
+                    android:text="@{newPetViewModel.petDOB.dateDisplay}" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/addPetBirthDateButton"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                app:icon="@drawable/baseline_edit_24" />
+        </LinearLayout>
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/tag_selection_fragment_container_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:name="com.hfad.petlogger.TagMultiSelectionDisplayFragment"
+            tools:layout="@layout/fragment_tag_multi_selection_display"/>
+    </LinearLayout>
+</layout>

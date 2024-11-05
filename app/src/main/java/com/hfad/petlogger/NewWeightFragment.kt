@@ -10,9 +10,15 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.get
 import androidx.navigation.fragment.findNavController
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.google.android.material.tabs.TabLayoutMediator
 import com.hfad.petlogger.databinding.FragmentNewWeightBinding
+import com.hfad.petlogger.databinding.FragmentNewWeightDetailsBinding
 import com.hfad.petlogger.photodisplay.stateless.GetAllCheckablePetsUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetAllNotesUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetAllTagsUseCase
@@ -29,6 +35,7 @@ import kotlinx.coroutines.launch
 class NewWeightFragment : Fragment() {
     private var _binding: FragmentNewWeightBinding? = null
     private val binding get() = _binding!!
+    private var mediator: TabLayoutMediator? = null
     lateinit var newWeightViewModel: NewWeightViewModel
 
     override fun onCreateView(
@@ -65,6 +72,69 @@ class NewWeightFragment : Fragment() {
 
         setAppBarTitle(getString(R.string.new_weight_header))
 
+        binding.viewPager.adapter = NewWeightViewPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
+        mediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+            tab.text = when(position) {
+                0 -> getString(R.string.details)
+                1 -> getString(R.string.notes)
+                else -> null
+            }
+        }
+        mediator?.attach()
+
+        binding.submitWeightButton.setOnClickListener {
+            petSingleSelectionViewModel.selectionTracker.currentSelection.value?.item?.petId?.let{ petId ->
+                newWeightViewModel.submitWeight(
+                    petId = petId,
+                    notes = noteMultiSelectionViewModel.getNotesToAdd(),
+                    tags = tagMultiSelectionViewModel.getTagsToAdd()
+                )
+            }
+        }
+
+        binding.backButton.setOnClickListener {
+            findNavController().popBackStack()
+        }
+
+        return view
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        mediator?.detach()
+        mediator = null
+        _binding?.viewPager?.adapter = null
+        _binding = null
+    }
+
+    private class NewWeightViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle): FragmentStateAdapter(fragmentManager, lifecycle) {
+        override fun getItemCount(): Int = 2
+        override fun createFragment(position: Int): Fragment {
+            return when(position) {
+                0 -> NewWeightDetailsFragment()
+                1 -> NoteMultiSelectionDisplayFragment()
+                else -> throw IllegalStateException("Invalid position $position")
+            }
+        }
+    }
+}
+
+class NewWeightDetailsFragment() : Fragment() {
+    private var _binding: FragmentNewWeightDetailsBinding? = null
+    val binding: FragmentNewWeightDetailsBinding get() = _binding!!
+    private val newWeightViewModel: NewWeightViewModel by viewModels({requireParentFragment()})
+    private val tagMultiSelectionViewModel: TagMultiSelectionViewModel by viewModels({requireParentFragment()})
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentNewWeightDetailsBinding.inflate(inflater, container, false)
+        val view = binding.root
+        binding.newWeightViewModel = newWeightViewModel
+        binding.tagMultiSelectionViewModel = tagMultiSelectionViewModel
+
         binding.dateFieldText.setOnClickListener { button ->
             button.isEnabled = false
             val coroutineScope = CoroutineScope(Dispatchers.Main.immediate)
@@ -83,20 +153,6 @@ class NewWeightFragment : Fragment() {
                 delay(200)
                 button.isEnabled = true
             }
-        }
-
-        binding.submitWeightButton.setOnClickListener {
-            petSingleSelectionViewModel.selectionTracker.currentSelection.value?.item?.petId?.let{ petId ->
-                newWeightViewModel.submitWeight(
-                    petId = petId,
-                    notes = noteMultiSelectionViewModel.getNotesToAdd(),
-                    tags = tagMultiSelectionViewModel.getTagsToAdd()
-                )
-            }
-        }
-
-        binding.backButton.setOnClickListener {
-            findNavController().popBackStack()
         }
 
         return view

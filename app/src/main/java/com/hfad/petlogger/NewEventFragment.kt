@@ -5,10 +5,16 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import androidx.navigation.fragment.findNavController
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.google.android.material.tabs.TabLayoutMediator
 import com.hfad.petlogger.databinding.FragmentNewEventBinding
+import com.hfad.petlogger.databinding.FragmentNewEventDetailsBinding
 import com.hfad.petlogger.photodisplay.stateless.GetAllNotesUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetAllPetsWithProfilePhotosUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetAllTagsUseCase
@@ -23,6 +29,7 @@ import kotlinx.coroutines.*
 class NewEventFragment : Fragment() {
     private var _binding: FragmentNewEventBinding? = null
     private val binding get() = _binding!!
+    private var mediator: TabLayoutMediator? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,6 +66,77 @@ class NewEventFragment : Fragment() {
 
         setAppBarTitle(getString(R.string.new_event_header))
 
+        binding.viewPager.adapter = NewEventViewPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
+        mediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+            tab.text = when(position) {
+                0 -> getString(R.string.details)
+                1 -> getString(R.string.notes)
+                2 -> getString(R.string.photos_header)
+                else -> null
+            }
+        }
+        mediator?.attach()
+
+
+        binding.submitEventButton.setOnClickListener {
+            newEventViewModel.submitEvent(
+                pets = petMultiSelectionViewModel.getPetsToAdd(),
+                photos = mediaSelectionViewModel.getPhotosToAdd(),
+                notes = noteMultiSelectionViewModel.getNotesToAdd(),
+                tags = tagMultiSelectionViewModel.getTagsToAdd()
+            )
+        }
+
+        binding.backButton.setOnClickListener {
+            findNavController().popBackStack()
+        }
+
+        newEventViewModel.carryOn.observe(viewLifecycleOwner) {
+            if (it == true) {
+                findNavController().navigateSafe(NewEventFragmentDirections.actionNewEventFragmentToEventListFragment())
+            }
+        }
+
+        return view
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        mediator?.detach()
+        mediator = null
+        _binding?.viewPager?.adapter = null
+        _binding = null
+    }
+
+    private class NewEventViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle): FragmentStateAdapter(fragmentManager, lifecycle) {
+        override fun getItemCount(): Int = 3
+        override fun createFragment(position: Int): Fragment {
+            return when(position) {
+                0 -> NewEventDetailsFragment()
+                1 -> NoteMultiSelectionDisplayFragment()
+                2 -> MediaSelectionFragment()
+                else -> throw IllegalStateException("Invalid position $position")
+            }
+        }
+    }
+}
+
+class NewEventDetailsFragment() : Fragment() {
+    private var _binding: FragmentNewEventDetailsBinding? = null
+    val binding: FragmentNewEventDetailsBinding get() = _binding!!
+    private val newEventViewModel: NewEventViewModel by viewModels({requireParentFragment()})
+    private val tagMultiSelectionViewModel: TagMultiSelectionViewModel by viewModels({requireParentFragment()})
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentNewEventDetailsBinding.inflate(inflater, container, false)
+        val view = binding.root
+        binding.newEventViewModel = newEventViewModel
+        binding.tagMultiSelectionViewModel = tagMultiSelectionViewModel
+
         binding.eventDate.setOnClickListener {
             binding.eventDate.isEnabled = false
             val coroutineScope = CoroutineScope(Dispatchers.Main.immediate)
@@ -78,25 +156,6 @@ class NewEventFragment : Fragment() {
                     .show(parentFragmentManager, "TIME_PICKER")
                 delay(200)
                 binding.eventTime.isEnabled = true
-            }
-        }
-
-        binding.submitEventButton.setOnClickListener {
-            newEventViewModel.submitEvent(
-                pets = petMultiSelectionViewModel.getPetsToAdd(),
-                photos = mediaSelectionViewModel.getPhotosToAdd(),
-                notes = noteMultiSelectionViewModel.getNotesToAdd(),
-                tags = tagMultiSelectionViewModel.getTagsToAdd()
-            )
-        }
-
-        binding.backButton.setOnClickListener {
-            findNavController().popBackStack()
-        }
-
-        newEventViewModel.carryOn.observe(viewLifecycleOwner) {
-            if (it == true) {
-                findNavController().navigateSafe(NewEventFragmentDirections.actionNewEventFragmentToEventListFragment())
             }
         }
 

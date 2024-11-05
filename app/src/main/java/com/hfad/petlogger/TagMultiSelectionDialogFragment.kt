@@ -20,7 +20,7 @@ import com.hfad.petlogger.recyclerviews.SetupTagMultiPickerUseCase
 class TagMultiSelectionDialogFragment : DialogFragment() {
     private var _binding: FragmentTagMultiSelectionDialogBinding? = null
     val binding: FragmentTagMultiSelectionDialogBinding get() = _binding!!
-    private val tagMultiSelectionViewModel: TagMultiSelectionViewModel by viewModels({requireParentFragment().requireParentFragment()})
+    private val tagMultiSelectionViewModel: TagMultiSelectionViewModel by viewModels({requireParentFragment().requireParentFragment().requireParentFragment()})
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

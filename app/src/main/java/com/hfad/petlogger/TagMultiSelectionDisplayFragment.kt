@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 class TagMultiSelectionDisplayFragment : Fragment() {
     private var _binding: FragmentTagMultiSelectionDisplayBinding? = null
     val binding: FragmentTagMultiSelectionDisplayBinding get() = _binding!!
-    private val tagMultiSelectionViewModel: TagMultiSelectionViewModel by viewModels({requireParentFragment()})
+    private val tagMultiSelectionViewModel: TagMultiSelectionViewModel by viewModels({requireParentFragment().requireParentFragment()})
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

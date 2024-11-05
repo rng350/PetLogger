@@ -142,4 +142,5 @@
     <string name="media">Media</string>
     <string name="viewing_tagged_content">Viewing Tagged Content</string>
     <string name="profile">Profile</string>
+    <string name="new_photo_header">New Photo</string>
 </resources>

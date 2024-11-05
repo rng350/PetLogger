@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".NewNoteDetailsFragment">
+
+    <data>
+        <variable
+            name="newNoteViewModel"
+            type="com.hfad.petlogger.NewNoteViewModel" />
+        <variable
+            name="tagMultiSelectionViewModel"
+            type="com.hfad.petlogger.TagMultiSelectionViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/noteTitleTextField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/title">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/noteTitleTextInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:text="@={newNoteViewModel.noteTitle}"
+                android:inputType="text"/>
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/noteDetailsTextField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/note_details">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/noteDetailsTextInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top"
+                android:minLines="10"
+                android:text="@={newNoteViewModel.noteDetails}"
+                android:inputType="textMultiLine|textCapSentences"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/tag_selection_fragment_container_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:name="com.hfad.petlogger.TagMultiSelectionDisplayFragment"
+            tools:layout="@layout/fragment_tag_multi_selection_display"/>
+    </LinearLayout>
+
+</layout>

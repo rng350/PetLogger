@@ -7,8 +7,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.google.android.material.tabs.TabLayoutMediator
 import com.hfad.petlogger.databinding.FragmentEditWeightBinding
+import com.hfad.petlogger.databinding.FragmentEditWeightDetailsBinding
 import com.hfad.petlogger.entities.Pet
 import com.hfad.petlogger.photodisplay.stateless.GetAllCheckablePetsUseCase
 import com.hfad.petlogger.photodisplay.stateless.GetAllNotesUseCase
@@ -24,6 +30,7 @@ import com.hfad.petlogger.repositories.WeightRepository
 class EditWeightFragment : Fragment() {
     private var _binding: FragmentEditWeightBinding? = null
     val binding get() = _binding!!
+    private var mediator: TabLayoutMediator? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -62,13 +69,16 @@ class EditWeightFragment : Fragment() {
 
         setAppBarTitle(getString(R.string.edit_weight_header))
 
-        binding.weightDate.setOnClickListener{
-            DatePicker.generate(editWeightViewModel.weightDateTime).show(parentFragmentManager, "DATEPICKER")
+        binding.viewPager.adapter = EditWeightViewPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
+        mediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+            tab.text = when(position) {
+                0 -> getString(R.string.details)
+                1 -> getString(R.string.notes)
+                else -> null
+            }
         }
+        mediator?.attach()
 
-        binding.weightTime.setOnClickListener{
-            TimePicker.generate(editWeightViewModel.weightDateTime, requireContext()).show(parentFragmentManager, "TIMEPICKER")
-        }
         binding.submitButton.setOnClickListener {
             petPickerViewModel.selectionTracker.currentSelection.value?.item?.petId?.let { petId ->
                 editWeightViewModel.submitChanges(
@@ -102,6 +112,52 @@ class EditWeightFragment : Fragment() {
             }
         }
 
+        return view
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        mediator?.detach()
+        mediator = null
+        _binding?.viewPager?.adapter = null
+        _binding = null
+    }
+
+    private class EditWeightViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle): FragmentStateAdapter(fragmentManager, lifecycle) {
+        override fun getItemCount(): Int = 2
+        override fun createFragment(position: Int): Fragment {
+            return when(position) {
+                0 -> EditWeightDetailsFragment()
+                1 -> NoteMultiSelectionDisplayFragment()
+                else -> throw IllegalStateException("Invalid position $position")
+            }
+        }
+    }
+}
+
+class EditWeightDetailsFragment() : Fragment() {
+    private var _binding: FragmentEditWeightDetailsBinding? = null
+    val binding: FragmentEditWeightDetailsBinding get() = _binding!!
+    private val editWeightViewModel: EditWeightViewModel by viewModels({requireParentFragment()})
+    private val tagMultiSelectionViewModel: TagMultiSelectionViewModel by viewModels({requireParentFragment()})
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentEditWeightDetailsBinding.inflate(inflater, container, false)
+        val view = binding.root
+        binding.viewModel = editWeightViewModel
+        binding.tagMultiSelectionViewModel = tagMultiSelectionViewModel
+
+        binding.weightDate.setOnClickListener{
+            DatePicker.generate(editWeightViewModel.weightDateTime).show(parentFragmentManager, "DATEPICKER")
+        }
+
+        binding.weightTime.setOnClickListener{
+            TimePicker.generate(editWeightViewModel.weightDateTime, requireContext()).show(parentFragmentManager, "TIMEPICKER")
+        }
         return view
     }
 

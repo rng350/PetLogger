@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 class PetSingleSelectionDisplayFragment : Fragment() {
     private var _binding: FragmentPetSingleSelectionDisplayBinding? = null
     val binding: FragmentPetSingleSelectionDisplayBinding get() = _binding!!
-    val petSingleSelectionViewModel: PetSingleSelectionViewModel by viewModels ({ requireParentFragment() })
+    val petSingleSelectionViewModel: PetSingleSelectionViewModel by viewModels ({ requireParentFragment().requireParentFragment() })
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
