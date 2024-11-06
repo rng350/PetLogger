@@ -79,6 +79,13 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/pet_selection_fragment_container_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:name="com.hfad.petlogger.PetMultiSelectionSectionDisplayFragment"
+            tools:layout="@layout/fragment_pet_multi_selection_section_display"/>
+
+        <androidx.fragment.app.FragmentContainerView
             android:id="@+id/tag_selection_fragment_container_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
