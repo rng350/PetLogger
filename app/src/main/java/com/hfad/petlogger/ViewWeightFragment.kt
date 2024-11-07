@@ -169,11 +169,11 @@ class ViewWeightDetailsFragment(): Fragment() {
                             }
                             // Previous Weight card
                             if (it.prevWeight != null) {
-                                binding.noPreviousWeightCard.visibility = View.GONE
                                 binding.previousWeightCard.visibility = View.VISIBLE
+                                binding.weightsInfoComparisonCard.visibility = View.VISIBLE
                             } else {
-                                binding.noPreviousWeightCard.visibility = View.VISIBLE
                                 binding.previousWeightCard.visibility = View.GONE
+                                binding.weightsInfoComparisonCard.visibility = View.GONE
                             }
                         }
                     }

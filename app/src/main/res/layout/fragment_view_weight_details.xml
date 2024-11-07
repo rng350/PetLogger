@@ -19,8 +19,8 @@
         android:orientation="vertical">
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/pet_card"
-            android:layout_width="250dp"
-            android:layout_height="275dp"
+            android:layout_width="200dp"
+            android:layout_height="225dp"
             android:layout_margin="8dp"
             android:layout_gravity="center_horizontal"
             android:background="@color/white"
@@ -34,8 +34,8 @@
                 android:orientation="vertical">
                 <ImageView
                     android:id="@+id/pet_profile_image"
-                    android:layout_width="200dp"
-                    android:layout_height="200dp"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
                     android:layout_marginTop="25dp"
                     android:layout_marginHorizontal="25dp"
                     android:scaleType="centerCrop"
@@ -51,262 +51,241 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:textSize="30sp"
+                        android:textSize="25sp"
                         android:text="@{viewModel.fullWeightDetails.weightPet.petName}"/>
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <LinearLayout
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/viewedWeightCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/viewedWeightCard"
-                android:layout_width="0dp"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="10dp"
+            android:clickable="false"
+            android:focusable="false">
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginEnd="10dp"
-                android:clickable="false"
-                android:focusable="false">
-                <LinearLayout
+                android:orientation="vertical">
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/viewedWeightHeaderField"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/viewedWeightHeaderField"
-                        android:layout_width="match_parent"
-                        android:layout_height="30dp"
-                        app:cardCornerRadius="0dp"
-                        app:cardBackgroundColor="@color/dark_beigeish"
-                        android:clickable="false"
-                        android:focusable="false">
-                        <com.google.android.material.textview.MaterialTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:textSize="15sp"
-                            android:text="@string/viewed_weight"/>
-                    </com.google.android.material.card.MaterialCardView>
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/weightFields"
-                        android:layout_width="match_parent"
-                        android:layout_height="30dp"
-                        app:cardCornerRadius="0dp"
-                        app:cardBackgroundColor="@color/beigeish"
-                        android:clickable="false"
-                        android:focusable="false">
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="horizontal">
-                            <com.google.android.material.textview.MaterialTextView
-                                android:id="@+id/viewedWeightAmt"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:layout_gravity="right"
-                                android:textSize="15sp"
-                                android:text="@{viewModel.curWeightAmtDisplay}"/>
-                            <com.google.android.material.textfield.TextInputLayout
-                                android:theme="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                                android:id="@+id/weightUnitTextField"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                app:boxBackgroundColor="@color/beigeish"
-                                android:layout_weight="1"
-                                android:hint="@string/unit">
-                                <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                                    android:id="@+id/weightUnitDropDownList"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:maxLines="1"
-                                    android:inputType="none"/>
-                            </com.google.android.material.textfield.TextInputLayout>
-                        </LinearLayout>
-                    </com.google.android.material.card.MaterialCardView>
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/dateTimeField"
-                        android:layout_width="match_parent"
-                        android:layout_height="30dp"
-                        app:cardCornerRadius="0dp"
-                        app:cardBackgroundColor="@color/slightly_darker_beigeish"
-                        android:clickable="false"
-                        android:focusable="false">
-                        <com.google.android.material.textview.MaterialTextView
-                            android:id="@+id/weightDateTimeText"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:textSize="15sp"
-                            android:text="@{viewModel.fullWeightDetails.curWeight.weightDateTimeDisplay}"/>
-                    </com.google.android.material.card.MaterialCardView>
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/weight_difference_field"
-                        android:layout_width="match_parent"
-                        android:layout_height="30dp"
-                        app:cardCornerRadius="0dp"
-                        app:cardBackgroundColor="@color/beigeish"
-                        android:clickable="false"
-                        android:focusable="false">
-                        <com.google.android.material.textview.MaterialTextView
-                            android:id="@+id/weightDifferenceText"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:textSize="15sp"
-                            android:text="@{viewModel.weightDifferenceDisplay}"/>
-                    </com.google.android.material.card.MaterialCardView>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/noPreviousWeightCard"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
-                <LinearLayout
+                    android:layout_height="30dp"
+                    app:cardCornerRadius="0dp"
+                    app:cardBackgroundColor="@color/dark_beigeish"
+                    android:clickable="false"
+                    android:focusable="false">
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textSize="15sp"
+                        android:text="@string/viewed_weight"/>
+                </com.google.android.material.card.MaterialCardView>
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/weightFields"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="match_parent"
-                        android:layout_height="30dp"
-                        app:cardCornerRadius="0dp"
-                        app:cardBackgroundColor="@color/dark_beigeish"
-                        android:clickable="false"
-                        android:focusable="false">
-                        <com.google.android.material.textview.MaterialTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:textSize="15sp"
-                            android:text="@string/previous_weight_header"/>
-                    </com.google.android.material.card.MaterialCardView>
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/noPreviousWeight"
-                        android:layout_width="match_parent"
-                        android:layout_height="90dp"
-                        app:cardCornerRadius="0dp"
-                        app:cardBackgroundColor="@color/beigeish"
-                        android:clickable="false"
-                        android:focusable="false">
-                        <com.google.android.material.textview.MaterialTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:textSize="15sp"
-                            android:text="@string/not_available"/>
-                    </com.google.android.material.card.MaterialCardView>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/previousWeightCard"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:focusable="true"
-                android:clickable="true"
-                android:visibility="gone">
-                <LinearLayout
-                    android:id="@+id/previousWeightLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/previousWeightHeaderField"
-                        android:layout_width="match_parent"
-                        android:layout_height="30dp"
-                        app:cardCornerRadius="0dp"
-                        app:cardBackgroundColor="@color/dark_beigeish"
-                        android:clickable="false"
-                        android:focusable="false">
-                        <com.google.android.material.textview.MaterialTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:textSize="15sp"
-                            android:text="@string/previous_weight_header"/>
-                    </com.google.android.material.card.MaterialCardView>
-
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/prevWeightAmt"
-                        android:layout_width="match_parent"
-                        android:layout_height="30dp"
-                        app:cardCornerRadius="0dp"
-                        app:cardBackgroundColor="@color/beigeish"
-                        android:clickable="false"
-                        android:focusable="false">
-                        <com.google.android.material.textview.MaterialTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:textSize="15sp"
-                            android:text="@{viewModel.prevWeightAmtDisplay}"/>
-                    </com.google.android.material.card.MaterialCardView>
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/prevWeightDateTime"
-                        android:layout_width="match_parent"
-                        android:layout_height="30dp"
-                        app:cardCornerRadius="0dp"
-                        app:cardBackgroundColor="@color/slightly_darker_beigeish"
-                        android:clickable="false"
-                        android:focusable="false">
-                        <com.google.android.material.textview.MaterialTextView
-                            android:id="@+id/prevWeightDateTimeText"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:textSize="15sp"
-                            android:text="@{viewModel.fullWeightDetails.prevWeight.weightDateTimeDisplay}"/>
-                    </com.google.android.material.card.MaterialCardView>
+                    android:layout_height="30dp"
+                    app:cardCornerRadius="0dp"
+                    app:cardBackgroundColor="@color/beigeish"
+                    android:clickable="false"
+                    android:focusable="false">
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="30dp"
+                        android:layout_height="match_parent"
                         android:orientation="horizontal">
-                        <com.google.android.material.card.MaterialCardView
-                            android:id="@+id/prevWeightDateDifference"
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/viewedWeightAmt"
                             android:layout_width="0dp"
-                            android:layout_height="30dp"
+                            android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            app:cardCornerRadius="0dp"
-                            app:cardBackgroundColor="@color/beigeish"
-                            android:clickable="false"
-                            android:focusable="false">
-                            <com.google.android.material.textview.MaterialTextView
-                                android:id="@+id/prevWeightDateDifferenceText"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:textSize="15sp"
-                                android:text="@{viewModel.fullWeightDetails.prevWeight.weighingPeriodElapsed}"/>
-                        </com.google.android.material.card.MaterialCardView>
-                        <com.google.android.material.card.MaterialCardView
-                            android:id="@+id/prevWeightTimeDifference"
+                            android:gravity="right"
+                            android:textSize="15sp"
+                            android:text="@{viewModel.curWeightAmtDisplay}"/>
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:theme="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                            android:id="@+id/weightUnitTextField"
                             android:layout_width="0dp"
-                            android:layout_height="30dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            app:boxBackgroundColor="@color/beigeish"
                             android:layout_weight="1"
-                            app:cardCornerRadius="0dp"
-                            app:cardBackgroundColor="@color/beigeish"
-                            android:clickable="false"
-                            android:focusable="false">
-                            <com.google.android.material.textview.MaterialTextView
-                                android:id="@+id/prevWeightTimeDifferenceText"
-                                android:layout_width="wrap_content"
+                            android:hint="@string/unit">
+                            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                                android:id="@+id/weightUnitDropDownList"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:textSize="15sp"
-                                android:text="@{viewModel.fullWeightDetails.prevWeight.weighingTimeDifference}"/>
-                        </com.google.android.material.card.MaterialCardView>
-
+                                android:maxLines="1"
+                                android:inputType="none"/>
+                        </com.google.android.material.textfield.TextInputLayout>
                     </LinearLayout>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-        </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/dateTimeField"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    app:cardCornerRadius="0dp"
+                    app:cardBackgroundColor="@color/slightly_darker_beigeish"
+                    android:clickable="false"
+                    android:focusable="false">
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/weightDateTimeText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textSize="15sp"
+                        android:text="@{viewModel.fullWeightDetails.curWeight.weightDateTimeDisplay}"/>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/previousWeightCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="10dp"
+            android:focusable="true"
+            android:clickable="true"
+            android:visibility="gone">
+            <LinearLayout
+                android:id="@+id/previousWeightLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/previousWeightHeaderField"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    app:cardCornerRadius="0dp"
+                    app:cardBackgroundColor="@color/dark_beigeish"
+                    android:clickable="false"
+                    android:focusable="false">
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textSize="15sp"
+                        android:text="@string/previous_weight_header"/>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/prevWeightAmt"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    app:cardCornerRadius="0dp"
+                    app:cardBackgroundColor="@color/beigeish"
+                    android:clickable="false"
+                    android:focusable="false">
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textSize="15sp"
+                        android:text="@{viewModel.prevWeightAmtDisplay}"/>
+                </com.google.android.material.card.MaterialCardView>
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/prevWeightDateTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    app:cardCornerRadius="0dp"
+                    app:cardBackgroundColor="@color/slightly_darker_beigeish"
+                    android:clickable="false"
+                    android:focusable="false">
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/prevWeightDateTimeText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textSize="15sp"
+                        android:text="@{viewModel.fullWeightDetails.prevWeight.weightDateTimeDisplay}"/>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/weightsInfoComparisonCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginVertical="10dp"
+            android:clickable="false"
+            android:focusable="false"
+            android:visibility="gone">
+            <LinearLayout
+                android:id="@+id/weightsComparisonLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/weightDifferencesHeaderField"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    app:cardCornerRadius="0dp"
+                    app:cardBackgroundColor="@color/dark_beigeish"
+                    android:clickable="false"
+                    android:focusable="false">
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textSize="15sp"
+                        android:text="@string/difference"/>
+                </com.google.android.material.card.MaterialCardView>
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/weight_difference_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    app:cardCornerRadius="0dp"
+                    app:cardBackgroundColor="@color/beigeish"
+                    android:clickable="false"
+                    android:focusable="false">
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/weightAmtDifferenceText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textSize="15sp"
+                        android:text="@{@string/amt_difference(viewModel.weightDifferenceDisplay)}"/>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/weighing_period_elapsed_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    app:cardCornerRadius="0dp"
+                    app:cardBackgroundColor="@color/slightly_darker_beigeish"
+                    android:clickable="false"
+                    android:focusable="false">
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/weightPeriodElapsedText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textSize="15sp"
+                        android:text="@{@string/time_elapsed(viewModel.fullWeightDetails.prevWeight.weighingPeriodElapsed)}"/>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/weighing_time_of_day_difference_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    app:cardCornerRadius="0dp"
+                    app:cardBackgroundColor="@color/beigeish"
+                    android:clickable="false"
+                    android:focusable="false">
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/weightTimeOfDayDifferenceText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textSize="15sp"
+                        android:text="@{@string/amt_difference(viewModel.fullWeightDetails.prevWeight.weighingTimeDifference)}"/>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/weightNotesCard"

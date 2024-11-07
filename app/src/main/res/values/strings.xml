@@ -143,4 +143,7 @@
     <string name="viewing_tagged_content">Viewing Tagged Content</string>
     <string name="profile">Profile</string>
     <string name="new_photo_header">New Photo</string>
+    <string name="difference">Difference</string>
+    <string name="amt_difference">%s difference</string>
+    <string name="time_elapsed">%s ago</string>
 </resources>
