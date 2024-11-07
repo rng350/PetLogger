@@ -18,115 +18,119 @@
             type="com.hfad.petlogger.TagMultiSelectionViewModel" />
     </data>
 
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:baselineAligned="false"
-            android:orientation="horizontal">
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/weightQtyTextField"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="@string/amount">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/weightQtyTextInput"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:maxLines="1"
-                    android:ems="10"
-                    android:inputType="number"
-                    android:text="@={DataBindingConverter.intToString(weightQtyTextInput, newWeightViewModel.weightAmt)}"/>
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:theme="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                android:id="@+id/weightUnitTextField"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:hint="@string/unit">
-                <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                    android:id="@+id/weightUnitDropDownList"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:maxLines="1"
-                    android:inputType="none"/>
-            </com.google.android.material.textfield.TextInputLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/date_field_header"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="@string/date"
-                app:endIconDrawable="@drawable/baseline_edit_24">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/date_field_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:maxLines="1"
-                    android:inputType="none"
-                    android:editable="false"
-                    android:text="@{newWeightViewModel.weightDateTime.dateDisplay}"
-                    android:drawableEnd="@drawable/baseline_edit_24"/>
-            </com.google.android.material.textfield.TextInputLayout>
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/time_field_header"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="@string/time_header">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/time_field_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:maxLines="1"
-                    android:inputType="none"
-                    android:editable="false"
-                    android:text="@{newWeightViewModel.weightDateTime.timeDisplay}"
-                    android:drawableEnd="@drawable/baseline_edit_24"/>
-            </com.google.android.material.textfield.TextInputLayout>
-        </LinearLayout>
-
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/pet_selection_fragment_container_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:name="com.hfad.petlogger.PetSingleSelectionDisplayFragment"
-            tools:layout="@layout/fragment_pet_single_selection_display" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/weightDetailsTextField"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/note_details">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/weightDetailsTextInput"
+            android:orientation="vertical">
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="top"
-                android:minLines="10"
-                android:text="@={newWeightViewModel.details}"
-                android:inputType="textMultiLine|textCapSentences"/>
-        </com.google.android.material.textfield.TextInputLayout>
+                android:baselineAligned="false"
+                android:orientation="horizontal">
 
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/tag_selection_fragment_container_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:name="com.hfad.petlogger.TagMultiSelectionDisplayFragment"
-            tools:layout="@layout/fragment_tag_multi_selection_display"/>
-    </LinearLayout>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/weightQtyTextField"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/amount">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/weightQtyTextInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:maxLines="1"
+                        android:ems="10"
+                        android:inputType="number"
+                        android:text="@={DataBindingConverter.intToString(weightQtyTextInput, newWeightViewModel.weightAmt)}"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:theme="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                    android:id="@+id/weightUnitTextField"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:hint="@string/unit">
+                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                        android:id="@+id/weightUnitDropDownList"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:maxLines="1"
+                        android:inputType="none"/>
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/date_field_header"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/date"
+                    app:endIconDrawable="@drawable/baseline_edit_24">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/date_field_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:maxLines="1"
+                        android:inputType="none"
+                        android:editable="false"
+                        android:text="@{newWeightViewModel.weightDateTime.dateDisplay}"
+                        android:drawableEnd="@drawable/baseline_edit_24"/>
+                </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/time_field_header"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/time_header">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/time_field_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:maxLines="1"
+                        android:inputType="none"
+                        android:editable="false"
+                        android:text="@{newWeightViewModel.weightDateTime.timeDisplay}"
+                        android:drawableEnd="@drawable/baseline_edit_24"/>
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/pet_selection_fragment_container_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:name="com.hfad.petlogger.PetSingleSelectionDisplayFragment"
+                tools:layout="@layout/fragment_pet_single_selection_display" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/weightDetailsTextField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/note_details">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/weightDetailsTextInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top"
+                    android:minLines="10"
+                    android:text="@={newWeightViewModel.details}"
+                    android:inputType="textMultiLine|textCapSentences"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/tag_selection_fragment_container_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:name="com.hfad.petlogger.TagMultiSelectionDisplayFragment"
+                tools:layout="@layout/fragment_tag_multi_selection_display"/>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 </layout>

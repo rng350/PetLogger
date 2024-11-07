@@ -11,44 +11,47 @@
             name="tagMultiSelectionViewModel"
             type="com.hfad.petlogger.TagMultiSelectionViewModel" />
     </data>
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/noteTitleTextField"
+        android:layout_height="wrap_content">
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/title">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/noteTitleTextInput"
+            android:orientation="vertical">
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/noteTitleTextField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:maxLines="1"
-                android:text="@={editNoteViewModel.noteTitle}"
-                android:inputType="text"/>
-        </com.google.android.material.textfield.TextInputLayout>
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/noteDetailsTextField"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/note_details">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/noteDetailsTextInput"
+                android:hint="@string/title">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/noteTitleTextInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:text="@={editNoteViewModel.noteTitle}"
+                    android:inputType="text"/>
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/noteDetailsTextField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="top"
-                android:minLines="10"
-                android:text="@={editNoteViewModel.noteDetails}"
-                android:inputType="textMultiLine|textCapSentences"/>
-        </com.google.android.material.textfield.TextInputLayout>
+                android:hint="@string/note_details">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/noteDetailsTextInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top"
+                    android:minLines="10"
+                    android:text="@={editNoteViewModel.noteDetails}"
+                    android:inputType="textMultiLine|textCapSentences"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/tag_selection_fragment_container_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:name="com.hfad.petlogger.TagMultiSelectionDisplayFragment"
-            tools:layout="@layout/fragment_tag_multi_selection_display"/>
-    </LinearLayout>
-
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/tag_selection_fragment_container_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:name="com.hfad.petlogger.TagMultiSelectionDisplayFragment"
+                tools:layout="@layout/fragment_tag_multi_selection_display"/>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 </layout>

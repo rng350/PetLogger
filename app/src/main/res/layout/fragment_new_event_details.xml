@@ -12,85 +12,87 @@
             name="tagMultiSelectionViewModel"
             type="com.hfad.petlogger.TagMultiSelectionViewModel" />
     </data>
-
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/eventTitleTextField"
+        android:layout_height="wrap_content">
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/title">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/eventTitleTextInput"
+            android:orientation="vertical">
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/eventTitleTextField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:maxLines="1"
-                android:text="@={newEventViewModel.eventTitle}"
-                android:inputType="text"/>
-        </com.google.android.material.textfield.TextInputLayout>
+                android:hint="@string/title">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/eventTitleTextInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:text="@={newEventViewModel.eventTitle}"
+                    android:inputType="text"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/eventDateLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/date">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/eventDate"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/eventDateLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableEnd="@drawable/baseline_edit_24"
-                android:text="@{newEventViewModel.eventDateTime.dateDisplay}"
-                android:focusable="true"
-                android:clickable="true"
-                android:inputType="date"/>
-        </com.google.android.material.textfield.TextInputLayout>
+                android:hint="@string/date">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/eventDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="@drawable/baseline_edit_24"
+                    android:text="@{newEventViewModel.eventDateTime.dateDisplay}"
+                    android:focusable="true"
+                    android:clickable="true"
+                    android:inputType="date"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/eventTimeLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/time_header">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/eventTime"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/eventTimeLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableEnd="@drawable/baseline_edit_24"
-                android:text="@{newEventViewModel.eventDateTime.timeDisplay}"
-                android:focusable="true"
-                android:clickable="true"
-                android:inputType="date"/>
-        </com.google.android.material.textfield.TextInputLayout>
+                android:hint="@string/time_header">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/eventTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="@drawable/baseline_edit_24"
+                    android:text="@{newEventViewModel.eventDateTime.timeDisplay}"
+                    android:focusable="true"
+                    android:clickable="true"
+                    android:inputType="date"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/eventDetailsTextField"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/event_details_header">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/eventDetailsTextInput"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/eventDetailsTextField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="top"
-                android:minLines="10"
-                android:text="@={newEventViewModel.eventDetails}"
-                android:inputType="textMultiLine|textCapSentences"/>
-        </com.google.android.material.textfield.TextInputLayout>
+                android:hint="@string/event_details_header">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/eventDetailsTextInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top"
+                    android:minLines="10"
+                    android:text="@={newEventViewModel.eventDetails}"
+                    android:inputType="textMultiLine|textCapSentences"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/pet_selection_fragment_container_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:name="com.hfad.petlogger.PetMultiSelectionSectionDisplayFragment"
-            tools:layout="@layout/fragment_pet_multi_selection_section_display"/>
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/pet_selection_fragment_container_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:name="com.hfad.petlogger.PetMultiSelectionSectionDisplayFragment"
+                tools:layout="@layout/fragment_pet_multi_selection_section_display"/>
 
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/tag_selection_fragment_container_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:name="com.hfad.petlogger.TagMultiSelectionDisplayFragment"
-            tools:layout="@layout/fragment_tag_multi_selection_display"/>
-    </LinearLayout>
-
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/tag_selection_fragment_container_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:name="com.hfad.petlogger.TagMultiSelectionDisplayFragment"
+                tools:layout="@layout/fragment_tag_multi_selection_display"/>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 </layout>
