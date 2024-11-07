@@ -146,4 +146,9 @@
     <string name="difference">Difference</string>
     <string name="amt_difference">%s difference</string>
     <string name="time_elapsed">%s ago</string>
+    <string name="add_new_pet_content_desc">Add new pet</string>
+    <string name="add_new_photo_content_desc">Add new photo</string>
+    <string name="add_new_weight_content_desc">Add new pet weight</string>
+    <string name="add_new_event_content_desc">Add new event</string>
+    <string name="add_new_note_content_desc">Add new note</string>
 </resources>
