@@ -3,22 +3,22 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".EditWeightFragment">
+    tools:context=".screens.weight.editweight.EditWeightFragment">
 
     <data>
-        <import type="com.hfad.petlogger.util.DataBindingConverter"/>
+        <import type="com.hfad.petlogger.common.util.DataBindingConverter"/>
         <variable
             name="viewModel"
-            type="com.hfad.petlogger.EditWeightViewModel" />
+            type="com.hfad.petlogger.screens.weight.editweight.EditWeightViewModel" />
         <variable
             name="petPickerViewModel"
-            type="com.hfad.petlogger.PetSingleSelectionViewModel" />
+            type="com.hfad.petlogger.screens.pet.petsingleselection.PetSingleSelectionViewModel" />
         <variable
             name="noteMultiSelectionViewModel"
-            type="com.hfad.petlogger.NoteMultiSelectionViewModel" />
+            type="com.hfad.petlogger.screens.note.notemultiselection.NoteMultiSelectionViewModel" />
         <variable
             name="tagMultiSelectionViewModel"
-            type="com.hfad.petlogger.TagMultiSelectionViewModel" />
+            type="com.hfad.petlogger.screens.tag.tagmultiselection.TagMultiSelectionViewModel" />
     </data>
 
     <LinearLayout

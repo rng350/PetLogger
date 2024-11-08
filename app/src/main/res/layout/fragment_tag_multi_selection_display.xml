@@ -3,11 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".TagMultiSelectionDisplayFragment">
+    tools:context=".screens.tag.tagmultiselection.TagMultiSelectionDisplayFragment">
     <data>
         <variable
             name="tagMultiSelectionViewModel"
-            type="com.hfad.petlogger.TagMultiSelectionViewModel" />
+            type="com.hfad.petlogger.screens.tag.tagmultiselection.TagMultiSelectionViewModel" />
     </data>
 
     <com.google.android.material.card.MaterialCardView

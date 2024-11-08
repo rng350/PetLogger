@@ -3,12 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".TaggedPetsListFragment">
+    tools:context=".screens.tag.viewtag.TaggedPetsListFragment">
 
     <data>
         <variable
             name="viewTagViewModel"
-            type="com.hfad.petlogger.ViewTagViewModel" />
+            type="com.hfad.petlogger.screens.tag.viewtag.ViewTagViewModel" />
     </data>
 
     <androidx.recyclerview.widget.RecyclerView

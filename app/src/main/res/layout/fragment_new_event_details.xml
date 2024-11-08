@@ -2,15 +2,15 @@
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".NewEventDetailsFragment">
+    tools:context=".screens.event.newevent.NewEventDetailsFragment">
 
     <data>
         <variable
             name="newEventViewModel"
-            type="com.hfad.petlogger.NewEventViewModel" />
+            type="com.hfad.petlogger.screens.event.newevent.NewEventViewModel" />
         <variable
             name="tagMultiSelectionViewModel"
-            type="com.hfad.petlogger.TagMultiSelectionViewModel" />
+            type="com.hfad.petlogger.screens.tag.tagmultiselection.TagMultiSelectionViewModel" />
     </data>
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -84,14 +84,14 @@
                 android:id="@+id/pet_selection_fragment_container_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:name="com.hfad.petlogger.PetMultiSelectionSectionDisplayFragment"
+                android:name="com.hfad.petlogger.screens.pet.petmultiselection.PetMultiSelectionSectionDisplayFragment"
                 tools:layout="@layout/fragment_pet_multi_selection_section_display"/>
 
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/tag_selection_fragment_container_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:name="com.hfad.petlogger.TagMultiSelectionDisplayFragment"
+                android:name="com.hfad.petlogger.screens.tag.tagmultiselection.TagMultiSelectionDisplayFragment"
                 tools:layout="@layout/fragment_tag_multi_selection_display"/>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

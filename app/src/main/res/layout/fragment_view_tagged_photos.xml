@@ -8,7 +8,7 @@
     <data>
         <variable
             name="viewTagViewModel"
-            type="com.hfad.petlogger.ViewTagViewModel" />
+            type="com.hfad.petlogger.screens.tag.viewtag.ViewTagViewModel" />
     </data>
 
     <androidx.recyclerview.widget.RecyclerView

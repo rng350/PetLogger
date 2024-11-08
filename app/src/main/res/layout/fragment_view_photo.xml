@@ -3,25 +3,25 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ViewPhotoFragment">
+    tools:context=".screens.photo.viewphoto.ViewPhotoFragment">
 
     <data>
-        <import type="com.hfad.petlogger.util.DataBindingConverter"/>
+        <import type="com.hfad.petlogger.common.util.DataBindingConverter"/>
         <variable
             name="viewPhotoViewModel"
-            type="com.hfad.petlogger.ViewPhotoViewModel" />
+            type="com.hfad.petlogger.screens.photo.viewphoto.ViewPhotoViewModel" />
         <variable
             name="associatedPetsDisplayViewModel"
-            type="com.hfad.petlogger.AssociatedPetsDisplayViewModel" />
+            type="com.hfad.petlogger.screens.sections.associatedentities.AssociatedPetsDisplayViewModel" />
         <variable
             name="associatedEventsDisplayViewModel"
-            type="com.hfad.petlogger.AssociatedEventsDisplayViewModel" />
+            type="com.hfad.petlogger.screens.sections.associatedentities.AssociatedEventsDisplayViewModel" />
         <variable
             name="associatedNotesDisplayViewModel"
-            type="com.hfad.petlogger.AssociatedNotesDisplayViewModel" />
+            type="com.hfad.petlogger.screens.sections.associatedentities.AssociatedNotesDisplayViewModel" />
         <variable
             name="associatedTagsDisplayViewModel"
-            type="com.hfad.petlogger.AssociatedTagsDisplayViewModel" />
+            type="com.hfad.petlogger.screens.sections.associatedentities.AssociatedTagsDisplayViewModel" />
     </data>
 
     <LinearLayout

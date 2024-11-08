@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/editEventFragment"
-        android:name="com.hfad.petlogger.EditEventFragment"
+        android:name="com.hfad.petlogger.screens.event.editevent.EditEventFragment"
         android:label="fragment_edit_event"
         tools:layout="@layout/fragment_edit_event" >
         <argument
@@ -23,7 +23,7 @@
     </fragment>
     <fragment
         android:id="@+id/editPetFragment"
-        android:name="com.hfad.petlogger.EditPetFragment"
+        android:name="com.hfad.petlogger.screens.pet.editpet.EditPetFragment"
         android:label="fragment_edit_pet"
         tools:layout="@layout/fragment_edit_pet" >
         <argument
@@ -40,7 +40,7 @@
     </fragment>
     <fragment
         android:id="@+id/newEventFragment"
-        android:name="com.hfad.petlogger.NewEventFragment"
+        android:name="com.hfad.petlogger.screens.event.newevent.NewEventFragment"
         android:label="fragment_new_event"
         tools:layout="@layout/fragment_new_event" >
         <action
@@ -49,7 +49,7 @@
     </fragment>
     <fragment
         android:id="@+id/viewPetFragment"
-        android:name="com.hfad.petlogger.ViewPetFragment"
+        android:name="com.hfad.petlogger.screens.pet.viewpet.ViewPetFragment"
         android:label="fragment_view_pet"
         tools:layout="@layout/fragment_view_pet" >
         <action
@@ -82,7 +82,7 @@
     </fragment>
     <fragment
         android:id="@+id/viewEventFragment"
-        android:name="com.hfad.petlogger.ViewEventFragment"
+        android:name="com.hfad.petlogger.screens.event.viewevent.ViewEventFragment"
         android:label="fragment_view_event"
         tools:layout="@layout/fragment_view_event" >
         <action
@@ -106,7 +106,7 @@
     </fragment>
     <fragment
         android:id="@+id/newPetFragment"
-        android:name="com.hfad.petlogger.NewPetFragment"
+        android:name="com.hfad.petlogger.screens.pet.newpet.NewPetFragment"
         android:label="fragment_new_pet"
         tools:layout="@layout/fragment_new_pet" >
         <action
@@ -115,7 +115,7 @@
     </fragment>
     <fragment
         android:id="@+id/newWeightFragment"
-        android:name="com.hfad.petlogger.NewWeightFragment"
+        android:name="com.hfad.petlogger.screens.weight.newweight.NewWeightFragment"
         android:label="fragment_new_weight"
         tools:layout="@layout/fragment_new_weight" >
         <action
@@ -129,7 +129,7 @@
     </fragment>
     <fragment
         android:id="@+id/petListFragment"
-        android:name="com.hfad.petlogger.PetListFragment"
+        android:name="com.hfad.petlogger.screens.pet.PetListFragment"
         android:label="fragment_pet_list"
         tools:layout="@layout/fragment_pet_list" >
         <action
@@ -141,7 +141,7 @@
     </fragment>
     <fragment
         android:id="@+id/eventListFragment"
-        android:name="com.hfad.petlogger.EventListFragment"
+        android:name="com.hfad.petlogger.screens.event.EventListFragment"
         android:label="fragment_event_list"
         tools:layout="@layout/fragment_event_list" >
         <action
@@ -153,7 +153,7 @@
     </fragment>
     <fragment
         android:id="@+id/fullGalleryFragment"
-        android:name="com.hfad.petlogger.FullGalleryFragment"
+        android:name="com.hfad.petlogger.screens.photo.FullGalleryFragment"
         android:label="fragment_full_gallery"
         tools:layout="@layout/fragment_full_gallery" >
         <action
@@ -165,7 +165,7 @@
     </fragment>
     <fragment
         android:id="@+id/noteListFragment"
-        android:name="com.hfad.petlogger.NoteListFragment"
+        android:name="com.hfad.petlogger.screens.note.NoteListFragment"
         android:label="fragment_note_list"
         tools:layout="@layout/fragment_note_list" >
         <action
@@ -177,7 +177,7 @@
     </fragment>
     <fragment
         android:id="@+id/monitoringListFragment"
-        android:name="com.hfad.petlogger.MonitoringListFragment"
+        android:name="com.hfad.petlogger.screens.weight.MonitoringListFragment"
         android:label="fragment_monitoring_list"
         tools:layout="@layout/fragment_monitoring_list" >
         <action
@@ -189,7 +189,7 @@
     </fragment>
     <fragment
         android:id="@+id/viewWeightFragment"
-        android:name="com.hfad.petlogger.ViewWeightFragment"
+        android:name="com.hfad.petlogger.screens.weight.viewweight.ViewWeightFragment"
         android:label="fragment_view_weight"
         tools:layout="@layout/fragment_view_weight" >
         <argument
@@ -213,7 +213,7 @@
     </fragment>
     <fragment
         android:id="@+id/editWeightFragment"
-        android:name="com.hfad.petlogger.EditWeightFragment"
+        android:name="com.hfad.petlogger.screens.weight.editweight.EditWeightFragment"
         android:label="fragment_edit_weight"
         tools:layout="@layout/fragment_edit_weight" >
         <action
@@ -231,7 +231,7 @@
     </fragment>
     <fragment
         android:id="@+id/newNoteFragment"
-        android:name="com.hfad.petlogger.NewNoteFragment"
+        android:name="com.hfad.petlogger.screens.note.newnote.NewNoteFragment"
         android:label="fragment_new_note"
         tools:layout="@layout/fragment_new_note" >
         <action
@@ -240,7 +240,7 @@
     </fragment>
     <fragment
         android:id="@+id/viewNoteFragment"
-        android:name="com.hfad.petlogger.ViewNoteFragment"
+        android:name="com.hfad.petlogger.screens.note.viewnote.ViewNoteFragment"
         android:label="fragment_view_note"
         tools:layout="@layout/fragment_view_note" >
         <argument
@@ -267,7 +267,7 @@
     </fragment>
     <fragment
         android:id="@+id/editNoteFragment"
-        android:name="com.hfad.petlogger.EditNoteFragment"
+        android:name="com.hfad.petlogger.screens.note.editnote.EditNoteFragment"
         android:label="fragment_edit_note"
         tools:layout="@layout/fragment_edit_note" >
         <action
@@ -282,7 +282,7 @@
     </fragment>
     <fragment
         android:id="@+id/newPhotoFragment"
-        android:name="com.hfad.petlogger.NewPhotoFragment"
+        android:name="com.hfad.petlogger.screens.photo.newphoto.NewPhotoFragment"
         android:label="fragment_new_photo"
         tools:layout="@layout/fragment_new_photo" >
         <action
@@ -291,7 +291,7 @@
     </fragment>
     <fragment
         android:id="@+id/viewPhotoFragment"
-        android:name="com.hfad.petlogger.ViewPhotoFragment"
+        android:name="com.hfad.petlogger.screens.photo.viewphoto.ViewPhotoFragment"
         android:label="fragment_view_photo"
         tools:layout="@layout/fragment_view_photo" >
         <action
@@ -315,7 +315,7 @@
     </fragment>
     <fragment
         android:id="@+id/editPhotoFragment"
-        android:name="com.hfad.petlogger.EditPhotoFragment"
+        android:name="com.hfad.petlogger.screens.photo.editphoto.EditPhotoFragment"
         android:label="fragment_edit_photo"
         tools:layout="@layout/fragment_edit_photo" >
         <argument
@@ -331,7 +331,7 @@
     </fragment>
     <fragment
         android:id="@+id/viewTagFragment"
-        android:name="com.hfad.petlogger.ViewTagFragment"
+        android:name="com.hfad.petlogger.screens.tag.viewtag.ViewTagFragment"
         android:label="fragment_view_tag"
         tools:layout="@layout/fragment_view_tag" >
         <action

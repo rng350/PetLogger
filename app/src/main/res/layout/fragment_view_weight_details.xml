@@ -3,14 +3,14 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ViewWeightDetailsFragment">
+    tools:context=".screens.weight.viewweight.ViewWeightDetailsFragment">
     <data>
         <variable
             name="viewModel"
-            type="com.hfad.petlogger.ViewWeightViewModel" />
+            type="com.hfad.petlogger.screens.weight.viewweight.ViewWeightViewModel" />
         <variable
             name="associatedTagsDisplayViewModel"
-            type="com.hfad.petlogger.AssociatedTagsDisplayViewModel" />
+            type="com.hfad.petlogger.screens.sections.associatedentities.AssociatedTagsDisplayViewModel" />
     </data>
 
     <LinearLayout
@@ -328,7 +328,7 @@
             android:id="@+id/associated_tags_fragment_container_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:name="com.hfad.petlogger.AssociatedTagsDisplayFragment"
+            android:name="com.hfad.petlogger.screens.sections.associatedentities.AssociatedTagsDisplayFragment"
             tools:layout="@layout/fragment_associated_tags_display" />
     </LinearLayout>
 

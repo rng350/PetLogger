@@ -4,7 +4,7 @@
     <data>
         <variable
             name="tag"
-            type="com.hfad.petlogger.entities.Tag" />
+            type="com.hfad.petlogger.tags.Tag" />
     </data>
     <com.google.android.material.chip.Chip
         android:id="@+id/tag_chip"

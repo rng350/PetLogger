@@ -6,10 +6,10 @@
     <data>
         <variable
             name="checkableNote"
-            type="com.hfad.petlogger.CheckableItem" />
+            type="com.hfad.petlogger.common.CheckableItem" />
         <variable
             name="note"
-            type="com.hfad.petlogger.entities.Note" />
+            type="com.hfad.petlogger.notes.Note" />
     </data>
 
     <com.google.android.material.card.MaterialCardView

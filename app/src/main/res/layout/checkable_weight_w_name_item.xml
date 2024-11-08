@@ -6,10 +6,10 @@
     <data>
         <variable
             name="checkableEvent"
-            type="com.hfad.petlogger.CheckableItem" />
+            type="com.hfad.petlogger.common.CheckableItem" />
         <variable
             name="weight"
-            type="com.hfad.petlogger.entities.WeightWithPetName" />
+            type="com.hfad.petlogger.weights.WeightWithPetName" />
     </data>
 
     <com.google.android.material.card.MaterialCardView

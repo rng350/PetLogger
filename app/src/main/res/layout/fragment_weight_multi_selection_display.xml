@@ -3,12 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".EventMultiSelectionDisplayFragment">
+    tools:context=".screens.event.eventmultiselection.EventMultiSelectionDisplayFragment">
 
     <data>
         <variable
             name="viewModel"
-            type="com.hfad.petlogger.WeightMultiSelectionViewModel" />
+            type="com.hfad.petlogger.screens.weight.weightmultiselection.WeightMultiSelectionViewModel" />
     </data>
 
     <com.google.android.material.card.MaterialCardView

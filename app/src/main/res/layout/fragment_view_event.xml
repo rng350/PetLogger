@@ -3,23 +3,23 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ViewEventFragment">
+    tools:context=".screens.event.viewevent.ViewEventFragment">
     <data>
         <variable
             name="viewEventViewModel"
-            type="com.hfad.petlogger.ViewEventViewModel" />
+            type="com.hfad.petlogger.screens.event.viewevent.ViewEventViewModel" />
         <variable
             name="associatedPetsDisplayViewModel"
-            type="com.hfad.petlogger.AssociatedPetsDisplayViewModel" />
+            type="com.hfad.petlogger.screens.sections.associatedentities.AssociatedPetsDisplayViewModel" />
         <variable
             name="associatedPhotosDisplayViewModel"
-            type="com.hfad.petlogger.AssociatedPhotosDisplayViewModel" />
+            type="com.hfad.petlogger.screens.sections.associatedentities.AssociatedPhotosDisplayViewModel" />
         <variable
             name="associatedNotesDisplayViewModel"
-            type="com.hfad.petlogger.AssociatedNotesDisplayViewModel" />
+            type="com.hfad.petlogger.screens.sections.associatedentities.AssociatedNotesDisplayViewModel" />
         <variable
             name="associatedTagsDisplayViewModel"
-            type="com.hfad.petlogger.AssociatedTagsDisplayViewModel" />
+            type="com.hfad.petlogger.screens.sections.associatedentities.AssociatedTagsDisplayViewModel" />
     </data>
 
     <LinearLayout

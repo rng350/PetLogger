@@ -3,29 +3,29 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".EditPetFragment">
+    tools:context=".screens.pet.editpet.EditPetFragment">
     <data>
         <variable
             name="editPetViewModel"
-            type="com.hfad.petlogger.EditPetViewModel" />
+            type="com.hfad.petlogger.screens.pet.editpet.EditPetViewModel" />
         <variable
             name="petWeightDeselectionViewModel"
-            type="com.hfad.petlogger.PetWeightDeselectionViewModel" />
+            type="com.hfad.petlogger.screens.weight.PetWeightDeselectionViewModel" />
         <variable
             name="eventMultiSelectionViewModel"
-            type="com.hfad.petlogger.EventMultiSelectionViewModel" />
+            type="com.hfad.petlogger.screens.event.eventmultiselection.EventMultiSelectionViewModel" />
         <variable
             name="mediaSelectionViewModel"
-            type="com.hfad.petlogger.MediaSelectionViewModel" />
+            type="com.hfad.petlogger.screens.photo.mediaselection.MediaSelectionViewModel" />
         <variable
             name="petProfilePhotoSelectionViewModel"
-            type="com.hfad.petlogger.MediaSingleSelectionViewModel"/>
+            type="com.hfad.petlogger.screens.photo.mediaselection.MediaSingleSelectionViewModel"/>
         <variable
             name="noteMultiSelectionViewModel"
-            type="com.hfad.petlogger.NoteMultiSelectionViewModel" />
+            type="com.hfad.petlogger.screens.note.notemultiselection.NoteMultiSelectionViewModel" />
         <variable
             name="tagMultiSelectionViewModel"
-            type="com.hfad.petlogger.TagMultiSelectionViewModel" />
+            type="com.hfad.petlogger.screens.tag.tagmultiselection.TagMultiSelectionViewModel" />
     </data>
 
     <LinearLayout

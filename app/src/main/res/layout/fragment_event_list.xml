@@ -3,11 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".EventListFragment">
+    tools:context=".screens.event.EventListFragment">
     <data>
         <variable
             name="viewModel"
-            type="com.hfad.petlogger.EventListViewModel" />
+            type="com.hfad.petlogger.screens.event.EventListViewModel" />
     </data>
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"

@@ -2,15 +2,15 @@
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".NewNoteDetailsFragment">
+    tools:context=".screens.note.newnote.NewNoteDetailsFragment">
 
     <data>
         <variable
             name="newNoteViewModel"
-            type="com.hfad.petlogger.NewNoteViewModel" />
+            type="com.hfad.petlogger.screens.note.newnote.NewNoteViewModel" />
         <variable
             name="tagMultiSelectionViewModel"
-            type="com.hfad.petlogger.TagMultiSelectionViewModel" />
+            type="com.hfad.petlogger.screens.tag.tagmultiselection.TagMultiSelectionViewModel" />
     </data>
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -51,7 +51,7 @@
                 android:id="@+id/tag_selection_fragment_container_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:name="com.hfad.petlogger.TagMultiSelectionDisplayFragment"
+                android:name="com.hfad.petlogger.screens.tag.tagmultiselection.TagMultiSelectionDisplayFragment"
                 tools:layout="@layout/fragment_tag_multi_selection_display"/>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

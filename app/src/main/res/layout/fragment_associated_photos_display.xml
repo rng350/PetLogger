@@ -3,12 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".AssociatedPhotosDisplayFragment">
+    tools:context=".screens.sections.associatedentities.AssociatedPhotosDisplayFragment">
 
     <data>
         <variable
             name="associatedPhotosDisplayViewModel"
-            type="com.hfad.petlogger.AssociatedPhotosDisplayViewModel" />
+            type="com.hfad.petlogger.screens.sections.associatedentities.AssociatedPhotosDisplayViewModel" />
     </data>
 
     <com.google.android.material.card.MaterialCardView

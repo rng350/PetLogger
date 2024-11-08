@@ -3,19 +3,19 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".NewWeightDetailsFragment">
+    tools:context=".screens.weight.newweight.NewWeightDetailsFragment">
     <data>
         <import
-            type="com.hfad.petlogger.util.DataBindingConverter" />
+            type="com.hfad.petlogger.common.util.DataBindingConverter" />
         <variable
             name="newWeightViewModel"
-            type="com.hfad.petlogger.NewWeightViewModel" />
+            type="com.hfad.petlogger.screens.weight.newweight.NewWeightViewModel" />
         <variable
             name="petSingleSelectionViewModel"
-            type="com.hfad.petlogger.PetSingleSelectionViewModel" />
+            type="com.hfad.petlogger.screens.pet.petsingleselection.PetSingleSelectionViewModel" />
         <variable
             name="tagMultiSelectionViewModel"
-            type="com.hfad.petlogger.TagMultiSelectionViewModel" />
+            type="com.hfad.petlogger.screens.tag.tagmultiselection.TagMultiSelectionViewModel" />
     </data>
 
     <androidx.core.widget.NestedScrollView
@@ -107,7 +107,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:name="com.hfad.petlogger.PetSingleSelectionDisplayFragment"
+                android:name="com.hfad.petlogger.screens.pet.petsingleselection.PetSingleSelectionDisplayFragment"
                 tools:layout="@layout/fragment_pet_single_selection_display" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -129,7 +129,7 @@
                 android:id="@+id/tag_selection_fragment_container_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:name="com.hfad.petlogger.TagMultiSelectionDisplayFragment"
+                android:name="com.hfad.petlogger.screens.tag.tagmultiselection.TagMultiSelectionDisplayFragment"
                 tools:layout="@layout/fragment_tag_multi_selection_display"/>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

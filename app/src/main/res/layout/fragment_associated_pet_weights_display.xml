@@ -3,12 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".AssociatedPetWeightsDisplayFragment">
+    tools:context=".screens.sections.associatedentities.AssociatedPetWeightsDisplayFragment">
 
     <data>
         <variable
             name="associatedPetWeightsDisplayViewModel"
-            type="com.hfad.petlogger.AssociatedPetWeightsDisplayViewModel" />
+            type="com.hfad.petlogger.screens.sections.associatedentities.AssociatedPetWeightsDisplayViewModel" />
     </data>
 
     <com.google.android.material.card.MaterialCardView

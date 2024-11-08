@@ -3,27 +3,27 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".NewNoteFragment">
+    tools:context=".screens.note.newnote.NewNoteFragment">
 
     <data>
         <variable
             name="newNoteViewModel"
-            type="com.hfad.petlogger.NewNoteViewModel" />
+            type="com.hfad.petlogger.screens.note.newnote.NewNoteViewModel" />
         <variable
             name="petMultiSelectionViewModel"
-            type="com.hfad.petlogger.PetMultiSelectionViewModel" />
+            type="com.hfad.petlogger.screens.pet.petmultiselection.PetMultiSelectionViewModel" />
         <variable
             name="eventMultiSelectionViewModel"
-            type="com.hfad.petlogger.EventMultiSelectionViewModel" />
+            type="com.hfad.petlogger.screens.event.eventmultiselection.EventMultiSelectionViewModel" />
         <variable
             name="weightMultiSelectionViewModel"
-            type="com.hfad.petlogger.WeightMultiSelectionViewModel" />
+            type="com.hfad.petlogger.screens.weight.weightmultiselection.WeightMultiSelectionViewModel" />
         <variable
             name="mediaSelectionViewModel"
-            type="com.hfad.petlogger.MediaSelectionViewModel" />
+            type="com.hfad.petlogger.screens.photo.mediaselection.MediaSelectionViewModel" />
         <variable
             name="tagMultiSelectionViewModel"
-            type="com.hfad.petlogger.TagMultiSelectionViewModel" />
+            type="com.hfad.petlogger.screens.tag.tagmultiselection.TagMultiSelectionViewModel" />
     </data>
 
     <LinearLayout

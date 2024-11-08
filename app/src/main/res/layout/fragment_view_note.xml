@@ -3,23 +3,23 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ViewNoteFragment">
+    tools:context=".screens.note.viewnote.ViewNoteFragment">
     <data>
         <variable
             name="viewNoteViewModel"
-            type="com.hfad.petlogger.ViewNoteViewModel" />
+            type="com.hfad.petlogger.screens.note.viewnote.ViewNoteViewModel" />
         <variable
             name="associatedPetsDisplayViewModel"
-            type="com.hfad.petlogger.AssociatedPetsDisplayViewModel" />
+            type="com.hfad.petlogger.screens.sections.associatedentities.AssociatedPetsDisplayViewModel" />
         <variable
             name="associatedEventsDisplayViewModel"
-            type="com.hfad.petlogger.AssociatedEventsDisplayViewModel" />
+            type="com.hfad.petlogger.screens.sections.associatedentities.AssociatedEventsDisplayViewModel" />
         <variable
             name="associatedPhotosDisplayViewModel"
-            type="com.hfad.petlogger.AssociatedPhotosDisplayViewModel" />
+            type="com.hfad.petlogger.screens.sections.associatedentities.AssociatedPhotosDisplayViewModel" />
         <variable
             name="associatedTagsDisplayViewModel"
-            type="com.hfad.petlogger.AssociatedTagsDisplayViewModel" />
+            type="com.hfad.petlogger.screens.sections.associatedentities.AssociatedTagsDisplayViewModel" />
     </data>
 
     <LinearLayout

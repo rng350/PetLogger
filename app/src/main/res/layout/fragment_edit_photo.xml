@@ -3,25 +3,25 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".EditPhotoFragment">
+    tools:context=".screens.photo.editphoto.EditPhotoFragment">
 
     <data>
-        <import type="com.hfad.petlogger.util.DataBindingConverter"/>
+        <import type="com.hfad.petlogger.common.util.DataBindingConverter"/>
         <variable
             name="editPhotoViewModel"
-            type="com.hfad.petlogger.EditPhotoViewModel" />
+            type="com.hfad.petlogger.screens.photo.editphoto.EditPhotoViewModel" />
         <variable
             name="petSelectorViewModel"
-            type="com.hfad.petlogger.PetMultiSelectionViewModel" />
+            type="com.hfad.petlogger.screens.pet.petmultiselection.PetMultiSelectionViewModel" />
         <variable
             name="eventSelectorViewModel"
-            type="com.hfad.petlogger.EventMultiSelectionViewModel" />
+            type="com.hfad.petlogger.screens.event.eventmultiselection.EventMultiSelectionViewModel" />
         <variable
             name="noteMultiSelectionViewModel"
-            type="com.hfad.petlogger.NoteMultiSelectionViewModel" />
+            type="com.hfad.petlogger.screens.note.notemultiselection.NoteMultiSelectionViewModel" />
         <variable
             name="tagMultiSelectionViewModel"
-            type="com.hfad.petlogger.TagMultiSelectionViewModel" />
+            type="com.hfad.petlogger.screens.tag.tagmultiselection.TagMultiSelectionViewModel" />
     </data>
 
     <LinearLayout

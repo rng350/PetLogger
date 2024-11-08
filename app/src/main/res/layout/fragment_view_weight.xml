@@ -3,17 +3,17 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ViewWeightFragment">
+    tools:context=".screens.weight.viewweight.ViewWeightFragment">
     <data>
         <variable
             name="viewModel"
-            type="com.hfad.petlogger.ViewWeightViewModel" />
+            type="com.hfad.petlogger.screens.weight.viewweight.ViewWeightViewModel" />
         <variable
             name="associatedNotesDisplayViewModel"
-            type="com.hfad.petlogger.AssociatedNotesDisplayViewModel" />
+            type="com.hfad.petlogger.screens.sections.associatedentities.AssociatedNotesDisplayViewModel" />
         <variable
             name="associatedTagsDisplayViewModel"
-            type="com.hfad.petlogger.AssociatedTagsDisplayViewModel" />
+            type="com.hfad.petlogger.screens.sections.associatedentities.AssociatedTagsDisplayViewModel" />
     </data>
     <LinearLayout
         android:layout_width="match_parent"

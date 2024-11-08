@@ -2,15 +2,15 @@
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ViewEventDetailsFragment">
+    tools:context=".screens.event.viewevent.ViewEventDetailsFragment">
 
     <data>
         <variable
             name="viewEventViewModel"
-            type="com.hfad.petlogger.ViewEventViewModel" />
+            type="com.hfad.petlogger.screens.event.viewevent.ViewEventViewModel" />
         <variable
             name="associatedTagsDisplayViewModel"
-            type="com.hfad.petlogger.AssociatedTagsDisplayViewModel" />
+            type="com.hfad.petlogger.screens.sections.associatedentities.AssociatedTagsDisplayViewModel" />
     </data>
     <LinearLayout
         android:layout_width="match_parent"
@@ -73,14 +73,14 @@
             android:id="@+id/associated_pets_fragment_container_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:name="com.hfad.petlogger.AssociatedPetsSectionFragment"
+            android:name="com.hfad.petlogger.screens.sections.associatedentities.AssociatedPetsSectionFragment"
             tools:layout="@layout/fragment_associated_pets_section" />
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/associated_tags_fragment_container_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:name="com.hfad.petlogger.AssociatedTagsDisplayFragment"
+            android:name="com.hfad.petlogger.screens.sections.associatedentities.AssociatedTagsDisplayFragment"
             tools:layout="@layout/fragment_associated_tags_display" />
     </LinearLayout>
 </layout>

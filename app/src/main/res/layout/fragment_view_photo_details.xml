@@ -2,13 +2,13 @@
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ViewPhotoDetailsFragment">
+    tools:context=".screens.photo.viewphoto.ViewPhotoDetailsFragment">
 
     <data>
-        <import type="com.hfad.petlogger.util.DataBindingConverter"/>
+        <import type="com.hfad.petlogger.common.util.DataBindingConverter"/>
         <variable
             name="viewPhotoViewModel"
-            type="com.hfad.petlogger.ViewPhotoViewModel" />
+            type="com.hfad.petlogger.screens.photo.viewphoto.ViewPhotoViewModel" />
     </data>
     <LinearLayout
         android:layout_width="match_parent"
@@ -106,7 +106,7 @@
             android:id="@+id/associated_tags_fragment_container_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:name="com.hfad.petlogger.AssociatedTagsDisplayFragment"
+            android:name="com.hfad.petlogger.screens.sections.associatedentities.AssociatedTagsDisplayFragment"
             tools:layout="@layout/fragment_associated_tags_display" />
     </LinearLayout>
 </layout>

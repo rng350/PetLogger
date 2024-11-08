@@ -2,16 +2,16 @@
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".EditPhotoDetailsFragment">
+    tools:context=".screens.photo.editphoto.EditPhotoDetailsFragment">
 
     <data>
-        <import type="com.hfad.petlogger.util.DataBindingConverter"/>
+        <import type="com.hfad.petlogger.common.util.DataBindingConverter"/>
         <variable
             name="editPhotoViewModel"
-            type="com.hfad.petlogger.EditPhotoViewModel" />
+            type="com.hfad.petlogger.screens.photo.editphoto.EditPhotoViewModel" />
         <variable
             name="tagMultiSelectionViewModel"
-            type="com.hfad.petlogger.TagMultiSelectionViewModel" />
+            type="com.hfad.petlogger.screens.tag.tagmultiselection.TagMultiSelectionViewModel" />
     </data>
 
     <androidx.core.widget.NestedScrollView
@@ -124,7 +124,7 @@
                 android:id="@+id/tag_selection_fragment_container_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:name="com.hfad.petlogger.TagMultiSelectionDisplayFragment"
+                android:name="com.hfad.petlogger.screens.tag.tagmultiselection.TagMultiSelectionDisplayFragment"
                 tools:layout="@layout/fragment_tag_multi_selection_display"/>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

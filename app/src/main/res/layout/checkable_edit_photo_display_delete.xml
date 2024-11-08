@@ -4,10 +4,10 @@
     <data>
         <variable
             name="checkable_item"
-            type="com.hfad.petlogger.CheckableItem" />
+            type="com.hfad.petlogger.common.CheckableItem" />
         <variable
             name="photo_item"
-            type="com.hfad.petlogger.entities.Photo" />
+            type="com.hfad.petlogger.photos.Photo" />
     </data>
 
     <com.google.android.material.card.MaterialCardView

@@ -3,11 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".NoteListFragment">
+    tools:context=".screens.note.NoteListFragment">
     <data>
         <variable
             name="viewModel"
-            type="com.hfad.petlogger.NoteListViewModel" />
+            type="com.hfad.petlogger.screens.note.NoteListViewModel" />
     </data>
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"

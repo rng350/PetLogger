@@ -3,11 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".WeightMultiSelectionDialogFragment">
+    tools:context=".screens.weight.weightmultiselection.WeightMultiSelectionDialogFragment">
     <data>
         <variable
             name="viewModel"
-            type="com.hfad.petlogger.WeightMultiSelectionViewModel" />
+            type="com.hfad.petlogger.screens.weight.weightmultiselection.WeightMultiSelectionViewModel" />
     </data>
 
     <LinearLayout

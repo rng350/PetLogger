@@ -3,11 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".PetMultiSelectionDialogFragment">
+    tools:context=".screens.pet.petmultiselection.PetMultiSelectionDialogFragment">
     <data>
         <variable
             name="viewModel"
-            type="com.hfad.petlogger.PetMultiSelectionViewModel" />
+            type="com.hfad.petlogger.screens.pet.petmultiselection.PetMultiSelectionViewModel" />
     </data>
 
     <LinearLayout
