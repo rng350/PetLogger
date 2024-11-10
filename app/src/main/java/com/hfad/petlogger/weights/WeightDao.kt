@@ -186,4 +186,22 @@ interface WeightDao {
         ORDER BY tag_table.tag_name ASC
     """)
     suspend fun getTagsOfWeightAlphabeticalOrder(weightId: Long): List<Tag>
+
+    @Query("""
+        SELECT note_table.* 
+        FROM note_table 
+        JOIN note_table_fts ON note_table.note_id=note_table_fts.note_id
+        JOIN weight_note_table ON weight_note_table.note_id=note_table.note_id
+        WHERE note_table_fts MATCH :query 
+        AND weight_note_table.weight_id=:weightId 
+        AND (datetime(note_table.note_last_updated), note_table.note_id) < (datetime(:lastNoteUpdateDate), :lastNoteId) 
+        ORDER BY datetime(note_table.note_last_updated) DESC, note_table.note_id DESC LIMIT :noteAmt
+    """)
+    suspend fun getSearchedNotesOfWeightPaginated(
+        weightId: Long,
+        query: String,
+        lastNoteUpdateDate: OffsetDateTime,
+        lastNoteId: Long,
+        noteAmt: Int
+    ): List<Note>
 }

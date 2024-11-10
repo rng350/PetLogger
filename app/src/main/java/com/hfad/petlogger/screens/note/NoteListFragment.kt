@@ -17,6 +17,8 @@ import com.hfad.petlogger.common.navigateSafe
 import com.hfad.petlogger.photos.MediaRepository
 import com.hfad.petlogger.notes.NoteRepository
 import com.hfad.petlogger.common.setAppBarTitle
+import com.hfad.petlogger.notes.usecases.GetMoreOfAllNotesUseCase
+import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesFromAllUseCase
 import com.hfad.petlogger.screens.sections.recyclerviews.SetupShortenedNotesListDisplayUseCase
 
 class NoteListFragment : Fragment() {
@@ -32,6 +34,7 @@ class NoteListFragment : Fragment() {
     ): View? {
         _binding = FragmentNoteListBinding.inflate(inflater, container, false)
         val view = binding.root
+        binding.lifecycleOwner = viewLifecycleOwner
 
         setAppBarTitle(getString(R.string.note_list_header))
 
@@ -40,11 +43,11 @@ class NoteListFragment : Fragment() {
 
         val mediaRepository = MediaRepository(database, application.applicationContext)
         val noteRepository = NoteRepository(PetLoggerDatabase.getInstance(requireContext()), mediaRepository)
-
-        binding.lifecycleOwner = viewLifecycleOwner
+        val getAllNotes = GetMoreOfAllNotesUseCase(noteRepository, noteAmt=10)
+        val getMoreOfSearchedNotesFromAll = GetMoreOfSearchedNotesFromAllUseCase(noteRepository, noteAmt = 10)
 
         viewModel = ViewModelProvider(this,
-            NoteListViewModel.provideFactory(noteRepository, notesAmt = 10)
+            NoteListViewModel.provideFactory(getAllNotes, getMoreOfSearchedNotesFromAll)
         ).get(NoteListViewModel::class.java)
         binding.viewModel = viewModel
 

@@ -161,6 +161,16 @@ class WeightRepository(private val database: PetLoggerDatabase) {
         weightDao.getNotesOfWeightPaginated(weightId, lastNoteEditedDate, lastNoteId, amtLimit)
     }
 
+    suspend fun getSearchedNotesOfWeightPaginated(
+        weightId: Long,
+        query: String,
+        lastNoteUpdateDate: OffsetDateTime,
+        lastNoteId: Long,
+        noteAmt: Int
+    ): List<Note> = withContext(Dispatchers.IO) {
+        weightDao.getSearchedNotesOfWeightPaginated(weightId, query, lastNoteUpdateDate, lastNoteId, noteAmt)
+    }
+
     suspend fun getAllWeightsPaginated(lastWeightDateTime: OffsetDateTime, lastWeightId: Long, weightsAmt: Int): List<WeightForListFetched> = withContext(Dispatchers.IO) {
         weightDao.getAllWeightsPaginated(lastWeightDateTime, lastWeightId, weightsAmt)
     }

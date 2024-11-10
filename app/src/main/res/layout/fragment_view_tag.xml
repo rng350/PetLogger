@@ -9,6 +9,9 @@
         <variable
             name="viewTagViewModel"
             type="com.hfad.petlogger.screens.tag.viewtag.ViewTagViewModel" />
+        <variable
+            name="noteListViewModel"
+            type="com.hfad.petlogger.screens.note.NoteListViewModel" />
     </data>
 
     <ScrollView

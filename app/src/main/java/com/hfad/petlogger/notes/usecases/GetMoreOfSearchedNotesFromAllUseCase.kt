@@ -4,13 +4,14 @@ import com.hfad.petlogger.notes.Note
 import com.hfad.petlogger.notes.NoteRepository
 import com.hfad.petlogger.common.util.Constants
 import com.hfad.petlogger.common.usecases.GetItemsUseCase
+import com.hfad.petlogger.common.usecases.GetSearchedItemsUseCase
 import java.time.OffsetDateTime
 
 class GetMoreOfSearchedNotesFromAllUseCase(
     private val noteRepository: NoteRepository,
-    private val noteAmt: Int,
-    private val query: String
-): GetItemsUseCase<Note> {
+    private val noteAmt: Int
+): GetSearchedItemsUseCase<Note> {
+    override var currentQuery: String = ""
     private var lastNoteUpdateDate = Constants.OFFSET_DATE_TIME_MAX_ALLOWED
     private var lastNoteId = Long.MAX_VALUE
     private var _onLastPage = false
@@ -18,7 +19,7 @@ class GetMoreOfSearchedNotesFromAllUseCase(
         get() = _onLastPage
 
     override suspend fun invoke(): List<Note> {
-        val notes = noteRepository.getSearchedNotesFromAllPaginated(query, lastNoteUpdateDate, lastNoteId, noteAmt)
+        val notes = noteRepository.getSearchedNotesFromAllPaginated(currentQuery, lastNoteUpdateDate, lastNoteId, noteAmt)
         lastNoteUpdateDate = notes.lastOrNull()?.lastUpdated ?: OffsetDateTime.MIN
         lastNoteId = notes.lastOrNull()?.id ?: Long.MIN_VALUE
         _onLastPage = notes.size < noteAmt

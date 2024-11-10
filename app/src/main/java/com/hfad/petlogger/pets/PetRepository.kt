@@ -397,4 +397,8 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
     suspend fun getTagsOfPet(petId: Long): List<Tag> = withContext(Dispatchers.IO) {
         petDao.getAllTagsOfPet(petId)
     }
+
+    suspend fun getSearchedNotesOfPetPaginated(petId: Long, query: String, lastNoteUpdateDate: OffsetDateTime, lastNoteId: Long, noteAmt: Int): List<Note> = withContext(Dispatchers.IO) {
+        petDao.getSearchedNotesOfPetPaginated(petId, query, lastNoteUpdateDate, lastNoteId, noteAmt)
+    }
 }

@@ -152,4 +152,21 @@ interface PhotoDao {
         ORDER BY tag_table.tag_name ASC
     """)
     suspend fun getTagsOfPhotoAlphabeticalOrder(photoId: Long): List<Tag>
+    @Query("""
+        SELECT note_table.* 
+        FROM note_table 
+        JOIN note_table_fts ON note_table.note_id=note_table_fts.note_id
+        JOIN photo_note_table ON photo_note_table.note_id=note_table.note_id
+        WHERE note_table_fts MATCH :query 
+        AND photo_note_table.photo_id=:photoId 
+        AND (datetime(note_table.note_last_updated), note_table.note_id) < (datetime(:lastNoteUpdateDate), :lastNoteId) 
+        ORDER BY datetime(note_table.note_last_updated) DESC, note_table.note_id DESC LIMIT :noteAmt
+    """)
+    suspend fun getSearchedNotesOfPhotoPaginated(
+        photoId: Long,
+        query: String,
+        lastNoteUpdateDate: OffsetDateTime,
+        lastNoteId: Long,
+        noteAmt: Int
+    ): List<Note>
 }

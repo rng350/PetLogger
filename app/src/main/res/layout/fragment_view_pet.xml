@@ -18,8 +18,8 @@
             name="associatedPetWeightsDisplayViewModel"
             type="com.hfad.petlogger.screens.sections.associatedentities.AssociatedPetWeightsDisplayViewModel" />
         <variable
-            name="associatedNotesDisplayViewModel"
-            type="com.hfad.petlogger.screens.sections.associatedentities.AssociatedNotesDisplayViewModel" />
+            name="noteListViewModel"
+            type="com.hfad.petlogger.screens.note.NoteListViewModel" />
         <variable
             name="associatedTagsDisplayViewModel"
             type="com.hfad.petlogger.screens.sections.associatedentities.AssociatedTagsDisplayViewModel" />

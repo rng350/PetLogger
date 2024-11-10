@@ -425,4 +425,8 @@ class MediaRepository(
     suspend fun getTagsOfPhotoAlphabeticalOrder(photoId: Long): List<Tag> = withContext(Dispatchers.IO) {
         photoDao.getTagsOfPhotoAlphabeticalOrder(photoId)
     }
+
+    suspend fun getSearchedNotesOfPhotoUseCase(photoId: Long, query: String, lastNoteUpdateDate: OffsetDateTime, lastNoteId: Long, noteAmt: Int): List<Note> = withContext(Dispatchers.IO) {
+        photoDao.getSearchedNotesOfPhotoPaginated(photoId, query, lastNoteUpdateDate, lastNoteId, noteAmt)
+    }
 }

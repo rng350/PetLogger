@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.hfad.petlogger.notes.Note
 import com.hfad.petlogger.common.usecases.GetItemsUseCase
+import com.hfad.petlogger.common.usecases.GetSearchedItemsUseCase
 import com.hfad.petlogger.notes.usecases.GetMoreOfAllNotesUseCase
 import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesFromAllUseCase
 import com.hfad.petlogger.notes.NoteRepository
@@ -17,17 +18,16 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class NoteListViewModel(
-    private val noteRepository: NoteRepository,
-    private val notesAmt: Int
+    private val getInitialNoteList: GetItemsUseCase<Note>,
+    private val getSearchedNotes: GetSearchedItemsUseCase<Note>
 ) : ViewModel() {
-    private val getAllNotes = GetMoreOfAllNotesUseCase(noteRepository, notesAmt)
-    private var currentNoteGetter: GetItemsUseCase<Note> = getAllNotes
+    private var currentNoteGetter: GetItemsUseCase<Note> = getInitialNoteList
     private val _notes: MutableStateFlow<List<Note>> = MutableStateFlow(listOf())
     val notes: StateFlow<List<Note>> = _notes.asStateFlow()
     val noteNavigator = Navigator()
     private var isLoading: Boolean = false
     init {
-        load()
+        reload()
     }
 
     fun load() {
@@ -35,6 +35,15 @@ class NoteListViewModel(
             isLoading = true
             val loadedNotes = currentNoteGetter()
             _notes.update { it + loadedNotes }
+            isLoading = false
+        }
+    }
+
+    private fun reload() {
+        viewModelScope.launch {
+            isLoading = true
+            val loadedNotes = currentNoteGetter()
+            _notes.update { loadedNotes }
             isLoading = false
         }
     }
@@ -65,20 +74,20 @@ class NoteListViewModel(
 
     private fun reinitializeGetterType(query: String) {
         if (query.isNotEmpty()) {
-            currentNoteGetter = GetMoreOfSearchedNotesFromAllUseCase(noteRepository, notesAmt, "${query}*")
+            getSearchedNotes.changeSearchQuery("${query}*")
+            currentNoteGetter = getSearchedNotes
         } else {
-            currentNoteGetter = getAllNotes
+            currentNoteGetter = getInitialNoteList
             currentNoteGetter.resetCurrentPoint()
         }
-        _notes.update { listOf() }
-        load()
+        reload()
     }
 
     companion object {
-        fun provideFactory(noteRepository: NoteRepository, notesAmt: Int): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+        fun provideFactory(getInitialNoteList: GetItemsUseCase<Note>, getSearchedNotes: GetSearchedItemsUseCase<Note>): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(NoteListViewModel::class.java)) {
-                    return NoteListViewModel(noteRepository, notesAmt) as T
+                    return NoteListViewModel(getInitialNoteList, getSearchedNotes) as T
                 }
                 throw IllegalArgumentException("Unknown ViewModel")
             }

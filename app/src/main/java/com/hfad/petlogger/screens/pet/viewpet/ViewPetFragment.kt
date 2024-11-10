@@ -40,6 +40,8 @@ import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPhotosDi
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedTagsDisplayViewModel
 import com.hfad.petlogger.common.setAppBarTitle
 import com.hfad.petlogger.common.util.GetPeriodDisplayUseCase
+import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesOfPetUseCase
+import com.hfad.petlogger.screens.note.NoteListViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -83,9 +85,10 @@ class ViewPetFragment : Fragment() {
         binding.associatedPhotosDisplayViewModel = associatedPhotosDisplayViewModel
 
         val getNotesOfPet = GetMoreNotesOfPetUseCase(petRepository, petId, notesAmt = 10)
-        val associatedNotesDisplayViewModel = ViewModelProvider(this, AssociatedNotesDisplayViewModel.provideFactory(getNotesOfPet)).get(
-            AssociatedNotesDisplayViewModel::class.java)
-        binding.associatedNotesDisplayViewModel = associatedNotesDisplayViewModel
+        val getSearchedNotesOfPet = GetMoreOfSearchedNotesOfPetUseCase(petRepository, petId, notesAmt = 10)
+        val noteListViewModel = ViewModelProvider(this, NoteListViewModel.provideFactory(getNotesOfPet, getSearchedNotesOfPet)).get(
+            NoteListViewModel::class.java)
+        binding.noteListViewModel = noteListViewModel
 
         val getTagsOfPet = GetAllTagsOfPetAlphabeticalOrderUseCase(petRepository, petId)
         val associatedTagsDisplayViewModel = ViewModelProvider(this, AssociatedTagsDisplayViewModel.provideFactory(getTagsOfPet)).get(
@@ -105,9 +108,9 @@ class ViewPetFragment : Fragment() {
                 findNavController().navigateSafe(ViewPetFragmentDirections.actionViewPetFragmentToViewWeightFragment(weightId))
             }
         }
-        associatedNotesDisplayViewModel.noteNavigator.navigateTo.observe(viewLifecycleOwner) { noteId ->
+        noteListViewModel.noteNavigator.navigateTo.observe(viewLifecycleOwner) { noteId ->
             noteId?.let {
-                associatedNotesDisplayViewModel.noteNavigator.onNavigated()
+                noteListViewModel.noteNavigator.onNavigated()
                 findNavController().navigateSafe(ViewPetFragmentDirections.actionViewPetFragmentToViewNoteFragment(noteId))
             }
         }

@@ -205,4 +205,22 @@ interface PetDao {
         ORDER BY tag_table.tag_name ASC
     """)
     suspend fun getAllTagsOfPetAlphabeticalOrder(petId: Long): List<Tag>
+
+    @Query("""
+        SELECT note_table.* 
+        FROM note_table 
+        JOIN note_table_fts ON note_table.note_id=note_table_fts.note_id
+        JOIN pet_note_table ON pet_note_table.note_id=note_table.note_id
+        WHERE note_table_fts MATCH :query 
+        AND pet_note_table.pet_id=:petId 
+        AND (datetime(note_table.note_last_updated), note_table.note_id) < (datetime(:lastNoteUpdateDate), :lastNoteId) 
+        ORDER BY datetime(note_table.note_last_updated) DESC, note_table.note_id DESC LIMIT :noteAmt
+    """)
+    suspend fun getSearchedNotesOfPetPaginated(
+        petId: Long,
+        query: String,
+        lastNoteUpdateDate: OffsetDateTime,
+        lastNoteId: Long,
+        noteAmt: Int
+    ): List<Note>
 }

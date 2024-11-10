@@ -31,6 +31,8 @@ import com.hfad.petlogger.screens.sections.associatedentities.AssociatedNotesDis
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedNotesDisplayViewModel
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedTagsDisplayViewModel
 import com.hfad.petlogger.common.setAppBarTitle
+import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesOfWeightUseCase
+import com.hfad.petlogger.screens.note.NoteListViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -60,9 +62,10 @@ class ViewWeightFragment : Fragment() {
         binding.viewModel = viewModel
 
         val getNotesOfWeight = GetMoreNotesOfWeightUseCase(weightRepository, weightId, notesAmt = 10)
-        val associatedNotesDisplayViewModel = ViewModelProvider(this, AssociatedNotesDisplayViewModel.provideFactory(getNotesOfWeight)).get(
-            AssociatedNotesDisplayViewModel::class.java)
-        binding.associatedNotesDisplayViewModel = associatedNotesDisplayViewModel
+        val getSearchedNotesOfWeight = GetMoreOfSearchedNotesOfWeightUseCase(weightRepository, weightId, notesAmt = 10)
+        val noteListViewModel = ViewModelProvider(this, NoteListViewModel.provideFactory(getNotesOfWeight, getSearchedNotesOfWeight)).get(
+            NoteListViewModel::class.java)
+        binding.noteListViewModel = noteListViewModel
 
         val getTagsOfWeight = GetAllTagsOfWeightAlphabeticalOrderUseCase(weightRepository, weightId)
         val associatedTagsDisplayViewModel = ViewModelProvider(this, AssociatedTagsDisplayViewModel.provideFactory(getTagsOfWeight)).get(
@@ -95,9 +98,9 @@ class ViewWeightFragment : Fragment() {
             findNavController().popBackStack()
         }
 
-        associatedNotesDisplayViewModel.noteNavigator.navigateTo.observe(viewLifecycleOwner, Observer { noteId ->
+        noteListViewModel.noteNavigator.navigateTo.observe(viewLifecycleOwner, Observer { noteId ->
             noteId?.let {
-                associatedNotesDisplayViewModel.noteNavigator.onNavigated()
+                noteListViewModel.noteNavigator.onNavigated()
                 findNavController().navigateSafe(ViewWeightFragmentDirections.actionViewWeightFragmentToViewNoteFragment(noteId))
             }
         })

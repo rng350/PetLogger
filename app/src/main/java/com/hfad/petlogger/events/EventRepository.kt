@@ -218,4 +218,8 @@ class EventRepository(private val database: PetLoggerDatabase,
     suspend fun getTagsOfEvent(eventId: Long): List<Tag> = withContext(Dispatchers.IO) {
         eventDao.getAllTagsOfEvent(eventId)
     }
+
+    suspend fun getSearchedNotesOfEvent(eventId: Long, query: String, lastNoteUpdateDate: OffsetDateTime, lastNoteId: Long, noteAmt: Int): List<Note> = withContext(Dispatchers.IO) {
+        eventDao.getSearchedNotesOfEventPaginated(eventId, query, lastNoteUpdateDate, lastNoteId, noteAmt)
+    }
 }

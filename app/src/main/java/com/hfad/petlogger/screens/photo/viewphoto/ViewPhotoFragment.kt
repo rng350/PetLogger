@@ -33,6 +33,8 @@ import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPetsDisp
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPetsDisplayViewModel
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedTagsDisplayViewModel
 import com.hfad.petlogger.common.setAppBarTitle
+import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesOfPhotoUseCase
+import com.hfad.petlogger.screens.note.NoteListViewModel
 
 class ViewPhotoFragment : Fragment() {
     private var _binding: FragmentViewPhotoBinding? = null
@@ -69,9 +71,10 @@ class ViewPhotoFragment : Fragment() {
         binding.associatedEventsDisplayViewModel = associatedEventsDisplayViewModel
 
         val getNotesOfPhoto = GetMoreNotesOfPhotoUseCase(mediaRepository, photoId, notesAmt = 10)
-        val associatedNotesDisplayViewModel = ViewModelProvider(this, AssociatedNotesDisplayViewModel.provideFactory(getNotesOfPhoto)).get(
-            AssociatedNotesDisplayViewModel::class.java)
-        binding.associatedNotesDisplayViewModel = associatedNotesDisplayViewModel
+        val getSearchedNotesOfPhoto = GetMoreOfSearchedNotesOfPhotoUseCase(mediaRepository, photoId, notesAmt = 10)
+        val noteListViewModel = ViewModelProvider(this, NoteListViewModel.provideFactory(getNotesOfPhoto, getSearchedNotesOfPhoto)).get(
+            NoteListViewModel::class.java)
+        binding.noteListViewModel = noteListViewModel
 
         val getTagsOfPhotoAlphabeticalOrder = GetAllTagsOfPhotoAlphabeticalOrderUseCase(mediaRepository, photoId)
         val associatedTagsDisplayViewModel = ViewModelProvider(this, AssociatedTagsDisplayViewModel.provideFactory(getTagsOfPhotoAlphabeticalOrder)).get(
@@ -105,9 +108,9 @@ class ViewPhotoFragment : Fragment() {
                 findNavController().navigateSafe(ViewPhotoFragmentDirections.actionViewPhotoFragmentToViewEventFragment(eventId))
             }
         })
-        associatedNotesDisplayViewModel.noteNavigator.navigateTo.observe(viewLifecycleOwner, Observer { noteId ->
+        noteListViewModel.noteNavigator.navigateTo.observe(viewLifecycleOwner, Observer { noteId ->
             noteId?.let {
-                associatedNotesDisplayViewModel.noteNavigator.onNavigated()
+                noteListViewModel.noteNavigator.onNavigated()
                 findNavController().navigateSafe(ViewPhotoFragmentDirections.actionViewPhotoFragmentToViewNoteFragment(noteId))
             }
         })
