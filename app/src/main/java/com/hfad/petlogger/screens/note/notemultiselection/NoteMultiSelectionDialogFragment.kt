@@ -30,6 +30,7 @@ class NoteMultiSelectionDialogFragment : DialogFragment() {
         }
 
         binding.cancelButton.setOnClickListener {
+            noteMultiSelectionViewModel.cancel()
             requireDialog().cancel()
         }
 

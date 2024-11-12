@@ -33,6 +33,7 @@ class NewPetViewModel(private val petRepository: PetRepository) : ViewModel() {
     fun addPet(
         petProfilePhoto: Photo? = null,
         petPhotos: List<Photo> = listOf<Photo>(),
+        events: List<Long> = listOf<Long>(),
         notes: List<Note> = listOf<Note>(),
         tags: List<Tag> = listOf<Tag>()
     ) {
@@ -45,7 +46,7 @@ class NewPetViewModel(private val petRepository: PetRepository) : ViewModel() {
                 pet.petSex = _petSex
                 pet.petDOB = petDOB.selectedDate
                 val addedPetId = async {
-                    petRepository.addPet(pet, petPhotos, petProfilePhoto, notes=notes, tags=tags)
+                    petRepository.addPet(pet = pet, photos = petPhotos, profilePic = petProfilePhoto, notes=notes, tags=tags)
                 }.await()
                 goToViewPet.value = addedPetId
             }

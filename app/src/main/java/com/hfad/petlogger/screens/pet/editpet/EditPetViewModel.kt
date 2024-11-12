@@ -2,7 +2,6 @@ package com.hfad.petlogger.screens.pet.editpet
 
 import androidx.lifecycle.*
 import com.hfad.petlogger.common.SelectableDateOptional
-import com.hfad.petlogger.events.Event
 import com.hfad.petlogger.notes.Note
 import com.hfad.petlogger.pets.Pet
 import com.hfad.petlogger.pets.PetRepository
@@ -44,8 +43,8 @@ class EditPetViewModel(
     }
 
     fun updatePet(
-        eventsToRemove: List<Event> = listOf<Event>(),
-        eventsToAdd: List<Event> = listOf<Event>(),
+        eventsToRemove: List<Long> = listOf<Long>(),
+        eventsToAdd: List<Long> = listOf<Long>(),
         weightsToRemove: List<Weight> = listOf<Weight>(),
         photosToAdd: List<Photo> = listOf<Photo>(),
         photosToRemove: List<Photo> = listOf<Photo>(),

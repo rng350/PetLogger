@@ -14,31 +14,41 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class MediaSelectionViewModel(private val mediaRepository: MediaRepository,
-                              private val fetchInitialSelection: GetItemsUseCase<Photo>? = null,
+                              fetchInitialSelection: GetItemsUseCase<Photo>? = null,
+                              fetchInitialNewSelection: GetItemsUseCase<Photo>? = null,
                               val maxItems: Int = Int.MAX_VALUE) : ViewModel() {
-    private var initialSelection = HashSet<Photo>()
-    private var _currentPhotoSelection = MutableLiveData<List<Photo>>(listOf<Photo>())
+    private val initialSelection = HashSet<Photo>()
+    private val initialNewSelection = HashSet<Photo>()
+    private val _currentPhotoSelection = MutableLiveData<List<Photo>>(listOf<Photo>())
     val currentPhotoSelection: LiveData<List<Photo>> get() = _currentPhotoSelection
-    private var _selectionToRemove = MutableLiveData<List<Photo>>(listOf<Photo>())
+    private val _selectionToRemove = MutableLiveData<List<Photo>>(listOf<Photo>())
     val selectionToRemove: LiveData<List<Photo>> get() = _selectionToRemove
-    private var _selectionToAdd = MutableLiveData<List<Photo>>(listOf<Photo>())
+    private val _selectionToAdd = MutableLiveData<List<Photo>>(listOf<Photo>())
     val selectionToAdd: LiveData<List<Photo>> get() = _selectionToAdd
 
     init {
         viewModelScope.launch {
-            async {
+            val fetchInitial = async {
                 fetchInitialSelection?.let { getInitialPhotos ->
                     val initialPhotos = getInitialPhotos()
                     initialSelection.addAll(initialPhotos)
                 }
-            }.await()
+            }
+            val fetchInitialNew = async {
+                fetchInitialNewSelection?.let { getInitialPhotosNew ->
+                    val initialPhotosNew = getInitialPhotosNew()
+                    initialNewSelection.addAll(initialPhotosNew)
+                }
+            }
+            fetchInitial.await()
+            fetchInitialNew.await()
             resetSelection()
         }
     }
 
     fun resetSelection() {
         _currentPhotoSelection.value = initialSelection.toList()
-        _selectionToAdd.value = listOf<Photo>()
+        _selectionToAdd.value = initialNewSelection.toList()
         _selectionToRemove.value = listOf<Photo>()
     }
 
@@ -122,10 +132,10 @@ class MediaSelectionViewModel(private val mediaRepository: MediaRepository,
         return selectionToRemove.value ?: listOf<Photo>()
     }
     companion object {
-        fun provideFactory(mediaRepository: MediaRepository, fetchInitialSelection: GetItemsUseCase<Photo>? = null, maxItems: Int = Int.MAX_VALUE): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+        fun provideFactory(mediaRepository: MediaRepository, fetchInitialSelection: GetItemsUseCase<Photo>? = null, fetchInitialNewSelection: GetItemsUseCase<Photo>? = null, maxItems: Int = Int.MAX_VALUE): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(MediaSelectionViewModel::class.java)) {
-                    return MediaSelectionViewModel(mediaRepository, fetchInitialSelection, maxItems) as T
+                    return MediaSelectionViewModel(mediaRepository, fetchInitialSelection, fetchInitialNewSelection, maxItems) as T
                 }
                 throw IllegalArgumentException("Unknown ViewModel")
             }

@@ -7,10 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.hfad.petlogger.notes.Note
 import com.hfad.petlogger.common.usecases.GetItemsUseCase
 import com.hfad.petlogger.common.usecases.GetSearchedItemsUseCase
-import com.hfad.petlogger.notes.usecases.GetMoreOfAllNotesUseCase
-import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesFromAllUseCase
-import com.hfad.petlogger.notes.NoteRepository
 import com.hfad.petlogger.common.util.Navigator
+import com.hfad.petlogger.common.util.NewEntityNavigator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,6 +24,7 @@ class NoteListViewModel(
     val notes: StateFlow<List<Note>> = _notes.asStateFlow()
     val noteNavigator = Navigator()
     private var isLoading: Boolean = false
+    val newNoteNavigator = NewEntityNavigator()
     init {
         reload()
     }

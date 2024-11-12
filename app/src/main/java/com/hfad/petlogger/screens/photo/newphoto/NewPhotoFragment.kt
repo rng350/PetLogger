@@ -37,7 +37,6 @@ import com.hfad.petlogger.common.navigateSafe
 import com.hfad.petlogger.notes.usecases.GetAllNotesUseCase
 import com.hfad.petlogger.pets.usecases.GetAllPetsWithProfilePhotosUseCase
 import com.hfad.petlogger.tags.usecases.GetAllTagsUseCase
-import com.hfad.petlogger.events.EventRepository
 import com.hfad.petlogger.photos.MediaRepository
 import com.hfad.petlogger.notes.NoteRepository
 import com.hfad.petlogger.pets.PetRepository
@@ -45,6 +44,7 @@ import com.hfad.petlogger.tags.TagRepository
 import com.hfad.petlogger.screens.event.eventmultiselection.EventMultiSelectionDisplayFragment
 import com.hfad.petlogger.screens.event.eventmultiselection.EventMultiSelectionViewModel
 import com.hfad.petlogger.common.setAppBarTitle
+import com.hfad.petlogger.events.usecases.GetAllEventsUseCase
 
 class NewPhotoFragment : Fragment() {
     private var _binding: FragmentNewPhotoBinding? = null
@@ -62,7 +62,6 @@ class NewPhotoFragment : Fragment() {
         val database = PetLoggerDatabase.getInstance(application)
         val mediaRepository = MediaRepository(database, application.applicationContext)
         val petRepository = PetRepository(database, mediaRepository)
-        val eventRepository = EventRepository(database, mediaRepository)
 
         val getAllPetsUseCase = GetAllPetsWithProfilePhotosUseCase(petRepository)
         val newPhotoViewModel = ViewModelProvider(this,
@@ -71,7 +70,9 @@ class NewPhotoFragment : Fragment() {
         val petSelectorViewModel = ViewModelProvider(this,
             PetMultiSelectionViewModel.provideFactory(getAllPetsUseCase)
         ).get(PetMultiSelectionViewModel::class.java)
-        val eventSelectionViewModel = ViewModelProvider(this, EventMultiSelectionViewModel.provideFactory(eventRepository)).get(
+
+        val getAllEvents = GetAllEventsUseCase(database.eventDao)
+        val eventSelectionViewModel = ViewModelProvider(this, EventMultiSelectionViewModel.provideFactory(getAllEvents=getAllEvents)).get(
             EventMultiSelectionViewModel::class.java)
 
         val tagRepository = TagRepository(database)

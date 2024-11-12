@@ -33,8 +33,10 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
     private val petDao = database.petDao
     private val photoDao = database.photoDao
     private val noteDao = database.noteDao
+    private val eventPetDao = database.eventPetDao
     suspend fun addPet(
         pet: Pet,
+        events: List<Long> = listOf<Long>(),
         photos: List<Photo> = listOf<Photo>(),
         profilePic: Photo? = null,
         notes: List<Note> = listOf<Note>(),
@@ -50,6 +52,9 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
             }
         }
         val petId = photosAdded.await()
+        val eventsAdded = async {
+            eventPetDao.insert(events.map{ eventId -> EventPet(eventId=eventId, petId=petId) })
+        }
         val notesAdded = async {
             noteDao.attachPets(notes.map{ note -> PetNote(petId=petId, noteId=note.id) })
         }
@@ -59,6 +64,7 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
                 attachPetToTag(tagRepository, petId, tag)
             }
         }
+        eventsAdded.await()
         notesAdded.await()
         tagsAdded.awaitAll()
         petId
@@ -82,8 +88,8 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
 
     suspend fun updatePet(
         pet: Pet,
-        eventsToAdd: List<Event> = listOf<Event>(),
-        eventsToRemove: List<Event> = listOf<Event>(),
+        eventsToAdd: List<Long> = listOf<Long>(),
+        eventsToRemove: List<Long> = listOf<Long>(),
         weightsToAdd: List<Weight> = listOf<Weight>(),
         weightsToRemove: List<Weight> = listOf<Weight>(),
         photosToAdd: List<Photo> = listOf<Photo>(),
@@ -101,10 +107,10 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
             petDao.update(pet)
         }
         val petEventsInserted = async {
-            petDao.insert(eventsToAdd.map { EventPet(eventId=it.eventId, petId=pet.petID) })
+            petDao.insert(eventsToAdd.map { eventId -> EventPet(eventId=eventId, petId=pet.petID) })
         }
         val petEventsDeleted = async {
-            petDao.delete(eventsToRemove.map { EventPet(eventId=it.eventId, petId=pet.petID) })
+            petDao.delete(eventsToRemove.map { eventId -> EventPet(eventId=eventId, petId=pet.petID) })
         }
         val petWeightsInserted = async {
             weightDao.insert(weightsToAdd)

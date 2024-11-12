@@ -42,6 +42,7 @@ class PetMultiSelectionSectionDialogFragment : DialogFragment() {
         }
 
         binding.cancelButton.setOnClickListener {
+            viewModel.cancel()
             requireDialog().cancel()
         }
 

@@ -10,6 +10,8 @@ import com.hfad.petlogger.common.associationentities.EventPet
 interface EventPetDao {
     @Insert
     suspend fun insert(eventPet : EventPet)
+    @Insert
+    suspend fun insert(eventPets : List<EventPet>)
 
     @Delete
     suspend fun delete(eventPet : EventPet)

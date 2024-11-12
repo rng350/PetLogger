@@ -35,6 +35,12 @@ import com.hfad.petlogger.screens.event.eventmultiselection.EventMultiSelectionV
 import com.hfad.petlogger.screens.photo.mediaselection.MediaSelectionFragment
 import com.hfad.petlogger.screens.photo.mediaselection.MediaSelectionViewModel
 import com.hfad.petlogger.common.setAppBarTitle
+import com.hfad.petlogger.common.util.Constants.Companion.defaultNullIdForNavigation
+import com.hfad.petlogger.events.usecases.GetAllEventsUseCase
+import com.hfad.petlogger.events.usecases.GetSingleEventUseCase
+import com.hfad.petlogger.pets.usecases.GetSinglePetUseCase
+import com.hfad.petlogger.tags.usecases.GetSingleTagUseCase
+import com.hfad.petlogger.weights.usecases.GetSingleWeightUseCase
 
 class NewNoteFragment : Fragment() {
     private var _binding: FragmentNewNoteBinding? = null
@@ -58,7 +64,6 @@ class NewNoteFragment : Fragment() {
         val mediaRepository = MediaRepository(database, application.applicationContext)
         val noteRepository = NoteRepository(database, mediaRepository)
         val petRepository = PetRepository(database, mediaRepository)
-        val eventRepository = EventRepository(database, mediaRepository)
         val weightRepository = WeightRepository(database)
 
         setAppBarTitle(getString(R.string.new_note_header))
@@ -79,23 +84,42 @@ class NewNoteFragment : Fragment() {
             NewNoteViewModel::class.java)
 
         val getAllPetsUseCase = GetAllPetsWithProfilePhotosUseCase(petRepository)
+        val assocPetId = NewNoteFragmentArgs.fromBundle(requireArguments()).petId
+        val getNewAssociatedPet = if (assocPetId != defaultNullIdForNavigation) {
+            GetSinglePetUseCase(database.petDao, assocPetId)
+        } else null
         petMultiSelectionViewModel = ViewModelProvider(this,
-            PetMultiSelectionViewModel.provideFactory(getAllPetsUseCase)
+            PetMultiSelectionViewModel.provideFactory(getAllPets = getAllPetsUseCase, getInitialNewSelection = getNewAssociatedPet)
         ).get(PetMultiSelectionViewModel::class.java)
-        eventMultiSelectionViewModel = ViewModelProvider(this, EventMultiSelectionViewModel.provideFactory(eventRepository)).get(
-            EventMultiSelectionViewModel::class.java)
+
+        val getAllEvents = GetAllEventsUseCase(database.eventDao)
+        val assocEventId = NewNoteFragmentArgs.fromBundle(requireArguments()).eventId
+        val getAssociatedEvent = if (assocEventId != defaultNullIdForNavigation) {
+            GetSingleEventUseCase(database.eventDao, assocEventId)
+        } else null
+        eventMultiSelectionViewModel = ViewModelProvider(this,
+            EventMultiSelectionViewModel.provideFactory(getAllEvents = getAllEvents, getAssociatedNewEvents = getAssociatedEvent)
+        ).get(EventMultiSelectionViewModel::class.java)
 
         val getAllWeights = GetAllWeightsWithPetNamesUseCase(weightRepository)
+        val assocWeightId = NewNoteFragmentArgs.fromBundle(requireArguments()).weightId
+        val getAssociatedWeight = if (assocWeightId != defaultNullIdForNavigation) {
+            GetSingleWeightUseCase(database.weightDao, assocWeightId)
+        } else null
         weightMultiSelectionViewModel = ViewModelProvider(this,
-            WeightMultiSelectionViewModel.provideFactory(getAllWeights)
+            WeightMultiSelectionViewModel.provideFactory(getAllWeights, getAssociatedWeight)
         ).get(WeightMultiSelectionViewModel::class.java)
         mediaSelectionViewModel = ViewModelProvider(this, MediaSelectionViewModel.provideFactory(mediaRepository = mediaRepository, maxItems = 10)).get(
             MediaSelectionViewModel::class.java)
 
         val tagRepository = TagRepository(database)
         val getAllTags = GetAllTagsUseCase(tagRepository)
+        val assocTagId = NewNoteFragmentArgs.fromBundle(requireArguments()).tagId
+        val getAssociatedTag = if (assocTagId != defaultNullIdForNavigation) {
+            GetSingleTagUseCase(database.tagDao, assocTagId)
+        } else null
         tagMultiSelectionViewModel = ViewModelProvider(this,
-            TagMultiSelectionViewModel.provideFactory(tagRepository, getAllTags)
+            TagMultiSelectionViewModel.provideFactory(tagRepository, getAllTags, getAssociatedTag)
         ).get(TagMultiSelectionViewModel::class.java)
 
         binding.newNoteViewModel = newNoteViewModel

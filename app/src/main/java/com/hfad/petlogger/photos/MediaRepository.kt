@@ -46,8 +46,8 @@ class MediaRepository(
         photo: Photo,
         petsToAdd: List<Long> = listOf<Long>(),
         petsToRemove: List<Long> = listOf<Long>(),
-        eventsToAdd: List<Event> = listOf<Event>(),
-        eventsToRemove: List<Event> = listOf<Event>(),
+        eventsToAdd: List<Long> = listOf<Long>(),
+        eventsToRemove: List<Long> = listOf<Long>(),
         notesToAdd: List<Note> = listOf<Note>(),
         notesToRemove: List<Note> = listOf<Note>(),
         notesToUpdate: List<Note> = listOf<Note>(),
@@ -67,14 +67,14 @@ class MediaRepository(
                 photoDao.dissociate(PetPhoto(petId = petId, photoId = photo.id))
             }
         }
-        val addEvents = eventsToAdd.map { event ->
+        val addEvents = eventsToAdd.map { eventId ->
             async {
-                photoDao.insert(PhotoEvent(eventID = event.eventId, photoID = photo.id))
+                photoDao.insert(PhotoEvent(eventID = eventId, photoID = photo.id))
             }
         }
-        val removeEvents = eventsToRemove.map { event ->
+        val removeEvents = eventsToRemove.map { eventId ->
             async {
-                photoDao.delete(PhotoEvent(eventID = event.eventId, photoID = photo.id))
+                photoDao.delete(PhotoEvent(eventID = eventId, photoID = photo.id))
             }
         }
         val addNotes = notesToAdd.map { note ->
@@ -137,7 +137,7 @@ class MediaRepository(
         newAttachedNotes: List<Note> = listOf<Note>(),
         existingAttachedNotes: List<Note> = listOf<Note>(),
         pets: List<Long> = listOf<Long>(),
-        events: List<Event> = listOf<Event>(),
+        events: List<Long> = listOf<Long>(),
         tags: List<Tag> = listOf<Tag>()
     ): Photo? = withContext(Dispatchers.IO) {
         val photoAdded = addPhoto(photo)
@@ -153,9 +153,9 @@ class MediaRepository(
                     petDao.insertPetPhoto(PetPhoto(petId = petId, photoId = photoAdded.id))
                 }
             }
-            val eventsAttached = events.map { event ->
+            val eventsAttached = events.map { eventId ->
                 async {
-                    photoDao.insert(PhotoEvent(photoID = photoAdded.id, eventID = event.eventId))
+                    photoDao.insert(PhotoEvent(photoID = photoAdded.id, eventID = eventId))
                 }
             }
             val tagRepository = TagRepository(database)

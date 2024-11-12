@@ -49,7 +49,7 @@ class NoteRepository(
 
     suspend fun insertNote(note: Note,
                            pets: List<Long> = listOf<Long>(),
-                           events: List<Event> = listOf<Event>(),
+                           events: List<Long> = listOf<Long>(),
                            weights: List<Weight> = listOf<Weight>(),
                            photos: List<Photo> = listOf<Photo>(),
                            tags: List<Tag> = listOf<Tag>()): Long
@@ -64,7 +64,7 @@ class NoteRepository(
         }
         val eventsDeferred = events.map {
             async {
-                insertEventNote(noteId, it.eventId)
+                insertEventNote(noteId, it)
             }
         }
         val weightsDeferred = weights.map {
@@ -96,8 +96,8 @@ class NoteRepository(
     suspend fun updateNote(note: Note,
                            petsToAdd: List<Long> = listOf<Long>(),
                            petsToRemove: List<Long> = listOf<Long>(),
-                           eventsToAdd: List<Event> = listOf<Event>(),
-                           eventsToRemove: List<Event> = listOf<Event>(),
+                           eventsToAdd: List<Long> = listOf<Long>(),
+                           eventsToRemove: List<Long> = listOf<Long>(),
                            weightsToAdd: List<Weight> = listOf<Weight>(),
                            weightsToRemove: List<Weight> = listOf<Weight>(),
                            photosToAdd: List<Photo> = listOf<Photo>(),
@@ -115,10 +115,10 @@ class NoteRepository(
             noteDao.detachPets(petsToRemove.map{ petID -> PetNote(petId=petID, noteId=note.id) })
         }
         val eventsAttached = async {
-            noteDao.attachEvents(eventsToAdd.map{ event -> EventNote(eventId = event.eventId, noteId = note.id) })
+            noteDao.attachEvents(eventsToAdd.map{ eventID -> EventNote(eventId = eventID, noteId = note.id) })
         }
         val eventsDetached = async {
-            noteDao.detachEvents(eventsToRemove.map{ event -> EventNote(eventId = event.eventId, noteId = note.id) })
+            noteDao.detachEvents(eventsToRemove.map{ eventID -> EventNote(eventId = eventID, noteId = note.id) })
         }
         val weightsAttached = async {
             noteDao.attachWeights(weightsToAdd.map{ weight -> WeightNote(weightId=weight.id, noteId=note.id) })

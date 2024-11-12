@@ -88,6 +88,13 @@ class ViewWeightFragment : Fragment() {
             }
         }
 
+        noteListViewModel.newNoteNavigator.makeNewEntity.observe(viewLifecycleOwner) { shouldMakeNewNote ->
+            if (shouldMakeNewNote) {
+                findNavController().navigateSafe(ViewWeightFragmentDirections.actionViewWeightFragmentToNewNoteFragment(weightId=weightId))
+                noteListViewModel.newNoteNavigator.onNavigatedToNewEntityScreen()
+            }
+        }
+
         binding.editWeight.setOnClickListener{
             viewModel.fullWeightDetails.value?.let { weight ->
                 findNavController().navigateSafe(ViewWeightFragmentDirections.actionViewWeightFragmentToEditWeightFragment(weightId = weightId, petId = weight.weightPet.petId))

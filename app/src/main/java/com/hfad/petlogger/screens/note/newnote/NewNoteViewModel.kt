@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.hfad.petlogger.events.Event
 import com.hfad.petlogger.notes.Note
 import com.hfad.petlogger.photos.Photo
 import com.hfad.petlogger.tags.Tag
@@ -21,7 +20,7 @@ class NewNoteViewModel(private val noteRepository: NoteRepository) : ViewModel()
     private val _goBack = MutableLiveData<Boolean>(false)
     val goBack: LiveData<Boolean> = _goBack
     fun submitNote(pets: List<Long> = listOf(),
-                   events: List<Event> = listOf(),
+                   events: List<Long> = listOf(),
                    weights: List<Weight> = listOf(),
                    photos: List<Photo> = listOf(),
                    tags: List<Tag> = listOf()) {

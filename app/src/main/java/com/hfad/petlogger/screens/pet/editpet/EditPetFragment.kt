@@ -41,7 +41,7 @@ import com.hfad.petlogger.notes.usecases.GetNotesOfPetUseCase
 import com.hfad.petlogger.photos.usecases.GetPetProfilePhotoUseCase
 import com.hfad.petlogger.photos.usecases.GetPhotosOfPetUseCase
 import com.hfad.petlogger.tags.usecases.GetTagsOfPetUseCase
-import com.hfad.petlogger.events.EventRepository
+import com.hfad.petlogger.events.usecases.GetAllEventsUseCase
 import com.hfad.petlogger.photos.MediaRepository
 import com.hfad.petlogger.notes.NoteRepository
 import com.hfad.petlogger.pets.PetRepository
@@ -87,10 +87,10 @@ class EditPetFragment : Fragment() {
             }
         })
 
+        val getAllEvents = GetAllEventsUseCase(database.eventDao)
         val getEventsOfPet = GetEventsOfPetUseCase(petRepository = petRepository, petId = petID)
-        val eventRepository = EventRepository(database, mediaRepository)
         val eventMultiSelectionViewModel = ViewModelProvider(this,
-            EventMultiSelectionViewModel.provideFactory(eventRepository, getEventsOfPet)
+            EventMultiSelectionViewModel.provideFactory(getAllEvents, getAssociatedEvents = getEventsOfPet)
         ).get(EventMultiSelectionViewModel::class.java)
         binding.eventMultiSelectionViewModel = eventMultiSelectionViewModel
 

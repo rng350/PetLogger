@@ -42,6 +42,10 @@ class AssociatedNotesDisplayFragment : Fragment() {
             onLast = {noteListViewModel.onLastPage()}
         )
 
+        binding.addNoteButton.setOnClickListener {
+            noteListViewModel.newNoteNavigator.navigateToNewEntityScreen()
+        }
+
         binding.searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 noteListViewModel.onQueryTextSubmit(query)

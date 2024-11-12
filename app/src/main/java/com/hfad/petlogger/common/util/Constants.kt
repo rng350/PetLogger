@@ -23,6 +23,8 @@ class Constants {
 
         const val newTagPlaceholderId: Long = -1
 
+        const val defaultNullIdForNavigation: Long = -1L
+
         val OFFSET_DATE_TIME_MAX_ALLOWED: OffsetDateTime = OffsetDateTime.of(9999,12,31,1,1,1,1, ZoneOffset.UTC)
     }
 }

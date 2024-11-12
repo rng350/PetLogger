@@ -1,18 +1,26 @@
 package com.hfad.petlogger.weights
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.Query
+import androidx.room.Transaction
+import androidx.room.Update
 import com.hfad.petlogger.notes.Note
 import com.hfad.petlogger.pets.PetWithProfilePic
 import com.hfad.petlogger.tags.Tag
-import com.hfad.petlogger.weights.Weight
-import com.hfad.petlogger.weights.WeightDetails
-import com.hfad.petlogger.weights.WeightFullDetailsFetched
-import com.hfad.petlogger.weights.WeightForListFetched
 import kotlinx.coroutines.flow.Flow
 import java.time.OffsetDateTime
 
 @Dao
 interface WeightDao {
+    @Query("""
+            SELECT * 
+            FROM weight_table 
+            WHERE weight_id=:weightId 
+            LIMIT 1
+        """)
+    suspend fun getWeightWithPetName(weightId: Long): WeightDetails
 
     @Transaction
     suspend fun addWeight(weight: Weight): Weight {

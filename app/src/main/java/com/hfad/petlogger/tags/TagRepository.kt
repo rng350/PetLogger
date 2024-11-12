@@ -3,7 +3,6 @@ package com.hfad.petlogger.tags
 import androidx.room.withTransaction
 import com.hfad.petlogger.common.CheckableItem
 import com.hfad.petlogger.common.PetLoggerDatabase
-import com.hfad.petlogger.events.Event
 import com.hfad.petlogger.events.EventForList
 import com.hfad.petlogger.common.associationentities.EventTag
 import com.hfad.petlogger.notes.Note
@@ -66,7 +65,7 @@ class TagRepository(private val database: PetLoggerDatabase) {
 
     suspend fun updateTag(
         associatedPets: List<PetWithProfilePic> = listOf<PetWithProfilePic>(),
-        associatedEvents: List<Event> = listOf<Event>(),
+        associatedEvents: List<Long> = listOf<Long>(),
         associatedNotes: List<Note> = listOf<Note>(),
         associatedWeights: List<WeightWithPetName> = listOf<WeightWithPetName>(),
         associatedPhotos: List<Photo> = listOf<Photo>()

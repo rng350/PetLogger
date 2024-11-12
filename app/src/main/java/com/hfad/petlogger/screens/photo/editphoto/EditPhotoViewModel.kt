@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.hfad.petlogger.events.Event
 import com.hfad.petlogger.notes.Note
 import com.hfad.petlogger.photos.Photo
 import com.hfad.petlogger.tags.Tag
@@ -14,7 +13,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class EditPhotoViewModel(private val mediaRepository: MediaRepository, private val photoId: Long) : ViewModel() {
-    // TODO: Implement the ViewModel
     private val photoInitial = MutableLiveData<Photo>()
     val photoNew = MutableLiveData<Photo>()
     private val _photoDate: MutableLiveData<String> = MutableLiveData<String>("N/A")
@@ -38,8 +36,8 @@ class EditPhotoViewModel(private val mediaRepository: MediaRepository, private v
 
     fun submit(petsToAdd: List<Long> = listOf<Long>(),
                petsToRemove: List<Long> = listOf<Long>(),
-               eventsToAdd: List<Event> = listOf<Event>(),
-               eventsToRemove: List<Event> = listOf<Event>(),
+               eventsToAdd: List<Long> = listOf<Long>(),
+               eventsToRemove: List<Long> = listOf<Long>(),
                notesToAdd: List<Note> = listOf<Note>(),
                notesToRemove: List<Note> = listOf<Note>(),
                notesToUpdate: List<Note> = listOf<Note>(),

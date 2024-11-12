@@ -133,6 +133,13 @@ class ViewPetFragment : Fragment() {
             }
         }
 
+        noteListViewModel.newNoteNavigator.makeNewEntity.observe(viewLifecycleOwner) { shouldMakeNewNote ->
+            if (shouldMakeNewNote) {
+                findNavController().navigateSafe(ViewPetFragmentDirections.actionViewPetFragmentToNewNoteFragment(petId=petId))
+                noteListViewModel.newNoteNavigator.onNavigatedToNewEntityScreen()
+            }
+        }
+
         binding.editPetButton.setOnClickListener {
             findNavController().navigateSafe(ViewPetFragmentDirections.actionViewPetFragmentToEditPetFragment(petId))
         }

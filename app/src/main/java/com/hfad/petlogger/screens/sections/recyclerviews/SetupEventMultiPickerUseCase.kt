@@ -1,24 +1,25 @@
 package com.hfad.petlogger.screens.sections.recyclerviews
 
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.hfad.petlogger.common.CheckableItem
 import com.hfad.petlogger.R
 import com.hfad.petlogger.databinding.CheckableEventItemBinding
-import com.hfad.petlogger.events.Event
 import com.hfad.petlogger.common.recyclerviews.DataItemBindingInterface
 import com.hfad.petlogger.common.recyclerviews.GenericRecyclerViewAdapter
+import com.hfad.petlogger.common.selectiontracker.MultiSelectionTracker
+import com.hfad.petlogger.events.EventForList
 
-class SetupEventMultiPickerUseCase(private val eventList: MutableLiveData<List<CheckableItem<Event>>>,
-                                   private val selection: MutableLiveData<List<CheckableItem<Event>>>,
-                                   private val selectionTracker: com.hfad.petlogger.common.selectiontracker.EditSelectionTracker<Event>,
+class SetupEventMultiPickerUseCase(private val eventList: LiveData<List<CheckableItem<EventForList>>>,
+                                   private val selection: LiveData<List<EventForList>>,
+                                   private val selectionTracker: MultiSelectionTracker<EventForList>,
                                    private val recyclerView: RecyclerView,
                                    private val lifecycleOwner: LifecycleOwner,
 ) {
     operator fun invoke() {
-        val adapter = GenericRecyclerViewAdapter<CheckableItem<Event>, CheckableEventItemBinding>(
+        val adapter = GenericRecyclerViewAdapter<CheckableItem<EventForList>, CheckableEventItemBinding>(
             layoutId = R.layout.checkable_event_item,
             bindingInterface = createCheckableEventItemBindingInterface()
         )
@@ -30,32 +31,20 @@ class SetupEventMultiPickerUseCase(private val eventList: MutableLiveData<List<C
     }
 
     private fun createCheckableEventItemBindingInterface() = object:
-        DataItemBindingInterface<CheckableItem<Event>, CheckableEventItemBinding> {
-        override fun bind(item: CheckableItem<Event>, binder: CheckableEventItemBinding) {
+        DataItemBindingInterface<CheckableItem<EventForList>, CheckableEventItemBinding> {
+        override fun bind(item: CheckableItem<EventForList>, binder: CheckableEventItemBinding) {
             binder.checkableEvent = item
             binder.event = item.item
+
             binder.eventCard.isChecked = item.isChecked.value!!
 
             binder.eventCard.setOnClickListener { null }
             binder.eventCard.setOnClickListener {
-                val mutableList = selection.value?.toMutableList() ?: mutableListOf<CheckableItem<Event>>()
-
                 selectionTracker.toggle(item)
-
-                if (mutableList.contains(item)) {
-                    mutableList.remove(item)
-                    item.isChecked.value = false
-                    binder.eventCard.isChecked = false
-                } else {
-                    mutableList.add(item)
-                    item.isChecked.value = true
-                    binder.eventCard.isChecked = true
-                }
-                selection.value = mutableList.toList()
             }
 
-            val observer = Observer<List<CheckableItem<Event>>> {
-                binder.eventCard.isChecked = selection.value?.contains(item) ?: false
+            val observer = Observer<List<EventForList>> {
+                binder.eventCard.isChecked = selection.value?.contains(item.item) ?: false
             }
             selection.observe(lifecycleOwner, observer)
         }

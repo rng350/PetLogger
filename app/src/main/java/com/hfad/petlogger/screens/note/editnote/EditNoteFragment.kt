@@ -35,13 +35,13 @@ import com.hfad.petlogger.pets.usecases.GetPetsOfNoteUseCase
 import com.hfad.petlogger.photos.usecases.GetPhotosOfNoteUseCase
 import com.hfad.petlogger.tags.usecases.GetTagsOfNoteUseCase
 import com.hfad.petlogger.weights.usecases.GetWeightsOfNoteUseCase
-import com.hfad.petlogger.events.EventRepository
 import com.hfad.petlogger.photos.MediaRepository
 import com.hfad.petlogger.notes.NoteRepository
 import com.hfad.petlogger.pets.PetRepository
 import com.hfad.petlogger.tags.TagRepository
 import com.hfad.petlogger.weights.WeightRepository
 import com.hfad.petlogger.common.setAppBarTitle
+import com.hfad.petlogger.events.usecases.GetAllEventsUseCase
 
 class EditNoteFragment : Fragment() {
 
@@ -71,10 +71,10 @@ class EditNoteFragment : Fragment() {
         ).get(EditNoteViewModel::class.java)
         binding.editNoteViewModel = editNoteViewModel
 
-        val eventRepository = EventRepository(database, mediaRepository)
+        val getAllEvents = GetAllEventsUseCase(database.eventDao)
         val getEventsOfNoteUseCase = GetEventsOfNoteUseCase(noteRepository, noteId)
         val eventMultiSelectionViewModel = ViewModelProvider(this,
-            EventMultiSelectionViewModel.provideFactory(eventRepository, getEventsOfNoteUseCase)
+            EventMultiSelectionViewModel.provideFactory(getAllEvents = getAllEvents, getAssociatedEvents =  getEventsOfNoteUseCase)
         ).get(EventMultiSelectionViewModel::class.java)
         binding.eventMultiSelectionViewModel = eventMultiSelectionViewModel
 

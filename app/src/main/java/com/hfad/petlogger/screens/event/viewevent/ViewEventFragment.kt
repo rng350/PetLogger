@@ -122,6 +122,13 @@ class ViewEventFragment : Fragment() {
             }
         }
 
+        noteListViewModel.newNoteNavigator.makeNewEntity.observe(viewLifecycleOwner) { shouldMakeNewNote ->
+            if (shouldMakeNewNote) {
+                findNavController().navigateSafe(ViewEventFragmentDirections.actionViewEventFragmentToNewNoteFragment(eventId=eventId))
+                noteListViewModel.newNoteNavigator.onNavigatedToNewEntityScreen()
+            }
+        }
+
         binding.editEventButton.setOnClickListener {
             this.findNavController().navigateSafe(ViewEventFragmentDirections.actionViewEventFragmentToEditEventFragment(eventId))
         }

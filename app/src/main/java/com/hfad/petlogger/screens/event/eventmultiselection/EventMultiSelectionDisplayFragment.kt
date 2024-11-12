@@ -12,7 +12,6 @@ import com.hfad.petlogger.screens.sections.recyclerviews.SetupEventMultiPickerSe
 class EventMultiSelectionDisplayFragment : Fragment() {
     private var _binding: FragmentEventMultiSelectionDisplayBinding? = null
     val binding get() = _binding!!
-
     val viewModel: EventMultiSelectionViewModel by viewModels({requireParentFragment()})
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -24,7 +23,7 @@ class EventMultiSelectionDisplayFragment : Fragment() {
         binding.viewModel = viewModel
 
         SetupEventMultiPickerSelectionDisplayUseCase(
-            viewModel.currentSelection,
+            viewModel.selectionTracker.currentSelection,
             viewModel.selectionTracker,
             binding.eventsList,
             viewLifecycleOwner

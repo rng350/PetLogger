@@ -10,22 +10,32 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 /**
-INITIAL SELECTION
-Pre-existing selection, prior to creation of display & dialog fragments.
+    INITIAL SELECTION
+    Pre-existing selection, prior to creation of display & dialog fragments.
 
-CURRENT SELECTION
-Items marked for becoming the new selection. Already confirmed from dialog selection. Changes not yet submitted to database.
+    INITIAL NEW SELECTION
+    Pre-existing selection not already associated with entity.
+    Mostly for creating a new entity associated with another one
+    For example, if you wanted to create a new Weight for a Pet, the Pet's ID will be associated with the Weight
 
-PROSPECTIVE SELECTION
-Items marked for selection in dialog, not yet confirmed
- **/
+    CURRENT SELECTION
+    Items marked for becoming the new selection. Already confirmed from dialog selection. Changes not yet submitted to database.
+
+    PROSPECTIVE SELECTION
+    Items marked for selection in dialog, not yet confirmed
+
+    VISIBLE OPTIONS
+    The checkable options shown in the dialog. Can vary based depending on whatever query may be in, say, a search box.
+**/
 class MultiSelectionTracker<T>(
     allOptionsFetcher: GetItemsUseCase<T>,
     initialSelectionFetcher: GetItemsUseCase<T>? = null,
+    initialNewSelectionFetcher: GetItemsUseCase<T>? = null,
     private val coroutineScope: CoroutineScope,
     private val choiceLimit: Int = Int.MAX_VALUE
 ) {
     private val initialSelection = HashSet<T>()
+    private val initialNewSelection = HashSet<T>()
     // for dialog
     private val _visibleOptions = MutableLiveData<List<CheckableItem<T>>>()
     val visibleOptions: LiveData<List<CheckableItem<T>>> get() = _visibleOptions
@@ -49,9 +59,16 @@ class MultiSelectionTracker<T>(
                 val initialPicks = initialPicksDeferred.await()
                 initialSelection.addAll(initialPicks)
             }
+            initialNewSelectionFetcher?.let {
+                val initialNewPicksDeferred = async {
+                    initialNewSelectionFetcher()
+                }
+                val initialNewPicks = initialNewPicksDeferred.await()
+                initialNewSelection.addAll(initialNewPicks)
+            }
             val currentSelectionTemp = mutableListOf<T>()
             val visibleOptionsFetched = allOptionsDeferred.await().map {
-                if (initialSelection.contains(it)) {
+                if (initialSelection.contains(it) || initialNewSelection.contains(it)) {
                     val checkableItem = CheckableItem(it, MutableLiveData(true))
                     currentSelectionTemp.add(checkableItem.item)
                     checkableItem
@@ -165,10 +182,9 @@ class MultiSelectionTracker<T>(
     // call when resetting in display fragment
     fun resetSelection() {
         val currentSelectionTemp = mutableListOf<T>()
-        val initialSelectionHash = initialSelection.toHashSet()
 
         _visibleOptions.value = visibleOptions.value?.onEach {
-            if (initialSelectionHash.contains(it.item)) {
+            if (initialSelection.contains(it.item) || initialNewSelection.contains(it.item)) {
                 it.isChecked.value = true
                 currentSelectionTemp.add(it.item)
             } else {

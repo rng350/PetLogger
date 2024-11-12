@@ -119,8 +119,14 @@ class ViewPhotoFragment : Fragment() {
                 associatedTagsDisplayViewModel.navigator.onNavigated()
                 findNavController().navigateSafe(ViewPhotoFragmentDirections.actionViewPhotoFragmentToViewTagFragment(tagId))
             }
-
         })
+
+        noteListViewModel.newNoteNavigator.makeNewEntity.observe(viewLifecycleOwner) { shouldMakeNewNote ->
+            if (shouldMakeNewNote) {
+                findNavController().navigateSafe(ViewPhotoFragmentDirections.actionViewPhotoFragmentToNewNoteFragment(photoId=photoId))
+                noteListViewModel.newNoteNavigator.onNavigatedToNewEntityScreen()
+            }
+        }
 
         binding.editButton.setOnClickListener{
             findNavController().navigateSafe(ViewPhotoFragmentDirections.actionViewPhotoFragmentToEditPhotoFragment(photoId))

@@ -10,11 +10,13 @@ import com.hfad.petlogger.common.selectiontracker.MultiSelectionTracker
 
 class WeightMultiSelectionViewModel(
     getAllPets: GetItemsUseCase<WeightWithPetName>,
-    getInitialSelection: GetItemsUseCase<WeightWithPetName>? = null
+    getInitialSelection: GetItemsUseCase<WeightWithPetName>? = null,
+    getInitialNewSelection: GetItemsUseCase<WeightWithPetName>? = null
 ) : ViewModel() {
     val selectionTracker = MultiSelectionTracker<WeightWithPetName>(
         allOptionsFetcher = getAllPets,
         initialSelectionFetcher = getInitialSelection,
+        initialNewSelectionFetcher = getInitialNewSelection,
         coroutineScope = viewModelScope
     )
     private var _currentSelectionChanged = false

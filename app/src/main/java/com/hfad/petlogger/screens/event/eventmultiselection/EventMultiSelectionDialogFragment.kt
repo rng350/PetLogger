@@ -1,6 +1,7 @@
 package com.hfad.petlogger.screens.event.eventmultiselection
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,19 +24,20 @@ class EventMultiSelectionDialogFragment : DialogFragment() {
         binding.viewModel = viewModel
 
         SetupEventMultiPickerUseCase(
-            viewModel.allEvents,
-            viewModel.currentSelection,
+            viewModel.selectionTracker.visibleOptions,
+            viewModel.selectionTracker.prospectiveSelection,
             viewModel.selectionTracker,
             binding.eventsList,
             viewLifecycleOwner
         )()
 
         binding.okayButton.setOnClickListener {
+            viewModel.confirmSelection()
             requireDialog().dismiss()
         }
 
         binding.cancelButton.setOnClickListener {
-            viewModel.resetSelection()
+            viewModel.cancel()
             requireDialog().dismiss()
         }
 
@@ -48,6 +50,15 @@ class EventMultiSelectionDialogFragment : DialogFragment() {
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (viewModel.currentSelectionChanged) {
+            viewModel.onCurrentSelectionChanged()
+        } else {
+            viewModel.cancel()
+        }
     }
 
     override fun onDestroyView() {

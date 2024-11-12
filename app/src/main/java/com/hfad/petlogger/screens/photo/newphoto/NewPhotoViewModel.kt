@@ -7,7 +7,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.hfad.petlogger.events.Event
 import com.hfad.petlogger.notes.Note
 import com.hfad.petlogger.photos.Photo
 import com.hfad.petlogger.tags.Tag
@@ -67,7 +66,7 @@ class NewPhotoViewModel(private val mediaRepository: MediaRepository) : ViewMode
         newAttachedNotes: List<Note> = listOf<Note>(),
         existingAttachedNotes: List<Note> = listOf<Note>(),
         pets: List<Long> = listOf<Long>(),
-        events: List<Event> = listOf<Event>(),
+        events: List<Long> = listOf<Long>(),
         tags: List<Tag> = listOf<Tag>()
     ) {
         photo.value?.let { photo ->

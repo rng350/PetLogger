@@ -12,11 +12,13 @@ import com.hfad.petlogger.common.selectiontracker.MultiSelectionTracker
 class TagMultiSelectionViewModel(
     private val tagRepository: TagRepository,
     private val getAllTags: GetItemsUseCase<Tag>,
-    getInitialSelection: GetItemsUseCase<Tag>? = null
+    getInitialSelection: GetItemsUseCase<Tag>? = null,
+    getInitialNewSelection: GetItemsUseCase<Tag>? = null
 ) : ViewModel() {
     val selectionTracker = MultiSelectionTracker<Tag>(
         allOptionsFetcher = getAllTags,
         initialSelectionFetcher = getInitialSelection,
+        initialNewSelectionFetcher = getInitialNewSelection,
         coroutineScope = viewModelScope
     )
     private var _currentSelectionChanged = false

@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.hfad.petlogger.events.Event
 import com.hfad.petlogger.notes.Note
 import com.hfad.petlogger.photos.Photo
 import com.hfad.petlogger.tags.Tag
@@ -42,8 +41,8 @@ class EditNoteViewModel(private val noteRepository: NoteRepository, private val 
     }
 
     fun submitChanges(
-        eventsToRemove: List<Event> = listOf<Event>(),
-        eventsToAdd: List<Event> = listOf<Event>(),
+        eventsToRemove: List<Long> = listOf<Long>(),
+        eventsToAdd: List<Long> = listOf<Long>(),
         petsToAdd: List<Long> = listOf(),
         petsToRemove: List<Long> = listOf(),
         photosToAdd: List<Photo> = listOf(),
