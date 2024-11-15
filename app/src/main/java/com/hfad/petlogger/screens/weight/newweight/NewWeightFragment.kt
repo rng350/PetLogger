@@ -33,6 +33,7 @@ import com.hfad.petlogger.tags.TagRepository
 import com.hfad.petlogger.weights.WeightRepository
 import com.hfad.petlogger.common.setAppBarTitle
 import com.hfad.petlogger.common.usecases.GetSingleInitialItemUseCase
+import com.hfad.petlogger.common.util.Constants.Companion.defaultNullIdForNavigation
 import com.hfad.petlogger.pets.PetWithProfilePic
 import com.hfad.petlogger.pets.usecases.GetAllPetsWithProfilePhotosUseCase
 import com.hfad.petlogger.pets.usecases.GetSinglePetUseCase
@@ -65,9 +66,9 @@ class NewWeightFragment : Fragment() {
 
         val mediaRepository = MediaRepository(database, application.applicationContext)
         val petRepository = PetRepository(database, mediaRepository)
-        val petId = NewWeightFragmentArgs.fromBundle(requireArguments()).petId?.toLongOrNull()
+        val petId = NewWeightFragmentArgs.fromBundle(requireArguments()).petId
         val getCheckablePets = GetAllPetsWithProfilePhotosUseCase(petRepository)
-        val getPet = if (petId!=null) {
+        val getPet = if (petId != defaultNullIdForNavigation) {
             GetSingleInitialItemUseCase.New<PetWithProfilePic>(GetSinglePetUseCase(database.petDao, petId))
         } else null
         val petSingleSelectionViewModel =  ViewModelProvider(this,

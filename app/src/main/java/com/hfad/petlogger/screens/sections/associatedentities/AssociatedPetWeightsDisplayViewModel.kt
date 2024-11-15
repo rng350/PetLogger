@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.hfad.petlogger.weights.Weight
 import com.hfad.petlogger.common.usecases.GetItemsUseCase
 import com.hfad.petlogger.common.util.Navigator
+import com.hfad.petlogger.common.util.NewEntityNavigator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,6 +19,7 @@ class AssociatedPetWeightsDisplayViewModel(private val getWeights: GetItemsUseCa
     val weights: StateFlow<List<Weight>> get() = _weights.asStateFlow()
     val weightNavigator = Navigator()
     private var isLoading: Boolean = false
+    val newPetWeightNavigator = NewEntityNavigator()
 
     init {
         load()

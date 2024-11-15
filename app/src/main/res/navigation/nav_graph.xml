@@ -133,8 +133,8 @@
             app:popUpTo="@id/viewPetFragment" />
         <argument
             android:name="petId"
-            app:argType="string"
-            app:nullable="true" />
+            app:argType="long"
+            android:defaultValue="-1L" />
     </fragment>
     <fragment
         android:id="@+id/petListFragment"

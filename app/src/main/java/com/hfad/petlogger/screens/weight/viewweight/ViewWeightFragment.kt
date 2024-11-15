@@ -28,7 +28,6 @@ import com.hfad.petlogger.tags.usecases.GetAllTagsOfWeightAlphabeticalOrderUseCa
 import com.hfad.petlogger.notes.usecases.GetMoreNotesOfWeightUseCase
 import com.hfad.petlogger.weights.WeightRepository
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedNotesDisplayFragment
-import com.hfad.petlogger.screens.sections.associatedentities.AssociatedNotesDisplayViewModel
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedTagsDisplayViewModel
 import com.hfad.petlogger.common.setAppBarTitle
 import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesOfWeightUseCase

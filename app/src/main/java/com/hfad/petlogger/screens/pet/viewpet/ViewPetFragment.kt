@@ -32,7 +32,6 @@ import com.hfad.petlogger.pets.PetRepository
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedEventsDisplayFragment
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedEventsDisplayViewModel
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedNotesDisplayFragment
-import com.hfad.petlogger.screens.sections.associatedentities.AssociatedNotesDisplayViewModel
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPetWeightsDisplayFragment
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPetWeightsDisplayViewModel
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPhotosDisplayFragment
@@ -137,6 +136,12 @@ class ViewPetFragment : Fragment() {
             if (shouldMakeNewNote) {
                 findNavController().navigateSafe(ViewPetFragmentDirections.actionViewPetFragmentToNewNoteFragment(petId=petId))
                 noteListViewModel.newNoteNavigator.onNavigatedToNewEntityScreen()
+            }
+        }
+        associatedWeightsDisplayViewModel.newPetWeightNavigator.makeNewEntity.observe(viewLifecycleOwner) { shouldMakeNewWeight ->
+            if (shouldMakeNewWeight) {
+                findNavController().navigateSafe(ViewPetFragmentDirections.actionViewPetFragmentToNewWeightFragment(petId=petId))
+                associatedWeightsDisplayViewModel.newPetWeightNavigator.onNavigatedToNewEntityScreen()
             }
         }
 

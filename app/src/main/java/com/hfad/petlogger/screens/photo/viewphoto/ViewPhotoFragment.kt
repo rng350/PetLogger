@@ -28,7 +28,6 @@ import com.hfad.petlogger.photos.MediaRepository
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedEventsDisplayFragment
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedEventsDisplayViewModel
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedNotesDisplayFragment
-import com.hfad.petlogger.screens.sections.associatedentities.AssociatedNotesDisplayViewModel
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPetsDisplayFragment
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPetsDisplayViewModel
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedTagsDisplayViewModel

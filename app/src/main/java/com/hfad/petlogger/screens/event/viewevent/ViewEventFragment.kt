@@ -25,7 +25,6 @@ import com.hfad.petlogger.photos.usecases.GetMorePhotosOfEventUseCase
 import com.hfad.petlogger.events.EventRepository
 import com.hfad.petlogger.photos.MediaRepository
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedNotesDisplayFragment
-import com.hfad.petlogger.screens.sections.associatedentities.AssociatedNotesDisplayViewModel
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPetsDisplayViewModel
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPhotosDisplayFragment
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPhotosDisplayViewModel

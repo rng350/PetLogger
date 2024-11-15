@@ -25,6 +25,10 @@ class AssociatedPetWeightsDisplayFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
         binding.associatedPetWeightsDisplayViewModel = associatedPetWeightsDisplayViewModel
 
+        binding.addWeightButton.setOnClickListener {
+            associatedPetWeightsDisplayViewModel.newPetWeightNavigator.navigateToNewEntityScreen()
+        }
+
         SetupAssociatedPetWeightsUseCase(
             associatedPetWeightsDisplayViewModel.weights,
             associatedPetWeightsDisplayViewModel.weightNavigator,
