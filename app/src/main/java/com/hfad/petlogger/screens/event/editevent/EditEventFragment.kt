@@ -206,6 +206,8 @@ class EditEventDetailsFragment(): Fragment() {
     ): View? {
         _binding = FragmentEditEventDetailsBinding.inflate(inflater, container, false)
         val view = binding.root
+        binding.lifecycleOwner = viewLifecycleOwner
+
         binding.viewModel = editEventViewModel
         binding.tagMultiSelectionViewModel = tagMultiSelectionViewModel
 

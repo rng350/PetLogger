@@ -176,6 +176,7 @@ class EditWeightDetailsFragment() : Fragment() {
         _binding = FragmentEditWeightDetailsBinding.inflate(inflater, container, false)
         val view = binding.root
         binding.viewModel = editWeightViewModel
+        binding.lifecycleOwner = viewLifecycleOwner
         binding.tagMultiSelectionViewModel = tagMultiSelectionViewModel
 
         binding.weightDate.setOnClickListener{

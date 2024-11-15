@@ -223,6 +223,8 @@ class EditPetDetailsFragment : Fragment() {
     ): View? {
         _binding = FragmentEditPetDetailsBinding.inflate(inflater, container, false)
         val view = binding.root
+        binding.lifecycleOwner = viewLifecycleOwner
+
         binding.editPetViewModel = editPetViewModel
         // initialize sex pick
         editPetViewModel.pet.observeOnce(viewLifecycleOwner, Observer {

@@ -200,6 +200,8 @@ class NewNoteDetailsFragment() : Fragment() {
     ): View? {
         _binding = FragmentNewNoteDetailsBinding.inflate(inflater, container, false)
         val view = binding.root
+        binding.lifecycleOwner = viewLifecycleOwner
+
         binding.newNoteViewModel = newNoteViewModel
         binding.tagMultiSelectionViewModel = tagMultiSelectionViewModel
         return view

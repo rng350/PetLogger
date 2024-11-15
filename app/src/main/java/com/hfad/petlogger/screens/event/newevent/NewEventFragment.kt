@@ -154,6 +154,8 @@ class NewEventDetailsFragment() : Fragment() {
     ): View? {
         _binding = FragmentNewEventDetailsBinding.inflate(inflater, container, false)
         val view = binding.root
+        binding.lifecycleOwner = viewLifecycleOwner
+
         binding.newEventViewModel = newEventViewModel
         binding.tagMultiSelectionViewModel = tagMultiSelectionViewModel
 

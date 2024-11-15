@@ -168,6 +168,7 @@ class NewPhotoDetailsFragment() : Fragment() {
     ): View? {
         _binding = FragmentNewPhotoDetailsBinding.inflate(inflater, container, false)
         val view = binding.root
+        binding.lifecycleOwner = viewLifecycleOwner
 
         binding.newPhotoViewModel = newPhotoViewModel
         binding.tagMultiSelectionViewModel = tagMultiSelectionViewModel

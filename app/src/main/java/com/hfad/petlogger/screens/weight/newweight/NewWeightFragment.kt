@@ -154,6 +154,7 @@ class NewWeightDetailsFragment() : Fragment() {
         val view = binding.root
         binding.newWeightViewModel = newWeightViewModel
         binding.tagMultiSelectionViewModel = tagMultiSelectionViewModel
+        binding.lifecycleOwner = viewLifecycleOwner
 
         binding.dateFieldText.setOnClickListener { button ->
             button.isEnabled = false

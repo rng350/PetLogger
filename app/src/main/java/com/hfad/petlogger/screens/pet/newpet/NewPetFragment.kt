@@ -173,6 +173,8 @@ class NewPetDetailsFragment() : Fragment() {
     ): View? {
         _binding = FragmentNewPetDetailsBinding.inflate(inflater, container, false)
         val view = binding.root
+        binding.lifecycleOwner = viewLifecycleOwner
+
         binding.newPetViewModel = newPetViewModel
         binding.tagMultiSelectionViewModel = tagMultiSelectionViewModel
 

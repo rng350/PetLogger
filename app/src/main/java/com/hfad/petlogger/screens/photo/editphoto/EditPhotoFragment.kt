@@ -194,6 +194,8 @@ class EditPhotoDetailsFragment() : Fragment() {
     ): View? {
         _binding = FragmentEditPhotoDetailsBinding.inflate(inflater, container, false)
         val view = binding.root
+        binding.lifecycleOwner = viewLifecycleOwner
+
         binding.editPhotoViewModel = editPhotoViewModel
         binding.tagMultiSelectionViewModel = tagMultiSelectionViewModel
         return view

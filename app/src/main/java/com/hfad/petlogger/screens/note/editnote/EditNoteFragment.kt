@@ -218,9 +218,11 @@ class EditNoteDetailsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentEditNoteDetailsBinding.inflate(inflater, container, false)
+        val view = binding.root
+        binding.lifecycleOwner = viewLifecycleOwner
+
         binding.editNoteViewModel = editNoteViewModel
         binding.tagMultiSelectionViewModel = tagMultiSelectionViewModel
-        val view = binding.root
         return view
     }
 
