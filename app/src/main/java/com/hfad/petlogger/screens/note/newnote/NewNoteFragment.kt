@@ -39,6 +39,7 @@ import com.hfad.petlogger.common.util.Constants.Companion.defaultNullIdForNaviga
 import com.hfad.petlogger.events.usecases.GetAllEventsUseCase
 import com.hfad.petlogger.events.usecases.GetSingleEventUseCase
 import com.hfad.petlogger.pets.usecases.GetSinglePetUseCase
+import com.hfad.petlogger.photos.usecases.GetSinglePhotoUseCase
 import com.hfad.petlogger.tags.usecases.GetSingleTagUseCase
 import com.hfad.petlogger.weights.usecases.GetSingleWeightUseCase
 
@@ -109,7 +110,12 @@ class NewNoteFragment : Fragment() {
         weightMultiSelectionViewModel = ViewModelProvider(this,
             WeightMultiSelectionViewModel.provideFactory(getAllWeights, getAssociatedWeight)
         ).get(WeightMultiSelectionViewModel::class.java)
-        mediaSelectionViewModel = ViewModelProvider(this, MediaSelectionViewModel.provideFactory(mediaRepository = mediaRepository, maxItems = 10)).get(
+
+        val assocPhotoId = NewNoteFragmentArgs.fromBundle(requireArguments()).photoId
+        val getAssociatedPhoto = if (assocPhotoId != defaultNullIdForNavigation) {
+            GetMultipleInitialItemsUseCase.New(GetSinglePhotoUseCase(database.photoDao, assocPhotoId))
+        } else null
+        mediaSelectionViewModel = ViewModelProvider(this, MediaSelectionViewModel.provideFactory(mediaRepository = mediaRepository, fetchInitialSelection = getAssociatedPhoto, maxItems = 10)).get(
             MediaSelectionViewModel::class.java)
 
         val tagRepository = TagRepository(database)

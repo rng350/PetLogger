@@ -9,14 +9,16 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.hfad.petlogger.photos.Photo
 import com.hfad.petlogger.common.usecases.GetItemsUseCase
+import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
 import com.hfad.petlogger.photos.MediaRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-class MediaSelectionViewModel(private val mediaRepository: MediaRepository,
-                              fetchInitialSelection: GetItemsUseCase<Photo>? = null,
-                              fetchInitialNewSelection: GetItemsUseCase<Photo>? = null,
-                              val maxItems: Int = Int.MAX_VALUE) : ViewModel() {
+class MediaSelectionViewModel(
+    private val mediaRepository: MediaRepository,
+    fetchInitialSelection: GetMultipleInitialItemsUseCase<Photo>? = null,
+    val maxItems: Int = Int.MAX_VALUE
+) : ViewModel() {
     private val initialSelection = HashSet<Photo>()
     private val initialNewSelection = HashSet<Photo>()
     private val _currentPhotoSelection = MutableLiveData<List<Photo>>(listOf<Photo>())
@@ -28,26 +30,23 @@ class MediaSelectionViewModel(private val mediaRepository: MediaRepository,
 
     init {
         viewModelScope.launch {
-            val fetchInitial = async {
-                fetchInitialSelection?.let { getInitialPhotos ->
-                    val initialPhotos = getInitialPhotos()
-                    initialSelection.addAll(initialPhotos)
+            when (fetchInitialSelection) {
+                is GetMultipleInitialItemsUseCase.New -> {
+                    fetchInitialSelection.useCase()?.let {
+                        initialNewSelection.add(it)
+                    }
                 }
-            }
-            val fetchInitialNew = async {
-                fetchInitialNewSelection?.let { getInitialPhotosNew ->
-                    val initialPhotosNew = getInitialPhotosNew()
-                    initialNewSelection.addAll(initialPhotosNew)
+                is GetMultipleInitialItemsUseCase.PreExisting -> {
+                    initialSelection.addAll(fetchInitialSelection.useCase())
                 }
+                null -> { }
             }
-            fetchInitial.await()
-            fetchInitialNew.await()
             resetSelection()
         }
     }
 
     fun resetSelection() {
-        _currentPhotoSelection.value = initialSelection.toList()
+        _currentPhotoSelection.value = initialSelection.toList() + initialNewSelection.toList()
         _selectionToAdd.value = initialNewSelection.toList()
         _selectionToRemove.value = listOf<Photo>()
     }
@@ -132,10 +131,14 @@ class MediaSelectionViewModel(private val mediaRepository: MediaRepository,
         return selectionToRemove.value ?: listOf<Photo>()
     }
     companion object {
-        fun provideFactory(mediaRepository: MediaRepository, fetchInitialSelection: GetItemsUseCase<Photo>? = null, fetchInitialNewSelection: GetItemsUseCase<Photo>? = null, maxItems: Int = Int.MAX_VALUE): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+        fun provideFactory(
+            mediaRepository: MediaRepository,
+            fetchInitialSelection: GetMultipleInitialItemsUseCase<Photo>? = null,
+            maxItems: Int = Int.MAX_VALUE
+        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(MediaSelectionViewModel::class.java)) {
-                    return MediaSelectionViewModel(mediaRepository, fetchInitialSelection, fetchInitialNewSelection, maxItems) as T
+                    return MediaSelectionViewModel(mediaRepository, fetchInitialSelection, maxItems) as T
                 }
                 throw IllegalArgumentException("Unknown ViewModel")
             }

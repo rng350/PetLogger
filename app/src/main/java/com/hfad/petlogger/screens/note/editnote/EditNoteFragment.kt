@@ -91,7 +91,7 @@ class EditNoteFragment : Fragment() {
         ).get(PetMultiSelectionViewModel::class.java)
         binding.petMultiSelectionViewModel = petMultiSelectionViewModel
 
-        val getPhotosOfNote = GetPhotosOfNoteUseCase(noteRepository, noteId)
+        val getPhotosOfNote = GetMultipleInitialItemsUseCase.PreExisting(GetPhotosOfNoteUseCase(noteRepository, noteId))
         val mediaSelectionViewModel = ViewModelProvider(this,
             MediaSelectionViewModel.provideFactory(mediaRepository, getPhotosOfNote, maxItems = 10)
         ).get(MediaSelectionViewModel::class.java)

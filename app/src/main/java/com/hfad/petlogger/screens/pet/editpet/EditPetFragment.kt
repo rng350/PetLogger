@@ -95,7 +95,7 @@ class EditPetFragment : Fragment() {
         ).get(EventMultiSelectionViewModel::class.java)
         binding.eventMultiSelectionViewModel = eventMultiSelectionViewModel
 
-        val getPhotosOfPet = GetPhotosOfPetUseCase(petRepository = petRepository, petId = petID)
+        val getPhotosOfPet = GetMultipleInitialItemsUseCase.PreExisting(GetPhotosOfPetUseCase(petRepository = petRepository, petId = petID))
         val mediaSelectionViewModel = ViewModelProvider(this,
             MediaSelectionViewModel.provideFactory(mediaRepository, getPhotosOfPet)
         ).get(MediaSelectionViewModel::class.java)
