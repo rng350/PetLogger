@@ -33,6 +33,7 @@ import com.hfad.petlogger.databinding.FragmentEditPetBinding
 import com.hfad.petlogger.databinding.FragmentEditPetDetailsBinding
 import com.hfad.petlogger.common.navigateSafe
 import com.hfad.petlogger.common.observeOnce
+import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
 import com.hfad.petlogger.notes.usecases.GetAllNotesUseCase
 import com.hfad.petlogger.tags.usecases.GetAllTagsUseCase
 import com.hfad.petlogger.weights.usecases.GetCheckableWeightsOfPetUseCase
@@ -88,7 +89,7 @@ class EditPetFragment : Fragment() {
         })
 
         val getAllEvents = GetAllEventsUseCase(database.eventDao)
-        val getEventsOfPet = GetEventsOfPetUseCase(petRepository = petRepository, petId = petID)
+        val getEventsOfPet = GetMultipleInitialItemsUseCase.PreExisting(GetEventsOfPetUseCase(petRepository = petRepository, petId = petID))
         val eventMultiSelectionViewModel = ViewModelProvider(this,
             EventMultiSelectionViewModel.provideFactory(getAllEvents, getAssociatedEvents = getEventsOfPet)
         ).get(EventMultiSelectionViewModel::class.java)
@@ -108,7 +109,7 @@ class EditPetFragment : Fragment() {
 
         val noteRepository = NoteRepository(database, mediaRepository)
         val getAllNotes = GetAllNotesUseCase(noteRepository)
-        val getNotesOfPet = GetNotesOfPetUseCase(petRepository, petID)
+        val getNotesOfPet = GetMultipleInitialItemsUseCase.PreExisting(GetNotesOfPetUseCase(petRepository, petID))
         val noteSelectionViewModel = ViewModelProvider(this,
             NoteMultiSelectionViewModel.provideFactory(getAllNotes, getNotesOfPet)
         ).get(NoteMultiSelectionViewModel::class.java)
@@ -116,7 +117,7 @@ class EditPetFragment : Fragment() {
 
         val tagRepository = TagRepository(database)
         val getAllTags = GetAllTagsUseCase(tagRepository)
-        val getTagsOfPet = GetTagsOfPetUseCase(petRepository, petID)
+        val getTagsOfPet = GetMultipleInitialItemsUseCase.PreExisting(GetTagsOfPetUseCase(petRepository, petID))
         val tagMultiSelectionViewModel = ViewModelProvider(this,
             TagMultiSelectionViewModel.provideFactory(tagRepository, getAllTags, getTagsOfPet)
         ).get(TagMultiSelectionViewModel::class.java)

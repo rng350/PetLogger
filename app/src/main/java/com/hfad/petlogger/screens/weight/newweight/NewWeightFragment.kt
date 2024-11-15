@@ -24,7 +24,6 @@ import com.hfad.petlogger.screens.tag.tagmultiselection.TagMultiSelectionViewMod
 import com.hfad.petlogger.common.TimePicker
 import com.hfad.petlogger.databinding.FragmentNewWeightBinding
 import com.hfad.petlogger.databinding.FragmentNewWeightDetailsBinding
-import com.hfad.petlogger.pets.usecases.GetAllCheckablePetsUseCase
 import com.hfad.petlogger.notes.usecases.GetAllNotesUseCase
 import com.hfad.petlogger.tags.usecases.GetAllTagsUseCase
 import com.hfad.petlogger.photos.MediaRepository
@@ -33,6 +32,10 @@ import com.hfad.petlogger.pets.PetRepository
 import com.hfad.petlogger.tags.TagRepository
 import com.hfad.petlogger.weights.WeightRepository
 import com.hfad.petlogger.common.setAppBarTitle
+import com.hfad.petlogger.common.usecases.GetSingleInitialItemUseCase
+import com.hfad.petlogger.pets.PetWithProfilePic
+import com.hfad.petlogger.pets.usecases.GetAllPetsWithProfilePhotosUseCase
+import com.hfad.petlogger.pets.usecases.GetSinglePetUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -63,10 +66,12 @@ class NewWeightFragment : Fragment() {
         val mediaRepository = MediaRepository(database, application.applicationContext)
         val petRepository = PetRepository(database, mediaRepository)
         val petId = NewWeightFragmentArgs.fromBundle(requireArguments()).petId?.toLongOrNull()
-        val petIdAsList = if (petId != null) listOf(petId) else listOf()
-        val getCheckablePets = GetAllCheckablePetsUseCase(petRepository, petIdAsList)
+        val getCheckablePets = GetAllPetsWithProfilePhotosUseCase(petRepository)
+        val getPet = if (petId!=null) {
+            GetSingleInitialItemUseCase.New<PetWithProfilePic>(GetSinglePetUseCase(database.petDao, petId))
+        } else null
         val petSingleSelectionViewModel =  ViewModelProvider(this,
-            PetSingleSelectionViewModel.provideFactory(getCheckablePets, petId)
+            PetSingleSelectionViewModel.provideFactory(getCheckablePets, getPet)
         ).get(PetSingleSelectionViewModel::class.java)
         binding.petSingleSelectionViewModel = petSingleSelectionViewModel
 
@@ -97,7 +102,7 @@ class NewWeightFragment : Fragment() {
         mediator?.attach()
 
         binding.submitWeightButton.setOnClickListener {
-            petSingleSelectionViewModel.selectionTracker.currentSelection.value?.item?.petId?.let{ petId ->
+            petSingleSelectionViewModel.selectionTracker.currentSelection.value?.petId?.let{ petId ->
                 newWeightViewModel.submitWeight(
                     petId = petId,
                     notes = noteMultiSelectionViewModel.getNotesToAdd(),

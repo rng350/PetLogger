@@ -41,6 +41,7 @@ import com.hfad.petlogger.pets.PetRepository
 import com.hfad.petlogger.tags.TagRepository
 import com.hfad.petlogger.weights.WeightRepository
 import com.hfad.petlogger.common.setAppBarTitle
+import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
 import com.hfad.petlogger.events.usecases.GetAllEventsUseCase
 
 class EditNoteFragment : Fragment() {
@@ -74,7 +75,10 @@ class EditNoteFragment : Fragment() {
         val getAllEvents = GetAllEventsUseCase(database.eventDao)
         val getEventsOfNoteUseCase = GetEventsOfNoteUseCase(noteRepository, noteId)
         val eventMultiSelectionViewModel = ViewModelProvider(this,
-            EventMultiSelectionViewModel.provideFactory(getAllEvents = getAllEvents, getAssociatedEvents =  getEventsOfNoteUseCase)
+            EventMultiSelectionViewModel.provideFactory(
+                getAllEvents = getAllEvents,
+                getAssociatedEvents = GetMultipleInitialItemsUseCase.PreExisting(getEventsOfNoteUseCase)
+            )
         ).get(EventMultiSelectionViewModel::class.java)
         binding.eventMultiSelectionViewModel = eventMultiSelectionViewModel
 
@@ -83,7 +87,7 @@ class EditNoteFragment : Fragment() {
         val getPetsOfNote = GetPetsOfNoteUseCase(noteRepository, noteId)
         //val getPetsOfNote = null
         val petMultiSelectionViewModel = ViewModelProvider(this,
-            PetMultiSelectionViewModel.provideFactory(getAllPets, getPetsOfNote)
+            PetMultiSelectionViewModel.provideFactory(getAllPets, GetMultipleInitialItemsUseCase.PreExisting(getPetsOfNote))
         ).get(PetMultiSelectionViewModel::class.java)
         binding.petMultiSelectionViewModel = petMultiSelectionViewModel
 
@@ -97,13 +101,13 @@ class EditNoteFragment : Fragment() {
         val getAllWeights = GetAllWeightsWithPetNamesUseCase(weightRepository)
         val getWeightsOfNote = GetWeightsOfNoteUseCase(noteRepository, noteId)
         val weightMultiSelectionViewModel = ViewModelProvider(this,
-            WeightMultiSelectionViewModel.provideFactory(getAllWeights, getWeightsOfNote)
+            WeightMultiSelectionViewModel.provideFactory(getAllWeights, GetMultipleInitialItemsUseCase.PreExisting(getWeightsOfNote))
         ).get(WeightMultiSelectionViewModel::class.java)
         binding.weightMultiSelectionViewModel = weightMultiSelectionViewModel
 
         val tagRepository = TagRepository(database)
         val getAllTags = GetAllTagsUseCase(tagRepository)
-        val getTagsOfNote = GetTagsOfNoteUseCase(tagRepository, noteId)
+        val getTagsOfNote = GetMultipleInitialItemsUseCase.PreExisting(GetTagsOfNoteUseCase(tagRepository, noteId))
         val tagMultiSelectionViewModel = ViewModelProvider(this,
             TagMultiSelectionViewModel.provideFactory(
                 tagRepository,

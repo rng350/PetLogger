@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.hfad.petlogger.common.CheckableItem
 import com.hfad.petlogger.common.copyOf
+import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
 import com.hfad.petlogger.common.usecases.GetItemsUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
@@ -29,8 +30,7 @@ import kotlinx.coroutines.launch
 **/
 class MultiSelectionTracker<T>(
     allOptionsFetcher: GetItemsUseCase<T>,
-    initialSelectionFetcher: GetItemsUseCase<T>? = null,
-    initialNewSelectionFetcher: GetItemsUseCase<T>? = null,
+    initialItemsUseCase: GetMultipleInitialItemsUseCase<T>? = null,
     private val coroutineScope: CoroutineScope,
     private val choiceLimit: Int = Int.MAX_VALUE
 ) {
@@ -52,19 +52,24 @@ class MultiSelectionTracker<T>(
             val allOptionsDeferred = async {
                 allOptionsFetcher()
             }
-            initialSelectionFetcher?.let {
-                val initialPicksDeferred = async {
-                    initialSelectionFetcher()
+            when (initialItemsUseCase) {
+                is GetMultipleInitialItemsUseCase.New -> {
+                    val initialNewPicksDeferred = async {
+                        initialItemsUseCase.useCase()
+                    }
+                    val initialNewPicks = initialNewPicksDeferred.await()
+                    initialNewPicks?.let { newPick ->
+                        initialNewSelection.add(newPick)
+                    }
                 }
-                val initialPicks = initialPicksDeferred.await()
-                initialSelection.addAll(initialPicks)
-            }
-            initialNewSelectionFetcher?.let {
-                val initialNewPicksDeferred = async {
-                    initialNewSelectionFetcher()
+                is GetMultipleInitialItemsUseCase.PreExisting -> {
+                    val initialPicksDeferred = async {
+                        initialItemsUseCase.useCase()
+                    }
+                    val initialPicks = initialPicksDeferred.await()
+                    initialSelection.addAll(initialPicks)
                 }
-                val initialNewPicks = initialNewPicksDeferred.await()
-                initialNewSelection.addAll(initialNewPicks)
+                null -> {}
             }
             val currentSelectionTemp = mutableListOf<T>()
             val visibleOptionsFetched = allOptionsDeferred.await().map {
@@ -90,7 +95,7 @@ class MultiSelectionTracker<T>(
             val visibleOptionsFetched = async {
                 visibleOptionsFetcher()
             }.await().map {
-                CheckableItem(it, MutableLiveData(prospectiveSelection.value?.contains(it)))
+                CheckableItem(it, MutableLiveData(prospectiveSelection.value?.contains(it) ?: false))
             }
             _visibleOptions.value = visibleOptionsFetched
             visibleOptionsMap = visibleOptionsFetched.associateBy { it.item }

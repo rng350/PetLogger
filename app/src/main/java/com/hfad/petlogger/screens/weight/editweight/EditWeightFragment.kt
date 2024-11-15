@@ -24,7 +24,6 @@ import com.hfad.petlogger.common.TimePicker
 import com.hfad.petlogger.databinding.FragmentEditWeightBinding
 import com.hfad.petlogger.databinding.FragmentEditWeightDetailsBinding
 import com.hfad.petlogger.common.navigateSafe
-import com.hfad.petlogger.pets.usecases.GetAllCheckablePetsUseCase
 import com.hfad.petlogger.notes.usecases.GetAllNotesUseCase
 import com.hfad.petlogger.tags.usecases.GetAllTagsUseCase
 import com.hfad.petlogger.notes.usecases.GetNotesOfWeightUseCase
@@ -35,6 +34,11 @@ import com.hfad.petlogger.pets.PetRepository
 import com.hfad.petlogger.tags.TagRepository
 import com.hfad.petlogger.weights.WeightRepository
 import com.hfad.petlogger.common.setAppBarTitle
+import com.hfad.petlogger.common.usecases.GetSingleInitialItemUseCase
+import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
+import com.hfad.petlogger.pets.PetWithProfilePic
+import com.hfad.petlogger.pets.usecases.GetAllPetsWithProfilePhotosUseCase
+import com.hfad.petlogger.pets.usecases.GetSinglePetUseCase
 
 class EditWeightFragment : Fragment() {
     private var _binding: FragmentEditWeightBinding? = null
@@ -62,15 +66,18 @@ class EditWeightFragment : Fragment() {
 
         val mediaRepository = MediaRepository(database, application.applicationContext)
         val petRepository = PetRepository(database, mediaRepository)
-        val getAllPets = GetAllCheckablePetsUseCase(petRepository, initialPetSelection = listOf(petId))
+        val getAllPets = GetAllPetsWithProfilePhotosUseCase(petRepository)
+        val getExistingPet = GetSingleInitialItemUseCase.PreExisting<PetWithProfilePic>(
+            GetSinglePetUseCase(database.petDao, petId)
+        )
         val petPickerViewModel = ViewModelProvider(this,
-            PetSingleSelectionViewModel.provideFactory(getAllPets, petId)
+            PetSingleSelectionViewModel.provideFactory(getAllPets, getExistingPet)
         ).get(PetSingleSelectionViewModel::class.java)
         binding.petPickerViewModel = petPickerViewModel
 
         val noteRepository = NoteRepository(database, mediaRepository)
         val getAllNotes = GetAllNotesUseCase(noteRepository)
-        val getNotesOfWeight = GetNotesOfWeightUseCase(weightRepository, weightId)
+        val getNotesOfWeight = GetMultipleInitialItemsUseCase.PreExisting(GetNotesOfWeightUseCase(weightRepository, weightId))
         val noteMultiPickerViewModel = ViewModelProvider(this,
             NoteMultiSelectionViewModel.provideFactory(
                 getAllNotes = getAllNotes,
@@ -81,7 +88,7 @@ class EditWeightFragment : Fragment() {
 
         val tagRepository = TagRepository(database)
         val getAllTags = GetAllTagsUseCase(tagRepository)
-        val getTagsOfWeight = GetTagsOfWeightUseCase(weightRepository, weightId)
+        val getTagsOfWeight = GetMultipleInitialItemsUseCase.PreExisting(GetTagsOfWeightUseCase(weightRepository, weightId))
         val tagMultiSelectionViewModel = ViewModelProvider(this,
             TagMultiSelectionViewModel.provideFactory(tagRepository, getAllTags, getTagsOfWeight)
         ).get(TagMultiSelectionViewModel::class.java)
@@ -100,7 +107,7 @@ class EditWeightFragment : Fragment() {
         mediator?.attach()
 
         binding.submitButton.setOnClickListener {
-            petPickerViewModel.selectionTracker.currentSelection.value?.item?.petId?.let { petId ->
+            petPickerViewModel.selectionTracker.currentSelection.value?.petId?.let { petId ->
                 editWeightViewModel.submitChanges(
                     petId = petId,
                     notesToAdd = noteMultiPickerViewModel.getNotesToAdd(),

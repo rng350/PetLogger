@@ -3,8 +3,10 @@ package com.hfad.petlogger.common.selectiontracker
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.hfad.petlogger.common.CheckableItem
+import com.hfad.petlogger.common.usecases.GetSingleInitialItemUseCase
 import com.hfad.petlogger.common.usecases.GetItemsUseCase
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 /**
@@ -18,80 +20,123 @@ PROSPECTIVE SELECTION
 Items marked for selection in dialog, not yet confirmed
  **/
 class SingleSelectionTracker<T>(
-    private val allOptionsFetcher: GetItemsUseCase<CheckableItem<T>>,
-    coroutineScope: CoroutineScope) {
-    private var _initialSelection: CheckableItem<T>? = null
+    allOptionsFetcher: GetItemsUseCase<T>,
+    private val initialItemFetcher: GetSingleInitialItemUseCase<T>?,
+    private val coroutineScope: CoroutineScope
+) {
+    private var initialSelection: T? = null
+    private var initialNewSelection: T? = null
     // for dialog
-    val allOptions = MutableLiveData<List<CheckableItem<T>>>()
+    private val _visibleOptions = MutableLiveData<List<CheckableItem<T>>>()
+    val visibleOptions: LiveData<List<CheckableItem<T>>> get() = _visibleOptions
+    private lateinit var visibleOptionsMap: Map<T, CheckableItem<T>>
     // for displaying
-    private val _currentSelection = MutableLiveData<CheckableItem<T>>()
-    val currentSelection: LiveData<CheckableItem<T>> get() = _currentSelection
+    private val _currentSelection = MutableLiveData<T>()
+    val currentSelection: LiveData<T> get() = _currentSelection
     // in-between
-    private val _prospectiveSelection = MutableLiveData<CheckableItem<T>>()
-    val prospectiveSelection: LiveData<CheckableItem<T>> get() = _prospectiveSelection
+    private val _prospectiveSelection = MutableLiveData<T>()
+    val prospectiveSelection: LiveData<T> get() = _prospectiveSelection
     init {
         coroutineScope.launch {
-            val allFetched = allOptionsFetcher()
-            allOptions.postValue(allFetched)
-            allFetched.firstOrNull { it.isChecked.value == true }.let {
-                it?.let {
-                    _initialSelection = it
-                    resetSelection()
+            val allOptionsDeferred = async {
+                allOptionsFetcher()
+            }
+            when (initialItemFetcher) {
+                is GetSingleInitialItemUseCase.New -> {
+                    val initialNewPickDeferred = async {
+                        initialItemFetcher.useCase()
+                    }
+                    val initialNewPick = initialNewPickDeferred.await()
+                    initialNewSelection = initialNewPick
                 }
+                is GetSingleInitialItemUseCase.PreExisting -> {
+                    val initialPickDeferred = async {
+                        initialItemFetcher.useCase()
+                    }
+                    val initialPick = initialPickDeferred.await()
+                    initialSelection = initialPick
+                }
+                null -> { }
+            }
+            var currentSelectionTemp: T? = null
+            val visibleOptionsFetched = allOptionsDeferred.await().map {
+                if (initialSelection?.equals(it)==true || initialNewSelection?.equals(it)==true) {
+                    val checkableItem = CheckableItem(it, MutableLiveData(true))
+                    currentSelectionTemp = checkableItem.item
+                    checkableItem
+                } else {
+                    CheckableItem(it, MutableLiveData(false))
+                }
+            }
+            _visibleOptions.value = visibleOptionsFetched
+            visibleOptionsMap = visibleOptionsFetched.associateBy { it.item }
+
+            currentSelectionTemp?.let {
+                _currentSelection.value = it
+                _prospectiveSelection.value = it
             }
         }
     }
 
     // call when pressing "Cancel" in dialog
     fun cancelProspectiveSelection() {
-        // uncheck prospective selection
-        _prospectiveSelection.value?.let {
-            it.isChecked.value = false
-        }
-        val currentSelectedItem = _currentSelection.value
-        currentSelectedItem?.let {
-            it.isChecked.value = true
-            _prospectiveSelection.value = it
-        }
+        _visibleOptions.value = _visibleOptions.value?.onEach { it.isChecked.value = currentSelection.value?.equals(it.item) ?: false } ?: listOf()
+        _prospectiveSelection.value = currentSelection.value
     }
 
     // call when pressing "Ok" in dialog
     fun confirmProspectiveSelection() {
-        _prospectiveSelection.value?.let {
-            _currentSelection.value = it
-        }
+        _currentSelection.value = prospectiveSelection.value
     }
 
     // call when pressing on any item in dialog
-    fun toggle(newProspectiveSelection: CheckableItem<T>) {
-        if (newProspectiveSelection.item != _prospectiveSelection) {
-            // uncheck previous prospective selection
-            _prospectiveSelection.value?.let {
-                it.isChecked.value = false
+    fun toggle(checkableItem: CheckableItem<T>) {
+        //uncheck current prospective selection
+        _prospectiveSelection.value?.let { curProspectiveSelection ->
+            if (curProspectiveSelection != checkableItem.item) {
+                visibleOptionsMap[curProspectiveSelection]?.isChecked?.value = false
             }
-
-            newProspectiveSelection.isChecked.value = true
-            _prospectiveSelection.value = newProspectiveSelection
+        }
+        //check new prospective selection
+        checkableItem.item?.let {
+            _prospectiveSelection.value = it
+            checkableItem.isChecked.value = true
         }
     }
 
     // call when submitting in display fragment
     fun getCurrentSelection(): T? {
-        return currentSelection.value?.item
+        return currentSelection.value
     }
 
     // call when resetting in display fragment
     fun resetSelection() {
-        _initialSelection?.let { initSelection ->
-            _currentSelection.value?.let {curSelection ->
-                curSelection.isChecked.value = false
+        when (initialItemFetcher) {
+            is GetSingleInitialItemUseCase.New -> {
+                initialNewSelection?.let {
+                    _currentSelection.value = it
+                }
             }
-            _prospectiveSelection.value?.let {prospSelection ->
-                prospSelection.isChecked.value = false
+            is GetSingleInitialItemUseCase.PreExisting -> {
+                initialSelection?.let {
+                    _currentSelection.value = it
+                }
             }
-            _currentSelection.value = initSelection
-            _prospectiveSelection.value = initSelection
-            initSelection.isChecked.value = true
+            null -> { }
+        }
+        cancelProspectiveSelection()
+    }
+
+    // call whenever search box is interacted with
+    fun setVisibleSelectionOptions(visibleOptionsFetcher: GetItemsUseCase<T>) {
+        coroutineScope.launch {
+            val visibleOptionsFetched = async {
+                visibleOptionsFetcher()
+            }.await().map {
+                CheckableItem(it, MutableLiveData(prospectiveSelection.value?.equals(it) ?: false))
+            }
+            _visibleOptions.value = visibleOptionsFetched
+            visibleOptionsMap = visibleOptionsFetched.associateBy { it.item }
         }
     }
 }

@@ -1,22 +1,17 @@
 package com.hfad.petlogger.weights.usecases
 
 import com.hfad.petlogger.common.usecases.GetItemsUseCase
+import com.hfad.petlogger.common.usecases.GetSingleItemUseCase
 import com.hfad.petlogger.weights.WeightDao
 import com.hfad.petlogger.weights.WeightWithPetName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class GetSingleWeightUseCase(private val weightDao: WeightDao, private val weightId: Long): GetItemsUseCase<WeightWithPetName> {
-    override val onLastPage: Boolean
-        get() = TODO("Not yet implemented")
+class GetSingleWeightUseCase(private val weightDao: WeightDao, private val weightId: Long): GetSingleItemUseCase<WeightWithPetName> {
 
-    override suspend fun invoke(): List<WeightWithPetName> = withContext(Dispatchers.IO) {
+    override suspend fun invoke(): WeightWithPetName = withContext(Dispatchers.IO) {
         val weightDetails = weightDao.getWeightWithPetName(weightId)
-        listOf(WeightWithPetName(weightDetails.weight, weightDetails.assocPet.petName))
-    }
-
-    override fun resetCurrentPoint() {
-        TODO("Not yet implemented")
+        WeightWithPetName(weightDetails.weight, weightDetails.assocPet.petName)
     }
 
 }

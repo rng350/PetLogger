@@ -4,21 +4,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.hfad.petlogger.common.selectiontracker.MultiSelectionTracker
+import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
 import com.hfad.petlogger.pets.PetWithProfilePic
 import com.hfad.petlogger.common.usecases.GetItemsUseCase
-import com.hfad.petlogger.tags.Tag
 
 // should be included in main fragment too
 class PetMultiSelectionViewModel(
     getAllPets: GetItemsUseCase<PetWithProfilePic>,
-    getInitialSelection: GetItemsUseCase<PetWithProfilePic>? = null,
-    getInitialNewSelection: GetItemsUseCase<PetWithProfilePic>? = null
+    getInitialSelection: GetMultipleInitialItemsUseCase<PetWithProfilePic>? = null,
 ) : ViewModel() {
     val selectionTracker = MultiSelectionTracker<PetWithProfilePic>(
         allOptionsFetcher = getAllPets,
-        initialSelectionFetcher = getInitialSelection,
-        coroutineScope = viewModelScope,
-        initialNewSelectionFetcher = getInitialNewSelection
+        initialItemsUseCase = getInitialSelection,
+        coroutineScope = viewModelScope
     )
     private var _currentSelectionChanged = false
     val currentSelectionChanged get() = _currentSelectionChanged
@@ -51,12 +49,11 @@ class PetMultiSelectionViewModel(
     companion object {
         fun provideFactory(
             getAllPets: GetItemsUseCase<PetWithProfilePic>,
-            getInitialSelection: GetItemsUseCase<PetWithProfilePic>? = null,
-            getInitialNewSelection: GetItemsUseCase<PetWithProfilePic>? = null)
+            getInitialSelection: GetMultipleInitialItemsUseCase<PetWithProfilePic>? = null)
         : ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(PetMultiSelectionViewModel::class.java)) {
-                    return PetMultiSelectionViewModel(getAllPets, getInitialSelection, getInitialNewSelection) as T
+                    return PetMultiSelectionViewModel(getAllPets, getInitialSelection) as T
                 }
                 throw IllegalArgumentException("Unknown ViewModel")
             }

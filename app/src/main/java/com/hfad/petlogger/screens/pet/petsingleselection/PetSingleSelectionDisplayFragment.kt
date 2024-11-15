@@ -41,14 +41,14 @@ class PetSingleSelectionDisplayFragment : Fragment() {
             petSingleSelectionViewModel.resetSelection()
         }
 
-        if (petSingleSelectionViewModel.initialPetSelectedId == null) {
+        if (petSingleSelectionViewModel.initialPetSelected == null) {
             binding.resetButton.isEnabled = false
             binding.resetButton.visibility = View.GONE
         }
 
         petSingleSelectionViewModel.selectionTracker.currentSelection.observe(viewLifecycleOwner) {checkablePetWithPhoto ->
             if (checkablePetWithPhoto != null) {
-                val photoUri = checkablePetWithPhoto.item.petProfilePicUri
+                val photoUri = checkablePetWithPhoto.petProfilePicUri
                 if (photoUri != null) {
                     Glide.with(requireContext())
                         .load(photoUri)
@@ -57,7 +57,7 @@ class PetSingleSelectionDisplayFragment : Fragment() {
                 else {
                     binding.petProfileImage.setImageResource(R.drawable.placeholder)
                 }
-                binding.petName.text = checkablePetWithPhoto.item.petName
+                binding.petName.text = checkablePetWithPhoto.petName
 
                 binding.petCard.visibility = View.VISIBLE
                 binding.noPetSelected.visibility = View.GONE

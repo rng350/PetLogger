@@ -7,16 +7,15 @@ import com.hfad.petlogger.weights.Weight
 import com.hfad.petlogger.weights.WeightWithPetName
 import com.hfad.petlogger.common.usecases.GetItemsUseCase
 import com.hfad.petlogger.common.selectiontracker.MultiSelectionTracker
+import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
 
 class WeightMultiSelectionViewModel(
     getAllPets: GetItemsUseCase<WeightWithPetName>,
-    getInitialSelection: GetItemsUseCase<WeightWithPetName>? = null,
-    getInitialNewSelection: GetItemsUseCase<WeightWithPetName>? = null
+    getInitialSelection: GetMultipleInitialItemsUseCase<WeightWithPetName>? = null,
 ) : ViewModel() {
     val selectionTracker = MultiSelectionTracker<WeightWithPetName>(
         allOptionsFetcher = getAllPets,
-        initialSelectionFetcher = getInitialSelection,
-        initialNewSelectionFetcher = getInitialNewSelection,
+        initialItemsUseCase = getInitialSelection,
         coroutineScope = viewModelScope
     )
     private var _currentSelectionChanged = false
@@ -54,7 +53,7 @@ class WeightMultiSelectionViewModel(
     companion object {
         fun provideFactory(
             getAllPets: GetItemsUseCase<WeightWithPetName>,
-            getInitialSelection: GetItemsUseCase<WeightWithPetName>? = null
+            getInitialSelection: GetMultipleInitialItemsUseCase<WeightWithPetName>? = null
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(WeightMultiSelectionViewModel::class.java)) {

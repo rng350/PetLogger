@@ -24,7 +24,6 @@ import com.hfad.petlogger.common.navigateSafe
 import com.hfad.petlogger.pets.usecases.GetAllPetsWithProfilePhotosUseCase
 import com.hfad.petlogger.tags.usecases.GetAllTagsUseCase
 import com.hfad.petlogger.weights.usecases.GetAllWeightsWithPetNamesUseCase
-import com.hfad.petlogger.events.EventRepository
 import com.hfad.petlogger.photos.MediaRepository
 import com.hfad.petlogger.notes.NoteRepository
 import com.hfad.petlogger.pets.PetRepository
@@ -35,6 +34,7 @@ import com.hfad.petlogger.screens.event.eventmultiselection.EventMultiSelectionV
 import com.hfad.petlogger.screens.photo.mediaselection.MediaSelectionFragment
 import com.hfad.petlogger.screens.photo.mediaselection.MediaSelectionViewModel
 import com.hfad.petlogger.common.setAppBarTitle
+import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
 import com.hfad.petlogger.common.util.Constants.Companion.defaultNullIdForNavigation
 import com.hfad.petlogger.events.usecases.GetAllEventsUseCase
 import com.hfad.petlogger.events.usecases.GetSingleEventUseCase
@@ -86,25 +86,25 @@ class NewNoteFragment : Fragment() {
         val getAllPetsUseCase = GetAllPetsWithProfilePhotosUseCase(petRepository)
         val assocPetId = NewNoteFragmentArgs.fromBundle(requireArguments()).petId
         val getNewAssociatedPet = if (assocPetId != defaultNullIdForNavigation) {
-            GetSinglePetUseCase(database.petDao, assocPetId)
+            GetMultipleInitialItemsUseCase.New(GetSinglePetUseCase(database.petDao, assocPetId))
         } else null
         petMultiSelectionViewModel = ViewModelProvider(this,
-            PetMultiSelectionViewModel.provideFactory(getAllPets = getAllPetsUseCase, getInitialNewSelection = getNewAssociatedPet)
+            PetMultiSelectionViewModel.provideFactory(getAllPets = getAllPetsUseCase, getInitialSelection = getNewAssociatedPet)
         ).get(PetMultiSelectionViewModel::class.java)
 
         val getAllEvents = GetAllEventsUseCase(database.eventDao)
         val assocEventId = NewNoteFragmentArgs.fromBundle(requireArguments()).eventId
         val getAssociatedEvent = if (assocEventId != defaultNullIdForNavigation) {
-            GetSingleEventUseCase(database.eventDao, assocEventId)
+            GetMultipleInitialItemsUseCase.New(GetSingleEventUseCase(database.eventDao, assocEventId))
         } else null
         eventMultiSelectionViewModel = ViewModelProvider(this,
-            EventMultiSelectionViewModel.provideFactory(getAllEvents = getAllEvents, getAssociatedNewEvents = getAssociatedEvent)
+            EventMultiSelectionViewModel.provideFactory(getAllEvents = getAllEvents, getAssociatedEvents = getAssociatedEvent)
         ).get(EventMultiSelectionViewModel::class.java)
 
         val getAllWeights = GetAllWeightsWithPetNamesUseCase(weightRepository)
         val assocWeightId = NewNoteFragmentArgs.fromBundle(requireArguments()).weightId
         val getAssociatedWeight = if (assocWeightId != defaultNullIdForNavigation) {
-            GetSingleWeightUseCase(database.weightDao, assocWeightId)
+            GetMultipleInitialItemsUseCase.New(GetSingleWeightUseCase(database.weightDao, assocWeightId))
         } else null
         weightMultiSelectionViewModel = ViewModelProvider(this,
             WeightMultiSelectionViewModel.provideFactory(getAllWeights, getAssociatedWeight)
@@ -116,7 +116,7 @@ class NewNoteFragment : Fragment() {
         val getAllTags = GetAllTagsUseCase(tagRepository)
         val assocTagId = NewNoteFragmentArgs.fromBundle(requireArguments()).tagId
         val getAssociatedTag = if (assocTagId != defaultNullIdForNavigation) {
-            GetSingleTagUseCase(database.tagDao, assocTagId)
+            GetMultipleInitialItemsUseCase.New(GetSingleTagUseCase(database.tagDao, assocTagId))
         } else null
         tagMultiSelectionViewModel = ViewModelProvider(this,
             TagMultiSelectionViewModel.provideFactory(tagRepository, getAllTags, getAssociatedTag)

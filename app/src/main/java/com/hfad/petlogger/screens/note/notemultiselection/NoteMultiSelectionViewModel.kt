@@ -6,11 +6,12 @@ import androidx.lifecycle.viewModelScope
 import com.hfad.petlogger.notes.Note
 import com.hfad.petlogger.common.usecases.GetItemsUseCase
 import com.hfad.petlogger.common.selectiontracker.MultiSelectionTracker
+import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
 
-class NoteMultiSelectionViewModel(getAllNotes: GetItemsUseCase<Note>, getInitialSelection: GetItemsUseCase<Note>? = null) : ViewModel() {
+class NoteMultiSelectionViewModel(getAllNotes: GetItemsUseCase<Note>, getInitialSelection: GetMultipleInitialItemsUseCase<Note>? = null) : ViewModel() {
     val selectionTracker = MultiSelectionTracker<Note>(
         allOptionsFetcher = getAllNotes,
-        initialSelectionFetcher = getInitialSelection,
+        initialItemsUseCase = getInitialSelection,
         coroutineScope = viewModelScope
     )
     private var _currentSelectionChanged = false
@@ -47,7 +48,7 @@ class NoteMultiSelectionViewModel(getAllNotes: GetItemsUseCase<Note>, getInitial
 
     companion object {
         fun provideFactory(
-            getAllNotes: GetItemsUseCase<Note>, getInitialSelection: GetItemsUseCase<Note>? = null
+            getAllNotes: GetItemsUseCase<Note>, getInitialSelection: GetMultipleInitialItemsUseCase<Note>? = null
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(NoteMultiSelectionViewModel::class.java)) {

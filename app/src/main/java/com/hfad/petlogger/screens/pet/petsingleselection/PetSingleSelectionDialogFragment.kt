@@ -27,7 +27,7 @@ class PetSingleSelectionDialogFragment : DialogFragment() {
         binding.lifecycleOwner = viewLifecycleOwner
 
         SetupPetPickerUseCase(
-            petSingleSelectionViewModel.selectionTracker.allOptions,
+            petSingleSelectionViewModel.selectionTracker.visibleOptions,
             petSingleSelectionViewModel.selectionTracker.prospectiveSelection,
             petSingleSelectionViewModel.selectionTracker,
             binding.petsList,

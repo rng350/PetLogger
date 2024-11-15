@@ -40,6 +40,7 @@ import com.hfad.petlogger.notes.NoteRepository
 import com.hfad.petlogger.pets.PetRepository
 import com.hfad.petlogger.tags.TagRepository
 import com.hfad.petlogger.common.setAppBarTitle
+import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -78,7 +79,7 @@ class EditEventFragment : Fragment() {
         val petMultiSelectionViewModel = ViewModelProvider(this,
             PetMultiSelectionViewModel.provideFactory(
                 getAllPets = getAllPetsUseCase,
-                getInitialSelection = getPetsOfEventUseCase
+                getInitialSelection = GetMultipleInitialItemsUseCase.PreExisting(getPetsOfEventUseCase)
             )
         ).get(PetMultiSelectionViewModel::class.java)
         binding.petMultiSelectionViewModel = petMultiSelectionViewModel
@@ -99,14 +100,14 @@ class EditEventFragment : Fragment() {
         val noteMultiSelectionViewModel = ViewModelProvider(this,
             NoteMultiSelectionViewModel.provideFactory(
                 getAllNotes = getAllNotes,
-                getInitialSelection = getNotesOfEvent
+                getInitialSelection = GetMultipleInitialItemsUseCase.PreExisting(getNotesOfEvent)
             )
         ).get(NoteMultiSelectionViewModel::class.java)
         binding.noteMultiSelectionViewModel = noteMultiSelectionViewModel
 
         val tagRepository = TagRepository(database)
         val getAllTags = GetAllTagsUseCase(tagRepository)
-        val getTagsOfEvent = GetTagsOfEventUseCase(eventRepository, eventID)
+        val getTagsOfEvent = GetMultipleInitialItemsUseCase.PreExisting(GetTagsOfEventUseCase(eventRepository, eventID))
         val tagMultiSelectionViewModel = ViewModelProvider(this,
             TagMultiSelectionViewModel.provideFactory(tagRepository, getAllTags, getTagsOfEvent)
         ).get(TagMultiSelectionViewModel::class.java)

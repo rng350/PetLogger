@@ -8,17 +8,16 @@ import com.hfad.petlogger.common.usecases.GetItemsUseCase
 import com.hfad.petlogger.tags.usecases.GetSearchedTagsUseCase
 import com.hfad.petlogger.tags.TagRepository
 import com.hfad.petlogger.common.selectiontracker.MultiSelectionTracker
+import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
 
 class TagMultiSelectionViewModel(
     private val tagRepository: TagRepository,
     private val getAllTags: GetItemsUseCase<Tag>,
-    getInitialSelection: GetItemsUseCase<Tag>? = null,
-    getInitialNewSelection: GetItemsUseCase<Tag>? = null
+    getInitialSelection: GetMultipleInitialItemsUseCase<Tag>? = null
 ) : ViewModel() {
     val selectionTracker = MultiSelectionTracker<Tag>(
         allOptionsFetcher = getAllTags,
-        initialSelectionFetcher = getInitialSelection,
-        initialNewSelectionFetcher = getInitialNewSelection,
+        initialItemsUseCase = getInitialSelection,
         coroutineScope = viewModelScope
     )
     private var _currentSelectionChanged = false
@@ -75,7 +74,7 @@ class TagMultiSelectionViewModel(
     }
 
     companion object {
-        fun provideFactory(tagRepository: TagRepository, getAllTags: GetItemsUseCase<Tag>, getInitialSelection: GetItemsUseCase<Tag>? = null): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+        fun provideFactory(tagRepository: TagRepository, getAllTags: GetItemsUseCase<Tag>, getInitialSelection: GetMultipleInitialItemsUseCase<Tag>? = null): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(TagMultiSelectionViewModel::class.java)) {
                     return TagMultiSelectionViewModel(tagRepository, getAllTags, getInitialSelection) as T
