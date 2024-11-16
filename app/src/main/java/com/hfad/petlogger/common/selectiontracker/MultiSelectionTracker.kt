@@ -29,7 +29,7 @@ import kotlinx.coroutines.launch
     The checkable options shown in the dialog. Can vary based depending on whatever query may be in, say, a search box.
 **/
 class MultiSelectionTracker<T>(
-    allOptionsFetcher: GetItemsUseCase<T>,
+    private val allOptionsFetcher: GetItemsUseCase<T>,
     initialItemsUseCase: GetMultipleInitialItemsUseCase<T>? = null,
     private val coroutineScope: CoroutineScope,
     private val choiceLimit: Int = Int.MAX_VALUE
@@ -108,6 +108,7 @@ class MultiSelectionTracker<T>(
 
         _visibleOptions.value = _visibleOptions.value?.onEach { it.isChecked.value = currentSelection.value?.contains(it.item) ?: false } ?: listOf()
         _prospectiveSelection.value = currentSelection.value
+        setVisibleSelectionOptions(allOptionsFetcher)
 
         /*currentSelection.value?.let { currentSelectionList ->
             currentSelectionList.onEach { it -> it.isChecked.value = true }
@@ -122,6 +123,7 @@ class MultiSelectionTracker<T>(
     fun confirmProspectiveSelection() {
         // set current to prospective
         _currentSelection.value = prospectiveSelection.value
+        setVisibleSelectionOptions(allOptionsFetcher)
     }
 
     // call when pressing on any item in dialog

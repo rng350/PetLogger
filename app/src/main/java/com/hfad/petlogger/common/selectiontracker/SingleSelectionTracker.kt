@@ -20,7 +20,7 @@ PROSPECTIVE SELECTION
 Items marked for selection in dialog, not yet confirmed
  **/
 class SingleSelectionTracker<T>(
-    allOptionsFetcher: GetItemsUseCase<T>,
+    private val allOptionsFetcher: GetItemsUseCase<T>,
     private val initialItemFetcher: GetSingleInitialItemUseCase<T>?,
     private val coroutineScope: CoroutineScope
 ) {
@@ -82,11 +82,13 @@ class SingleSelectionTracker<T>(
     fun cancelProspectiveSelection() {
         _visibleOptions.value = _visibleOptions.value?.onEach { it.isChecked.value = currentSelection.value?.equals(it.item) ?: false } ?: listOf()
         _prospectiveSelection.value = currentSelection.value
+        setVisibleSelectionOptions(allOptionsFetcher)
     }
 
     // call when pressing "Ok" in dialog
     fun confirmProspectiveSelection() {
         _currentSelection.value = prospectiveSelection.value
+        setVisibleSelectionOptions(allOptionsFetcher)
     }
 
     // call when pressing on any item in dialog
