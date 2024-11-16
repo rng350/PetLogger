@@ -8,6 +8,7 @@ import com.hfad.petlogger.common.util.GetTimeDisplayUseCase
 import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.ZoneId
+import java.time.ZonedDateTime
 
 // meant to be used as variable in viewmodels so we can get
 // OffsetDateTimes from Instants given by DatePickers & TimePickers
@@ -22,15 +23,12 @@ class SelectableDateTime(private var _selectedDateTime: OffsetDateTime = OffsetD
     private val _timeDisplay: MutableLiveData<String> = MutableLiveData<String>(getTimeDisplay(_selectedDateTime))
     val timeDisplay: LiveData<String> get() = _timeDisplay
     override fun set(newDate: Instant) {
-        val pickedDate = OffsetDateTime
-            .ofInstant(newDate, ZoneId.of("UTC"))
-
-        Log.d("SelectableDate", "pickedDateOffset: ${pickedDate.toString()}")
-
-        set(_selectedDateTime
-            .withYear(pickedDate.year)
-            .withMonth(pickedDate.monthValue)
-            .withDayOfMonth(pickedDate.dayOfMonth))
+        val localDate = newDate.atZone(ZoneId.of("UTC")).toLocalDate()
+        val zoneId = ZoneId.systemDefault()
+        val zonedDateTime = _selectedDateTime.atZoneSameInstant(zoneId)
+        val currentSetTime = zonedDateTime.toLocalTime()
+        val newZonedDateTime = ZonedDateTime.of(localDate, currentSetTime, zoneId)
+        set(newZonedDateTime.toOffsetDateTime())
     }
 
     fun set(newDate: OffsetDateTime) {
