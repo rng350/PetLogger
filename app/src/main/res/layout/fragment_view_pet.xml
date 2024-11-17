@@ -9,8 +9,8 @@
             name="viewPetViewModel"
             type="com.hfad.petlogger.screens.pet.viewpet.ViewPetViewModel" />
         <variable
-            name="associatedPhotosDisplayViewModel"
-            type="com.hfad.petlogger.screens.sections.associatedentities.AssociatedPhotosDisplayViewModel" />
+            name="photoListViewModel"
+            type="com.hfad.petlogger.screens.photo.FullGalleryViewModel" />
         <variable
             name="eventListViewModel"
             type="com.hfad.petlogger.screens.event.EventListViewModel" />

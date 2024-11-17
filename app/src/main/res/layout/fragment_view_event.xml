@@ -12,8 +12,8 @@
             name="associatedPetsDisplayViewModel"
             type="com.hfad.petlogger.screens.sections.associatedentities.AssociatedPetsDisplayViewModel" />
         <variable
-            name="associatedPhotosDisplayViewModel"
-            type="com.hfad.petlogger.screens.sections.associatedentities.AssociatedPhotosDisplayViewModel" />
+            name="photoListViewModel"
+            type="com.hfad.petlogger.screens.photo.FullGalleryViewModel" />
         <variable
             name="noteListViewModel"
             type="com.hfad.petlogger.screens.note.NoteListViewModel" />

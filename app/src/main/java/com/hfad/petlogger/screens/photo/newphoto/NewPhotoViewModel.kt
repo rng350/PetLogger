@@ -16,7 +16,6 @@ import kotlinx.coroutines.launch
 import java.time.ZoneId
 
 class NewPhotoViewModel(private val mediaRepository: MediaRepository) : ViewModel() {
-    // TODO: Implement the ViewModel
     val photo = MutableLiveData<Photo?>(null)
     val photoTitle = MutableLiveData<String>("")
     val photoFilesizeReadable: String get() = String.format("%.2f", photo.value?.size)

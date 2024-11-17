@@ -26,14 +26,13 @@ import com.hfad.petlogger.photos.MediaRepository
 import com.hfad.petlogger.notes.NoteRepository
 import com.hfad.petlogger.tags.TagRepository
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedEventsDisplayFragment
-import com.hfad.petlogger.screens.sections.associatedentities.AssociatedEventsDisplayViewModel
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPetsDisplayFragment
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPetsDisplayViewModel
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPhotosDisplayFragment
-import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPhotosDisplayViewModel
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedTagsDisplayViewModel
 import com.hfad.petlogger.common.setAppBarTitle
 import com.hfad.petlogger.screens.event.EventListViewModel
+import com.hfad.petlogger.screens.photo.FullGalleryViewModel
 
 class ViewNoteFragment : Fragment() {
     private var _binding: FragmentViewNoteBinding? = null
@@ -62,9 +61,9 @@ class ViewNoteFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
 
         val getPhotosOfNote = GetMorePhotosOfNoteUseCase(noteRepository, noteId, photosAmt = 9)
-        val associatedPhotosViewModel = ViewModelProvider(this, AssociatedPhotosDisplayViewModel.provideFactory(getPhotosOfNote)).get(
-            AssociatedPhotosDisplayViewModel::class.java)
-        binding.associatedPhotosDisplayViewModel = associatedPhotosViewModel
+        val photoListViewModel = ViewModelProvider(this, FullGalleryViewModel.provideFactory(getPhotosOfNote)).get(
+            FullGalleryViewModel::class.java)
+        binding.photoListViewModel = photoListViewModel
 
         val getAssociatedPets = GetMorePetsOfNoteUseCase(noteRepository, noteId, petsAmt = 10)
         val associatedPetsDisplayViewModel = ViewModelProvider(this, AssociatedPetsDisplayViewModel.provideFactory(getAssociatedPets)).get(
@@ -127,9 +126,9 @@ class ViewNoteFragment : Fragment() {
                 findNavController().navigateSafe(ViewNoteFragmentDirections.actionViewNoteFragmentToViewEventFragment(eventId))
             }
         }
-        associatedPhotosViewModel.navigator.navigateTo.observe(viewLifecycleOwner) {
+        photoListViewModel.photoNavigator.navigateTo.observe(viewLifecycleOwner) {
             it?.let {
-                associatedPhotosViewModel.navigator.onNavigated()
+                photoListViewModel.photoNavigator.onNavigated()
                 findNavController().navigateSafe(ViewNoteFragmentDirections.actionViewNoteFragmentToViewPhotoFragment(it))
             }
         }
@@ -145,6 +144,12 @@ class ViewNoteFragment : Fragment() {
             if (shouldMakeNewEvent) {
                 findNavController().navigateSafe(ViewNoteFragmentDirections.actionViewNoteFragmentToNewEventFragment(noteId=noteId))
                 eventListViewModel.newEventNavigator.onNavigatedToNewEntityScreen()
+            }
+        }
+        photoListViewModel.newPhotoNavigator.makeNewEntity.observe(viewLifecycleOwner) { shouldMakeNewPhoto ->
+            if (shouldMakeNewPhoto) {
+                findNavController().navigateSafe(ViewNoteFragmentDirections.actionViewNoteFragmentToNewPhotoFragment(noteId=noteId))
+                photoListViewModel.newPhotoNavigator.onNavigatedToNewEntityScreen()
             }
         }
 

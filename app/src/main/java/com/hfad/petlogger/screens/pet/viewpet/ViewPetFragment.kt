@@ -1,7 +1,6 @@
 package com.hfad.petlogger.screens.pet.viewpet
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -31,18 +30,17 @@ import com.hfad.petlogger.weights.usecases.GetMoreWeightsOfPetUseCase
 import com.hfad.petlogger.photos.MediaRepository
 import com.hfad.petlogger.pets.PetRepository
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedEventsDisplayFragment
-import com.hfad.petlogger.screens.sections.associatedentities.AssociatedEventsDisplayViewModel
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedNotesDisplayFragment
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPetWeightsDisplayFragment
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPetWeightsDisplayViewModel
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPhotosDisplayFragment
-import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPhotosDisplayViewModel
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedTagsDisplayViewModel
 import com.hfad.petlogger.common.setAppBarTitle
 import com.hfad.petlogger.common.util.GetPeriodDisplayUseCase
 import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesOfPetUseCase
 import com.hfad.petlogger.screens.event.EventListViewModel
 import com.hfad.petlogger.screens.note.NoteListViewModel
+import com.hfad.petlogger.screens.photo.FullGalleryViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -81,9 +79,9 @@ class ViewPetFragment : Fragment() {
         binding.associatedPetWeightsDisplayViewModel = associatedWeightsDisplayViewModel
 
         val getPhotosOfPetForDisplayUseCase = GetMorePhotosOfPetUseCase(petRepository, petId, photosAmt = 10)
-        val associatedPhotosDisplayViewModel = ViewModelProvider(this, AssociatedPhotosDisplayViewModel.provideFactory(getPhotosOfPetForDisplayUseCase)).get(
-            AssociatedPhotosDisplayViewModel::class.java)
-        binding.associatedPhotosDisplayViewModel = associatedPhotosDisplayViewModel
+        val photoListViewModel = ViewModelProvider(this, FullGalleryViewModel.provideFactory(getPhotosOfPetForDisplayUseCase)).get(
+            FullGalleryViewModel::class.java)
+        binding.photoListViewModel = photoListViewModel
 
         val getNotesOfPet = GetMoreNotesOfPetUseCase(petRepository, petId, notesAmt = 10)
         val getSearchedNotesOfPet = GetMoreOfSearchedNotesOfPetUseCase(petRepository, petId, notesAmt = 10)
@@ -121,9 +119,9 @@ class ViewPetFragment : Fragment() {
                 findNavController().navigateSafe(ViewPetFragmentDirections.actionViewPetFragmentToViewEventFragment(eventId))
             }
         }
-        associatedPhotosDisplayViewModel.navigator.navigateTo.observe(viewLifecycleOwner) {photoId ->
+        photoListViewModel.photoNavigator.navigateTo.observe(viewLifecycleOwner) {photoId ->
             photoId?.let {
-                associatedPhotosDisplayViewModel.navigator.onNavigated()
+                photoListViewModel.photoNavigator.onNavigated()
                 findNavController().navigateSafe(ViewPetFragmentDirections.actionViewPetFragmentToViewPhotoFragment(photoId))
             }
         }
@@ -150,6 +148,12 @@ class ViewPetFragment : Fragment() {
             if (shouldMakeNewEvent) {
                 findNavController().navigateSafe(ViewPetFragmentDirections.actionViewPetFragmentToNewEventFragment(petId=petId))
                 eventListViewModel.newEventNavigator.onNavigatedToNewEntityScreen()
+            }
+        }
+        photoListViewModel.newPhotoNavigator.makeNewEntity.observe(viewLifecycleOwner) { shouldMakeNewPhoto ->
+            if (shouldMakeNewPhoto) {
+                findNavController().navigateSafe(ViewPetFragmentDirections.actionViewPetFragmentToNewPhotoFragment(petId=petId))
+                photoListViewModel.newPhotoNavigator.onNavigatedToNewEntityScreen()
             }
         }
 

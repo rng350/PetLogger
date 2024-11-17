@@ -128,6 +128,9 @@
         <action
             android:id="@+id/action_viewEventFragment_to_newNoteFragment"
             app:destination="@id/newNoteFragment" />
+        <action
+            android:id="@+id/action_viewEventFragment_to_newPhotoFragment"
+            app:destination="@id/newPhotoFragment" />
     </fragment>
     <fragment
         android:id="@+id/newPetFragment"
@@ -315,6 +318,9 @@
         <action
             android:id="@+id/action_viewNoteFragment_to_newEventFragment"
             app:destination="@id/newEventFragment" />
+        <action
+            android:id="@+id/action_viewNoteFragment_to_newPhotoFragment"
+            app:destination="@id/newPhotoFragment" />
     </fragment>
     <fragment
         android:id="@+id/editNoteFragment"
@@ -339,6 +345,18 @@
         <action
             android:id="@+id/action_newPhotoFragment_to_fullGalleryFragment"
             app:destination="@id/fullGalleryFragment" />
+        <argument
+            android:name="petId"
+            app:argType="long"
+            android:defaultValue="-1L" />
+        <argument
+            android:name="eventId"
+            app:argType="long"
+            android:defaultValue="-1L" />
+        <argument
+            android:name="noteId"
+            app:argType="long"
+            android:defaultValue="-1L" />
     </fragment>
     <fragment
         android:id="@+id/viewPhotoFragment"
@@ -415,5 +433,8 @@
         <action
             android:id="@+id/action_viewTagFragment_to_newEventFragment"
             app:destination="@id/newEventFragment" />
+        <action
+            android:id="@+id/action_viewTagFragment_to_newPhotoFragment"
+            app:destination="@id/newPhotoFragment" />
     </fragment>
 </navigation>

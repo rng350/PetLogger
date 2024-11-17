@@ -44,7 +44,12 @@ import com.hfad.petlogger.tags.TagRepository
 import com.hfad.petlogger.screens.event.eventmultiselection.EventMultiSelectionDisplayFragment
 import com.hfad.petlogger.screens.event.eventmultiselection.EventMultiSelectionViewModel
 import com.hfad.petlogger.common.setAppBarTitle
+import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
+import com.hfad.petlogger.common.util.Constants.Companion.defaultNullIdForNavigation
 import com.hfad.petlogger.events.usecases.GetAllEventsUseCase
+import com.hfad.petlogger.events.usecases.GetSingleEventUseCase
+import com.hfad.petlogger.notes.usecases.GetSingleNoteUseCase
+import com.hfad.petlogger.pets.usecases.GetSinglePetUseCase
 
 class NewPhotoFragment : Fragment() {
     private var _binding: FragmentNewPhotoBinding? = null
@@ -60,19 +65,30 @@ class NewPhotoFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
         val application = requireNotNull(this.activity).application
         val database = PetLoggerDatabase.getInstance(application)
-        val mediaRepository = MediaRepository(database, application.applicationContext)
-        val petRepository = PetRepository(database, mediaRepository)
 
-        val getAllPetsUseCase = GetAllPetsWithProfilePhotosUseCase(petRepository)
+        val mediaRepository = MediaRepository(database, application.applicationContext)
         val newPhotoViewModel = ViewModelProvider(this,
             NewPhotoViewModel.provideFactory(mediaRepository)
         ).get(NewPhotoViewModel::class.java)
+
+        val petRepository = PetRepository(database, mediaRepository)
+        val getAllPetsUseCase = GetAllPetsWithProfilePhotosUseCase(petRepository)
+        val petId = NewPhotoFragmentArgs.fromBundle(requireArguments()).petId
+        val getInitialPet =
+            if (petId != defaultNullIdForNavigation)
+                GetMultipleInitialItemsUseCase.New(GetSinglePetUseCase(database.petDao, petId))
+            else null
         val petSelectorViewModel = ViewModelProvider(this,
-            PetMultiSelectionViewModel.provideFactory(getAllPetsUseCase)
+            PetMultiSelectionViewModel.provideFactory(getAllPetsUseCase, getInitialPet)
         ).get(PetMultiSelectionViewModel::class.java)
 
         val getAllEvents = GetAllEventsUseCase(database.eventDao)
-        val eventSelectionViewModel = ViewModelProvider(this, EventMultiSelectionViewModel.provideFactory(getAllEvents=getAllEvents)).get(
+        val eventId = NewPhotoFragmentArgs.fromBundle(requireArguments()).eventId
+        val getInitialEvent =
+            if (eventId != defaultNullIdForNavigation)
+                GetMultipleInitialItemsUseCase.New(GetSingleEventUseCase(database.eventDao, eventId))
+            else null
+        val eventSelectionViewModel = ViewModelProvider(this, EventMultiSelectionViewModel.provideFactory(getAllEvents=getAllEvents, getAssociatedEvents = getInitialEvent)).get(
             EventMultiSelectionViewModel::class.java)
 
         val tagRepository = TagRepository(database)
@@ -83,8 +99,13 @@ class NewPhotoFragment : Fragment() {
 
         val noteRepository = NoteRepository(database, mediaRepository)
         val getAllNotes = GetAllNotesUseCase(noteRepository)
+        val noteId = NewPhotoFragmentArgs.fromBundle(requireArguments()).noteId
+        val getInitialNote =
+            if (noteId != defaultNullIdForNavigation)
+                GetMultipleInitialItemsUseCase.New(GetSingleNoteUseCase(database.noteDao, noteId))
+            else null
         val noteMultiSelectionViewModel = ViewModelProvider(this,
-            NoteMultiSelectionViewModel.provideFactory(getAllNotes)
+            NoteMultiSelectionViewModel.provideFactory(getAllNotes, getInitialNote)
         ).get(NoteMultiSelectionViewModel::class.java)
 
         setAppBarTitle(getString(R.string.new_photo_header))

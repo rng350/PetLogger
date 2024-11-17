@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.hfad.petlogger.photos.Photo
 import com.hfad.petlogger.common.usecases.GetItemsUseCase
 import com.hfad.petlogger.common.util.Navigator
+import com.hfad.petlogger.common.util.NewEntityNavigator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,6 +17,7 @@ class FullGalleryViewModel(private val getAllPhotos: GetItemsUseCase<Photo>) : V
     private val _photos: MutableStateFlow<List<Photo>> = MutableStateFlow(listOf())
     val photos: StateFlow<List<Photo>> = _photos.asStateFlow()
     val photoNavigator = Navigator()
+    val newPhotoNavigator = NewEntityNavigator()
     private var isLoading: Boolean = false
     init {
         load()

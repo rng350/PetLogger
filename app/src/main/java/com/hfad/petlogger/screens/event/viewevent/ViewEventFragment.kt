@@ -27,11 +27,11 @@ import com.hfad.petlogger.photos.MediaRepository
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedNotesDisplayFragment
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPetsDisplayViewModel
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPhotosDisplayFragment
-import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPhotosDisplayViewModel
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedTagsDisplayViewModel
 import com.hfad.petlogger.common.setAppBarTitle
 import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesOfEventUseCase
 import com.hfad.petlogger.screens.note.NoteListViewModel
+import com.hfad.petlogger.screens.photo.FullGalleryViewModel
 
 class ViewEventFragment : Fragment() {
     private var _binding: FragmentViewEventBinding? = null
@@ -59,9 +59,9 @@ class ViewEventFragment : Fragment() {
         binding.viewEventViewModel = viewEventViewModel
 
         val getAssociatedPhotos = GetMorePhotosOfEventUseCase(eventRepository, eventId, photosAmt = 10)
-        val associatedPhotosDisplayViewModel = ViewModelProvider(this, AssociatedPhotosDisplayViewModel.provideFactory(getAssociatedPhotos)).get(
-            AssociatedPhotosDisplayViewModel::class.java)
-        binding.associatedPhotosDisplayViewModel = associatedPhotosDisplayViewModel
+        val galleryViewModel = ViewModelProvider(this, FullGalleryViewModel.provideFactory(getAssociatedPhotos)).get(
+            FullGalleryViewModel::class.java)
+        binding.photoListViewModel = galleryViewModel
 
         val getAssociatedPets = GetMorePetsOfEventUseCase(eventRepository, eventId, petsAmt = 10)
         val associatedPetsDisplayViewModel = ViewModelProvider(this, AssociatedPetsDisplayViewModel.provideFactory(getAssociatedPets)).get(
@@ -103,9 +103,9 @@ class ViewEventFragment : Fragment() {
                 this.findNavController().navigateSafe(ViewEventFragmentDirections.actionViewEventFragmentToViewPetFragment(it))
             }
         }
-        associatedPhotosDisplayViewModel.navigator.navigateTo.observe(viewLifecycleOwner) {
+        galleryViewModel.photoNavigator.navigateTo.observe(viewLifecycleOwner) {
             it?.let {
-                associatedPhotosDisplayViewModel.navigator.onNavigated()
+                galleryViewModel.photoNavigator.onNavigated()
                 findNavController().navigateSafe(ViewEventFragmentDirections.actionViewEventFragmentToViewPhotoFragment(it))
             }
         }
@@ -126,6 +126,12 @@ class ViewEventFragment : Fragment() {
             if (shouldMakeNewNote) {
                 findNavController().navigateSafe(ViewEventFragmentDirections.actionViewEventFragmentToNewNoteFragment(eventId=eventId))
                 noteListViewModel.newNoteNavigator.onNavigatedToNewEntityScreen()
+            }
+        }
+        galleryViewModel.newPhotoNavigator.makeNewEntity.observe(viewLifecycleOwner) { shouldMakeNewPhoto ->
+            if (shouldMakeNewPhoto) {
+                findNavController().navigateSafe(ViewEventFragmentDirections.actionViewEventFragmentToNewPhotoFragment(eventId=eventId))
+                galleryViewModel.newPhotoNavigator.onNavigatedToNewEntityScreen()
             }
         }
 
