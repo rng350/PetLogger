@@ -89,6 +89,7 @@ class NewPhotoFragment : Fragment() {
 
         setAppBarTitle(getString(R.string.new_photo_header))
 
+        binding.viewPager.offscreenPageLimit = 4
         binding.viewPager.adapter = NewPhotoViewPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
         mediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = when(position) {

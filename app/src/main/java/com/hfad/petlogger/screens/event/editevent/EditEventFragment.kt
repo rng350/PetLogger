@@ -119,6 +119,7 @@ class EditEventFragment : Fragment() {
             }
         })
 
+        binding.viewPager.offscreenPageLimit = 3
         binding.viewPager.adapter = EditEventViewPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
         mediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = when(position) {

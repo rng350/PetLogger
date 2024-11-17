@@ -61,6 +61,7 @@ class ViewTagFragment : Fragment() {
             }
         })
 
+        binding.viewPager.offscreenPageLimit = 5
         binding.viewPager.adapter = ViewTagViewPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
         mediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = when(position) {

@@ -102,6 +102,7 @@ class EditPhotoFragment : Fragment() {
 
         setAppBarTitle(getString(R.string.editing_photo_details))
 
+        binding.viewPager.offscreenPageLimit = 4
         binding.viewPager.adapter = EditPhotoViewPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
         mediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = when(position) {

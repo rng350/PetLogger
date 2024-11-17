@@ -80,6 +80,7 @@ class ViewPhotoFragment : Fragment() {
             AssociatedTagsDisplayViewModel::class.java)
         binding.associatedTagsDisplayViewModel = associatedTagsDisplayViewModel
 
+        binding.viewPager.offscreenPageLimit = 4
         binding.viewPager.adapter = ViewPhotoViewPagerAdapter(
             childFragmentManager,
             viewLifecycleOwner.lifecycle

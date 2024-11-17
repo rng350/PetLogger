@@ -1,6 +1,7 @@
 package com.hfad.petlogger.screens.pet.viewpet
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -152,6 +153,7 @@ class ViewPetFragment : Fragment() {
             findNavController().popBackStack()
         }
 
+        binding.viewPager.offscreenPageLimit = 5
         binding.viewPager.adapter = ViewPetViewPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
         mediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = when(position) {

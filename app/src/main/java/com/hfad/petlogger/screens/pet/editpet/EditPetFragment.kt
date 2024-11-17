@@ -123,6 +123,7 @@ class EditPetFragment : Fragment() {
         ).get(TagMultiSelectionViewModel::class.java)
         binding.tagMultiSelectionViewModel = tagMultiSelectionViewModel
 
+        binding.viewPager.offscreenPageLimit = 5
         binding.viewPager.adapter = EditPetViewPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
         mediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = when(position) {

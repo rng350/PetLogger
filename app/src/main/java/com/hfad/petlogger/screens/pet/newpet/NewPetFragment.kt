@@ -90,6 +90,7 @@ class NewPetFragment : Fragment() {
 
         setAppBarTitle(getString(R.string.new_pet_header))
 
+        binding.viewPager.offscreenPageLimit = 3
         binding.viewPager.adapter = NewPetViewPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
         mediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = when(position) {

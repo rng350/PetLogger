@@ -97,6 +97,7 @@ class ViewNoteFragment : Fragment() {
             findNavController().popBackStack()
         }
 
+        binding.viewPager.offscreenPageLimit = 4
         binding.viewPager.adapter = ViewNoteViewPagerAdapter(
             childFragmentManager,
             viewLifecycleOwner.lifecycle

@@ -92,6 +92,7 @@ class NewWeightFragment : Fragment() {
 
         setAppBarTitle(getString(R.string.new_weight_header))
 
+        binding.viewPager.offscreenPageLimit = 2
         binding.viewPager.adapter = NewWeightViewPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
         mediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = when(position) {

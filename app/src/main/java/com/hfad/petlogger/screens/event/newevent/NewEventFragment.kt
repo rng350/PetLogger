@@ -86,6 +86,7 @@ class NewEventFragment : Fragment() {
 
         setAppBarTitle(getString(R.string.new_event_header))
 
+        binding.viewPager.offscreenPageLimit = 3
         binding.viewPager.adapter = NewEventViewPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
         mediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = when(position) {

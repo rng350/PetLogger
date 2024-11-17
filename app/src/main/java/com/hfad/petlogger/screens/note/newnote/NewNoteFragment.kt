@@ -60,6 +60,8 @@ class NewNoteFragment : Fragment() {
     ): View? {
         _binding = FragmentNewNoteBinding.inflate(inflater, container, false)
         val view = binding.root
+        binding.lifecycleOwner = viewLifecycleOwner
+
         val application = requireNotNull(this.activity).application
         val database = PetLoggerDatabase.getInstance(application)
         val mediaRepository = MediaRepository(database, application.applicationContext)
@@ -68,18 +70,6 @@ class NewNoteFragment : Fragment() {
         val weightRepository = WeightRepository(database)
 
         setAppBarTitle(getString(R.string.new_note_header))
-
-        binding.viewPager.adapter = NewNoteViewPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
-        mediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
-            tab.text = when(position) {
-                0 -> getString(R.string.details)
-                1 -> getString(R.string.pets)
-                2 -> getString(R.string.events)
-                3 -> getString(R.string.photos_header)
-                else -> null
-            }
-        }
-        mediator?.attach()
 
         newNoteViewModel = ViewModelProvider(this, NewNoteViewModel.provideFactory(noteRepository)).get(
             NewNoteViewModel::class.java)
@@ -135,8 +125,18 @@ class NewNoteFragment : Fragment() {
         binding.mediaSelectionViewModel = mediaSelectionViewModel
         binding.tagMultiSelectionViewModel = tagMultiSelectionViewModel
 
-
-        binding.lifecycleOwner = viewLifecycleOwner
+        binding.viewPager.offscreenPageLimit = 4
+        binding.viewPager.adapter = NewNoteViewPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
+        mediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+            tab.text = when(position) {
+                0 -> getString(R.string.details)
+                1 -> getString(R.string.pets)
+                2 -> getString(R.string.events)
+                3 -> getString(R.string.photos_header)
+                else -> null
+            }
+        }
+        mediator?.attach()
 
         binding.submitButton.setOnClickListener {
             newNoteViewModel.submitNote(

@@ -79,6 +79,7 @@ class ViewEventFragment : Fragment() {
             AssociatedTagsDisplayViewModel::class.java)
         binding.associatedTagsDisplayViewModel = associatedTagsDisplayViewModel
 
+        binding.viewPager.offscreenPageLimit = 3
         binding.viewPager.adapter = ViewEventViewPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
         mediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = when(position) {

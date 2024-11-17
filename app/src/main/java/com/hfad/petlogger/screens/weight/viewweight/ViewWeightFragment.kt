@@ -117,6 +117,7 @@ class ViewWeightFragment : Fragment() {
             }
         })
 
+        binding.viewPager.offscreenPageLimit = 2
         binding.viewPager.adapter = ViewWeightViewPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
         mediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = when(position) {

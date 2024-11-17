@@ -117,6 +117,7 @@ class EditNoteFragment : Fragment() {
         ).get(TagMultiSelectionViewModel::class.java)
         binding.tagMultiSelectionViewModel = tagMultiSelectionViewModel
 
+        binding.viewPager.offscreenPageLimit = 4
         binding.viewPager.adapter = EditNoteViewPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
         mediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = when(position) {
