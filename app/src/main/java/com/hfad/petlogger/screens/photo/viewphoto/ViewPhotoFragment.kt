@@ -33,6 +33,7 @@ import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPetsDisp
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedTagsDisplayViewModel
 import com.hfad.petlogger.common.setAppBarTitle
 import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesOfPhotoUseCase
+import com.hfad.petlogger.screens.event.EventListViewModel
 import com.hfad.petlogger.screens.note.NoteListViewModel
 
 class ViewPhotoFragment : Fragment() {
@@ -65,9 +66,9 @@ class ViewPhotoFragment : Fragment() {
         binding.associatedPetsDisplayViewModel = associatedPetsDisplayViewModel
 
         val getEventsOfPhotoForDisplayUseCase = GetMoreEventsOfPhotoUseCase(mediaRepository, photoId, eventAmt = 10)
-        val associatedEventsDisplayViewModel = ViewModelProvider(this, AssociatedEventsDisplayViewModel.provideFactory(getEventsOfPhotoForDisplayUseCase)).get(
-            AssociatedEventsDisplayViewModel::class.java)
-        binding.associatedEventsDisplayViewModel = associatedEventsDisplayViewModel
+        val eventListViewModel = ViewModelProvider(this, EventListViewModel.provideFactory(getEventsOfPhotoForDisplayUseCase)).get(
+            EventListViewModel::class.java)
+        binding.eventListViewModel = eventListViewModel
 
         val getNotesOfPhoto = GetMoreNotesOfPhotoUseCase(mediaRepository, photoId, notesAmt = 10)
         val getSearchedNotesOfPhoto = GetMoreOfSearchedNotesOfPhotoUseCase(mediaRepository, photoId, notesAmt = 10)
@@ -102,9 +103,9 @@ class ViewPhotoFragment : Fragment() {
                 findNavController().navigateSafe(ViewPhotoFragmentDirections.actionViewPhotoFragmentToViewPetFragment(petId))
             }
         })
-        associatedEventsDisplayViewModel.eventNavigator.navigateTo.observe(viewLifecycleOwner, Observer { eventId ->
+        eventListViewModel.eventNavigator.navigateTo.observe(viewLifecycleOwner, Observer { eventId ->
             eventId?.let {
-                associatedEventsDisplayViewModel.eventNavigator.onNavigated()
+                eventListViewModel.eventNavigator.onNavigated()
                 findNavController().navigateSafe(ViewPhotoFragmentDirections.actionViewPhotoFragmentToViewEventFragment(eventId))
             }
         })
@@ -125,6 +126,12 @@ class ViewPhotoFragment : Fragment() {
             if (shouldMakeNewNote) {
                 findNavController().navigateSafe(ViewPhotoFragmentDirections.actionViewPhotoFragmentToNewNoteFragment(photoId=photoId))
                 noteListViewModel.newNoteNavigator.onNavigatedToNewEntityScreen()
+            }
+        }
+        eventListViewModel.newEventNavigator.makeNewEntity.observe(viewLifecycleOwner) { shouldMakeNewEvent ->
+            if (shouldMakeNewEvent) {
+                findNavController().navigateSafe(ViewPhotoFragmentDirections.actionViewPhotoFragmentToNewEventFragment(photoId=photoId))
+                eventListViewModel.newEventNavigator.onNavigatedToNewEntityScreen()
             }
         }
 

@@ -33,6 +33,7 @@ import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPhotosDi
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPhotosDisplayViewModel
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedTagsDisplayViewModel
 import com.hfad.petlogger.common.setAppBarTitle
+import com.hfad.petlogger.screens.event.EventListViewModel
 
 class ViewNoteFragment : Fragment() {
     private var _binding: FragmentViewNoteBinding? = null
@@ -71,9 +72,9 @@ class ViewNoteFragment : Fragment() {
         binding.associatedPetsDisplayViewModel = associatedPetsDisplayViewModel
 
         val getEventsOfNote = GetMoreEventsOfNoteUseCase(noteRepository, noteId, eventAmt = 10)
-        val associatedEventsDisplayViewModel = ViewModelProvider(this, AssociatedEventsDisplayViewModel.provideFactory(getEventsOfNote)).get(
-            AssociatedEventsDisplayViewModel::class.java)
-        binding.associatedEventsDisplayViewModel = associatedEventsDisplayViewModel
+        val eventListViewModel = ViewModelProvider(this, EventListViewModel.provideFactory(getEventsOfNote)).get(
+            EventListViewModel::class.java)
+        binding.eventListViewModel = eventListViewModel
 
         val tagRepository = TagRepository(database)
         val getTagsOfNote = GetTagsOfNoteUseCase(tagRepository, noteId)
@@ -113,15 +114,16 @@ class ViewNoteFragment : Fragment() {
         }
         mediator?.attach()
 
+        // navigate to specific associated entities
         associatedPetsDisplayViewModel.navigator.navigateTo.observe(viewLifecycleOwner) {
             it?.let {
                 associatedPetsDisplayViewModel.navigator.onNavigated()
                 findNavController().navigateSafe(ViewNoteFragmentDirections.actionViewNoteFragmentToViewPetFragment(it))
             }
         }
-        associatedEventsDisplayViewModel.eventNavigator.navigateTo.observe(viewLifecycleOwner) { eventId ->
+        eventListViewModel.eventNavigator.navigateTo.observe(viewLifecycleOwner) { eventId ->
             eventId?.let {
-                associatedEventsDisplayViewModel.eventNavigator.onNavigated()
+                eventListViewModel.eventNavigator.onNavigated()
                 findNavController().navigateSafe(ViewNoteFragmentDirections.actionViewNoteFragmentToViewEventFragment(eventId))
             }
         }
@@ -135,6 +137,14 @@ class ViewNoteFragment : Fragment() {
             it?.let {
                 associatedTagsViewModel.navigator.onNavigated()
                 findNavController().navigateSafe(ViewNoteFragmentDirections.actionViewNoteFragmentToViewTagFragment(it))
+            }
+        }
+
+        // create new associated entities
+        eventListViewModel.newEventNavigator.makeNewEntity.observe(viewLifecycleOwner) { shouldMakeNewEvent ->
+            if (shouldMakeNewEvent) {
+                findNavController().navigateSafe(ViewNoteFragmentDirections.actionViewNoteFragmentToNewEventFragment(noteId=noteId))
+                eventListViewModel.newEventNavigator.onNavigatedToNewEntityScreen()
             }
         }
 

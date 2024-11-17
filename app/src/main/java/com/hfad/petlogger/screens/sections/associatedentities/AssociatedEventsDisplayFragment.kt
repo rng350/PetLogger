@@ -9,25 +9,27 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.hfad.petlogger.databinding.FragmentAssociatedEventsDisplayBinding
+import com.hfad.petlogger.databinding.FragmentEventListBinding
+import com.hfad.petlogger.screens.event.EventListViewModel
 import com.hfad.petlogger.screens.sections.recyclerviews.SetupAssociatedEventsDisplayUseCase
 
 class AssociatedEventsDisplayFragment : Fragment() {
-    private var _binding: FragmentAssociatedEventsDisplayBinding? = null
-    val binding: FragmentAssociatedEventsDisplayBinding get() = _binding!!
-    private val associatedEventsDisplayViewModel: AssociatedEventsDisplayViewModel by viewModels({requireParentFragment()})
+    private var _binding: FragmentEventListBinding? = null
+    val binding: FragmentEventListBinding get() = _binding!!
+    private val eventListViewModel: EventListViewModel by viewModels({requireParentFragment()})
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentAssociatedEventsDisplayBinding.inflate(inflater, container, false)
+        _binding = FragmentEventListBinding.inflate(inflater, container, false)
         val view = binding.root
         binding.lifecycleOwner = viewLifecycleOwner
-        binding.associatedEventsDisplayViewModel = associatedEventsDisplayViewModel
+        binding.viewModel = eventListViewModel
 
         SetupAssociatedEventsDisplayUseCase(
-            associatedEventsDisplayViewModel.events,
-            associatedEventsDisplayViewModel.eventNavigator,
+            eventListViewModel.event,
+            eventListViewModel.eventNavigator,
             binding.eventsList,
             lifecycleScope,
             viewLifecycleOwner
@@ -35,10 +37,14 @@ class AssociatedEventsDisplayFragment : Fragment() {
 
         RecyclerViewPaginator(
             recyclerView = binding.eventsList,
-            isLoading = {associatedEventsDisplayViewModel.isLoading()},
-            loadMore = {associatedEventsDisplayViewModel.load()},
-            onLast = {associatedEventsDisplayViewModel.onLastPage()}
+            isLoading = {eventListViewModel.isLoading()},
+            loadMore = {eventListViewModel.load()},
+            onLast = {eventListViewModel.onLastPage()}
         )
+
+        binding.addEventButton.setOnClickListener {
+            eventListViewModel.newEventNavigator.navigateToNewEntityScreen()
+        }
 
         return view
     }

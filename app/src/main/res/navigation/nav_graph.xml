@@ -46,6 +46,22 @@
         <action
             android:id="@+id/action_newEventFragment_to_eventListFragment"
             app:destination="@id/eventListFragment" />
+        <argument
+            android:name="petId"
+            app:argType="long"
+            android:defaultValue="-1L" />
+        <argument
+            android:name="noteId"
+            app:argType="long"
+            android:defaultValue="-1L" />
+        <argument
+            android:name="photoId"
+            app:argType="long"
+            android:defaultValue="-1L" />
+        <argument
+            android:name="tagId"
+            app:argType="long"
+            android:defaultValue="-1L" />
     </fragment>
     <fragment
         android:id="@+id/viewPetFragment"
@@ -296,6 +312,9 @@
         <action
             android:id="@+id/action_viewNoteFragment_to_viewEventFragment"
             app:destination="@id/viewEventFragment" />
+        <action
+            android:id="@+id/action_viewNoteFragment_to_newEventFragment"
+            app:destination="@id/newEventFragment" />
     </fragment>
     <fragment
         android:id="@+id/editNoteFragment"
@@ -347,6 +366,9 @@
         <action
             android:id="@+id/action_viewPhotoFragment_to_newNoteFragment"
             app:destination="@id/newNoteFragment" />
+        <action
+            android:id="@+id/action_viewPhotoFragment_to_newEventFragment"
+            app:destination="@id/newEventFragment" />
     </fragment>
     <fragment
         android:id="@+id/editPhotoFragment"
@@ -390,5 +412,8 @@
         <action
             android:id="@+id/action_viewTagFragment_to_newNoteFragment"
             app:destination="@id/newNoteFragment" />
+        <action
+            android:id="@+id/action_viewTagFragment_to_newEventFragment"
+            app:destination="@id/newEventFragment" />
     </fragment>
 </navigation>

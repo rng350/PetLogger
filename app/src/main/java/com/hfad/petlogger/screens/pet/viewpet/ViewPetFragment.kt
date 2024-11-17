@@ -41,6 +41,7 @@ import com.hfad.petlogger.screens.sections.associatedentities.AssociatedTagsDisp
 import com.hfad.petlogger.common.setAppBarTitle
 import com.hfad.petlogger.common.util.GetPeriodDisplayUseCase
 import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesOfPetUseCase
+import com.hfad.petlogger.screens.event.EventListViewModel
 import com.hfad.petlogger.screens.note.NoteListViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -70,9 +71,9 @@ class ViewPetFragment : Fragment() {
         binding.viewPetViewModel = viewPetViewModel
 
         val getAssociatedEvents = GetMoreEventsOfPetUseCase(petRepository, petId, eventAmt = 10)
-        val associatedEventsDisplayViewModel = ViewModelProvider(this, AssociatedEventsDisplayViewModel.provideFactory(getAssociatedEvents)).get(
-            AssociatedEventsDisplayViewModel::class.java)
-        binding.associatedEventsDisplayViewModel = associatedEventsDisplayViewModel
+        val eventListViewModel = ViewModelProvider(this, EventListViewModel.provideFactory(getAssociatedEvents)).get(
+            EventListViewModel::class.java)
+        binding.eventListViewModel = eventListViewModel
 
         val getAssociatedWeights = GetMoreWeightsOfPetUseCase(petRepository, petId, weightsAmt = 10)
         val associatedWeightsDisplayViewModel = ViewModelProvider(this, AssociatedPetWeightsDisplayViewModel.provideFactory(getAssociatedWeights)).get(
@@ -114,9 +115,9 @@ class ViewPetFragment : Fragment() {
                 findNavController().navigateSafe(ViewPetFragmentDirections.actionViewPetFragmentToViewNoteFragment(noteId))
             }
         }
-        associatedEventsDisplayViewModel.eventNavigator.navigateTo.observe(viewLifecycleOwner) { eventId ->
+        eventListViewModel.eventNavigator.navigateTo.observe(viewLifecycleOwner) { eventId ->
             eventId?.let {
-                associatedEventsDisplayViewModel.eventNavigator.onNavigated()
+                eventListViewModel.eventNavigator.onNavigated()
                 findNavController().navigateSafe(ViewPetFragmentDirections.actionViewPetFragmentToViewEventFragment(eventId))
             }
         }
@@ -143,6 +144,12 @@ class ViewPetFragment : Fragment() {
             if (shouldMakeNewWeight) {
                 findNavController().navigateSafe(ViewPetFragmentDirections.actionViewPetFragmentToNewWeightFragment(petId=petId))
                 associatedWeightsDisplayViewModel.newPetWeightNavigator.onNavigatedToNewEntityScreen()
+            }
+        }
+        eventListViewModel.newEventNavigator.makeNewEntity.observe(viewLifecycleOwner) { shouldMakeNewEvent ->
+            if (shouldMakeNewEvent) {
+                findNavController().navigateSafe(ViewPetFragmentDirections.actionViewPetFragmentToNewEventFragment(petId=petId))
+                eventListViewModel.newEventNavigator.onNavigatedToNewEntityScreen()
             }
         }
 

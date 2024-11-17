@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.hfad.petlogger.events.EventForList
 import com.hfad.petlogger.common.usecases.GetItemsUseCase
 import com.hfad.petlogger.common.util.Navigator
+import com.hfad.petlogger.common.util.NewEntityNavigator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,6 +17,7 @@ class EventListViewModel(private val getAllEvents: GetItemsUseCase<EventForList>
     private val _events: MutableStateFlow<List<EventForList>> = MutableStateFlow(listOf())
     val event: StateFlow<List<EventForList>> = _events.asStateFlow()
     val eventNavigator = Navigator()
+    val newEventNavigator = NewEntityNavigator()
     private var isLoading: Boolean = false
     init {
         load()
