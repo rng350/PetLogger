@@ -6,7 +6,8 @@ interface GetSearchedItemsUseCase<T>: GetItemsUseCase<T> {
     override suspend operator fun invoke(): List<T>
 
     fun changeSearchQuery(query: String) {
-        currentQuery = query
+        val sanitizeSearchQuery = SanitizeSearchQueryUseCase()
+        currentQuery = sanitizeSearchQuery(query)
         resetCurrentPoint()
     }
     override fun resetCurrentPoint()
