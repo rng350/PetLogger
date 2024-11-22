@@ -1,4 +1,4 @@
-package com.hfad.petlogger.common.usecases
+package com.hfad.petlogger.common.search
 
 class SanitizeSearchQueryUseCase {
     operator fun invoke(query: String): String {

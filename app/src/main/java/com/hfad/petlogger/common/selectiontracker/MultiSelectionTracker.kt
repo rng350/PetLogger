@@ -69,7 +69,7 @@ class MultiSelectionTracker<T>(
                     val initialPicks = initialPicksDeferred.await()
                     initialSelection.addAll(initialPicks)
                 }
-                null -> {}
+                else -> {}
             }
             val currentSelectionTemp = mutableListOf<T>()
             val visibleOptionsFetched = allOptionsDeferred.await().map {

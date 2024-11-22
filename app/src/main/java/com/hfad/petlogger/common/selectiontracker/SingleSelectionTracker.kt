@@ -56,7 +56,7 @@ class SingleSelectionTracker<T>(
                     val initialPick = initialPickDeferred.await()
                     initialSelection = initialPick
                 }
-                null -> { }
+                else -> { }
             }
             var currentSelectionTemp: T? = null
             val visibleOptionsFetched = allOptionsDeferred.await().map {
@@ -124,7 +124,7 @@ class SingleSelectionTracker<T>(
                     _currentSelection.value = it
                 }
             }
-            null -> { }
+            else -> { }
         }
         cancelProspectiveSelection()
     }
