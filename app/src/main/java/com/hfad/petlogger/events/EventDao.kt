@@ -1,6 +1,7 @@
 package com.hfad.petlogger.events
 
 import androidx.room.*
+import androidx.sqlite.db.SupportSQLiteQuery
 import com.hfad.petlogger.common.associationentities.EventNote
 import com.hfad.petlogger.notes.Note
 import com.hfad.petlogger.pets.PetWithProfilePic
@@ -148,4 +149,7 @@ interface EventDao {
         lastNoteId: Long,
         noteAmt: Int
     ): List<Note>
+
+    @RawQuery
+    suspend fun searchEvents(dynamicQuery: SupportSQLiteQuery): List<Event>
 }

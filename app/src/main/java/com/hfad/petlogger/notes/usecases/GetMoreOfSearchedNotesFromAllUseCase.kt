@@ -1,5 +1,6 @@
 package com.hfad.petlogger.notes.usecases
 
+import android.util.Log
 import com.hfad.petlogger.notes.Note
 import com.hfad.petlogger.notes.NoteRepository
 import com.hfad.petlogger.common.util.Constants
@@ -19,6 +20,7 @@ class GetMoreOfSearchedNotesFromAllUseCase(
         get() = _onLastPage
 
     override suspend fun invoke(): List<Note> {
+        Log.d("GetSearchedNotesUseCase", "Query: $currentQuery")
         val notes = noteRepository.getSearchedNotesFromAllPaginated(currentQuery, lastNoteUpdateDate, lastNoteId, noteAmt)
         lastNoteUpdateDate = notes.lastOrNull()?.lastUpdated ?: OffsetDateTime.MIN
         lastNoteId = notes.lastOrNull()?.id ?: Long.MIN_VALUE

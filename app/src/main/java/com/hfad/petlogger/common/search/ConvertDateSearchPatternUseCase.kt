@@ -5,14 +5,13 @@ import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
 // expects YYYY-MM-DD input and validates it
-class ValidateDateSearchUseCase {
-    operator fun invoke(date: String): Boolean {
+class ConvertDateSearchPatternUseCase {
+    operator fun invoke(date: String): LocalDate? {
         val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         return try {
             LocalDate.parse(date, dateFormatter)
-            true
         } catch (e: DateTimeParseException) {
-            false
+            null
         }
     }
 }

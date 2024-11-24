@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -18,6 +19,7 @@ import com.hfad.petlogger.events.usecases.GetMoreOfAllEventsUseCase
 import com.hfad.petlogger.events.EventRepository
 import com.hfad.petlogger.photos.MediaRepository
 import com.hfad.petlogger.common.setAppBarTitle
+import com.hfad.petlogger.events.usecases.GetMoreOfSearchedEventsFromAllUseCase
 import com.hfad.petlogger.screens.sections.recyclerviews.SetupAssociatedEventsDisplayUseCase
 
 class EventListFragment : Fragment() {
@@ -40,7 +42,8 @@ class EventListFragment : Fragment() {
         val mediaRepository = MediaRepository(database, application.applicationContext)
         val eventRepository = EventRepository(database, mediaRepository)
         val getAllEvents = GetMoreOfAllEventsUseCase(eventRepository, eventAmt=10)
-        viewModel = ViewModelProvider(this, EventListViewModel.provideFactory(getAllEvents)).get(
+        val getSearchedEvents = GetMoreOfSearchedEventsFromAllUseCase(database.eventDao, eventAmt=10)
+        viewModel = ViewModelProvider(this, EventListViewModel.provideFactory(getAllEvents, getSearchedEvents)).get(
             EventListViewModel::class.java)
         binding.viewModel = viewModel
 
@@ -58,6 +61,18 @@ class EventListFragment : Fragment() {
             isLoading = {viewModel.isLoading()},
             onLast = {viewModel.onLastPage()}
         )
+
+        binding.searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                viewModel.onQueryTextSubmit(query)
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                viewModel.onQueryTextChanged(newText)
+                return true
+            }
+        })
 
         binding.addEventButton.setOnClickListener {
             this.findNavController().navigateSafe(EventListFragmentDirections.actionEventListFragmentToNewEventFragment())

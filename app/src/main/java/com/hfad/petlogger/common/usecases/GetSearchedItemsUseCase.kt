@@ -7,7 +7,7 @@ interface GetSearchedItemsUseCase<T>: GetItemsUseCase<T> {
     override val onLastPage: Boolean
     override suspend operator fun invoke(): List<T>
 
-    fun changeSearchQuery(query: String) {
+    fun changeSearchQueryAndResetCurrentPoint(query: String) {
         val sanitizeSearchQuery = SanitizeSearchQueryUseCase()
         currentQuery = sanitizeSearchQuery(query)
         resetCurrentPoint()

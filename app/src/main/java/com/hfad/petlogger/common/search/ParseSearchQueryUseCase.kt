@@ -1,7 +1,9 @@
 package com.hfad.petlogger.common.search
 
 // At instantiation, prefixes must be provided. Do not include colons (":")
-// i.e. ["before", "after", "tag"] -- Something like that is good
+// i.e. ["before", "after", "title"] -- Something like that is good if you want to have searches like:
+// before:____ after:____ tag:____ title:_____
+// and whatnot...
 class ParseSearchQueryUseCase(private val prefixes: List<String> = listOf()) {
     private val prefixRegex: String = prefixes.joinToString(separator = "") { "\\b${it}:|" }
     private val prefixPatternInLineRegex: String = prefixes.joinToString(separator = "") { "${it}:|" }
@@ -10,7 +12,7 @@ class ParseSearchQueryUseCase(private val prefixes: List<String> = listOf()) {
         val quotedMatches = mutableMapOf<String?, MutableList<String>>()
 
         // Step 1: Parse through any tokens with quoted strings
-        val contextPattern = Regex("(?:${prefixRegex}#)?(\".*?\")")
+        val contextPattern = Regex("(?:${prefixRegex}#)?\"(.*?)\"")
         contextPattern.findAll(query).forEach { matchResult ->
             var prefix: String? = null
             for (item in prefixes) {
