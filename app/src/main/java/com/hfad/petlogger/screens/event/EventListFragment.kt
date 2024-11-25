@@ -19,7 +19,7 @@ import com.hfad.petlogger.events.usecases.GetMoreOfAllEventsUseCase
 import com.hfad.petlogger.events.EventRepository
 import com.hfad.petlogger.photos.MediaRepository
 import com.hfad.petlogger.common.setAppBarTitle
-import com.hfad.petlogger.events.usecases.GetMoreOfSearchedEventsFromAllUseCase
+import com.hfad.petlogger.events.usecases.GetMoreOfSearchedEventsUseCase
 import com.hfad.petlogger.screens.sections.recyclerviews.SetupAssociatedEventsDisplayUseCase
 
 class EventListFragment : Fragment() {
@@ -42,7 +42,7 @@ class EventListFragment : Fragment() {
         val mediaRepository = MediaRepository(database, application.applicationContext)
         val eventRepository = EventRepository(database, mediaRepository)
         val getAllEvents = GetMoreOfAllEventsUseCase(eventRepository, eventAmt=10)
-        val getSearchedEvents = GetMoreOfSearchedEventsFromAllUseCase(database.eventDao, eventAmt=10)
+        val getSearchedEvents = GetMoreOfSearchedEventsUseCase(database.eventDao, eventAmt=10)
         viewModel = ViewModelProvider(this, EventListViewModel.provideFactory(getAllEvents, getSearchedEvents)).get(
             EventListViewModel::class.java)
         binding.viewModel = viewModel

@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.hfad.petlogger.databinding.FragmentAssociatedEventsDisplayBinding
@@ -41,6 +42,17 @@ class AssociatedEventsDisplayFragment : Fragment() {
             loadMore = {eventListViewModel.load()},
             onLast = {eventListViewModel.onLastPage()}
         )
+
+        binding.searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                eventListViewModel.onQueryTextSubmit(query)
+                return true
+            }
+            override fun onQueryTextChange(newText: String?): Boolean {
+                eventListViewModel.onQueryTextChanged(newText)
+                return true
+            }
+        })
 
         binding.addEventButton.setOnClickListener {
             eventListViewModel.newEventNavigator.navigateToNewEntityScreen()

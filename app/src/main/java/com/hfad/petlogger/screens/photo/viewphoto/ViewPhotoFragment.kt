@@ -26,13 +26,12 @@ import com.hfad.petlogger.notes.usecases.GetMoreNotesOfPhotoUseCase
 import com.hfad.petlogger.pets.usecases.GetMorePetsOfPhotoUseCase
 import com.hfad.petlogger.photos.MediaRepository
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedEventsDisplayFragment
-import com.hfad.petlogger.screens.sections.associatedentities.AssociatedEventsDisplayViewModel
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedNotesDisplayFragment
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPetsDisplayFragment
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPetsDisplayViewModel
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedTagsDisplayViewModel
 import com.hfad.petlogger.common.setAppBarTitle
-import com.hfad.petlogger.events.usecases.GetMoreOfSearchedEventsFromAllUseCase
+import com.hfad.petlogger.events.usecases.GetMoreOfSearchedEventsUseCase
 import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesOfPhotoUseCase
 import com.hfad.petlogger.screens.event.EventListViewModel
 import com.hfad.petlogger.screens.note.NoteListViewModel
@@ -67,8 +66,8 @@ class ViewPhotoFragment : Fragment() {
         binding.associatedPetsDisplayViewModel = associatedPetsDisplayViewModel
 
         val getEventsOfPhotoForDisplayUseCase = GetMoreEventsOfPhotoUseCase(mediaRepository, photoId, eventAmt = 10)
-        val getSearchedEventsTEMPORARY = GetMoreOfSearchedEventsFromAllUseCase(database.eventDao, eventAmt=10)
-        val eventListViewModel = ViewModelProvider(this, EventListViewModel.provideFactory(getEventsOfPhotoForDisplayUseCase, getSearchedEventsTEMPORARY)).get(
+        val getSearchedEvents = GetMoreOfSearchedEventsUseCase(database.eventDao, eventAmt=10, GetMoreOfSearchedEventsUseCase.PickFrom.Photo(photoId))
+        val eventListViewModel = ViewModelProvider(this, EventListViewModel.provideFactory(getEventsOfPhotoForDisplayUseCase, getSearchedEvents)).get(
             EventListViewModel::class.java)
         binding.eventListViewModel = eventListViewModel
 

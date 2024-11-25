@@ -1,6 +1,5 @@
 package com.hfad.petlogger.events.usecases
 
-import android.util.Log
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.hfad.petlogger.common.search.GetBoundingSearchDatesUseCase
 import com.hfad.petlogger.common.search.ParseSearchQueryUseCase
@@ -12,9 +11,10 @@ import com.hfad.petlogger.events.EventForList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class GetMoreOfSearchedEventsFromAllUseCase(
+class GetMoreOfSearchedEventsUseCase(
     private val eventDao: EventDao,
-    private val eventAmt: Int
+    private val eventAmt: Int,
+    private val pickFrom: PickFrom? = null
 ): GetSearchedItemsUseCase<EventForList> {
     override var currentQuery: String = ""
     private var lastEventDate = Constants.OFFSET_DATE_TIME_MAX_ALLOWED
@@ -37,21 +37,46 @@ class GetMoreOfSearchedEventsFromAllUseCase(
         val queryBuilder = StringBuilder()
         val queryParams = mutableListOf<Any>()
 
+        // FTS4 matches
+        if (nonCategorizedSearch.isNotEmpty()) {
+            queryBuilder.append("WITH matched_events AS ( SELECT event_id FROM event_table_fts WHERE event_table_fts MATCH ? ) ")
+            queryParams.add(nonCategorizedSearch.joinToString(separator=" "))
+        }
         // Base query to join Event with associations
-        queryBuilder.append("SELECT event_table.* FROM event_table JOIN event_table_fts ON event_table.event_id=event_table_fts.event_id ")
+        queryBuilder.append("SELECT event_table.* FROM event_table ")
+        if (nonCategorizedSearch.isNotEmpty()) {
+            queryBuilder.append("JOIN matched_events ON event_table.event_id=matched_events.event_id ")
+        }
+        pickFrom?.let {
+            when (pickFrom) {
+                is PickFrom.Note -> {
+                    queryBuilder.append("JOIN event_note_table ON event_table.event_id=event_note_table.event_id ")
+                }
+                is PickFrom.Pet -> {
+                    queryBuilder.append("JOIN event_pet_table ON event_table.event_id=event_pet_table.event_id ")
+                }
+                is PickFrom.Photo -> {
+                    queryBuilder.append("JOIN photo_event_table ON event_table.event_id=photo_event_table.event_id ")
+                }
+                is PickFrom.Tag -> {
+                    queryBuilder.append("JOIN event_tag_table ON event_table.event_id=event_tag_table.event_id ")
+                }
+            }
+        }
+
         if (searchedPets.isNotEmpty()) {
-            queryBuilder.append("""
-                JOIN event_pet_table ON event_table.event_id = event_pet_table.event_id 
-                JOIN pet_table ON pet_table.pet_id = event_pet_table.pet_id 
-            """)
+            if (pickFrom !is PickFrom.Pet) {
+                queryBuilder.append("JOIN event_pet_table ON event_table.event_id = event_pet_table.event_id ")
+            }
+            queryBuilder.append("JOIN pet_table ON pet_table.pet_id = event_pet_table.pet_id ")
         }
         if (searchedTags.isNotEmpty()) {
-            queryBuilder.append("""
-                JOIN event_tag_table ON event_table.event_id = event_tag_table.event_id 
-                JOIN tag_table ON tag_table.tag_id = event_tag_table.tag_id 
-            """)
+            if (pickFrom !is PickFrom.Tag) {
+                queryBuilder.append("JOIN event_tag_table ON event_table.event_id = event_tag_table.event_id ")
+            }
+            queryBuilder.append("JOIN tag_table ON tag_table.tag_id = event_tag_table.tag_id ")
         }
-        //queryBuilder.append("WHERE 1 = 1 ") // just so we can have a "WHERE" clause regardless
+
         queryBuilder.append("WHERE (datetime(event_table.event_date), event_table.event_id) < (datetime(?), ?) ")
         queryParams.add("${Converter.fromOffsetDateTime(lastEventDate)}")
         queryParams.add(lastEventId)
@@ -73,27 +98,39 @@ class GetMoreOfSearchedEventsFromAllUseCase(
             else -> {}
         }
         if (searchedPets.isNotEmpty()) {
-            queryBuilder.append("AND pet_table.pet_name IN ${searchedPets.joinToString(prefix="(", separator=",", postfix=")"){"?"}} ")
+            queryBuilder.append("AND ${if (pickFrom is PickFrom.Pet) "(" else ""}pet_table.pet_name IN ${searchedPets.joinToString(prefix="(", separator=",", postfix=")"){"?"}} ")
             queryParams.addAll(searchedPets)
         }
+        if (pickFrom is PickFrom.Pet) {
+            queryBuilder.append("${if (searchedPets.isNotEmpty()) "OR" else "AND" } event_pet_table.pet_id = ?${if (searchedPets.isNotEmpty()) ")" else "" } ")
+            queryParams.add(pickFrom.petId)
+        }
         if (searchedTags.isNotEmpty()) {
-            queryBuilder.append("AND tag_table.tag_name IN ${searchedTags.joinToString(prefix="(", separator=",", postfix=")"){"?"}} ")
+            queryBuilder.append("AND ${if (pickFrom is PickFrom.Tag) "(" else ""}tag_table.tag_name IN ${searchedTags.joinToString(prefix="(", separator=",", postfix=")"){"?"}} ")
             queryParams.addAll(searchedTags)
         }
-        if (nonCategorizedSearch.isNotEmpty()) {
-            queryBuilder.append("AND event_table_fts MATCH ? ")
-            queryParams.add(nonCategorizedSearch.joinToString(separator=" "))
+        if (pickFrom is PickFrom.Tag) {
+            queryBuilder.append("${if (searchedTags.isNotEmpty()) "OR" else "AND" } event_tag_table.tag_id = ? ${if (searchedTags.isNotEmpty()) ")" else ""} ")
+            queryParams.add(pickFrom.tagId)
+        }
+        if (pickFrom is PickFrom.Photo) {
+            queryBuilder.append("AND photo_event_table.photo_id = ? ")
+            queryParams.add(pickFrom.photoId)
+        }
+        if (pickFrom is PickFrom.Note) {
+            queryBuilder.append("AND event_note_table.note_id = ? ")
+            queryParams.add(pickFrom.noteId)
         }
         queryBuilder.append("GROUP BY event_table.event_id ")
 
         val havingCountQuery = StringBuilder()
-        if (searchedPets.isNotEmpty()) {
-            havingCountQuery.append("HAVING COUNT(DISTINCT pet_table.pet_name) = ? ")
-            queryParams.add(searchedPets.size)
+        if (searchedPets.isNotEmpty() || pickFrom is PickFrom.Pet) {
+            havingCountQuery.append("HAVING COUNT(DISTINCT event_pet_table.pet_id) = ? ")
+            queryParams.add(searchedPets.size + if (pickFrom is PickFrom.Pet) 1 else 0)
         }
-        if (searchedTags.isNotEmpty()) {
-            havingCountQuery.append("${if (havingCountQuery.isNotEmpty()) "AND" else "HAVING"} COUNT(DISTINCT tag_table.tag_name) = ? ")
-            queryParams.add(searchedTags.size)
+        if (searchedTags.isNotEmpty() || pickFrom is PickFrom.Tag) {
+            havingCountQuery.append("${if (havingCountQuery.isNotEmpty()) "AND" else "HAVING"} COUNT(DISTINCT event_tag_table.tag_id) = ? ")
+            queryParams.add(searchedTags.size + if (pickFrom is PickFrom.Tag) 1 else 0)
         }
         queryBuilder.append(havingCountQuery)
 
@@ -113,5 +150,12 @@ class GetMoreOfSearchedEventsFromAllUseCase(
         lastEventDate = Constants.OFFSET_DATE_TIME_MAX_ALLOWED
         lastEventId = Long.MAX_VALUE
         _onLastPage = false
+    }
+
+    sealed class PickFrom {
+        data class Pet(val petId: Long): PickFrom()
+        data class Note(val noteId: Long): PickFrom()
+        data class Photo(val photoId: Long): PickFrom()
+        data class Tag(val tagId: Long): PickFrom()
     }
 }
