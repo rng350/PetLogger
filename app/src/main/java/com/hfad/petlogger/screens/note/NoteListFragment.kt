@@ -18,7 +18,6 @@ import com.hfad.petlogger.photos.MediaRepository
 import com.hfad.petlogger.notes.NoteRepository
 import com.hfad.petlogger.common.setAppBarTitle
 import com.hfad.petlogger.notes.usecases.GetMoreOfAllNotesUseCase
-import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesFromAllUseCase
 import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesUseCase
 import com.hfad.petlogger.screens.sections.recyclerviews.SetupShortenedNotesListDisplayUseCase
 

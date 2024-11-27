@@ -38,7 +38,6 @@ import com.hfad.petlogger.screens.sections.associatedentities.AssociatedTagsDisp
 import com.hfad.petlogger.common.setAppBarTitle
 import com.hfad.petlogger.common.util.GetPeriodDisplayUseCase
 import com.hfad.petlogger.events.usecases.GetMoreOfSearchedEventsUseCase
-import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesOfPetUseCase
 import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesUseCase
 import com.hfad.petlogger.screens.event.EventListViewModel
 import com.hfad.petlogger.screens.note.NoteListViewModel

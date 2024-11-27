@@ -30,7 +30,6 @@ import com.hfad.petlogger.weights.WeightRepository
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedNotesDisplayFragment
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedTagsDisplayViewModel
 import com.hfad.petlogger.common.setAppBarTitle
-import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesOfWeightUseCase
 import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesUseCase
 import com.hfad.petlogger.screens.note.NoteListViewModel
 import kotlinx.coroutines.flow.collectLatest

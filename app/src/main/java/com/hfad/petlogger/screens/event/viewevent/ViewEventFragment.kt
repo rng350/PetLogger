@@ -29,7 +29,6 @@ import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPetsDisp
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPhotosDisplayFragment
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedTagsDisplayViewModel
 import com.hfad.petlogger.common.setAppBarTitle
-import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesOfEventUseCase
 import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesUseCase
 import com.hfad.petlogger.screens.note.NoteListViewModel
 import com.hfad.petlogger.screens.photo.FullGalleryViewModel

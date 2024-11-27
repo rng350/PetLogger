@@ -1,6 +1,5 @@
 package com.hfad.petlogger.notes.usecases
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.hfad.petlogger.common.search.GetBoundingSearchDatesUseCase
@@ -8,18 +7,9 @@ import com.hfad.petlogger.common.search.ParseSearchQueryUseCase
 import com.hfad.petlogger.common.usecases.GetSearchedItemsUseCase
 import com.hfad.petlogger.common.util.Constants
 import com.hfad.petlogger.common.util.Converter
-import com.hfad.petlogger.events.EventDao
 import com.hfad.petlogger.notes.Note
 import com.hfad.petlogger.notes.NoteDao
-import com.hfad.petlogger.pets.Pet
-import com.hfad.petlogger.pets.PetDao
-import com.hfad.petlogger.photos.PhotoDao
-import com.hfad.petlogger.tags.Tag
-import com.hfad.petlogger.tags.TagDao
-import com.hfad.petlogger.weights.WeightDao
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.OffsetDateTime
 
