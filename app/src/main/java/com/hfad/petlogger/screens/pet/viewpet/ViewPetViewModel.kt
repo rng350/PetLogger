@@ -17,7 +17,8 @@ class ViewPetViewModel (
     private val getPetAgeDisplay: GetPeriodDisplayUseCase,
     notAvailableString: String
 ): ViewModel() {
-    val pet : MutableLiveData<Pet> = MutableLiveData<Pet>()
+    private val _pet : MutableLiveData<Pet> = MutableLiveData<Pet>()
+    val pet: LiveData<Pet> get() = _pet
     val petProfilePhoto = MutableLiveData<Photo>()
     val petBirthdate : MutableLiveData<String> = MutableLiveData<String>(notAvailableString)
     val petAge : MutableLiveData<String> = MutableLiveData<String>(notAvailableString)
@@ -28,10 +29,10 @@ class ViewPetViewModel (
 
     init {
         viewModelScope.launch {
-            pet.value = async {
+            _pet.value = async {
                 petRepository.getPet(petID)
             }.await()
-            pet.value?.let {
+            _pet.value?.let {
                 it.petDOB?.let {
                     petBirthdate.value = getDate(it)
                     petAge.value = getPetAgeDisplay(it)

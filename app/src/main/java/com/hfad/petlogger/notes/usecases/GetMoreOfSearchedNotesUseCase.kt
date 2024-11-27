@@ -1,5 +1,6 @@
-package com.hfad.petlogger.events.usecases
+package com.hfad.petlogger.notes.usecases
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.hfad.petlogger.common.search.GetBoundingSearchDatesUseCase
@@ -8,23 +9,34 @@ import com.hfad.petlogger.common.usecases.GetSearchedItemsUseCase
 import com.hfad.petlogger.common.util.Constants
 import com.hfad.petlogger.common.util.Converter
 import com.hfad.petlogger.events.EventDao
-import com.hfad.petlogger.events.EventForList
+import com.hfad.petlogger.notes.Note
+import com.hfad.petlogger.notes.NoteDao
+import com.hfad.petlogger.pets.Pet
+import com.hfad.petlogger.pets.PetDao
+import com.hfad.petlogger.photos.PhotoDao
+import com.hfad.petlogger.tags.Tag
+import com.hfad.petlogger.tags.TagDao
+import com.hfad.petlogger.weights.WeightDao
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.OffsetDateTime
 
-class GetMoreOfSearchedEventsUseCase(
-    private val eventDao: EventDao,
-    private val eventAmt: Int,
+class GetMoreOfSearchedNotesUseCase(
+    private val noteDao: NoteDao,
+    private val notesAmt: Int,
     private val pickFrom: PickFrom? = null
-): GetSearchedItemsUseCase<EventForList> {
+    ): GetSearchedItemsUseCase<Note> {
     override var currentQuery: String = ""
-    private var lastEventDate = Constants.OFFSET_DATE_TIME_MAX_ALLOWED
-    private var lastEventId = Long.MAX_VALUE
+    private var lastNoteEditedDate = Constants.OFFSET_DATE_TIME_MAX_ALLOWED
+    private var lastNoteId = Long.MAX_VALUE
     private var _onLastPage = false
     override val onLastPage: Boolean
         get() = _onLastPage
     private val parseSearchQuery = ParseSearchQueryUseCase(listOf("pet", "before", "after"))
-    override suspend fun invoke(): List<EventForList> = withContext(Dispatchers.IO) {
+
+    override suspend fun invoke(): List<Note> = withContext(Dispatchers.IO) {
         val parsedSearch = parseSearchQuery(currentQuery)
         // get bounding dates
         val getBoundingSearchDates = GetBoundingSearchDatesUseCase()
@@ -50,56 +62,60 @@ class GetMoreOfSearchedEventsUseCase(
 
         // FTS4 matches
         if (nonCategorizedSearch.isNotEmpty()) {
-            queryBuilder.append("WITH matched_events AS ( SELECT event_id FROM event_table_fts WHERE event_table_fts MATCH ? ) ")
+            queryBuilder.append("WITH matched_notes AS ( SELECT note_id FROM note_table_fts WHERE note_table_fts MATCH ? ) ")
             queryParams.add(nonCategorizedSearch.joinToString(separator=" "))
         }
-        // Base query to join Event with associations
-        queryBuilder.append("SELECT event_table.* FROM event_table ")
+        // Base query to join Note with associations
+        queryBuilder.append("SELECT note_table.* FROM note_table ")
         if (nonCategorizedSearch.isNotEmpty()) {
-            queryBuilder.append("JOIN matched_events ON event_table.event_id=matched_events.event_id ")
+            queryBuilder.append("JOIN matched_notes ON note_table.note_id=matched_notes.note_id ")
         }
         pickFrom?.let {
             when (pickFrom) {
-                is PickFrom.Note -> {
-                    queryBuilder.append("JOIN event_note_table ON event_table.event_id=event_note_table.event_id ")
-                }
                 is PickFrom.Photo -> {
-                    queryBuilder.append("JOIN photo_event_table ON event_table.event_id=photo_event_table.event_id ")
+                    queryBuilder.append("JOIN photo_note_table ON note_table.note_id=photo_note_table.note_id ")
+                }
+                is PickFrom.Event -> {
+                    queryBuilder.append("JOIN event_note_table ON note_table.note_id=event_note_table.note_id ")
+                }
+                is PickFrom.Weight -> {
+                    queryBuilder.append("JOIN weight_note_table ON note_table.note_id=weight_note_table.note_id ")
                 }
                 else -> {}
             }
         }
-
         if (searchedPets.isNotEmpty()) {
-            queryBuilder.append("JOIN event_pet_table ON event_table.event_id = event_pet_table.event_id ")
-            queryBuilder.append("JOIN pet_table ON pet_table.pet_id = event_pet_table.pet_id ")
+            queryBuilder.append("JOIN pet_note_table ON note_table.note_id=pet_note_table.note_id ")
+            queryBuilder.append("JOIN pet_table ON pet_table.pet_id=pet_note_table.pet_id ")
         }
         if (searchedTags.isNotEmpty()) {
-            queryBuilder.append("JOIN event_tag_table ON event_table.event_id = event_tag_table.event_id ")
-            queryBuilder.append("JOIN tag_table ON tag_table.tag_id = event_tag_table.tag_id ")
+            queryBuilder.append("JOIN note_tag_table ON note_table.note_id=note_tag_table.note_id ")
+            queryBuilder.append("JOIN tag_table ON tag_table.tag_id=note_tag_table.tag_id ")
         }
 
-        queryBuilder.append("WHERE (datetime(event_table.event_date), event_table.event_id) < (datetime(?), ?) ")
-        queryParams.add("${Converter.fromOffsetDateTime(lastEventDate)}")
-        queryParams.add(lastEventId)
+        // for pagination
+        queryBuilder.append("WHERE (datetime(note_table.note_last_updated), note_table.note_id) < (datetime(?), ?) ")
+        queryParams.add("${Converter.fromOffsetDateTime(lastNoteEditedDate)}")
+        queryParams.add(lastNoteId)
 
         when (startAndEndDates) {
             is GetBoundingSearchDatesUseCase.Result.BoundingEndSearchDate -> {
-                queryBuilder.append("AND datetime(event_table.event_date) < datetime(?) ")
+                queryBuilder.append("AND datetime(note_table.note_last_updated) < datetime(?) ")
                 queryParams.add("${Converter.fromOffsetDateTime(startAndEndDates.endDate)}")
             }
             is GetBoundingSearchDatesUseCase.Result.BoundingSearchDates -> {
-                queryBuilder.append("AND datetime(event_table.event_date) > datetime(?) ")
-                queryBuilder.append("AND datetime(event_table.event_date) < datetime(?) ")
+                queryBuilder.append("AND datetime(note_table.note_last_updated) > datetime(?) ")
+                queryBuilder.append("AND datetime(note_table.note_last_updated) < datetime(?) ")
                 queryParams.add("${Converter.fromOffsetDateTime(startAndEndDates.startDate)}")
                 queryParams.add("${Converter.fromOffsetDateTime(startAndEndDates.endDate)}")
             }
             is GetBoundingSearchDatesUseCase.Result.BoundingStartSearchDate -> {
-                queryBuilder.append("AND datetime(event_table.event_date) > datetime(?) ")
+                queryBuilder.append("AND datetime(note_table.note_last_updated) > datetime(?) ")
                 queryParams.add("${Converter.fromOffsetDateTime(startAndEndDates.startDate)}")
             }
             else -> {}
         }
+
         if (searchedPets.isNotEmpty()) {
             queryBuilder.append("AND pet_table.pet_name IN ${searchedPets.joinToString(prefix="(", separator=",", postfix=")"){"?"}} ")
             queryParams.addAll(searchedPets)
@@ -109,50 +125,49 @@ class GetMoreOfSearchedEventsUseCase(
             queryParams.addAll(searchedTags)
         }
         if (pickFrom is PickFrom.Photo) {
-            queryBuilder.append("AND photo_event_table.photo_id = ? ")
+            queryBuilder.append("AND photo_note_table.photo_id = ? ")
             queryParams.add(pickFrom.photoId)
         }
-        if (pickFrom is PickFrom.Note) {
-            queryBuilder.append("AND event_note_table.note_id = ? ")
-            queryParams.add(pickFrom.noteId)
+        if (pickFrom is PickFrom.Weight) {
+            queryBuilder.append("AND weight_note_table.weight_id = ? ")
+            queryParams.add(pickFrom.weightId)
         }
-        queryBuilder.append("GROUP BY event_table.event_id ")
+        queryBuilder.append("GROUP BY note_table.note_id ")
 
         val havingCountQuery = StringBuilder()
         if (searchedPets.isNotEmpty()) {
-            havingCountQuery.append("HAVING COUNT(DISTINCT event_pet_table.pet_id) = ? ")
+            havingCountQuery.append("HAVING COUNT(DISTINCT pet_note_table.pet_id) = ? ")
             queryParams.add(searchedPets.size)
         }
         if (searchedTags.isNotEmpty()) {
-            havingCountQuery.append("${if (havingCountQuery.isNotEmpty()) "AND" else "HAVING"} COUNT(DISTINCT event_tag_table.tag_id) = ? ")
+            havingCountQuery.append("${if (havingCountQuery.isNotEmpty()) "AND" else "HAVING"} COUNT(DISTINCT note_tag_table.tag_id) = ? ")
             queryParams.add(searchedTags.size)
         }
         queryBuilder.append(havingCountQuery)
 
-        queryBuilder.append("ORDER BY datetime(event_table.event_date) DESC, event_table.event_id DESC LIMIT $eventAmt")
+        queryBuilder.append("ORDER BY datetime(note_table.note_last_updated) DESC, note_table.note_id DESC LIMIT $notesAmt")
 
-        val searchResults = eventDao.searchEvents(SimpleSQLiteQuery(queryBuilder.toString(), queryParams.toTypedArray()))
+        val searchResults = noteDao.searchNotes(SimpleSQLiteQuery(queryBuilder.toString(), queryParams.toTypedArray()))
 
-        // update for further pagination
-        lastEventId = searchResults.lastOrNull()?.eventId ?: Long.MAX_VALUE
-        lastEventDate = searchResults.lastOrNull()?.date ?: Constants.OFFSET_DATE_TIME_MAX_ALLOWED
-        _onLastPage = searchResults.size < eventAmt
+        lastNoteEditedDate = searchResults.lastOrNull()?.lastUpdated ?: OffsetDateTime.MIN
+        lastNoteId = searchResults.lastOrNull()?.id ?: Long.MIN_VALUE
+        _onLastPage = searchResults.size < notesAmt
 
-        searchResults.map{it.toEventForList()}
+        searchResults
     }
 
     override fun resetCurrentPoint() {
-        lastEventDate = Constants.OFFSET_DATE_TIME_MAX_ALLOWED
-        lastEventId = Long.MAX_VALUE
+        lastNoteEditedDate = Constants.OFFSET_DATE_TIME_MAX_ALLOWED
+        lastNoteId = Long.MAX_VALUE
         _onLastPage = false
     }
 
     sealed class PickFrom {
-
         data class Pet(private val pet: LiveData<com.hfad.petlogger.pets.Pet>): PickFrom() {
             val petName: String get() = pet.value?.petName ?: ""
         }
-        data class Note(val noteId: Long): PickFrom()
+        data class Event(val eventId: Long): PickFrom()
+        data class Weight(val weightId: Long): PickFrom()
         data class Photo(val photoId: Long): PickFrom()
         data class Tag(private val tag: LiveData<com.hfad.petlogger.tags.Tag>): PickFrom() {
             val tagName: String get() = tag.value?.tagName ?: ""

@@ -73,7 +73,7 @@ class NoteListViewModel(
 
     private fun reinitializeGetterType(query: String) {
         if (query.isNotEmpty()) {
-            getSearchedNotes.changeSearchQueryAndResetCurrentPoint("${query}*")
+            getSearchedNotes.changeSearchQueryAndResetCurrentPoint(query)
             currentNoteGetter = getSearchedNotes
         } else {
             currentNoteGetter = getInitialNoteList

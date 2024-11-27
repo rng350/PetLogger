@@ -31,6 +31,7 @@ import com.hfad.petlogger.screens.sections.associatedentities.AssociatedNotesDis
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedTagsDisplayViewModel
 import com.hfad.petlogger.common.setAppBarTitle
 import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesOfWeightUseCase
+import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesUseCase
 import com.hfad.petlogger.screens.note.NoteListViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -61,7 +62,7 @@ class ViewWeightFragment : Fragment() {
         binding.viewModel = viewModel
 
         val getNotesOfWeight = GetMoreNotesOfWeightUseCase(weightRepository, weightId, notesAmt = 10)
-        val getSearchedNotesOfWeight = GetMoreOfSearchedNotesOfWeightUseCase(weightRepository, weightId, notesAmt = 10)
+        val getSearchedNotesOfWeight = GetMoreOfSearchedNotesUseCase(database.noteDao, notesAmt = 10, GetMoreOfSearchedNotesUseCase.PickFrom.Weight(weightId))
         val noteListViewModel = ViewModelProvider(this, NoteListViewModel.provideFactory(getNotesOfWeight, getSearchedNotesOfWeight)).get(
             NoteListViewModel::class.java)
         binding.noteListViewModel = noteListViewModel

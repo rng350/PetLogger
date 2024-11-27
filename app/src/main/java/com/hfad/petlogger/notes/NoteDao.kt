@@ -5,8 +5,10 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.RawQuery
 import androidx.room.Transaction
 import androidx.room.Update
+import androidx.sqlite.db.SimpleSQLiteQuery
 import com.hfad.petlogger.events.Event
 import com.hfad.petlogger.common.associationentities.EventNote
 import com.hfad.petlogger.notes.Note
@@ -227,4 +229,7 @@ interface NoteDao {
         ORDER BY datetime(note_table.note_last_updated) DESC, note_table.note_id DESC LIMIT :noteAmt
     """)
     suspend fun getSearchedNotesFromAllPaginated(query: String, lastNoteUpdateDate: OffsetDateTime, lastNoteId: Long, noteAmt: Int): List<Note>
+
+    @RawQuery
+    suspend fun searchNotes(query: SimpleSQLiteQuery): List<Note>
 }

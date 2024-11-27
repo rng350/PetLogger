@@ -19,6 +19,7 @@ import com.hfad.petlogger.notes.NoteRepository
 import com.hfad.petlogger.common.setAppBarTitle
 import com.hfad.petlogger.notes.usecases.GetMoreOfAllNotesUseCase
 import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesFromAllUseCase
+import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesUseCase
 import com.hfad.petlogger.screens.sections.recyclerviews.SetupShortenedNotesListDisplayUseCase
 
 class NoteListFragment : Fragment() {
@@ -44,7 +45,7 @@ class NoteListFragment : Fragment() {
         val mediaRepository = MediaRepository(database, application.applicationContext)
         val noteRepository = NoteRepository(PetLoggerDatabase.getInstance(requireContext()), mediaRepository)
         val getAllNotes = GetMoreOfAllNotesUseCase(noteRepository, noteAmt=10)
-        val getMoreOfSearchedNotesFromAll = GetMoreOfSearchedNotesFromAllUseCase(noteRepository, noteAmt = 10)
+        val getMoreOfSearchedNotesFromAll = GetMoreOfSearchedNotesUseCase(database.noteDao, notesAmt = 10)
 
         viewModel = ViewModelProvider(this,
             NoteListViewModel.provideFactory(getAllNotes, getMoreOfSearchedNotesFromAll)
