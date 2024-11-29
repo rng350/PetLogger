@@ -8,6 +8,7 @@ import com.hfad.petlogger.events.Event
 import com.hfad.petlogger.notes.Note
 import com.hfad.petlogger.photos.Photo
 import com.hfad.petlogger.tags.Tag
+import com.hfad.petlogger.weights.PetWeightForDisplayFetched
 import com.hfad.petlogger.weights.Weight
 import kotlinx.coroutines.flow.Flow
 import java.time.OffsetDateTime
@@ -79,11 +80,20 @@ interface PetDao {
     @Query("SELECT * FROM weight_table WHERE weight_pet_id=:petId ORDER BY weight_datetime DESC")
     suspend fun getWeightsOfPet(petId: Long): List<Weight>
 
-    @Query("SELECT * FROM weight_table " +
-            "WHERE weight_pet_id=:petId " +
-            "AND (datetime(weight_datetime), weight_id) < (datetime(:lastWeightDate), :lastWeightId) " +
-            "ORDER BY datetime(weight_datetime) DESC, weight_id DESC LIMIT :amtLimit")
-    suspend fun getWeightsOfPetPaginated(petId: Long, lastWeightDate: OffsetDateTime, lastWeightId: Long, amtLimit: Int): List<Weight>
+    @Query("""
+            SELECT wt_1.weight_id AS weightId, wt_1.weight_grams AS weightGramsAmt, wt_1.weight_datetime AS weightDateTime, 
+                (SELECT wt_2.weight_grams  
+                FROM weight_table wt_2  
+                WHERE wt_2.weight_pet_id=:petId 
+                AND (datetime(wt_2.weight_datetime), wt_2.weight_id) < (datetime(wt_1.weight_datetime), wt_1.weight_id) 
+                ORDER BY datetime(wt_2.weight_datetime) DESC, wt_2.weight_id DESC LIMIT 1
+                ) AS prevWeightGramsAmt  
+            FROM weight_table wt_1  
+            WHERE wt_1.weight_pet_id=:petId  
+            AND (datetime(wt_1.weight_datetime), wt_1.weight_id) < (datetime(:lastWeightDate), :lastWeightId)  
+            ORDER BY datetime(wt_1.weight_datetime) DESC, wt_1.weight_id DESC LIMIT :amtLimit
+            """)
+    suspend fun getWeightsOfPetPaginated(petId: Long, lastWeightDate: OffsetDateTime, lastWeightId: Long, amtLimit: Int): List<PetWeightForDisplayFetched>
 
     @Query("SELECT note_table.* " +
             "FROM note_table INNER JOIN pet_note_table " +

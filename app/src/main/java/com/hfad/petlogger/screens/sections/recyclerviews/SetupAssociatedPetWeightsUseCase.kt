@@ -11,18 +11,19 @@ import com.hfad.petlogger.weights.Weight
 import com.hfad.petlogger.common.recyclerviews.DataItemBindingInterface
 import com.hfad.petlogger.common.recyclerviews.GenericRecyclerViewAdapter
 import com.hfad.petlogger.common.util.Navigator
+import com.hfad.petlogger.weights.PetWeightForDisplay
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class SetupAssociatedPetWeightsUseCase(private val weights: StateFlow<List<Weight>>,
+class SetupAssociatedPetWeightsUseCase(private val weights: StateFlow<List<PetWeightForDisplay>>,
                                        private val weightNavigator: Navigator,
                                        private val recyclerView: RecyclerView,
                                        private val lifecycleScope: LifecycleCoroutineScope,
                                        private val lifecycleOwner: LifecycleOwner
 ) {
     operator fun invoke() {
-        val adapter =  GenericRecyclerViewAdapter<Weight, PetWeightItemBinding>(
+        val adapter =  GenericRecyclerViewAdapter<PetWeightForDisplay, PetWeightItemBinding>(
             layoutId = R.layout.pet_weight_item,
             bindingInterface = createWeightItemBindingInterface()
         )
@@ -38,15 +39,15 @@ class SetupAssociatedPetWeightsUseCase(private val weights: StateFlow<List<Weigh
     }
 
     private fun createWeightItemBindingInterface()
-            = object : DataItemBindingInterface<Weight, PetWeightItemBinding> {
+            = object : DataItemBindingInterface<PetWeightForDisplay, PetWeightItemBinding> {
         override fun bind(
-            item: Weight,
+            item: PetWeightForDisplay,
             binder: PetWeightItemBinding
         ) {
             binder.weight = item
-            binder.card.setOnClickListener { null }
-            binder.card.setOnClickListener {
-                weightNavigator.navigateTo(item.id)
+            binder.weightCard.setOnClickListener { null }
+            binder.weightCard.setOnClickListener {
+                weightNavigator.navigateTo(item.weightId)
             }
         }
     }

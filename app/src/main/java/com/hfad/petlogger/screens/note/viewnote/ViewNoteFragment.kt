@@ -72,7 +72,7 @@ class ViewNoteFragment : Fragment() {
         binding.associatedPetsDisplayViewModel = associatedPetsDisplayViewModel
 
         val getEventsOfNote = GetMoreEventsOfNoteUseCase(noteRepository, noteId, eventAmt = 10)
-        val getSearchedEvents = GetMoreOfSearchedEventsUseCase(database.eventDao, eventAmt=10, GetMoreOfSearchedEventsUseCase.PickFrom.Note(noteId))
+        val getSearchedEvents = GetMoreOfSearchedEventsUseCase(database.eventDao, eventAmt=10, GetMoreOfSearchedEventsUseCase.Pick.FromNote(noteId))
         val eventListViewModel = ViewModelProvider(this, EventListViewModel.provideFactory(getEventsOfNote, getSearchedEvents)).get(
             EventListViewModel::class.java)
         binding.eventListViewModel = eventListViewModel

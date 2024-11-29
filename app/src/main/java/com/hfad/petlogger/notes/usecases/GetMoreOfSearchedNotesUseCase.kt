@@ -16,7 +16,7 @@ import java.time.OffsetDateTime
 class GetMoreOfSearchedNotesUseCase(
     private val noteDao: NoteDao,
     private val notesAmt: Int,
-    private val pickFrom: PickFrom? = null
+    private val pickFrom: Pick? = null
     ): GetSearchedItemsUseCase<Note> {
     override var currentQuery: String = ""
     private var lastNoteEditedDate = Constants.OFFSET_DATE_TIME_MAX_ALLOWED
@@ -35,13 +35,13 @@ class GetMoreOfSearchedNotesUseCase(
 
         val nonCategorizedSearch = parsedSearch[null]?:listOf()
         val searchedPets =
-            if (pickFrom is PickFrom.Pet) {
+            if (pickFrom is Pick.FromPet) {
                 val petsHashedSet = parsedSearch["pet"]?.toHashSet() ?: HashSet<String>()
                 petsHashedSet.add(pickFrom.petName)
                 petsHashedSet.toList()
             } else parsedSearch["pet"]?.toHashSet()?.toList()?:listOf()
         val searchedTags =
-            if (pickFrom is PickFrom.Tag) {
+            if (pickFrom is Pick.FromTag) {
                 val tagsHashedSet = parsedSearch["#"]?.toHashSet() ?: HashSet<String>()
                 tagsHashedSet.add(pickFrom.tagName)
                 tagsHashedSet.toList()
@@ -62,13 +62,13 @@ class GetMoreOfSearchedNotesUseCase(
         }
         pickFrom?.let {
             when (pickFrom) {
-                is PickFrom.Photo -> {
+                is Pick.FromPhoto -> {
                     queryBuilder.append("JOIN photo_note_table ON note_table.note_id=photo_note_table.note_id ")
                 }
-                is PickFrom.Event -> {
+                is Pick.FromEvent -> {
                     queryBuilder.append("JOIN event_note_table ON note_table.note_id=event_note_table.note_id ")
                 }
-                is PickFrom.Weight -> {
+                is Pick.FromWeight -> {
                     queryBuilder.append("JOIN weight_note_table ON note_table.note_id=weight_note_table.note_id ")
                 }
                 else -> {}
@@ -114,11 +114,11 @@ class GetMoreOfSearchedNotesUseCase(
             queryBuilder.append("AND tag_table.tag_name IN ${searchedTags.joinToString(prefix="(", separator=",", postfix=")"){"?"}} ")
             queryParams.addAll(searchedTags)
         }
-        if (pickFrom is PickFrom.Photo) {
+        if (pickFrom is Pick.FromPhoto) {
             queryBuilder.append("AND photo_note_table.photo_id = ? ")
             queryParams.add(pickFrom.photoId)
         }
-        if (pickFrom is PickFrom.Weight) {
+        if (pickFrom is Pick.FromWeight) {
             queryBuilder.append("AND weight_note_table.weight_id = ? ")
             queryParams.add(pickFrom.weightId)
         }
@@ -152,14 +152,14 @@ class GetMoreOfSearchedNotesUseCase(
         _onLastPage = false
     }
 
-    sealed class PickFrom {
-        data class Pet(private val pet: LiveData<com.hfad.petlogger.pets.Pet>): PickFrom() {
+    sealed class Pick {
+        data class FromPet(private val pet: LiveData<com.hfad.petlogger.pets.Pet>): Pick() {
             val petName: String get() = pet.value?.petName ?: ""
         }
-        data class Event(val eventId: Long): PickFrom()
-        data class Weight(val weightId: Long): PickFrom()
-        data class Photo(val photoId: Long): PickFrom()
-        data class Tag(private val tag: LiveData<com.hfad.petlogger.tags.Tag>): PickFrom() {
+        data class FromEvent(val eventId: Long): Pick()
+        data class FromWeight(val weightId: Long): Pick()
+        data class FromPhoto(val photoId: Long): Pick()
+        data class FromTag(private val tag: LiveData<com.hfad.petlogger.tags.Tag>): Pick() {
             val tagName: String get() = tag.value?.tagName ?: ""
         }
     }

@@ -1,10 +1,12 @@
 package com.hfad.petlogger.screens.weight
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.hfad.petlogger.weights.WeightForList
 import com.hfad.petlogger.common.usecases.GetItemsUseCase
+import com.hfad.petlogger.common.usecases.GetSearchedItemsUseCase
 import com.hfad.petlogger.common.util.Navigator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,39 +14,72 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class MonitoringListViewModel(private val getWeightsUseCase: GetItemsUseCase<WeightForList>) : ViewModel() {
+class MonitoringListViewModel(
+    private val getInitialWeightsUseCase: GetItemsUseCase<WeightForList>,
+    private val getSearchedWeightsUseCase: GetSearchedItemsUseCase<WeightForList>
+) : ViewModel() {
     private val _weights: MutableStateFlow<List<WeightForList>> = MutableStateFlow<List<WeightForList>>(listOf())
+    private var currentEventGetter: GetItemsUseCase<WeightForList> = getInitialWeightsUseCase
     val weights: StateFlow<List<WeightForList>> = _weights.asStateFlow()
     val weightNavigator = Navigator()
     private var isLoading: Boolean = false
     init {
-        load()
+        reload()
     }
 
     fun load() {
         viewModelScope.launch {
             isLoading = true
-            val loadedWeights = getWeightsUseCase()
+            val loadedWeights = getInitialWeightsUseCase()
             _weights.update { it + loadedWeights }
-            /*_weights.value.map {
-                Log.d("WeightListVM", "WeightId: ${it.weightId}, WeightDate&Time: ${it.weightDate},${it.weightTime}, PetName: ${it.weightPetName}, Grams: ${it.weightGramsAmt}")
-            }*/
+            isLoading = false
+        }
+    }
+
+    private fun reload() {
+        viewModelScope.launch {
+            isLoading = true
+            val loadedWeights = currentEventGetter()
+            _weights.update { loadedWeights }
             isLoading = false
         }
     }
 
     fun onLastPage(): Boolean {
-        return getWeightsUseCase.onLastPage
+        return getInitialWeightsUseCase.onLastPage
     }
 
     fun isLoading(): Boolean {
         return isLoading
     }
+
+    fun onQueryTextSubmit(query: String?) {
+        if (query != null) {
+            reinitializeGetterType(query)
+        }
+    }
+
+    fun onQueryTextChanged(newText: String?) {
+        if (newText != null) {
+            reinitializeGetterType(newText)
+        }
+    }
+
+    private fun reinitializeGetterType(query: String) {
+        if (query.isNotEmpty()) {
+            getSearchedWeightsUseCase.changeSearchQueryAndResetCurrentPoint(query)
+            currentEventGetter = getSearchedWeightsUseCase
+        } else {
+            currentEventGetter = getInitialWeightsUseCase
+            currentEventGetter.resetCurrentPoint()
+        }
+        reload()
+    }
     companion object {
-        fun provideFactory(getWeightsUseCase: GetItemsUseCase<WeightForList>): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+        fun provideFactory(getInitialWeightsUseCase: GetItemsUseCase<WeightForList>, getSearchedWeightsUseCase: GetSearchedItemsUseCase<WeightForList>): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(MonitoringListViewModel::class.java)) {
-                    return MonitoringListViewModel(getWeightsUseCase) as T
+                    return MonitoringListViewModel(getInitialWeightsUseCase, getSearchedWeightsUseCase) as T
                 }
                 throw IllegalArgumentException("Unknown ViewModel")
             }

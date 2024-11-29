@@ -23,7 +23,7 @@ class EditPetViewModel(
     var newPetDOB = SelectableDateOptional()
     private val _doneUpdating = MutableLiveData(false)
     val doneUpdating: LiveData<Boolean> get() = _doneUpdating
-    val _goToPetList = MutableLiveData(false)
+    private val _goToPetList = MutableLiveData(false)
     val goToPetList: LiveData<Boolean> get() = _goToPetList
 
     init {
@@ -45,7 +45,7 @@ class EditPetViewModel(
     fun updatePet(
         eventsToRemove: List<Long> = listOf<Long>(),
         eventsToAdd: List<Long> = listOf<Long>(),
-        weightsToRemove: List<Weight> = listOf<Weight>(),
+        weightsToRemove: List<Long> = listOf<Long>(),
         photosToAdd: List<Photo> = listOf<Photo>(),
         photosToRemove: List<Photo> = listOf<Photo>(),
         petProfilePhotoToAdd: Photo? = null,

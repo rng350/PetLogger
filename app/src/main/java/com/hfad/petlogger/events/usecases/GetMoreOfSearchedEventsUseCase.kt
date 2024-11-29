@@ -15,7 +15,7 @@ import kotlinx.coroutines.withContext
 class GetMoreOfSearchedEventsUseCase(
     private val eventDao: EventDao,
     private val eventAmt: Int,
-    private val pickFrom: PickFrom? = null
+    private val pickFrom: Pick? = null
 ): GetSearchedItemsUseCase<EventForList> {
     override var currentQuery: String = ""
     private var lastEventDate = Constants.OFFSET_DATE_TIME_MAX_ALLOWED
@@ -33,13 +33,13 @@ class GetMoreOfSearchedEventsUseCase(
 
         val nonCategorizedSearch = parsedSearch[null]?:listOf()
         val searchedPets =
-            if (pickFrom is PickFrom.Pet) {
+            if (pickFrom is Pick.FromPet) {
                 val petsHashedSet = parsedSearch["pet"]?.toHashSet() ?: HashSet<String>()
                 petsHashedSet.add(pickFrom.petName)
                 petsHashedSet.toList()
             } else parsedSearch["pet"]?.toHashSet()?.toList()?:listOf()
         val searchedTags =
-            if (pickFrom is PickFrom.Tag) {
+            if (pickFrom is Pick.FromTag) {
                 val tagsHashedSet = parsedSearch["#"]?.toHashSet() ?: HashSet<String>()
                 tagsHashedSet.add(pickFrom.tagName)
                 tagsHashedSet.toList()
@@ -60,10 +60,10 @@ class GetMoreOfSearchedEventsUseCase(
         }
         pickFrom?.let {
             when (pickFrom) {
-                is PickFrom.Note -> {
+                is Pick.FromNote -> {
                     queryBuilder.append("JOIN event_note_table ON event_table.event_id=event_note_table.event_id ")
                 }
-                is PickFrom.Photo -> {
+                is Pick.FromPhoto -> {
                     queryBuilder.append("JOIN photo_event_table ON event_table.event_id=photo_event_table.event_id ")
                 }
                 else -> {}
@@ -108,11 +108,11 @@ class GetMoreOfSearchedEventsUseCase(
             queryBuilder.append("AND tag_table.tag_name IN ${searchedTags.joinToString(prefix="(", separator=",", postfix=")"){"?"}} ")
             queryParams.addAll(searchedTags)
         }
-        if (pickFrom is PickFrom.Photo) {
+        if (pickFrom is Pick.FromPhoto) {
             queryBuilder.append("AND photo_event_table.photo_id = ? ")
             queryParams.add(pickFrom.photoId)
         }
-        if (pickFrom is PickFrom.Note) {
+        if (pickFrom is Pick.FromNote) {
             queryBuilder.append("AND event_note_table.note_id = ? ")
             queryParams.add(pickFrom.noteId)
         }
@@ -147,14 +147,14 @@ class GetMoreOfSearchedEventsUseCase(
         _onLastPage = false
     }
 
-    sealed class PickFrom {
+    sealed class Pick {
 
-        data class Pet(private val pet: LiveData<com.hfad.petlogger.pets.Pet>): PickFrom() {
+        data class FromPet(private val pet: LiveData<com.hfad.petlogger.pets.Pet>): Pick() {
             val petName: String get() = pet.value?.petName ?: ""
         }
-        data class Note(val noteId: Long): PickFrom()
-        data class Photo(val photoId: Long): PickFrom()
-        data class Tag(private val tag: LiveData<com.hfad.petlogger.tags.Tag>): PickFrom() {
+        data class FromNote(val noteId: Long): Pick()
+        data class FromPhoto(val photoId: Long): Pick()
+        data class FromTag(private val tag: LiveData<com.hfad.petlogger.tags.Tag>): Pick() {
             val tagName: String get() = tag.value?.tagName ?: ""
         }
     }

@@ -7,12 +7,12 @@ import com.hfad.petlogger.common.util.GetWeightGramsDisplayUseCase
 import java.time.OffsetDateTime
 
 data class WeightForListFetched(
-    val weightId: Long,
-    val weightGramsAmt: Int,
-    val weightDateTime: OffsetDateTime,
-    val weightPetName: String,
-    val prevWeightGramsAmt: Int?
-) {
+    override val weightId: Long,
+    override val weightGramsAmt: Int,
+    override val weightDateTime: OffsetDateTime,
+    override val weightPetName: String,
+    override val prevWeightGramsAmt: Int?
+): FetchedWeight, WithPreviousWeight, WithPetName {
         fun toWeightForList(): WeightForList {
             val dateDisplay = GetDateDisplayUseCase()
             val timeDisplay = GetTimeDisplayUseCase()

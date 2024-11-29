@@ -11,7 +11,7 @@ import com.hfad.petlogger.notes.Note
 import com.hfad.petlogger.common.associationentities.PetNote
 import com.hfad.petlogger.common.associationentities.PetPhoto
 import com.hfad.petlogger.common.associationentities.PetProfilePhoto
-import com.hfad.petlogger.weights.PetWeightForDisplay
+import com.hfad.petlogger.weights.PetWeightForSelection
 import com.hfad.petlogger.photos.Photo
 import com.hfad.petlogger.tags.Tag
 import com.hfad.petlogger.weights.Weight
@@ -20,6 +20,8 @@ import com.hfad.petlogger.common.util.GetDateDisplayUseCase
 import com.hfad.petlogger.common.util.GetTimeDisplayUseCase
 import com.hfad.petlogger.photos.MediaRepository
 import com.hfad.petlogger.tags.TagRepository
+import com.hfad.petlogger.weights.PetWeightForDisplay
+import com.hfad.petlogger.weights.PetWeightForDisplayFetched
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -91,7 +93,7 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
         eventsToAdd: List<Long> = listOf<Long>(),
         eventsToRemove: List<Long> = listOf<Long>(),
         weightsToAdd: List<Weight> = listOf<Weight>(),
-        weightsToRemove: List<Weight> = listOf<Weight>(),
+        weightsToRemove: List<Long> = listOf<Long>(),
         photosToAdd: List<Photo> = listOf<Photo>(),
         photosToRemove: List<Photo> = listOf<Photo>(),
         notesToAdd: List<Note> = listOf<Note>(),
@@ -116,7 +118,7 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
             weightDao.insert(weightsToAdd)
         }
         val petWeightsDeleted = async {
-            weightDao.delete(weightsToRemove)
+            weightDao.deleteWeightsById(weightsToRemove)
         }
         val petPhotosAdded = async {
             addPetPhotos(petId=pet.petID, photos=photosToAdd, profilePic = petProfilePhotoToAdd)
@@ -197,16 +199,12 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
             }.flowOn(Dispatchers.IO)
     }
 
-    suspend fun getPetWeights(petId: Long, lastWeightDate: OffsetDateTime, lastWeightId: Long, amtLimit: Int): List<Weight> {
-        return petDao.getWeightsOfPetPaginated(petId, lastWeightDate, lastWeightId, amtLimit)
-    }
-
     suspend fun getPetWeightsPaginated(
         petId: Long,
         lastWeightDate: OffsetDateTime,
         lastWeightId: Long,
         amtLimit: Int
-    ): List<Weight> = withContext(Dispatchers.IO) {
+    ): List<PetWeightForDisplayFetched> = withContext(Dispatchers.IO) {
         petDao.getWeightsOfPetPaginated(petId, lastWeightDate, lastWeightId, amtLimit)
     }
 
@@ -231,13 +229,13 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
         //petDao.getEventsOfPetPaginatedCC(petId, lastEventDate, eventAmt)
     }
 
-    suspend fun getCheckablePetWeightsWithTextFields(petId: Long): List<CheckableItem<PetWeightForDisplay>> = withContext(Dispatchers.IO) {
+    suspend fun getCheckablePetWeightsWithTextFields(petId: Long): List<CheckableItem<PetWeightForSelection>> = withContext(Dispatchers.IO) {
         val getDateDisplay = GetDateDisplayUseCase()
         val getTimeDisplay = GetTimeDisplayUseCase()
         petDao.getWeightsOfPet(petId).map { weight ->
             CheckableItem(
-                PetWeightForDisplay(
-                    weight,
+                PetWeightForSelection(
+                    weight.id,
                     getDateDisplay(weight.weightDateTime),
                     getTimeDisplay(weight.weightDateTime),
                     "${weight.weightGrams}g"

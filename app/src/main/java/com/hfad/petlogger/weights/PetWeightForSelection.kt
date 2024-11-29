@@ -1,9 +1,8 @@
 package com.hfad.petlogger.weights
 
-data class PetWeightForDisplay(
+data class PetWeightForSelection(
     val weightId: Long,
-    val weightGramsAmt: String,
     val weightDate: String,
     val weightTime: String,
-    val prevWeightDifference: String
+    val weightAmt: String
 )

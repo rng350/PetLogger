@@ -8,6 +8,7 @@ import com.hfad.petlogger.pets.PetRepository
 import com.hfad.petlogger.common.util.GetDateDisplayUseCase
 import com.hfad.petlogger.common.util.GetDateTimeDisplayUseCase
 import com.hfad.petlogger.common.util.GetPeriodDisplayUseCase
+import com.hfad.petlogger.weights.PetWeightForDisplay
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
@@ -47,10 +48,10 @@ class ViewPetViewModel (
         }
     }
 
-    fun setLatestWeight(weights: List<Weight>, gramSingular: String = "gram", gramPlural: String = "grams") {
+    fun setLatestWeight(weights: List<PetWeightForDisplay>) {
         if (weights.isNotEmpty()) {
-            mostRecentWeightAmtDisplay.value = "${weights[0].weightGrams} ${if (weights[0].weightGrams == 1) gramSingular else gramPlural}"
-            mostRecentWeightDateDisplay.value = getDateTime(weights[0].weightDateTime)
+            mostRecentWeightAmtDisplay.value = weights[0].weightGramsAmt
+            mostRecentWeightDateDisplay.value = "${weights[0].weightDate} at ${weights[0].weightTime}"
         }
     }
 

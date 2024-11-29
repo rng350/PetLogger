@@ -152,4 +152,5 @@
     <string name="add_new_event_content_desc">Add new event</string>
     <string name="add_new_note_content_desc">Add new note</string>
     <string name="search_events">Search Events</string>
+    <string name="search_weights">Search Weights</string>
 </resources>

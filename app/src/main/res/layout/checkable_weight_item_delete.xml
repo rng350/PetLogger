@@ -9,7 +9,7 @@
             type="com.hfad.petlogger.common.CheckableItem" />
         <variable
             name="weightDisplay"
-            type="com.hfad.petlogger.weights.PetWeightForDisplay" />
+            type="com.hfad.petlogger.weights.PetWeightForSelection" />
     </data>
 
     <com.google.android.material.card.MaterialCardView

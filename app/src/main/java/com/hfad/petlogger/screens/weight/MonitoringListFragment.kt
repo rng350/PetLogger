@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -18,6 +19,7 @@ import com.hfad.petlogger.weights.usecases.GetMoreOfAllWeightsUseCase
 import com.hfad.petlogger.weights.WeightRepository
 import com.hfad.petlogger.common.setAppBarTitle
 import com.hfad.petlogger.screens.sections.recyclerviews.SetupAssociatedWeightsDisplayUseCase
+import com.hfad.petlogger.weights.usecases.GetSearchedWeightsFromAllForDisplayUseCase
 
 class MonitoringListFragment : Fragment() {
     private var _binding: FragmentMonitoringListBinding? = null
@@ -35,8 +37,9 @@ class MonitoringListFragment : Fragment() {
         val database = PetLoggerDatabase.getInstance(application)
         val weightRepository = WeightRepository(database)
         val getWeightsUseCase = GetMoreOfAllWeightsUseCase(weightRepository, weightsAmt = 15)
+        val getSearchedWeights = GetSearchedWeightsFromAllForDisplayUseCase(database.weightDao, weightsAmt = 15)
         viewModel = ViewModelProvider(this,
-            MonitoringListViewModel.provideFactory(getWeightsUseCase)
+            MonitoringListViewModel.provideFactory(getWeightsUseCase, getSearchedWeights)
         ).get(MonitoringListViewModel::class.java)
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
@@ -58,6 +61,18 @@ class MonitoringListFragment : Fragment() {
             isLoading = {viewModel.isLoading()},
             onLast = {viewModel.onLastPage()}
         )
+
+        binding.searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                viewModel.onQueryTextSubmit(query)
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                viewModel.onQueryTextChanged(newText)
+                return true
+            }
+        })
 
         viewModel.weightNavigator.navigateTo.observe(viewLifecycleOwner, Observer {
             it?.let {

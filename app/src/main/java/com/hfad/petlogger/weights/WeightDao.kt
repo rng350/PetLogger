@@ -4,8 +4,10 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.RawQuery
 import androidx.room.Transaction
 import androidx.room.Update
+import androidx.sqlite.db.SimpleSQLiteQuery
 import com.hfad.petlogger.notes.Note
 import com.hfad.petlogger.pets.PetWithProfilePic
 import com.hfad.petlogger.tags.Tag
@@ -212,4 +214,16 @@ interface WeightDao {
         lastNoteId: Long,
         noteAmt: Int
     ): List<Note>
+
+    @Query("DELETE FROM weight_table WHERE weight_id=:weightId")
+    suspend fun deleteWeightById(weightId: Long)
+
+    @Query("DELETE FROM weight_table WHERE weight_id IN (:weightIds)")
+    suspend fun deleteWeightsById(weightIds: List<Long>)
+
+    @RawQuery
+    suspend fun getWeightForGeneralDisplayList(query: SimpleSQLiteQuery): List<WeightForListFetched>
+
+    @RawQuery
+    suspend fun getWeightsOfPetForDisplayList(query: SimpleSQLiteQuery): List<PetWeightForDisplayFetched>
 }

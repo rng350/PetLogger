@@ -66,13 +66,13 @@ class ViewPhotoFragment : Fragment() {
         binding.associatedPetsDisplayViewModel = associatedPetsDisplayViewModel
 
         val getEventsOfPhotoForDisplayUseCase = GetMoreEventsOfPhotoUseCase(mediaRepository, photoId, eventAmt = 10)
-        val getSearchedEvents = GetMoreOfSearchedEventsUseCase(database.eventDao, eventAmt=10, GetMoreOfSearchedEventsUseCase.PickFrom.Photo(photoId))
+        val getSearchedEvents = GetMoreOfSearchedEventsUseCase(database.eventDao, eventAmt=10, GetMoreOfSearchedEventsUseCase.Pick.FromPhoto(photoId))
         val eventListViewModel = ViewModelProvider(this, EventListViewModel.provideFactory(getEventsOfPhotoForDisplayUseCase, getSearchedEvents)).get(
             EventListViewModel::class.java)
         binding.eventListViewModel = eventListViewModel
 
         val getNotesOfPhoto = GetMoreNotesOfPhotoUseCase(mediaRepository, photoId, notesAmt = 10)
-        val getSearchedNotesOfPhoto = GetMoreOfSearchedNotesUseCase(database.noteDao, notesAmt = 10, GetMoreOfSearchedNotesUseCase.PickFrom.Photo(photoId))
+        val getSearchedNotesOfPhoto = GetMoreOfSearchedNotesUseCase(database.noteDao, notesAmt = 10, GetMoreOfSearchedNotesUseCase.Pick.FromPhoto(photoId))
         val noteListViewModel = ViewModelProvider(this, NoteListViewModel.provideFactory(getNotesOfPhoto, getSearchedNotesOfPhoto)).get(
             NoteListViewModel::class.java)
         binding.noteListViewModel = noteListViewModel

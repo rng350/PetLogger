@@ -61,7 +61,7 @@ class ViewWeightFragment : Fragment() {
         binding.viewModel = viewModel
 
         val getNotesOfWeight = GetMoreNotesOfWeightUseCase(weightRepository, weightId, notesAmt = 10)
-        val getSearchedNotesOfWeight = GetMoreOfSearchedNotesUseCase(database.noteDao, notesAmt = 10, GetMoreOfSearchedNotesUseCase.PickFrom.Weight(weightId))
+        val getSearchedNotesOfWeight = GetMoreOfSearchedNotesUseCase(database.noteDao, notesAmt = 10, GetMoreOfSearchedNotesUseCase.Pick.FromWeight(weightId))
         val noteListViewModel = ViewModelProvider(this, NoteListViewModel.provideFactory(getNotesOfWeight, getSearchedNotesOfWeight)).get(
             NoteListViewModel::class.java)
         binding.noteListViewModel = noteListViewModel

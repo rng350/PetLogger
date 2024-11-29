@@ -42,6 +42,7 @@ import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesUseCase
 import com.hfad.petlogger.screens.event.EventListViewModel
 import com.hfad.petlogger.screens.note.NoteListViewModel
 import com.hfad.petlogger.screens.photo.FullGalleryViewModel
+import com.hfad.petlogger.weights.usecases.GetSearchedWeightsOfPetForDisplayUseCase
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -70,13 +71,14 @@ class ViewPetFragment : Fragment() {
         binding.viewPetViewModel = viewPetViewModel
 
         val getAssociatedEvents = GetMoreEventsOfPetUseCase(petRepository, petId, eventAmt = 10)
-        val getSearchedEvents = GetMoreOfSearchedEventsUseCase(database.eventDao, eventAmt=10, GetMoreOfSearchedEventsUseCase.PickFrom.Pet(viewPetViewModel.pet))
+        val getSearchedEvents = GetMoreOfSearchedEventsUseCase(database.eventDao, eventAmt=10, GetMoreOfSearchedEventsUseCase.Pick.FromPet(viewPetViewModel.pet))
         val eventListViewModel = ViewModelProvider(this, EventListViewModel.provideFactory(getAssociatedEvents, getSearchedEvents)).get(
             EventListViewModel::class.java)
         binding.eventListViewModel = eventListViewModel
 
         val getAssociatedWeights = GetMoreWeightsOfPetUseCase(petRepository, petId, weightsAmt = 10)
-        val associatedWeightsDisplayViewModel = ViewModelProvider(this, AssociatedPetWeightsDisplayViewModel.provideFactory(getAssociatedWeights)).get(
+        val getSearchedWeights = GetSearchedWeightsOfPetForDisplayUseCase(database.weightDao, weightsAmt = 15, pet = viewPetViewModel.pet)
+        val associatedWeightsDisplayViewModel = ViewModelProvider(this, AssociatedPetWeightsDisplayViewModel.provideFactory(getAssociatedWeights, getSearchedWeights)).get(
             AssociatedPetWeightsDisplayViewModel::class.java)
         binding.associatedPetWeightsDisplayViewModel = associatedWeightsDisplayViewModel
 
@@ -86,7 +88,7 @@ class ViewPetFragment : Fragment() {
         binding.photoListViewModel = photoListViewModel
 
         val getNotesOfPet = GetMoreNotesOfPetUseCase(petRepository, petId, notesAmt = 10)
-        val getSearchedNotesOfPet = GetMoreOfSearchedNotesUseCase(database.noteDao, notesAmt = 10, GetMoreOfSearchedNotesUseCase.PickFrom.Pet(viewPetViewModel.pet))
+        val getSearchedNotesOfPet = GetMoreOfSearchedNotesUseCase(database.noteDao, notesAmt = 10, GetMoreOfSearchedNotesUseCase.Pick.FromPet(viewPetViewModel.pet))
         val noteListViewModel = ViewModelProvider(this, NoteListViewModel.provideFactory(getNotesOfPet, getSearchedNotesOfPet)).get(
             NoteListViewModel::class.java)
         binding.noteListViewModel = noteListViewModel
