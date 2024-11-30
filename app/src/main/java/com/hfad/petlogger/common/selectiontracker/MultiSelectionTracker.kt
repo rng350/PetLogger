@@ -27,9 +27,14 @@ import kotlinx.coroutines.launch
 
     VISIBLE OPTIONS
     The checkable options shown in the dialog. Can vary based depending on whatever query may be in, say, a search box.
+
+    VISIBLE CURRENT SELECTION
+    The current selection being displayed. May be a limited subset of "CURRENT SELECTION" depending on pagination and search.
 **/
 class MultiSelectionTracker<T>(
     private val allOptionsFetcher: GetItemsUseCase<T>,
+    // private val getSearchedOptions: GetSearchedItemsUseCase<T>,
+    // private val currentSelectionDisplayFetcher: GetSearchedItemsWithAllowedOptionsPoolUseCase<T>,
     initialItemsUseCase: GetMultipleInitialItemsUseCase<T>? = null,
     private val coroutineScope: CoroutineScope,
     private val choiceLimit: Int = Int.MAX_VALUE
@@ -46,6 +51,11 @@ class MultiSelectionTracker<T>(
     // in-between
     private val _prospectiveSelection = MutableLiveData<List<T>>()
     val prospectiveSelection: LiveData<List<T>> get() = _prospectiveSelection
+    private val _visibleCurrentSelection = MutableLiveData<List<T>>()
+    val visibleCurrentSelection: LiveData<List<T>> get() = _visibleCurrentSelection
+
+    private var currentVisibleSelectionOptionsGetter: GetItemsUseCase<T> = allOptionsFetcher
+   //private lateinit var currentVisibleSelectionDisplayGetter: GetSearchedItemsWithAllowedOptionsPoolUseCase<T>
 
     init {
         coroutineScope.launch {
@@ -85,15 +95,21 @@ class MultiSelectionTracker<T>(
             visibleOptionsMap = visibleOptionsFetched.associateBy { it.item }
 
             _currentSelection.value = currentSelectionTemp
+            _visibleCurrentSelection.value = currentSelectionTemp
             _prospectiveSelection.value = currentSelectionTemp
         }
     }
 
     // call whenever search box is interacted with
     fun setVisibleSelectionOptions(visibleOptionsFetcher: GetItemsUseCase<T>) {
+        currentVisibleSelectionOptionsGetter = visibleOptionsFetcher
+        reloadVisibleSelectionOptions()
+    }
+
+    private fun reloadVisibleSelectionOptions() {
         coroutineScope.launch {
             val visibleOptionsFetched = async {
-                visibleOptionsFetcher()
+                currentVisibleSelectionOptionsGetter()
             }.await().map {
                 CheckableItem(it, MutableLiveData(prospectiveSelection.value?.contains(it) ?: false))
             }
@@ -102,21 +118,39 @@ class MultiSelectionTracker<T>(
         }
     }
 
+    // meant to be used with pagination
+    fun loadVisibleSelectionOptions() {
+        coroutineScope.launch {
+            val visibleOptionsFetched = async {
+                currentVisibleSelectionOptionsGetter()
+            }.await().map {
+                CheckableItem(it, MutableLiveData(prospectiveSelection.value?.contains(it) ?: false))
+            }
+            _visibleOptions.value = (_visibleOptions.value ?: listOf()) + visibleOptionsFetched
+            visibleOptionsMap = visibleOptionsFetched.associateBy { it.item }
+        }
+    }
+
+    /*private fun reloadVisibleSelectionDisplay() {
+        coroutineScope.launch {
+            val visibleCurrentSelectionFetched = currentVisibleSelectionDisplayGetter(currentSelection.value ?: listOf())
+            _visibleCurrentSelection.value = visibleCurrentSelectionFetched
+        }
+    }
+    fun loadVisibleSelectionDisplay() {
+        coroutineScope.launch {
+            val visibleCurrentSelectionFetched = currentVisibleSelectionDisplayGetter(currentSelection.value ?: listOf())
+            _visibleCurrentSelection.value = (_visibleCurrentSelection.value ?: listOf()) + visibleCurrentSelectionFetched
+        }
+    }*/
+
     // call when pressing "Cancel" in dialog
     fun cancelProspectiveSelection() {
         // set prospective to current
-
         _visibleOptions.value = _visibleOptions.value?.onEach { it.isChecked.value = currentSelection.value?.contains(it.item) ?: false } ?: listOf()
         _prospectiveSelection.value = currentSelection.value
+        // reset selection option view in dialog
         setVisibleSelectionOptions(allOptionsFetcher)
-
-        /*currentSelection.value?.let { currentSelectionList ->
-            currentSelectionList.onEach { it -> it.isChecked.value = true }
-            prospectiveSelection.value?.let { prospectiveSelectionList ->
-                prospectiveSelectionList.onEach { it -> it.isChecked.value = currentSelectionList.contains(it) }
-            }
-            _prospectiveSelection.value = currentSelection.value
-        }*/
     }
 
     // call when pressing "Ok" in dialog
@@ -183,6 +217,11 @@ class MultiSelectionTracker<T>(
             val listCopy = it.toMutableList()
             listCopy.remove(item)
             _currentSelection.value = listCopy
+        }
+        _visibleCurrentSelection.value?.let {
+            val listCopy = it.toMutableList()
+            listCopy.remove(item)
+            _visibleCurrentSelection.value = listCopy
         }
     }
 

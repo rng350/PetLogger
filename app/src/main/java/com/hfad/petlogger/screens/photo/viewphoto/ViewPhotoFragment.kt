@@ -31,6 +31,7 @@ import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPetsDisp
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPetsDisplayViewModel
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedTagsDisplayViewModel
 import com.hfad.petlogger.common.setAppBarTitle
+import com.hfad.petlogger.events.usecases.BuildEventSearchQueryUseCase
 import com.hfad.petlogger.events.usecases.GetMoreOfSearchedEventsUseCase
 import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesUseCase
 import com.hfad.petlogger.screens.event.EventListViewModel
@@ -66,7 +67,7 @@ class ViewPhotoFragment : Fragment() {
         binding.associatedPetsDisplayViewModel = associatedPetsDisplayViewModel
 
         val getEventsOfPhotoForDisplayUseCase = GetMoreEventsOfPhotoUseCase(mediaRepository, photoId, eventAmt = 10)
-        val getSearchedEvents = GetMoreOfSearchedEventsUseCase(database.eventDao, eventAmt=10, GetMoreOfSearchedEventsUseCase.Pick.FromPhoto(photoId))
+        val getSearchedEvents = GetMoreOfSearchedEventsUseCase(database.eventDao, eventAmt=10, BuildEventSearchQueryUseCase.Pick.FromPhoto(photoId))
         val eventListViewModel = ViewModelProvider(this, EventListViewModel.provideFactory(getEventsOfPhotoForDisplayUseCase, getSearchedEvents)).get(
             EventListViewModel::class.java)
         binding.eventListViewModel = eventListViewModel
