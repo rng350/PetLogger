@@ -25,7 +25,7 @@ class ParseSearchQueryUseCase(private val prefixes: List<String> = listOf()) {
                 prefix = "#"
             }
             val content = matchResult.groups[1]?.value ?: ""
-            quotedMatches.getOrPut(prefix){ mutableListOf() }.add(content)
+            quotedMatches.getOrPut(prefix){ mutableListOf() }.add(if (prefix==null) "\"$content\"" else content)
         }
 
         // Remove all quoted strings from the query
