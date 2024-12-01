@@ -1,6 +1,7 @@
 package com.hfad.petlogger.photos
 
 import androidx.room.*
+import androidx.sqlite.db.SimpleSQLiteQuery
 import com.hfad.petlogger.events.Event
 import com.hfad.petlogger.notes.Note
 import com.hfad.petlogger.common.associationentities.PetPhoto
@@ -169,4 +170,7 @@ interface PhotoDao {
         lastNoteId: Long,
         noteAmt: Int
     ): List<Note>
+
+    @RawQuery
+    suspend fun searchPhotos(query: SimpleSQLiteQuery): List<Photo>
 }

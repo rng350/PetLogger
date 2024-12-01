@@ -9,6 +9,7 @@ import com.hfad.petlogger.common.usecases.GetItemsUseCase
 import com.hfad.petlogger.common.usecases.GetSearchedItemsUseCase
 import com.hfad.petlogger.common.util.Navigator
 import com.hfad.petlogger.common.util.NewEntityNavigator
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

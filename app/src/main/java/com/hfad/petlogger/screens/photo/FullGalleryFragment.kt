@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -17,6 +18,7 @@ import com.hfad.petlogger.common.navigateSafe
 import com.hfad.petlogger.photos.usecases.GetMoreOfAllPhotosUseCase
 import com.hfad.petlogger.photos.MediaRepository
 import com.hfad.petlogger.common.setAppBarTitle
+import com.hfad.petlogger.photos.usecases.GetMoreOfSearchedPhotosUseCase
 import com.hfad.petlogger.screens.sections.recyclerviews.SetupAssociatedPhotosDisplayUseCase
 
 class FullGalleryFragment : Fragment() {
@@ -36,7 +38,8 @@ class FullGalleryFragment : Fragment() {
 
         val mediaRepository = MediaRepository(database, application.applicationContext)
         val getAllPhotos = GetMoreOfAllPhotosUseCase(mediaRepository, photosAmt = 18)
-        viewModel = ViewModelProvider(this, FullGalleryViewModel.provideFactory(getAllPhotos)).get(
+        val getSearchedPhotos = GetMoreOfSearchedPhotosUseCase(database.photoDao, photosAmt = 10)
+        viewModel = ViewModelProvider(this, FullGalleryViewModel.provideFactory(getAllPhotos, getSearchedPhotos)).get(
             FullGalleryViewModel::class.java)
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
@@ -58,6 +61,18 @@ class FullGalleryFragment : Fragment() {
             isLoading = {viewModel.isLoading()},
             onLast = {viewModel.onLastPage()}
         )
+
+        binding.searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                viewModel.onQueryTextSubmit(query)
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                viewModel.onQueryTextChanged(newText)
+                return true
+            }
+        })
 
         binding.addPhotoButton.setOnClickListener {
             this.findNavController().navigateSafe(FullGalleryFragmentDirections.actionFullGalleryFragmentToNewPhotoFragment())

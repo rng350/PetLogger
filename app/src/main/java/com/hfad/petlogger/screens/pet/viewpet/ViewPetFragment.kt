@@ -41,6 +41,8 @@ import com.hfad.petlogger.events.usecases.BuildEventSearchQueryUseCase
 import com.hfad.petlogger.events.usecases.GetMoreOfSearchedEventsUseCase
 import com.hfad.petlogger.notes.usecases.BuildNoteSearchQueryUseCase
 import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesUseCase
+import com.hfad.petlogger.photos.usecases.BuildPhotoSearchQueryUseCase
+import com.hfad.petlogger.photos.usecases.GetMoreOfSearchedPhotosUseCase
 import com.hfad.petlogger.screens.event.EventListViewModel
 import com.hfad.petlogger.screens.note.NoteListViewModel
 import com.hfad.petlogger.screens.photo.FullGalleryViewModel
@@ -85,7 +87,12 @@ class ViewPetFragment : Fragment() {
         binding.associatedPetWeightsDisplayViewModel = associatedWeightsDisplayViewModel
 
         val getPhotosOfPetForDisplayUseCase = GetMorePhotosOfPetUseCase(petRepository, petId, photosAmt = 10)
-        val photoListViewModel = ViewModelProvider(this, FullGalleryViewModel.provideFactory(getPhotosOfPetForDisplayUseCase)).get(
+        val getSearchedPhotosOfPetUseCase = GetMoreOfSearchedPhotosUseCase(
+            photoDao = database.photoDao,
+            photosAmt = 10,
+            pickFrom = BuildPhotoSearchQueryUseCase.Pick.FromPet(viewPetViewModel.pet)
+        )
+        val photoListViewModel = ViewModelProvider(this, FullGalleryViewModel.provideFactory(getPhotosOfPetForDisplayUseCase, getSearchedPhotosOfPetUseCase)).get(
             FullGalleryViewModel::class.java)
         binding.photoListViewModel = photoListViewModel
 

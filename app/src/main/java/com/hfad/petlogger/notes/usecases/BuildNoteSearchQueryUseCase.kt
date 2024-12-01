@@ -28,13 +28,13 @@ class BuildNoteSearchQueryUseCase(
 
         val nonCategorizedSearch = parsedSearch[null]?:listOf()
         val searchedPets =
-            if (pickFrom is Pick.FromPet) {
+            if (pickFrom is Pick.FromPet && pickFrom.petName.isNotEmpty()) {
                 val petsHashedSet = parsedSearch["pet"]?.toHashSet() ?: HashSet<String>()
                 petsHashedSet.add(pickFrom.petName)
                 petsHashedSet.toList()
             } else parsedSearch["pet"]?.toHashSet()?.toList()?:listOf()
         val searchedTags =
-            if (pickFrom is Pick.FromTag) {
+            if (pickFrom is Pick.FromTag && pickFrom.tagName.isNotEmpty()) {
                 val tagsHashedSet = parsedSearch["#"]?.toHashSet() ?: HashSet<String>()
                 tagsHashedSet.add(pickFrom.tagName)
                 tagsHashedSet.toList()
@@ -111,7 +111,7 @@ class BuildNoteSearchQueryUseCase(
             queryBuilder.append("AND photo_note_table.photo_id = ? ")
             queryParams.add(pickFrom.photoId)
         }
-        if (pickFrom is Pick.FromWeight) {
+        else if (pickFrom is Pick.FromWeight) {
             queryBuilder.append("AND weight_note_table.weight_id = ? ")
             queryParams.add(pickFrom.weightId)
         }
@@ -137,7 +137,8 @@ class BuildNoteSearchQueryUseCase(
         }
         queryBuilder.append(havingCountQuery)
 
-        queryBuilder.append("ORDER BY datetime(note_table.note_last_updated) DESC, note_table.note_id DESC LIMIT $notesAmt")
+        queryBuilder.append("ORDER BY datetime(note_table.note_last_updated) DESC, note_table.note_id DESC LIMIT ? ")
+        queryParams.add(notesAmt)
 
         return SimpleSQLiteQuery(queryBuilder.toString(), queryParams.toTypedArray())
     }

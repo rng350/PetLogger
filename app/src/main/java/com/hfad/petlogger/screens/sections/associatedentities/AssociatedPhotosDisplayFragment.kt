@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.hfad.petlogger.databinding.FragmentFullGalleryBinding
@@ -41,6 +42,18 @@ class AssociatedPhotosDisplayFragment : Fragment() {
             loadMore = {galleryViewModel.load()},
             onLast = {galleryViewModel.onLastPage()}
         )
+
+        binding.searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                galleryViewModel.onQueryTextSubmit(query)
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                galleryViewModel.onQueryTextChanged(newText)
+                return true
+            }
+        })
 
         binding.addPhotoButton.setOnClickListener {
             galleryViewModel.newPhotoNavigator.navigateToNewEntityScreen()

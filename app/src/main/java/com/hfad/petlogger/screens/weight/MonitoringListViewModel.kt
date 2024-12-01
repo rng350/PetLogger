@@ -19,7 +19,7 @@ class MonitoringListViewModel(
     private val getSearchedWeightsUseCase: GetSearchedItemsUseCase<WeightForList>
 ) : ViewModel() {
     private val _weights: MutableStateFlow<List<WeightForList>> = MutableStateFlow<List<WeightForList>>(listOf())
-    private var currentEventGetter: GetItemsUseCase<WeightForList> = getInitialWeightsUseCase
+    private var currentWeightGetter: GetItemsUseCase<WeightForList> = getInitialWeightsUseCase
     val weights: StateFlow<List<WeightForList>> = _weights.asStateFlow()
     val weightNavigator = Navigator()
     private var isLoading: Boolean = false
@@ -30,7 +30,7 @@ class MonitoringListViewModel(
     fun load() {
         viewModelScope.launch {
             isLoading = true
-            val loadedWeights = getInitialWeightsUseCase()
+            val loadedWeights = currentWeightGetter()
             _weights.update { it + loadedWeights }
             isLoading = false
         }
@@ -39,7 +39,7 @@ class MonitoringListViewModel(
     private fun reload() {
         viewModelScope.launch {
             isLoading = true
-            val loadedWeights = currentEventGetter()
+            val loadedWeights = currentWeightGetter()
             _weights.update { loadedWeights }
             isLoading = false
         }
@@ -68,10 +68,10 @@ class MonitoringListViewModel(
     private fun reinitializeGetterType(query: String) {
         if (query.isNotEmpty()) {
             getSearchedWeightsUseCase.changeSearchQueryAndResetCurrentPoint(query)
-            currentEventGetter = getSearchedWeightsUseCase
+            currentWeightGetter = getSearchedWeightsUseCase
         } else {
-            currentEventGetter = getInitialWeightsUseCase
-            currentEventGetter.resetCurrentPoint()
+            currentWeightGetter = getInitialWeightsUseCase
+            currentWeightGetter.resetCurrentPoint()
         }
         reload()
     }

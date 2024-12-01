@@ -6,6 +6,7 @@ import com.hfad.petlogger.common.CheckableItem
 import com.hfad.petlogger.common.copyOf
 import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
 import com.hfad.petlogger.common.usecases.GetItemsUseCase
+import com.hfad.petlogger.common.usecases.GetSearchedItemsUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -33,8 +34,8 @@ import kotlinx.coroutines.launch
 **/
 class MultiSelectionTracker<T>(
     private val allOptionsFetcher: GetItemsUseCase<T>,
-    // private val getSearchedOptions: GetSearchedItemsUseCase<T>,
-    // private val currentSelectionDisplayFetcher: GetSearchedItemsWithAllowedOptionsPoolUseCase<T>,
+    //private val getSearchedOptions: GetSearchedItemsUseCase<T>,
+    //private val currentSelectionDisplayFetcher: GetSearchedItemsUseCase<T>,
     initialItemsUseCase: GetMultipleInitialItemsUseCase<T>? = null,
     private val coroutineScope: CoroutineScope,
     private val choiceLimit: Int = Int.MAX_VALUE
@@ -55,7 +56,7 @@ class MultiSelectionTracker<T>(
     val visibleCurrentSelection: LiveData<List<T>> get() = _visibleCurrentSelection
 
     private var currentVisibleSelectionOptionsGetter: GetItemsUseCase<T> = allOptionsFetcher
-   //private lateinit var currentVisibleSelectionDisplayGetter: GetSearchedItemsWithAllowedOptionsPoolUseCase<T>
+   private lateinit var currentVisibleSelectionDisplayGetter: GetItemsUseCase<T>
 
     init {
         coroutineScope.launch {
@@ -131,18 +132,18 @@ class MultiSelectionTracker<T>(
         }
     }
 
-    /*private fun reloadVisibleSelectionDisplay() {
+    private fun reloadVisibleSelectionDisplay() {
         coroutineScope.launch {
-            val visibleCurrentSelectionFetched = currentVisibleSelectionDisplayGetter(currentSelection.value ?: listOf())
+            val visibleCurrentSelectionFetched = currentVisibleSelectionDisplayGetter()
             _visibleCurrentSelection.value = visibleCurrentSelectionFetched
         }
     }
     fun loadVisibleSelectionDisplay() {
         coroutineScope.launch {
-            val visibleCurrentSelectionFetched = currentVisibleSelectionDisplayGetter(currentSelection.value ?: listOf())
+            val visibleCurrentSelectionFetched = currentVisibleSelectionDisplayGetter()
             _visibleCurrentSelection.value = (_visibleCurrentSelection.value ?: listOf()) + visibleCurrentSelectionFetched
         }
-    }*/
+    }
 
     // call when pressing "Cancel" in dialog
     fun cancelProspectiveSelection() {
