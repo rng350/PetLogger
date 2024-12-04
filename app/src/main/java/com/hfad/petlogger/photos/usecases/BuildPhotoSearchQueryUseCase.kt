@@ -29,28 +29,48 @@ class BuildPhotoSearchQueryUseCase(
 
         val nonCategorizedSearch = parsedSearch[null]?:listOf()
 
-        val searchedPets =
-            if (pickFrom is Pick.FromPet && pickFrom.petName.isNotEmpty()) {
-                val petsHashedSet = parsedSearch["pet"]?.toHashSet() ?: HashSet<String>()
-                petsHashedSet.add(pickFrom.petName)
-                petsHashedSet.toList()
-            } else parsedSearch["pet"]?.toHashSet()?.toList()?:listOf()
-        val searchedTags =
-            if (pickFrom is Pick.FromTag && pickFrom.tagName.isNotEmpty()) {
-                val tagsHashedSet = parsedSearch["#"]?.toHashSet() ?: HashSet<String>()
-                tagsHashedSet.add(pickFrom.tagName)
-                tagsHashedSet.toList()
-            } else parsedSearch["#"]?.toHashSet()?.toList()?:listOf()
+        val searchedPets = parsedSearch["pet"]?.toHashSet()?.toList()?:listOf()
+        val searchedTags = parsedSearch["#"]?.toHashSet()?.toList()?:listOf()
 
         val queryBuilder = StringBuilder()
         val queryParams = mutableListOf<Any>()
 
-        queryBuilder.append("SELECT photo_table.* FROM photo_table ")
-        if (pickFrom is Pick.FromNote) {
-            queryBuilder.append("JOIN photo_note_table ON photo_note_table.photo_id=photo_table.photo_id ")
+        when (pickFrom) {
+            is Pick.FromEvent -> {
+                queryBuilder.append("WITH photos_of_given_event AS (SELECT photo_id FROM photo_event_table WHERE event_id = ?) ")
+                queryParams.add(pickFrom.eventId)
+            }
+            is Pick.FromNote -> {
+                queryBuilder.append("WITH photos_of_given_note AS (SELECT photo_id FROM photo_note_table WHERE note_id = ?) ")
+                queryParams.add(pickFrom.noteId)
+            }
+            is Pick.FromPet -> {
+                queryBuilder.append("WITH photos_of_given_pet AS (SELECT photo_id FROM pet_photo_table WHERE pet_id = ?) ")
+                queryParams.add(pickFrom.petId)
+            }
+            is Pick.FromTag -> {
+                queryBuilder.append("WITH photos_of_given_tag AS (SELECT photo_id FROM photo_tag_table WHERE tag_id = ?) ")
+                queryParams.add(pickFrom.tagId)
+            }
+            null -> {}
         }
-        else if (pickFrom is Pick.FromEvent) {
-            queryBuilder.append("JOIN photo_event_table ON photo_event_table.photo_id=photo_table.photo_id ")
+
+        queryBuilder.append("SELECT photo_table.* FROM photo_table ")
+
+        when (pickFrom) {
+            is Pick.FromEvent -> {
+                queryBuilder.append("JOIN photos_of_given_event ON photo_table.photo_id = photos_of_given_event.photo_id ")
+            }
+            is Pick.FromNote -> {
+                queryBuilder.append("JOIN photos_of_given_note ON photo_table.photo_id = photos_of_given_note.photo_id ")
+            }
+            is Pick.FromPet -> {
+                queryBuilder.append("JOIN photos_of_given_pet ON photo_table.photo_id = photos_of_given_pet.photo_id ")
+            }
+            is Pick.FromTag -> {
+                queryBuilder.append("JOIN photos_of_given_tag ON photo_table.photo_id = photos_of_given_tag.photo_id ")
+            }
+            null -> {}
         }
 
         if (searchedPets.isNotEmpty()) {
@@ -93,15 +113,6 @@ class BuildPhotoSearchQueryUseCase(
             queryParams.addAll(searchedTags)
         }
 
-        if (pickFrom is Pick.FromNote) {
-            queryBuilder.append("AND photo_note_table.note_id = ? ")
-            queryParams.add(pickFrom.noteId)
-        }
-        else if (pickFrom is Pick.FromEvent) {
-            queryBuilder.append("AND photo_event_table.event_id = ? ")
-            queryParams.add(pickFrom.eventId)
-        }
-
         photoIdSelectionPool?.let {
             if (photoIdSelectionPool.isEmpty()) {
                 return null
@@ -132,13 +143,9 @@ class BuildPhotoSearchQueryUseCase(
         return SimpleSQLiteQuery(queryBuilder.toString(), queryParams.toTypedArray())
     }
     sealed class Pick {
-        data class FromPet(val pet: LiveData<Pet>): Pick() {
-            val petName: String get() = pet.value?.petName ?: ""
-        }
+        data class FromPet(val petId: Long): Pick()
         data class FromNote(val noteId: Long): Pick()
         data class FromEvent(val eventId: Long): Pick()
-        data class FromTag(val tag: LiveData<Tag>): Pick() {
-            val tagName: String get() = tag.value?.tagName ?: ""
-        }
+        data class FromTag(val tagId: Long): Pick()
     }
 }

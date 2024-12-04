@@ -1,5 +1,6 @@
 package com.hfad.petlogger.notes.usecases
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.hfad.petlogger.common.search.GetBoundingSearchDatesUseCase
@@ -27,18 +28,8 @@ class BuildNoteSearchQueryUseCase(
         if (startAndEndDates == GetBoundingSearchDatesUseCase.Result.Invalid) return null
 
         val nonCategorizedSearch = parsedSearch[null]?:listOf()
-        val searchedPets =
-            if (pickFrom is Pick.FromPet && pickFrom.petName.isNotEmpty()) {
-                val petsHashedSet = parsedSearch["pet"]?.toHashSet() ?: HashSet<String>()
-                petsHashedSet.add(pickFrom.petName)
-                petsHashedSet.toList()
-            } else parsedSearch["pet"]?.toHashSet()?.toList()?:listOf()
-        val searchedTags =
-            if (pickFrom is Pick.FromTag && pickFrom.tagName.isNotEmpty()) {
-                val tagsHashedSet = parsedSearch["#"]?.toHashSet() ?: HashSet<String>()
-                tagsHashedSet.add(pickFrom.tagName)
-                tagsHashedSet.toList()
-            } else parsedSearch["#"]?.toHashSet()?.toList()?:listOf()
+        val searchedPets = parsedSearch["pet"]?.toHashSet()?.toList()?:listOf()
+        val searchedTags = parsedSearch["#"]?.toHashSet()?.toList()?:listOf()
 
         val queryBuilder = StringBuilder()
         val queryParams = mutableListOf<Any>()
@@ -48,6 +39,39 @@ class BuildNoteSearchQueryUseCase(
             queryBuilder.append("WITH matched_notes AS ( SELECT note_id FROM note_table_fts WHERE note_table_fts MATCH ? ) ")
             queryParams.add(nonCategorizedSearch.joinToString(separator=" "))
         }
+
+        if (pickFrom!=null) {
+            if (queryBuilder.isNotEmpty()) {
+                queryBuilder.append(", ")
+            } else if (queryBuilder.isEmpty()) {
+                queryBuilder.append("WITH ")
+            }
+        }
+
+        when (pickFrom) {
+            is Pick.FromEvent -> {
+                queryBuilder.append("notes_of_given_event AS (SELECT note_id FROM event_note_table WHERE event_id = ?) ")
+                queryParams.add(pickFrom.eventId)
+            }
+            is Pick.FromPet -> {
+                queryBuilder.append("notes_of_given_pet AS (SELECT note_id FROM pet_note_table WHERE pet_id = ?) ")
+                queryParams.add(pickFrom.petId)
+            }
+            is Pick.FromPhoto -> {
+                queryBuilder.append("notes_of_given_photo AS (SELECT note_id FROM photo_note_table WHERE photo_id = ?) ")
+                queryParams.add(pickFrom.photoId)
+            }
+            is Pick.FromWeight -> {
+                queryBuilder.append("notes_of_given_weight AS (SELECT note_id FROM weight_note_table WHERE weight_id = ?) ")
+                queryParams.add(pickFrom.weightId)
+            }
+            is Pick.FromTag -> {
+                queryBuilder.append("notes_of_given_tag AS (SELECT note_id FROM note_tag_table WHERE tag_id = ?) ")
+                queryParams.add(pickFrom.tagId)
+            }
+            null -> {}
+        }
+
         // Base query to join Note with associations
         queryBuilder.append("SELECT note_table.* FROM note_table ")
         if (nonCategorizedSearch.isNotEmpty()) {
@@ -55,16 +79,21 @@ class BuildNoteSearchQueryUseCase(
         }
         pickFrom?.let {
             when (pickFrom) {
-                is Pick.FromPhoto -> {
-                    queryBuilder.append("JOIN photo_note_table ON note_table.note_id=photo_note_table.note_id ")
-                }
                 is Pick.FromEvent -> {
-                    queryBuilder.append("JOIN event_note_table ON note_table.note_id=event_note_table.note_id ")
+                    queryBuilder.append("JOIN notes_of_given_event ON note_table.note_id=notes_of_given_event.note_id ")
+                }
+                is Pick.FromPet -> {
+                    queryBuilder.append("JOIN notes_of_given_pet ON note_table.note_id=notes_of_given_pet.note_id ")
+                }
+                is Pick.FromPhoto -> {
+                    queryBuilder.append("JOIN notes_of_given_photo ON note_table.note_id=notes_of_given_photo.note_id ")
                 }
                 is Pick.FromWeight -> {
-                    queryBuilder.append("JOIN weight_note_table ON note_table.note_id=weight_note_table.note_id ")
+                    queryBuilder.append("JOIN notes_of_given_weight ON note_table.note_id=notes_of_given_weight.note_id ")
                 }
-                else -> {}
+                is Pick.FromTag -> {
+                    queryBuilder.append("JOIN notes_of_given_tag ON note_table.note_id=notes_of_given_tag.note_id ")
+                }
             }
         }
         if (searchedPets.isNotEmpty()) {
@@ -107,14 +136,6 @@ class BuildNoteSearchQueryUseCase(
             queryBuilder.append("AND tag_table.tag_name IN ${searchedTags.joinToString(prefix="(", separator=",", postfix=")"){"?"}} ")
             queryParams.addAll(searchedTags)
         }
-        if (pickFrom is Pick.FromPhoto) {
-            queryBuilder.append("AND photo_note_table.photo_id = ? ")
-            queryParams.add(pickFrom.photoId)
-        }
-        else if (pickFrom is Pick.FromWeight) {
-            queryBuilder.append("AND weight_note_table.weight_id = ? ")
-            queryParams.add(pickFrom.weightId)
-        }
 
         noteIdSelectionPool?.let {
             if (noteIdSelectionPool.isEmpty()) {
@@ -140,18 +161,17 @@ class BuildNoteSearchQueryUseCase(
         queryBuilder.append("ORDER BY datetime(note_table.note_last_updated) DESC, note_table.note_id DESC LIMIT ? ")
         queryParams.add(notesAmt)
 
+        Log.d("NoteSearchQuery", "Query: $queryBuilder")
+        Log.d("NoteSearchQuery", "Params: ${queryParams.map{it.toString()}}")
+
         return SimpleSQLiteQuery(queryBuilder.toString(), queryParams.toTypedArray())
     }
 
     sealed class Pick {
-        data class FromPet(private val pet: LiveData<Pet>): Pick() {
-            val petName: String get() = pet.value?.petName ?: ""
-        }
+        data class FromPet(val petId: Long): Pick()
         data class FromEvent(val eventId: Long): Pick()
         data class FromWeight(val weightId: Long): Pick()
         data class FromPhoto(val photoId: Long): Pick()
-        data class FromTag(private val tag: LiveData<Tag>): Pick() {
-            val tagName: String get() = tag.value?.tagName ?: ""
-        }
+        data class FromTag(val tagId: Long): Pick()
     }
 }

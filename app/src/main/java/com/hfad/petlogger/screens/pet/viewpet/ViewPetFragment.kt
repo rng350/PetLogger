@@ -75,7 +75,7 @@ class ViewPetFragment : Fragment() {
         binding.viewPetViewModel = viewPetViewModel
 
         val getAssociatedEvents = GetMoreEventsOfPetUseCase(petRepository, petId, eventAmt = 10)
-        val getSearchedEvents = GetMoreOfSearchedEventsUseCase(database.eventDao, eventAmt=10, BuildEventSearchQueryUseCase.Pick.FromPet(viewPetViewModel.pet))
+        val getSearchedEvents = GetMoreOfSearchedEventsUseCase(database.eventDao, eventAmt=10, BuildEventSearchQueryUseCase.Pick.FromPet(petId))
         val eventListViewModel = ViewModelProvider(this, EventListViewModel.provideFactory(getAssociatedEvents, getSearchedEvents)).get(
             EventListViewModel::class.java)
         binding.eventListViewModel = eventListViewModel
@@ -90,14 +90,14 @@ class ViewPetFragment : Fragment() {
         val getSearchedPhotosOfPetUseCase = GetMoreOfSearchedPhotosUseCase(
             photoDao = database.photoDao,
             photosAmt = 10,
-            pickFrom = BuildPhotoSearchQueryUseCase.Pick.FromPet(viewPetViewModel.pet)
+            pickFrom = BuildPhotoSearchQueryUseCase.Pick.FromPet(petId)
         )
         val photoListViewModel = ViewModelProvider(this, FullGalleryViewModel.provideFactory(getPhotosOfPetForDisplayUseCase, getSearchedPhotosOfPetUseCase)).get(
             FullGalleryViewModel::class.java)
         binding.photoListViewModel = photoListViewModel
 
         val getNotesOfPet = GetMoreNotesOfPetUseCase(petRepository, petId, notesAmt = 10)
-        val getSearchedNotesOfPet = GetMoreOfSearchedNotesUseCase(database.noteDao, notesAmt = 10, BuildNoteSearchQueryUseCase.Pick.FromPet(viewPetViewModel.pet))
+        val getSearchedNotesOfPet = GetMoreOfSearchedNotesUseCase(database.noteDao, notesAmt = 10, BuildNoteSearchQueryUseCase.Pick.FromPet(petId))
         val noteListViewModel = ViewModelProvider(this, NoteListViewModel.provideFactory(getNotesOfPet, getSearchedNotesOfPet)).get(
             NoteListViewModel::class.java)
         binding.noteListViewModel = noteListViewModel

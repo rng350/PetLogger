@@ -27,18 +27,8 @@ class BuildEventSearchQueryUseCase(
         if (startAndEndDates == GetBoundingSearchDatesUseCase.Result.Invalid) return null
 
         val nonCategorizedSearch = parsedSearch[null]?:listOf()
-        val searchedPets =
-            if (pickFrom is Pick.FromPet && pickFrom.petName.isNotEmpty()) {
-                val petsHashedSet = parsedSearch["pet"]?.toHashSet() ?: HashSet<String>()
-                petsHashedSet.add(pickFrom.petName)
-                petsHashedSet.toList()
-            } else parsedSearch["pet"]?.toHashSet()?.toList()?:listOf()
-        val searchedTags =
-            if (pickFrom is Pick.FromTag && pickFrom.tagName.isNotEmpty()) {
-                val tagsHashedSet = parsedSearch["#"]?.toHashSet() ?: HashSet<String>()
-                tagsHashedSet.add(pickFrom.tagName)
-                tagsHashedSet.toList()
-            } else parsedSearch["#"]?.toHashSet()?.toList()?:listOf()
+        val searchedPets = parsedSearch["pet"]?.toHashSet()?.toList()?:listOf()
+        val searchedTags = parsedSearch["#"]?.toHashSet()?.toList()?:listOf()
 
         val queryBuilder = StringBuilder()
         val queryParams = mutableListOf<Any>()
@@ -48,21 +38,54 @@ class BuildEventSearchQueryUseCase(
             queryBuilder.append("WITH matched_events AS ( SELECT event_id FROM event_table_fts WHERE event_table_fts MATCH ? ) ")
             queryParams.add(nonCategorizedSearch.joinToString(separator=" "))
         }
+
+        if (pickFrom!=null) {
+            if (queryBuilder.isNotEmpty()) {
+                queryBuilder.append(", ")
+            } else if (queryBuilder.isEmpty()) {
+                queryBuilder.append("WITH ")
+            }
+        }
+
+        when (pickFrom) {
+            is Pick.FromNote -> {
+                queryBuilder.append("events_of_given_note AS (SELECT event_id FROM event_note_table WHERE note_id = ?) ")
+                queryParams.add(pickFrom.noteId)
+            }
+            is Pick.FromPet -> {
+                queryBuilder.append("events_of_given_pet AS (SELECT event_id FROM event_pet_table WHERE pet_id = ?) ")
+                queryParams.add(pickFrom.petId)
+            }
+            is Pick.FromPhoto -> {
+                queryBuilder.append("events_of_given_photo AS (SELECT event_id FROM photo_event_table WHERE photo_id = ?) ")
+                queryParams.add(pickFrom.photoId)
+            }
+            is Pick.FromTag -> {
+                queryBuilder.append("events_of_given_tag AS (SELECT event_id FROM event_tag_table WHERE tag_id = ?) ")
+                queryParams.add(pickFrom.tagId)
+            }
+            null -> {}
+        }
+
         // Base query to join Event with associations
         queryBuilder.append("SELECT event_table.* FROM event_table ")
         if (nonCategorizedSearch.isNotEmpty()) {
             queryBuilder.append("JOIN matched_events ON event_table.event_id=matched_events.event_id ")
         }
-        pickFrom?.let {
-            when (pickFrom) {
-                is Pick.FromNote -> {
-                    queryBuilder.append("JOIN event_note_table ON event_table.event_id=event_note_table.event_id ")
-                }
-                is Pick.FromPhoto -> {
-                    queryBuilder.append("JOIN photo_event_table ON event_table.event_id=photo_event_table.event_id ")
-                }
-                else -> {}
+        when (pickFrom) {
+            is Pick.FromNote -> {
+                queryBuilder.append("JOIN events_of_given_note ON event_table.event_id=events_of_given_note.event_id ")
             }
+            is Pick.FromPet -> {
+                queryBuilder.append("JOIN events_of_given_pet ON event_table.event_id=events_of_given_pet.event_id ")
+            }
+            is Pick.FromPhoto -> {
+                queryBuilder.append("JOIN events_of_given_photo ON event_table.event_id=events_of_given_photo.event_id ")
+            }
+            is Pick.FromTag -> {
+                queryBuilder.append("JOIN events_of_given_tag ON event_table.event_id=events_of_given_tag.event_id ")
+            }
+            null -> {}
         }
 
         if (searchedPets.isNotEmpty()) {
@@ -103,14 +126,6 @@ class BuildEventSearchQueryUseCase(
             queryBuilder.append("AND tag_table.tag_name IN ${searchedTags.joinToString(prefix="(", separator=",", postfix=")"){"?"}} ")
             queryParams.addAll(searchedTags)
         }
-        if (pickFrom is Pick.FromPhoto) {
-            queryBuilder.append("AND photo_event_table.photo_id = ? ")
-            queryParams.add(pickFrom.photoId)
-        }
-        else if (pickFrom is Pick.FromNote) {
-            queryBuilder.append("AND event_note_table.note_id = ? ")
-            queryParams.add(pickFrom.noteId)
-        }
         eventIdSelectionPool?.let {
             if (eventIdSelectionPool.isEmpty()) {
                 return null
@@ -138,13 +153,9 @@ class BuildEventSearchQueryUseCase(
     }
 
     sealed class Pick {
-        data class FromPet(private val pet: LiveData<Pet>): Pick() {
-            val petName: String get() = pet.value?.petName ?: ""
-        }
+        data class FromPet(val petId: Long): Pick()
         data class FromNote(val noteId: Long): Pick()
         data class FromPhoto(val photoId: Long): Pick()
-        data class FromTag(private val tag: LiveData<Tag>): Pick() {
-            val tagName: String get() = tag.value?.tagName ?: ""
-        }
+        data class FromTag(val tagId: Long): Pick()
     }
 }
