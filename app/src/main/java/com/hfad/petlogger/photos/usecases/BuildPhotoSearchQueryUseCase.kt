@@ -114,7 +114,7 @@ class BuildPhotoSearchQueryUseCase(
 
         val havingCountQuery = StringBuilder()
         if (searchedPets.isNotEmpty()) {
-            havingCountQuery.append("HAVING COUNT(DISTINCT pet_photo_table.pet_id) = ? ")
+            havingCountQuery.append("HAVING COUNT(DISTINCT pet_table.pet_name) = ? ")
             queryParams.add(searchedPets.size)
         }
         if (searchedTags.isNotEmpty()) {

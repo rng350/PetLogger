@@ -33,6 +33,7 @@ import com.hfad.petlogger.events.EventFts
 import com.hfad.petlogger.notes.Note
 import com.hfad.petlogger.notes.NoteFts
 import com.hfad.petlogger.pets.Pet
+import com.hfad.petlogger.pets.PetFts
 import com.hfad.petlogger.photos.Photo
 import com.hfad.petlogger.tags.Tag
 import com.hfad.petlogger.weights.Weight
@@ -40,6 +41,7 @@ import com.hfad.petlogger.weights.Weight
 @Database(
     entities = [
         Pet::class,
+        PetFts::class,
         PetPhoto::class,
 
         Event::class,
@@ -66,7 +68,7 @@ import com.hfad.petlogger.weights.Weight
         NoteTag::class,
         PhotoTag::class
     ],
-    version = 2,
+    version = 1,
     exportSchema = false)
 @TypeConverters(
     Converter::class,

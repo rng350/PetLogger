@@ -2,6 +2,7 @@ package com.hfad.petlogger.pets
 
 import android.util.Log
 import androidx.room.*
+import androidx.sqlite.db.SimpleSQLiteQuery
 import com.hfad.petlogger.common.associationentities.EventPet
 import com.hfad.petlogger.common.associationentities.PetPhoto
 import com.hfad.petlogger.events.Event
@@ -233,4 +234,10 @@ interface PetDao {
         lastNoteId: Long,
         noteAmt: Int
     ): List<Note>
+
+    @RawQuery
+    suspend fun searchPets(query: SimpleSQLiteQuery): List<PetWithProfilePic>
+
+    @RawQuery
+    suspend fun searchPetIds(query: SimpleSQLiteQuery): List<String>
 }
