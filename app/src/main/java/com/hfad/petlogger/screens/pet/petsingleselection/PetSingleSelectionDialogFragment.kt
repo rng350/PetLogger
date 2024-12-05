@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import com.hfad.petlogger.databinding.FragmentPetSingleSelectionDialogBinding
-import com.hfad.petlogger.screens.sections.recyclerviews.SetupPetPickerUseCase
+import com.hfad.petlogger.screens.sections.recyclerviews.SetupSinglePetPickerUseCase
 
 class PetSingleSelectionDialogFragment : DialogFragment() {
     private var _binding: FragmentPetSingleSelectionDialogBinding? = null
@@ -26,7 +26,7 @@ class PetSingleSelectionDialogFragment : DialogFragment() {
         binding.viewModel = petSingleSelectionViewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        SetupPetPickerUseCase(
+        SetupSinglePetPickerUseCase(
             petSingleSelectionViewModel.selectionTracker.visibleOptions,
             petSingleSelectionViewModel.selectionTracker.prospectiveSelection,
             petSingleSelectionViewModel.selectionTracker,

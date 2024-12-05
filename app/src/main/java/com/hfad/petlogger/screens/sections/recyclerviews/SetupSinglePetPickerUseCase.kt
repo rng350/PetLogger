@@ -15,12 +15,12 @@ import com.hfad.petlogger.common.recyclerviews.DataItemBindingInterface
 import com.hfad.petlogger.common.recyclerviews.GenericRecyclerViewAdapter
 import com.hfad.petlogger.common.selectiontracker.SingleSelectionTracker
 
-class SetupPetPickerUseCase(private val petList: LiveData<List<CheckableItem<PetWithProfilePic>>>,
-                            private val currentSelection: LiveData<PetWithProfilePic>,
-                            private val selectionTracker: SingleSelectionTracker<PetWithProfilePic>,
-                            private val recyclerView: RecyclerView,
-                            private val lifecycleOwner: LifecycleOwner,
-                            private val context: Context
+class SetupSinglePetPickerUseCase(private val petList: LiveData<List<CheckableItem<PetWithProfilePic>>>,
+                                  private val currentSelection: LiveData<PetWithProfilePic?>,
+                                  private val selectionTracker: SingleSelectionTracker<PetWithProfilePic>,
+                                  private val recyclerView: RecyclerView,
+                                  private val lifecycleOwner: LifecycleOwner,
+                                  private val context: Context
 ) {
     operator fun invoke() {
         val adapter = GenericRecyclerViewAdapter<CheckableItem<PetWithProfilePic>, CheckablePetItemBinding>(
@@ -57,8 +57,8 @@ class SetupPetPickerUseCase(private val petList: LiveData<List<CheckableItem<Pet
                 selectionTracker.toggle(item)
             }
 
-            val observer = Observer<PetWithProfilePic> {
-                binder.petCard.isChecked = item.item.petId==it.petId
+            val observer = Observer<PetWithProfilePic?> {
+                binder.petCard.isChecked = item.item.petId==it?.petId
             }
             currentSelection.observe(lifecycleOwner, observer)
         }

@@ -27,15 +27,15 @@ class SingleSelectionTracker<T>(
     private var initialSelection: T? = null
     private var initialNewSelection: T? = null
     // for dialog
-    private val _visibleOptions = MutableLiveData<List<CheckableItem<T>>>()
+    private val _visibleOptions = MutableLiveData<List<CheckableItem<T>>>(listOf())
     val visibleOptions: LiveData<List<CheckableItem<T>>> get() = _visibleOptions
     private lateinit var visibleOptionsMap: Map<T, CheckableItem<T>>
     // for displaying
-    private val _currentSelection = MutableLiveData<T>()
-    val currentSelection: LiveData<T> get() = _currentSelection
+    private val _currentSelection = MutableLiveData<T?>()
+    val currentSelection: LiveData<T?> get() = _currentSelection
     // in-between
-    private val _prospectiveSelection = MutableLiveData<T>()
-    val prospectiveSelection: LiveData<T> get() = _prospectiveSelection
+    private val _prospectiveSelection = MutableLiveData<T?>()
+    val prospectiveSelection: LiveData<T?> get() = _prospectiveSelection
     init {
         coroutineScope.launch {
             val allOptionsDeferred = async {
@@ -74,6 +74,9 @@ class SingleSelectionTracker<T>(
             currentSelectionTemp?.let {
                 _currentSelection.value = it
                 _prospectiveSelection.value = it
+            } ?: run {
+                _currentSelection.value = null
+                _prospectiveSelection.value = null
             }
         }
     }
