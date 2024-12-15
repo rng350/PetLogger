@@ -292,5 +292,6 @@ class MultiSelectionTracker<T>(
 
         _currentSelection.value = currentSelectionTemp
         _prospectiveSelection.value = currentSelectionTemp
+        _visibleCurrentSelection.value = currentSelectionTemp
     }
 }
