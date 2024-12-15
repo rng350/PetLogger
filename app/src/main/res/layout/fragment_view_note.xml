@@ -9,8 +9,8 @@
             name="viewNoteViewModel"
             type="com.hfad.petlogger.screens.note.viewnote.ViewNoteViewModel" />
         <variable
-            name="associatedPetsDisplayViewModel"
-            type="com.hfad.petlogger.screens.sections.associatedentities.AssociatedPetsDisplayViewModel" />
+            name="petListViewModel"
+            type="com.hfad.petlogger.screens.pet.PetListViewModel" />
         <variable
             name="eventListViewModel"
             type="com.hfad.petlogger.screens.event.EventListViewModel" />

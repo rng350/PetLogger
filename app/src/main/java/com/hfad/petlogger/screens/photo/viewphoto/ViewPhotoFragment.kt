@@ -35,8 +35,11 @@ import com.hfad.petlogger.events.usecases.BuildEventSearchQueryUseCase
 import com.hfad.petlogger.events.usecases.GetMoreOfSearchedEventsUseCase
 import com.hfad.petlogger.notes.usecases.BuildNoteSearchQueryUseCase
 import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesUseCase
+import com.hfad.petlogger.pets.usecases.BuildPetSearchQueryUseCase
+import com.hfad.petlogger.pets.usecases.GetMoreOfSearchedPetsUseCase
 import com.hfad.petlogger.screens.event.EventListViewModel
 import com.hfad.petlogger.screens.note.NoteListViewModel
+import com.hfad.petlogger.screens.pet.PetListViewModel
 
 class ViewPhotoFragment : Fragment() {
     private var _binding: FragmentViewPhotoBinding? = null
@@ -63,9 +66,10 @@ class ViewPhotoFragment : Fragment() {
         setAppBarTitle(getString(R.string.viewing_photo_details))
 
         val getPetsOfPhotoForDisplayUseCase = GetMorePetsOfPhotoUseCase(mediaRepository, photoId, petsAmt = 10)
-        val associatedPetsDisplayViewModel = ViewModelProvider(this, AssociatedPetsDisplayViewModel.provideFactory(getPetsOfPhotoForDisplayUseCase)).get(
-            AssociatedPetsDisplayViewModel::class.java)
-        binding.associatedPetsDisplayViewModel = associatedPetsDisplayViewModel
+        val getSearchedPets = GetMoreOfSearchedPetsUseCase(database.petDao, petsAmt = 10, BuildPetSearchQueryUseCase.Pick.FromPhoto(photoId))
+        val petListViewModel = ViewModelProvider(this, PetListViewModel.provideFactory(getPetsOfPhotoForDisplayUseCase, getSearchedPets)).get(
+            PetListViewModel::class.java)
+        binding.petListViewModel = petListViewModel
 
         val getEventsOfPhotoForDisplayUseCase = GetMoreEventsOfPhotoUseCase(mediaRepository, photoId, eventAmt = 10)
         val getSearchedEvents = GetMoreOfSearchedEventsUseCase(database.eventDao, eventAmt=10, BuildEventSearchQueryUseCase.Pick.FromPhoto(photoId))
@@ -100,9 +104,9 @@ class ViewPhotoFragment : Fragment() {
         }
         mediator?.attach()
 
-        associatedPetsDisplayViewModel.navigator.navigateTo.observe(viewLifecycleOwner, Observer { petId ->
+        petListViewModel.petNavigator.navigateTo.observe(viewLifecycleOwner, Observer { petId ->
             petId?.let {
-                associatedPetsDisplayViewModel.navigator.onNavigated()
+                petListViewModel.petNavigator.onNavigated()
                 findNavController().navigateSafe(ViewPhotoFragmentDirections.actionViewPhotoFragmentToViewPetFragment(petId))
             }
         })
@@ -194,7 +198,6 @@ class ViewPhotoDetailsFragment() : Fragment() {
                     .into(binding.photoDisplay)
             } else binding.photoDisplay.setImageResource(R.drawable.placeholder)
         }
-
         return view
     }
 

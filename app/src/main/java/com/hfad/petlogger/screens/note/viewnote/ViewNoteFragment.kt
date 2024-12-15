@@ -33,9 +33,12 @@ import com.hfad.petlogger.screens.sections.associatedentities.AssociatedTagsDisp
 import com.hfad.petlogger.common.setAppBarTitle
 import com.hfad.petlogger.events.usecases.BuildEventSearchQueryUseCase
 import com.hfad.petlogger.events.usecases.GetMoreOfSearchedEventsUseCase
+import com.hfad.petlogger.pets.usecases.BuildPetSearchQueryUseCase
+import com.hfad.petlogger.pets.usecases.GetMoreOfSearchedPetsUseCase
 import com.hfad.petlogger.photos.usecases.BuildPhotoSearchQueryUseCase
 import com.hfad.petlogger.photos.usecases.GetMoreOfSearchedPhotosUseCase
 import com.hfad.petlogger.screens.event.EventListViewModel
+import com.hfad.petlogger.screens.pet.PetListViewModel
 import com.hfad.petlogger.screens.photo.FullGalleryViewModel
 
 class ViewNoteFragment : Fragment() {
@@ -75,9 +78,10 @@ class ViewNoteFragment : Fragment() {
         binding.photoListViewModel = photoListViewModel
 
         val getAssociatedPets = GetMorePetsOfNoteUseCase(noteRepository, noteId, petsAmt = 10)
-        val associatedPetsDisplayViewModel = ViewModelProvider(this, AssociatedPetsDisplayViewModel.provideFactory(getAssociatedPets)).get(
-            AssociatedPetsDisplayViewModel::class.java)
-        binding.associatedPetsDisplayViewModel = associatedPetsDisplayViewModel
+        val getSearchedPets = GetMoreOfSearchedPetsUseCase(database.petDao, petsAmt=10, BuildPetSearchQueryUseCase.Pick.FromNote(noteId))
+        val petListViewModel = ViewModelProvider(this, PetListViewModel.provideFactory(getAssociatedPets, getSearchedPets)).get(
+            PetListViewModel::class.java)
+        binding.petListViewModel = petListViewModel
 
         val getEventsOfNote = GetMoreEventsOfNoteUseCase(noteRepository, noteId, eventAmt = 10)
         val getSearchedEvents = GetMoreOfSearchedEventsUseCase(database.eventDao, eventAmt=10, BuildEventSearchQueryUseCase.Pick.FromNote(noteId))
@@ -124,9 +128,9 @@ class ViewNoteFragment : Fragment() {
         mediator?.attach()
 
         // navigate to specific associated entities
-        associatedPetsDisplayViewModel.navigator.navigateTo.observe(viewLifecycleOwner) {
+        petListViewModel.petNavigator.navigateTo.observe(viewLifecycleOwner) {
             it?.let {
-                associatedPetsDisplayViewModel.navigator.onNavigated()
+                petListViewModel.petNavigator.onNavigated()
                 findNavController().navigateSafe(ViewNoteFragmentDirections.actionViewNoteFragmentToViewPetFragment(it))
             }
         }
