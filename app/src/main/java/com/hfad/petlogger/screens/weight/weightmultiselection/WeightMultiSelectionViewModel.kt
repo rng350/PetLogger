@@ -10,12 +10,12 @@ import com.hfad.petlogger.common.selectiontracker.MultiSelectionTracker
 import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
 
 class WeightMultiSelectionViewModel(
-    getAllPets: GetItemsUseCase<WeightWithPetName>,
+    getAllWeights: GetItemsUseCase<WeightWithPetName>,
     getInitialSelection: GetMultipleInitialItemsUseCase<WeightWithPetName>? = null,
 ) : ViewModel() {
-    val selectionTracker = MultiSelectionTracker<WeightWithPetName>(
-        allOptionsFetcher = getAllPets,
-        initialItemsUseCase = getInitialSelection,
+    /*val selectionTracker = MultiSelectionTracker<WeightWithPetName>(
+        allOptionsFetcher = getAllWeights,
+        getInitialSelection = getInitialSelection,
         coroutineScope = viewModelScope
     )
     private var _currentSelectionChanged = false
@@ -62,5 +62,5 @@ class WeightMultiSelectionViewModel(
                 throw IllegalArgumentException("Unknown ViewModel")
             }
         }
-    }
+    }*/
 }

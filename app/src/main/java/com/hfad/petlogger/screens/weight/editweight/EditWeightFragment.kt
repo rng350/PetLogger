@@ -36,9 +36,16 @@ import com.hfad.petlogger.weights.WeightRepository
 import com.hfad.petlogger.common.setAppBarTitle
 import com.hfad.petlogger.common.usecases.GetSingleInitialItemUseCase
 import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
+import com.hfad.petlogger.notes.usecases.GetAllNotesFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.notes.usecases.GetMoreOfAllNotesUseCase
+import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesUseCase
+import com.hfad.petlogger.notes.usecases.GetSearchedNotesFromCurrentSelectionUseCaseFactory
 import com.hfad.petlogger.pets.PetWithProfilePic
 import com.hfad.petlogger.pets.usecases.GetAllPetsWithProfilePhotosUseCase
 import com.hfad.petlogger.pets.usecases.GetSinglePetUseCase
+import com.hfad.petlogger.tags.usecases.GetAllTagsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.tags.usecases.GetSearchedTagsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.tags.usecases.GetSearchedTagsUseCase
 
 class EditWeightFragment : Fragment() {
     private var _binding: FragmentEditWeightBinding? = null
@@ -76,12 +83,18 @@ class EditWeightFragment : Fragment() {
         binding.petPickerViewModel = petPickerViewModel
 
         val noteRepository = NoteRepository(database, mediaRepository)
-        val getAllNotes = GetAllNotesUseCase(noteRepository)
+        val getAllNotes = GetMoreOfAllNotesUseCase(noteRepository, noteAmt = 10)
         val getNotesOfWeight = GetMultipleInitialItemsUseCase.PreExisting(GetNotesOfWeightUseCase(weightRepository, weightId))
+        val getSearchedNotesFromAll = GetMoreOfSearchedNotesUseCase(database.noteDao, notesAmt = 10)
+        val getAllNotesFromCurrentSelectionFactory = GetAllNotesFromCurrentSelectionUseCaseFactory()
+        val getSearchedNotesFromCurrentSelectionFactory = GetSearchedNotesFromCurrentSelectionUseCaseFactory(database.noteDao)
         val noteMultiPickerViewModel = ViewModelProvider(this,
             NoteMultiSelectionViewModel.provideFactory(
                 getAllNotes = getAllNotes,
-                getInitialSelection = getNotesOfWeight
+                getInitialSelection = getNotesOfWeight,
+                getSearchedSelectionOptions = getSearchedNotesFromAll,
+                getAllNotesFromCurrentSelectionFactory = getAllNotesFromCurrentSelectionFactory,
+                getSearchedNotesFromCurrentSelectionFactory = getSearchedNotesFromCurrentSelectionFactory
             )
         ).get(NoteMultiSelectionViewModel::class.java)
         binding.noteMultiSelectionViewModel = noteMultiPickerViewModel
@@ -89,8 +102,18 @@ class EditWeightFragment : Fragment() {
         val tagRepository = TagRepository(database)
         val getAllTags = GetAllTagsUseCase(tagRepository)
         val getTagsOfWeight = GetMultipleInitialItemsUseCase.PreExisting(GetTagsOfWeightUseCase(weightRepository, weightId))
+        val getSearchedTagsFromAll = GetSearchedTagsUseCase(tagRepository)
+        val getAllTagsFromCurrentSelectionFactory = GetAllTagsFromCurrentSelectionUseCaseFactory()
+        val getSearchedTagsFromCurrentSelectionFactory = GetSearchedTagsFromCurrentSelectionUseCaseFactory(tagRepository)
         val tagMultiSelectionViewModel = ViewModelProvider(this,
-            TagMultiSelectionViewModel.provideFactory(tagRepository, getAllTags, getTagsOfWeight)
+            TagMultiSelectionViewModel.provideFactory(
+                tagRepository = tagRepository,
+                getAllTags = getAllTags,
+                getInitialSelection = getTagsOfWeight,
+                getAllSearchedTagsUseCase = getSearchedTagsFromAll,
+                getAllCurrentSelectionFactory = getAllTagsFromCurrentSelectionFactory,
+                getSearchedTagsFromCurrentSelectionFactory = getSearchedTagsFromCurrentSelectionFactory
+            )
         ).get(TagMultiSelectionViewModel::class.java)
         binding.tagMultiSelectionViewModel = tagMultiSelectionViewModel
 

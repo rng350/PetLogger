@@ -17,7 +17,7 @@ class GetMoreOfSearchedPhotosUseCase(
     override var currentQuery: String = ""
     private var _onLastPage = false
     override val onLastPage: Boolean get() = _onLastPage
-    private val queryBuilder = BuildPhotoSearchQueryUseCase(photosAmt, pickFrom)
+    private val queryBuilder = BuildPhotoSearchQueryUseCase(photosAmt = photosAmt, pickFrom =  pickFrom)
 
     override suspend fun invoke(): List<Photo> = withContext(Dispatchers.IO) {
         val queryBuilt = queryBuilder(currentQuery, lastPhotoDate, lastPhotoId)

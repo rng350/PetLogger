@@ -1,5 +1,6 @@
 package com.hfad.petlogger.screens.tag.tagmultiselection
 
+import RecyclerViewPaginator
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -52,13 +53,20 @@ class TagMultiSelectionDialogFragment : DialogFragment() {
             lifecycleOwner = viewLifecycleOwner
         )()
 
+        RecyclerViewPaginator(
+            recyclerView = binding.tagsList,
+            onLast = {tagMultiSelectionViewModel.visibleOptionsOnLastPage()},
+            isLoading = {tagMultiSelectionViewModel.visibleOptionsAreLoading()},
+            loadMore = {tagMultiSelectionViewModel.loadFromVisibleOptions()}
+        )
+
         binding.searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                tagMultiSelectionViewModel.onQueryTextSubmit(query)
+                tagMultiSelectionViewModel.onSelectionOptionsQueryTextSubmit(query)
                 return true
             }
             override fun onQueryTextChange(newText: String?): Boolean {
-                tagMultiSelectionViewModel.onQueryTextChanged(newText)
+                tagMultiSelectionViewModel.onSelectionOptionsQueryTextChange(newText)
                 return true
             }
         })

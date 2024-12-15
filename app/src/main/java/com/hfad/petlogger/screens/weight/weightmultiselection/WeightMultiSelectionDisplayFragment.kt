@@ -14,7 +14,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class WeightMultiSelectionDisplayFragment : Fragment() {
-    var _binding: FragmentWeightMultiSelectionDisplayBinding? = null
+    /*var _binding: FragmentWeightMultiSelectionDisplayBinding? = null
     val binding get() = _binding!!
     private val viewModel: WeightMultiSelectionViewModel by viewModels({requireParentFragment()})
     override fun onCreateView(
@@ -59,5 +59,5 @@ class WeightMultiSelectionDisplayFragment : Fragment() {
         super.onDestroyView()
         binding.weightsList.adapter = null
         _binding = null
-    }
+    }*/
 }

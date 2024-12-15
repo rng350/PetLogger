@@ -23,7 +23,7 @@ class GetMoreOfSearchedEventsUseCase(
     private var _onLastPage = false
     override val onLastPage: Boolean
         get() = _onLastPage
-    private val queryBuilder = BuildEventSearchQueryUseCase(eventAmt, pickFrom)
+    private val queryBuilder = BuildEventSearchQueryUseCase(eventAmt = eventAmt, pickFrom =  pickFrom)
     override suspend fun invoke(): List<EventForList> = withContext(Dispatchers.IO) {
         val builtQuery = queryBuilder(currentQuery, lastEventDate, lastEventId)
         builtQuery?.let { query ->

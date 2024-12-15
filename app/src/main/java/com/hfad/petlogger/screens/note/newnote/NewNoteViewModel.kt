@@ -21,7 +21,7 @@ class NewNoteViewModel(private val noteRepository: NoteRepository) : ViewModel()
     val goBack: LiveData<Boolean> = _goBack
     fun submitNote(pets: List<Long> = listOf(),
                    events: List<Long> = listOf(),
-                   weights: List<Weight> = listOf(),
+                   weights: List<Long> = listOf(),
                    photos: List<Photo> = listOf(),
                    tags: List<Tag> = listOf()) {
         if (noteTitle.isNotEmpty() || noteDetails.isNotEmpty()) {

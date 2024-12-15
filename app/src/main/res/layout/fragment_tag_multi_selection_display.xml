@@ -15,12 +15,10 @@
         android:layout_height="wrap_content"
         android:layout_margin="30dp"
         android:padding="30dp">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
             <com.google.android.material.appbar.AppBarLayout
                 android:id="@+id/dialogFragmentAppBarLayout"
                 android:layout_width="match_parent"
@@ -35,12 +33,16 @@
                     app:title="@string/tags"
                     app:titleCentered="true"/>
             </com.google.android.material.appbar.AppBarLayout>
-
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/search_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:queryHint="@string/search_pets"/>
             <androidx.core.widget.NestedScrollView
                 android:id="@+id/tag_list_scroll_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
+                android:layout_height="0dp"
+                android:layout_weight="1">
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/tag_list"
                     android:layout_width="match_parent"
@@ -58,7 +60,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="10dp"
                     android:text="@string/add_tags" />
-
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/resetButton"
                     android:layout_width="wrap_content"
@@ -67,7 +68,5 @@
                     android:text="@string/reset" />
             </LinearLayout>
         </LinearLayout>
-
     </com.google.android.material.card.MaterialCardView>
-
 </layout>

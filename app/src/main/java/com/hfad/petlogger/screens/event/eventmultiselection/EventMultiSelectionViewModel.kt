@@ -7,18 +7,32 @@ import com.hfad.petlogger.common.selectiontracker.MultiSelectionTracker
 import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
 import com.hfad.petlogger.common.usecases.GetItemsUseCase
 import com.hfad.petlogger.events.EventForList
+import com.hfad.petlogger.events.usecases.GetAllEventsFromCurrentSelectionUseCase
+import com.hfad.petlogger.events.usecases.GetAllEventsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.events.usecases.GetAllEventsUseCase
+import com.hfad.petlogger.events.usecases.GetMoreOfAllEventsUseCase
+import com.hfad.petlogger.events.usecases.GetMoreOfSearchedEventsUseCase
+import com.hfad.petlogger.events.usecases.GetSearchedEventsFromCurrentSelectionUseCaseFactory
+import kotlinx.coroutines.launch
 
 class EventMultiSelectionViewModel(
-    getAllEvents: GetItemsUseCase<EventForList>,
-    getAssociatedEvents: GetMultipleInitialItemsUseCase<EventForList>? = null
+    getAssociatedEvents: GetMultipleInitialItemsUseCase<EventForList>? = null,
+    getAllEvents: GetMoreOfAllEventsUseCase,
+    getSearchedEvents: GetMoreOfSearchedEventsUseCase,
+    getAllEventsFromCurrentSelection: GetAllEventsFromCurrentSelectionUseCaseFactory,
+    getSearchedEventsFromCurrentSelectionFactory: GetSearchedEventsFromCurrentSelectionUseCaseFactory
 ) : ViewModel() {
     val selectionTracker = MultiSelectionTracker<EventForList>(
-        allOptionsFetcher = getAllEvents,
-        initialItemsUseCase = getAssociatedEvents,
+        getAllSelectionOptions = getAllEvents,
+        getInitialSelection = getAssociatedEvents,
+        getSearchedSelectionOptions = getSearchedEvents,
+        getAllCurrentSelectionDisplayFactory = getAllEventsFromCurrentSelection,
+        getSearchedCurrentSelectionDisplayFactory = getSearchedEventsFromCurrentSelectionFactory,
         coroutineScope = viewModelScope
     )
     private var _currentSelectionChanged = false
     val currentSelectionChanged get() = _currentSelectionChanged
+    private var visibleSelectionOptionsLoading: Boolean = false
 
     fun getEventsToAdd(): List<Long> {
         return selectionTracker.getSelectionToAdd().map{it.eventId}
@@ -37,6 +51,46 @@ class EventMultiSelectionViewModel(
         _currentSelectionChanged = false
     }
 
+    fun onCurrentSelectionDisplayQueryTextSubmit(query: String?) {
+        query?.let {
+            selectionTracker.searchFromCurrentSelectionDisplay(query)
+        }
+    }
+
+    fun onCurrentSelectionDisplayQueryTextChange(newText: String?) {
+        newText?.let {
+            selectionTracker.searchFromCurrentSelectionDisplay(newText)
+        }
+    }
+
+    fun onSelectionOptionsQueryTextSubmit(query: String?) {
+        query?.let {
+            selectionTracker.searchFromSelectionOptions(query)
+        }
+    }
+
+    fun onSelectionOptionsQueryTextChange(newText: String?) {
+        newText?.let {
+            selectionTracker.searchFromSelectionOptions(newText)
+        }
+    }
+
+    fun loadFromVisibleOptions() {
+        viewModelScope.launch {
+            visibleSelectionOptionsLoading = true
+            selectionTracker.loadVisibleSelectionOptions()
+            visibleSelectionOptionsLoading = false
+        }
+    }
+
+    fun visibleOptionsAreLoading(): Boolean {
+        return visibleSelectionOptionsLoading
+    }
+
+    fun visibleOptionsOnLastPage(): Boolean {
+        return selectionTracker.visibleSelectionOptionsOnLastPage()
+    }
+
     fun resetSelection() {
         selectionTracker.resetSelection()
     }
@@ -47,12 +101,20 @@ class EventMultiSelectionViewModel(
 
     companion object {
         fun provideFactory(
-            getAllEvents: GetItemsUseCase<EventForList>,
-            getAssociatedEvents: GetMultipleInitialItemsUseCase<EventForList>? = null)
-        : ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            getAssociatedEvents: GetMultipleInitialItemsUseCase<EventForList>? = null,
+            getAllEvents: GetMoreOfAllEventsUseCase,
+            getSearchedEvents: GetMoreOfSearchedEventsUseCase,
+            getAllEventsFromCurrentSelection: GetAllEventsFromCurrentSelectionUseCaseFactory,
+            getSearchedEventsFromCurrentSelectionFactory: GetSearchedEventsFromCurrentSelectionUseCaseFactory
+        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(EventMultiSelectionViewModel::class.java)) {
-                    return EventMultiSelectionViewModel(getAllEvents, getAssociatedEvents) as T
+                    return EventMultiSelectionViewModel(
+                        getAssociatedEvents,
+                        getAllEvents,
+                        getSearchedEvents,
+                        getAllEventsFromCurrentSelection,
+                        getSearchedEventsFromCurrentSelectionFactory) as T
                 }
                 throw IllegalArgumentException("Unknown ViewModel")
             }

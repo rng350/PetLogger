@@ -10,7 +10,7 @@ import com.hfad.petlogger.databinding.FragmentWeightMultiSelectionDialogBinding
 import com.hfad.petlogger.screens.sections.recyclerviews.SetupWeightMultiPickerUseCase
 
 class WeightMultiSelectionDialogFragment : DialogFragment() {
-    private var _binding: FragmentWeightMultiSelectionDialogBinding? = null
+    /*private var _binding: FragmentWeightMultiSelectionDialogBinding? = null
     val binding get() = _binding!!
 
     private val viewModel: WeightMultiSelectionViewModel by viewModels({requireParentFragment().requireParentFragment()})
@@ -66,5 +66,5 @@ class WeightMultiSelectionDialogFragment : DialogFragment() {
         super.onDestroyView()
         binding.weightsList.adapter = null
         _binding = null
-    }
+    }*/
 }

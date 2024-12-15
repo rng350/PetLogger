@@ -27,8 +27,6 @@ import com.hfad.petlogger.common.TimePicker
 import com.hfad.petlogger.databinding.FragmentEditEventBinding
 import com.hfad.petlogger.databinding.FragmentEditEventDetailsBinding
 import com.hfad.petlogger.common.navigateSafe
-import com.hfad.petlogger.notes.usecases.GetAllNotesUseCase
-import com.hfad.petlogger.pets.usecases.GetAllPetsWithProfilePhotosUseCase
 import com.hfad.petlogger.tags.usecases.GetAllTagsUseCase
 import com.hfad.petlogger.notes.usecases.GetNotesOfEventUseCase
 import com.hfad.petlogger.pets.usecases.GetPetsOfEventUseCase
@@ -41,6 +39,17 @@ import com.hfad.petlogger.pets.PetRepository
 import com.hfad.petlogger.tags.TagRepository
 import com.hfad.petlogger.common.setAppBarTitle
 import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
+import com.hfad.petlogger.notes.usecases.GetAllNotesFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.notes.usecases.GetMoreOfAllNotesUseCase
+import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesUseCase
+import com.hfad.petlogger.notes.usecases.GetSearchedNotesFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.pets.usecases.GetAllPetsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.pets.usecases.GetMoreOfAllPetsUseCase
+import com.hfad.petlogger.pets.usecases.GetMoreOfSearchedPetsUseCase
+import com.hfad.petlogger.pets.usecases.GetSearchedPetsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.tags.usecases.GetAllTagsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.tags.usecases.GetSearchedTagsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.tags.usecases.GetSearchedTagsUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -74,12 +83,18 @@ class EditEventFragment : Fragment() {
         binding.viewModel = editEventViewModel
 
         val petRepository = PetRepository(database, mediaRepository)
-        val getAllPetsUseCase = GetAllPetsWithProfilePhotosUseCase(petRepository)
+        val getAllPetsUseCase = GetMoreOfAllPetsUseCase(petRepository, petsAmt = 10)
         val getPetsOfEventUseCase = GetPetsOfEventUseCase(eventRepository, eventID)
+        val getSearchedPets = GetMoreOfSearchedPetsUseCase(database.petDao, petsAmt = 10)
+        val getAllCurrentSelectedPetsFactory = GetAllPetsFromCurrentSelectionUseCaseFactory()
+        val getSearchedCurrentSelectedPetsFactory = GetSearchedPetsFromCurrentSelectionUseCaseFactory(database.petDao)
         val petMultiSelectionViewModel = ViewModelProvider(this,
             PetMultiSelectionViewModel.provideFactory(
                 getAllPets = getAllPetsUseCase,
-                getInitialSelection = GetMultipleInitialItemsUseCase.PreExisting(getPetsOfEventUseCase)
+                getInitialSelection = GetMultipleInitialItemsUseCase.PreExisting(getPetsOfEventUseCase),
+                getSearchedSelectionOptions = getSearchedPets,
+                getAllCurrentSelectionDisplayFactory = getAllCurrentSelectedPetsFactory,
+                getSearchedCurrentSelectionDisplayFactory = getSearchedCurrentSelectedPetsFactory
             )
         ).get(PetMultiSelectionViewModel::class.java)
         binding.petMultiSelectionViewModel = petMultiSelectionViewModel
@@ -95,12 +110,18 @@ class EditEventFragment : Fragment() {
         binding.mediaSelectionViewModel = mediaSelectionViewModel
 
         val noteRepository = NoteRepository(database, mediaRepository)
-        val getAllNotes = GetAllNotesUseCase(noteRepository)
+        val getAllNotes = GetMoreOfAllNotesUseCase(noteRepository, noteAmt = 10)
         val getNotesOfEvent = GetNotesOfEventUseCase(eventRepository, eventID)
+        val getSearchedNotesFromAll = GetMoreOfSearchedNotesUseCase(database.noteDao, notesAmt = 10)
+        val getAllNotesFromCurrentSelectionFactory = GetAllNotesFromCurrentSelectionUseCaseFactory()
+        val getSearchedNotesFromCurrentSelectionFactory = GetSearchedNotesFromCurrentSelectionUseCaseFactory(database.noteDao)
         val noteMultiSelectionViewModel = ViewModelProvider(this,
             NoteMultiSelectionViewModel.provideFactory(
                 getAllNotes = getAllNotes,
-                getInitialSelection = GetMultipleInitialItemsUseCase.PreExisting(getNotesOfEvent)
+                getInitialSelection = GetMultipleInitialItemsUseCase.PreExisting(getNotesOfEvent),
+                getSearchedSelectionOptions = getSearchedNotesFromAll,
+                getAllNotesFromCurrentSelectionFactory = getAllNotesFromCurrentSelectionFactory,
+                getSearchedNotesFromCurrentSelectionFactory = getSearchedNotesFromCurrentSelectionFactory
             )
         ).get(NoteMultiSelectionViewModel::class.java)
         binding.noteMultiSelectionViewModel = noteMultiSelectionViewModel
@@ -108,8 +129,18 @@ class EditEventFragment : Fragment() {
         val tagRepository = TagRepository(database)
         val getAllTags = GetAllTagsUseCase(tagRepository)
         val getTagsOfEvent = GetMultipleInitialItemsUseCase.PreExisting(GetTagsOfEventUseCase(eventRepository, eventID))
+        val getSearchedTagsFromAll = GetSearchedTagsUseCase(tagRepository)
+        val getAllTagsFromCurrentSelectionFactory = GetAllTagsFromCurrentSelectionUseCaseFactory()
+        val getSearchedTagsFromCurrentSelectionFactory = GetSearchedTagsFromCurrentSelectionUseCaseFactory(tagRepository)
         val tagMultiSelectionViewModel = ViewModelProvider(this,
-            TagMultiSelectionViewModel.provideFactory(tagRepository, getAllTags, getTagsOfEvent)
+            TagMultiSelectionViewModel.provideFactory(
+                tagRepository = tagRepository,
+                getAllTags = getAllTags,
+                getInitialSelection = getTagsOfEvent,
+                getAllSearchedTagsUseCase = getSearchedTagsFromAll,
+                getAllCurrentSelectionFactory = getAllTagsFromCurrentSelectionFactory,
+                getSearchedTagsFromCurrentSelectionFactory = getSearchedTagsFromCurrentSelectionFactory
+            )
         ).get(TagMultiSelectionViewModel::class.java)
         binding.tagMultiSelectionViewModel = tagMultiSelectionViewModel
 

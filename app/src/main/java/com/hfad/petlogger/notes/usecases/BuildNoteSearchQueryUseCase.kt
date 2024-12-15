@@ -5,21 +5,22 @@ import androidx.lifecycle.LiveData
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.hfad.petlogger.common.search.GetBoundingSearchDatesUseCase
 import com.hfad.petlogger.common.search.ParseSearchQueryUseCase
+import com.hfad.petlogger.common.util.Constants
 import com.hfad.petlogger.common.util.Converter
 import com.hfad.petlogger.pets.Pet
 import com.hfad.petlogger.tags.Tag
 import java.time.OffsetDateTime
 
 class BuildNoteSearchQueryUseCase(
-    private val notesAmt: Int,
+    private val get: Get = Get.Note,
+    private val notesAmt: Int? = null,
     private val pickFrom: Pick? = null
 ) {
     private val parseSearchQuery = ParseSearchQueryUseCase(listOf("pet", "before", "after"))
     operator fun invoke(
         query: String,
-        lastNoteEditedDate: OffsetDateTime,
-        lastNoteId: Long,
-        noteIdSelectionPool: List<Long>? = null
+        lastNoteEditedDate: OffsetDateTime = Constants.OFFSET_DATE_TIME_MAX_ALLOWED,
+        lastNoteId: Long = Long.MAX_VALUE
     ): SimpleSQLiteQuery? {
         val parsedSearch = parseSearchQuery(query)
         // get bounding dates
@@ -73,7 +74,15 @@ class BuildNoteSearchQueryUseCase(
         }
 
         // Base query to join Note with associations
-        queryBuilder.append("SELECT note_table.* FROM note_table ")
+        when(get) {
+            Get.Note -> {
+                queryBuilder.append("SELECT note_table.* ")
+            }
+            Get.OnlyIds -> {
+                queryBuilder.append("SELECT note_table.note_id ")
+            }
+        }
+        queryBuilder.append("FROM note_table ")
         if (nonCategorizedSearch.isNotEmpty()) {
             queryBuilder.append("JOIN matched_notes ON note_table.note_id=matched_notes.note_id ")
         }
@@ -137,14 +146,6 @@ class BuildNoteSearchQueryUseCase(
             queryParams.addAll(searchedTags)
         }
 
-        noteIdSelectionPool?.let {
-            if (noteIdSelectionPool.isEmpty()) {
-                return null
-            }
-            queryBuilder.append("AND note_table.note_id IN ${noteIdSelectionPool.joinToString(prefix="(",separator=",",postfix=")"){"?"}} ")
-            queryParams.addAll(noteIdSelectionPool)
-        }
-
         queryBuilder.append("GROUP BY note_table.note_id ")
 
         val havingCountQuery = StringBuilder()
@@ -158,8 +159,11 @@ class BuildNoteSearchQueryUseCase(
         }
         queryBuilder.append(havingCountQuery)
 
-        queryBuilder.append("ORDER BY datetime(note_table.note_last_updated) DESC, note_table.note_id DESC LIMIT ? ")
-        queryParams.add(notesAmt)
+        queryBuilder.append("ORDER BY datetime(note_table.note_last_updated) DESC, note_table.note_id DESC ")
+        notesAmt?.let {
+            queryBuilder.append("LIMIT ? ")
+            queryParams.add(notesAmt)
+        }
 
         Log.d("NoteSearchQuery", "Query: $queryBuilder")
         Log.d("NoteSearchQuery", "Params: ${queryParams.map{it.toString()}}")
@@ -173,5 +177,10 @@ class BuildNoteSearchQueryUseCase(
         data class FromWeight(val weightId: Long): Pick()
         data class FromPhoto(val photoId: Long): Pick()
         data class FromTag(val tagId: Long): Pick()
+    }
+
+    sealed class Get {
+        object OnlyIds: Get()
+        object Note: Get()
     }
 }

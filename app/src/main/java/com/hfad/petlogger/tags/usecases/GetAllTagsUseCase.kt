@@ -5,14 +5,16 @@ import com.hfad.petlogger.tags.Tag
 import com.hfad.petlogger.tags.TagRepository
 
 class GetAllTagsUseCase(private val tagRepository: TagRepository): GetItemsUseCase<Tag> {
+    private var _onLastPage = false
     override val onLastPage: Boolean
-        get() = TODO("Not yet implemented")
+        get() = _onLastPage
 
     override suspend fun invoke(): List<Tag> {
+        _onLastPage = true
         return tagRepository.getAllTags()
     }
 
     override fun resetCurrentPoint() {
-        TODO("Not yet implemented")
+        _onLastPage = false
     }
 }

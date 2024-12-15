@@ -1,24 +1,26 @@
 package com.hfad.petlogger.events.usecases
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.hfad.petlogger.common.search.GetBoundingSearchDatesUseCase
 import com.hfad.petlogger.common.search.ParseSearchQueryUseCase
+import com.hfad.petlogger.common.util.Constants
 import com.hfad.petlogger.common.util.Converter
 import com.hfad.petlogger.pets.Pet
 import com.hfad.petlogger.tags.Tag
 import java.time.OffsetDateTime
 
 class BuildEventSearchQueryUseCase(
-    private val eventAmt: Int,
+    private val get: Get = Get.Event,
+    private val eventAmt: Int? = null,
     private val pickFrom: Pick? = null
 ) {
     private val parseSearchQuery = ParseSearchQueryUseCase(listOf("pet", "before", "after"))
     operator fun invoke(
         query: String,
-        lastEventDate: OffsetDateTime,
-        lastEventId: Long,
-        eventIdSelectionPool: List<Long>? = null
+        lastEventDate: OffsetDateTime = Constants.OFFSET_DATE_TIME_MAX_ALLOWED,
+        lastEventId: Long = Long.MAX_VALUE
     ): SimpleSQLiteQuery? {
         val parsedSearch = parseSearchQuery(query)
         // get bounding dates
@@ -68,7 +70,15 @@ class BuildEventSearchQueryUseCase(
         }
 
         // Base query to join Event with associations
-        queryBuilder.append("SELECT event_table.* FROM event_table ")
+        when(get) {
+            Get.Event -> {
+                queryBuilder.append("SELECT event_table.* ")
+            }
+            Get.OnlyIds -> {
+                queryBuilder.append("SELECT event_table.event_id ")
+            }
+        }
+        queryBuilder.append("FROM event_table ")
         if (nonCategorizedSearch.isNotEmpty()) {
             queryBuilder.append("JOIN matched_events ON event_table.event_id=matched_events.event_id ")
         }
@@ -126,13 +136,6 @@ class BuildEventSearchQueryUseCase(
             queryBuilder.append("AND tag_table.tag_name IN ${searchedTags.joinToString(prefix="(", separator=",", postfix=")"){"?"}} ")
             queryParams.addAll(searchedTags)
         }
-        eventIdSelectionPool?.let {
-            if (eventIdSelectionPool.isEmpty()) {
-                return null
-            }
-            queryBuilder.append("AND event_table.event_id IN ${eventIdSelectionPool.joinToString(prefix="(",separator=",",postfix=")"){"?"}} ")
-            queryParams.addAll(eventIdSelectionPool)
-        }
         queryBuilder.append("GROUP BY event_table.event_id ")
 
         val havingCountQuery = StringBuilder()
@@ -146,8 +149,14 @@ class BuildEventSearchQueryUseCase(
         }
         queryBuilder.append(havingCountQuery)
 
-        queryBuilder.append("ORDER BY datetime(event_table.event_date) DESC, event_table.event_id DESC LIMIT ? ")
-        queryParams.add(eventAmt)
+        queryBuilder.append("ORDER BY datetime(event_table.event_date) DESC, event_table.event_id DESC ")
+        eventAmt?.let {
+            queryBuilder.append("LIMIT ? ")
+            queryParams.add(eventAmt)
+        }
+
+        Log.d("EventSearch", "Query: $queryBuilder")
+        Log.d("EventSearch", "Params: ${queryParams.map{it.toString()}}")
 
         return SimpleSQLiteQuery(queryBuilder.toString(), queryParams.toTypedArray())
     }
@@ -157,5 +166,10 @@ class BuildEventSearchQueryUseCase(
         data class FromNote(val noteId: Long): Pick()
         data class FromPhoto(val photoId: Long): Pick()
         data class FromTag(val tagId: Long): Pick()
+    }
+
+    sealed class Get {
+        object OnlyIds: Get()
+        object Event: Get()
     }
 }

@@ -173,4 +173,7 @@ interface PhotoDao {
 
     @RawQuery
     suspend fun searchPhotos(query: SimpleSQLiteQuery): List<Photo>
+
+    @RawQuery
+    suspend fun searchPhotoIds(query: SimpleSQLiteQuery): List<Long>
 }

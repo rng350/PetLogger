@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
 import com.hfad.petlogger.databinding.FragmentPetMultiSelectionSectionDisplayBinding
 import com.hfad.petlogger.screens.sections.recyclerviews.SetupPetMultiPickerSelectionDisplayUseCase
@@ -44,12 +45,23 @@ class PetMultiSelectionSectionDisplayFragment : Fragment() {
         }
 
         SetupPetMultiPickerSelectionDisplayUseCase(
-            selection = viewModel.selectionTracker.currentSelection,
+            selection = viewModel.selectionTracker.visibleCurrentSelection,
             selectionTracker = viewModel.selectionTracker,
             recyclerView = binding.petsList,
             lifecycleOwner = viewLifecycleOwner,
             context = requireContext()
         )()
+
+        binding.searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                viewModel.onCurrentSelectionDisplayQueryTextSubmit(query)
+                return true
+            }
+            override fun onQueryTextChange(newText: String?): Boolean {
+                viewModel.onCurrentSelectionDisplayQueryTextChange(newText)
+                return true
+            }
+        })
 
         return view
     }

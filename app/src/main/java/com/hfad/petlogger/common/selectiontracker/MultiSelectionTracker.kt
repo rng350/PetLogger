@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.hfad.petlogger.common.CheckableItem
 import com.hfad.petlogger.common.copyOf
+import com.hfad.petlogger.common.usecases.factories.GetAllCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.common.usecases.factories.GetSearchedCurrentSelectionUseCaseFactory
 import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
 import com.hfad.petlogger.common.usecases.GetItemsUseCase
 import com.hfad.petlogger.common.usecases.GetSearchedItemsUseCase
@@ -31,22 +33,35 @@ import kotlinx.coroutines.launch
 
     VISIBLE CURRENT SELECTION
     The current selection being displayed. May be a limited subset of "CURRENT SELECTION" depending on pagination and search.
+
+    A note on fetchers:
+    In Initialization:
+    - getInitialSelection (gotta retrieve everything in one shot, no pagination)
+    In Selection Display: Not paginated
+    - getAllCurrentSelectionDisplay
+    - getSearchedCurrentSelectionDisplay
+    In Selection Dialog: Paginated
+    - getAllSelectionOptions
+    - getSearchedSelectionOptions
 **/
 class MultiSelectionTracker<T>(
-    private val allOptionsFetcher: GetItemsUseCase<T>,
-    //private val getSearchedOptions: GetSearchedItemsUseCase<T>,
-    //private val currentSelectionDisplayFetcher: GetSearchedItemsUseCase<T>,
-    initialItemsUseCase: GetMultipleInitialItemsUseCase<T>? = null,
+    getInitialSelection: GetMultipleInitialItemsUseCase<T>? = null,
+    private val getAllSelectionOptions: GetItemsUseCase<T>,
+    private val getSearchedSelectionOptions: GetSearchedItemsUseCase<T>,
+    getAllCurrentSelectionDisplayFactory: GetAllCurrentSelectionUseCaseFactory<T>,
+    getSearchedCurrentSelectionDisplayFactory: GetSearchedCurrentSelectionUseCaseFactory<T>,
     private val coroutineScope: CoroutineScope,
     private val choiceLimit: Int = Int.MAX_VALUE
 ) {
     private val initialSelection = HashSet<T>()
     private val initialNewSelection = HashSet<T>()
+    private val getSearchedCurrentSelectionDisplay: GetSearchedItemsUseCase<T>
+    private val getAllCurrentSelectionDisplay: GetItemsUseCase<T>
     // for dialog
     private val _visibleOptions = MutableLiveData<List<CheckableItem<T>>>()
     val visibleOptions: LiveData<List<CheckableItem<T>>> get() = _visibleOptions
     private lateinit var visibleOptionsMap: Map<T, CheckableItem<T>>
-    // for displaying
+
     private val _currentSelection = MutableLiveData<List<T>>()
     val currentSelection: LiveData<List<T>> get() = _currentSelection
     // in-between
@@ -55,18 +70,22 @@ class MultiSelectionTracker<T>(
     private val _visibleCurrentSelection = MutableLiveData<List<T>>()
     val visibleCurrentSelection: LiveData<List<T>> get() = _visibleCurrentSelection
 
-    private var currentVisibleSelectionOptionsGetter: GetItemsUseCase<T> = allOptionsFetcher
-   private lateinit var currentVisibleSelectionDisplayGetter: GetItemsUseCase<T>
+    private var _currentVisibleSelectionOptionsGetter: GetItemsUseCase<T> = getAllSelectionOptions
+    private var _currentVisibleCurrentSelectionDisplayGetter: GetItemsUseCase<T>
 
     init {
+        getAllCurrentSelectionDisplay = getAllCurrentSelectionDisplayFactory.createGetAllCurrentSelectionUseCase(currentSelection)
+        getSearchedCurrentSelectionDisplay = getSearchedCurrentSelectionDisplayFactory.createGetSearchedCurrentSelectionUseCase(currentSelection)
+        _currentVisibleCurrentSelectionDisplayGetter = getAllCurrentSelectionDisplay
+
         coroutineScope.launch {
             val allOptionsDeferred = async {
-                allOptionsFetcher()
+                getAllSelectionOptions()
             }
-            when (initialItemsUseCase) {
+            when (getInitialSelection) {
                 is GetMultipleInitialItemsUseCase.New -> {
                     val initialNewPicksDeferred = async {
-                        initialItemsUseCase.useCase()
+                        getInitialSelection.useCase()
                     }
                     val initialNewPicks = initialNewPicksDeferred.await()
                     initialNewPicks?.let { newPick ->
@@ -75,7 +94,7 @@ class MultiSelectionTracker<T>(
                 }
                 is GetMultipleInitialItemsUseCase.PreExisting -> {
                     val initialPicksDeferred = async {
-                        initialItemsUseCase.useCase()
+                        getInitialSelection.useCase()
                     }
                     val initialPicks = initialPicksDeferred.await()
                     initialSelection.addAll(initialPicks)
@@ -102,15 +121,16 @@ class MultiSelectionTracker<T>(
     }
 
     // call whenever search box is interacted with
-    fun setVisibleSelectionOptions(visibleOptionsFetcher: GetItemsUseCase<T>) {
-        currentVisibleSelectionOptionsGetter = visibleOptionsFetcher
+    private fun setVisibleSelectionOptions(visibleOptionsFetcher: GetItemsUseCase<T>) {
+        _currentVisibleSelectionOptionsGetter = visibleOptionsFetcher
         reloadVisibleSelectionOptions()
     }
 
     private fun reloadVisibleSelectionOptions() {
         coroutineScope.launch {
+            _currentVisibleSelectionOptionsGetter.resetCurrentPoint()
             val visibleOptionsFetched = async {
-                currentVisibleSelectionOptionsGetter()
+                _currentVisibleSelectionOptionsGetter()
             }.await().map {
                 CheckableItem(it, MutableLiveData(prospectiveSelection.value?.contains(it) ?: false))
             }
@@ -123,27 +143,27 @@ class MultiSelectionTracker<T>(
     fun loadVisibleSelectionOptions() {
         coroutineScope.launch {
             val visibleOptionsFetched = async {
-                currentVisibleSelectionOptionsGetter()
+                _currentVisibleSelectionOptionsGetter()
             }.await().map {
                 CheckableItem(it, MutableLiveData(prospectiveSelection.value?.contains(it) ?: false))
             }
             _visibleOptions.value = (_visibleOptions.value ?: listOf()) + visibleOptionsFetched
-            visibleOptionsMap = visibleOptionsFetched.associateBy { it.item }
+            visibleOptionsMap = _visibleOptions.value?.associateBy { it.item } ?: mapOf()
         }
     }
 
-    private fun reloadVisibleSelectionDisplay() {
+    private fun reloadVisibleCurrentSelectionDisplay() {
         coroutineScope.launch {
-            val visibleCurrentSelectionFetched = currentVisibleSelectionDisplayGetter()
+            val visibleCurrentSelectionFetched = _currentVisibleCurrentSelectionDisplayGetter()
             _visibleCurrentSelection.value = visibleCurrentSelectionFetched
         }
     }
-    fun loadVisibleSelectionDisplay() {
+    /*fun loadVisibleCurrentSelectionDisplay() {
         coroutineScope.launch {
-            val visibleCurrentSelectionFetched = currentVisibleSelectionDisplayGetter()
+            val visibleCurrentSelectionFetched = currentVisibleCurrentSelectionDisplayGetter()
             _visibleCurrentSelection.value = (_visibleCurrentSelection.value ?: listOf()) + visibleCurrentSelectionFetched
         }
-    }
+    }*/
 
     // call when pressing "Cancel" in dialog
     fun cancelProspectiveSelection() {
@@ -151,14 +171,15 @@ class MultiSelectionTracker<T>(
         _visibleOptions.value = _visibleOptions.value?.onEach { it.isChecked.value = currentSelection.value?.contains(it.item) ?: false } ?: listOf()
         _prospectiveSelection.value = currentSelection.value
         // reset selection option view in dialog
-        setVisibleSelectionOptions(allOptionsFetcher)
+        setVisibleSelectionOptions(getAllSelectionOptions)
     }
 
     // call when pressing "Ok" in dialog
     fun confirmProspectiveSelection() {
         // set current to prospective
         _currentSelection.value = prospectiveSelection.value
-        setVisibleSelectionOptions(allOptionsFetcher)
+        setVisibleSelectionOptions(getAllSelectionOptions)
+        reloadVisibleCurrentSelectionDisplay()
     }
 
     // call when pressing on any item in dialog
@@ -180,6 +201,36 @@ class MultiSelectionTracker<T>(
                 }
             }
         }
+    }
+
+    fun searchFromSelectionOptions(query: String) {
+        _currentVisibleSelectionOptionsGetter = if (query.isNotEmpty()) {
+            getSearchedSelectionOptions.changeSearchQueryAndResetCurrentPoint(query)
+            getSearchedSelectionOptions
+        } else {
+            getAllSelectionOptions.resetCurrentPoint()
+            getAllSelectionOptions
+        }
+        reloadVisibleSelectionOptions()
+    }
+
+    fun searchFromCurrentSelectionDisplay(query: String) {
+        _currentVisibleCurrentSelectionDisplayGetter = if (query.isNotEmpty()) {
+            getSearchedCurrentSelectionDisplay.changeSearchQueryAndResetCurrentPoint(query)
+            getSearchedCurrentSelectionDisplay
+        } else {
+            getAllCurrentSelectionDisplay.resetCurrentPoint()
+            getAllCurrentSelectionDisplay
+        }
+        reloadVisibleCurrentSelectionDisplay()
+    }
+
+    fun visibleSelectionOptionsOnLastPage(): Boolean {
+        return _currentVisibleSelectionOptionsGetter.onLastPage
+    }
+
+    fun visibleCurrentSelectionDisplayOnLastPage(): Boolean {
+        return _currentVisibleCurrentSelectionDisplayGetter.onLastPage
     }
 
     // call when submitting in display fragment

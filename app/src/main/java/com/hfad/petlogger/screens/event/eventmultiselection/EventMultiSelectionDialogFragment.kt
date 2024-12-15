@@ -1,10 +1,12 @@
 package com.hfad.petlogger.screens.event.eventmultiselection
 
+import RecyclerViewPaginator
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import com.hfad.petlogger.databinding.FragmentEventMultiSelectionDialogBinding
@@ -31,6 +33,17 @@ class EventMultiSelectionDialogFragment : DialogFragment() {
             viewLifecycleOwner
         )()
 
+        binding.searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                viewModel.onSelectionOptionsQueryTextSubmit(query)
+                return true
+            }
+            override fun onQueryTextChange(newText: String?): Boolean {
+                viewModel.onSelectionOptionsQueryTextChange(newText)
+                return true
+            }
+        })
+
         binding.okayButton.setOnClickListener {
             viewModel.confirmSelection()
             requireDialog().dismiss()
@@ -40,6 +53,13 @@ class EventMultiSelectionDialogFragment : DialogFragment() {
             viewModel.cancel()
             requireDialog().dismiss()
         }
+
+        RecyclerViewPaginator(
+            recyclerView = binding.eventsList,
+            onLast = {viewModel.visibleOptionsOnLastPage()},
+            isLoading = {viewModel.visibleOptionsAreLoading()},
+            loadMore = {viewModel.loadFromVisibleOptions()}
+        )
 
         return view
     }

@@ -152,4 +152,7 @@ interface EventDao {
 
     @RawQuery
     suspend fun searchEvents(dynamicQuery: SupportSQLiteQuery): List<Event>
+
+    @RawQuery
+    suspend fun searchEventIds(dynamicQuery: SupportSQLiteQuery): List<Long>
 }

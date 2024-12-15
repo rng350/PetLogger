@@ -12,7 +12,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical">
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/dialogFragmentAppBarLayout"
@@ -30,30 +30,32 @@
                 app:titleCentered="true"
                 app:subtitleCentered="true"/>
         </com.google.android.material.appbar.AppBarLayout>
-
-        <ScrollView
-            android:id="@+id/tags_list_scroll_view"
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/search_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:queryHint="@string/search_pets"/>
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1">
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/tags_list"
+            android:layout_weight="1"
+            android:fillViewport="true">
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:gravity="top" />
-        </ScrollView>
-
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/tags_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:gravity="top" />
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="end"
+            android:gravity="center"
             android:orientation="horizontal">
-            <androidx.appcompat.widget.SearchView
-                android:id="@+id/search_view"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                app:queryHint="@string/enter_tag"/>
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/cancel_button"
                 android:layout_width="wrap_content"

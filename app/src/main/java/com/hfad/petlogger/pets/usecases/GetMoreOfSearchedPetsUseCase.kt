@@ -17,7 +17,7 @@ class GetMoreOfSearchedPetsUseCase(
     private var _onLastPage = false
     override val onLastPage: Boolean get() = _onLastPage
     private var lastPetId = Long.MIN_VALUE
-    private val queryBuilder = BuildPetSearchQueryUseCase(petsAmt, pickFrom)
+    private val queryBuilder = BuildPetSearchQueryUseCase(petsAmt = petsAmt, pickFrom =  pickFrom)
 
     override suspend fun invoke(): List<PetWithProfilePic> = withContext(Dispatchers.IO) {
         val petIds = petDao.searchPetIds(SimpleSQLiteQuery(

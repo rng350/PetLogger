@@ -7,14 +7,14 @@ import com.hfad.petlogger.common.search.ParseSearchQueryUseCase
 import com.hfad.petlogger.tags.Tag
 
 class BuildPetSearchQueryUseCase(
-    private val petsAmt: Int,
+    private val get: Get = Get.PetWithProfilePic,
+    private val petsAmt: Int? = null,
     private val pickFrom: Pick? = null
 ) {
     private val parseSearchQuery = ParseSearchQueryUseCase(listOf("name", "species", "breed", "sex"))
     operator fun invoke(
         query: String,
-        lastPetId: Long,
-        petIdSelectionPool: List<Long>? = null
+        lastPetId: Long = Long.MIN_VALUE
     ): SimpleSQLiteQuery? {
         val parsedSearch = parseSearchQuery(query)
         val nonCategorizedSearch = parsedSearch[null]?:listOf()
@@ -37,7 +37,15 @@ class BuildPetSearchQueryUseCase(
             queryParams.add(nonCategorizedSearch.joinToString(separator=" "))
         }
 
-        queryBuilder.append("SELECT pet_table.pet_name AS petName, pet_table.pet_id AS petId, photo_table.photo_uri AS petProfilePicUri FROM pet_table ")
+        when(get) {
+            Get.OnlyIds -> {
+                queryBuilder.append("SELECT pet_table.pet_id ")
+            }
+            Get.PetWithProfilePic -> {
+                queryBuilder.append("SELECT pet_table.pet_name AS petName, pet_table.pet_id AS petId, photo_table.photo_uri AS petProfilePicUri ")
+            }
+        }
+        queryBuilder.append("FROM pet_table ")
         if (nonCategorizedSearch.isNotEmpty()) {
             queryBuilder.append("JOIN matched_pets ON pet_table.pet_id = matched_pets.pet_id ")
         }
@@ -104,8 +112,11 @@ class BuildPetSearchQueryUseCase(
             queryParams.add(searchedTags.size)
         }
 
-        queryBuilder.append("ORDER BY pet_table.pet_id ASC LIMIT ? ")
-        queryParams.add(petsAmt)
+        queryBuilder.append("ORDER BY pet_table.pet_id ASC ")
+        petsAmt?.let {
+            queryBuilder.append("LIMIT ? ")
+            queryParams.add(petsAmt)
+        }
 
         Log.d("PetSearchQuery", "Query: $queryBuilder")
         Log.d("PetSearchQuery", "Params: ${queryParams.map{it.toString()}}")
@@ -120,5 +131,10 @@ class BuildPetSearchQueryUseCase(
         data class FromTag(val tag: LiveData<Tag>): Pick() {
             val tagName: String get() = tag.value?.tagName ?: ""
         }
+    }
+
+    sealed class Get {
+        object OnlyIds: Get()
+        object PetWithProfilePic: Get()
     }
 }

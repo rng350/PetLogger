@@ -1,10 +1,12 @@
 package com.hfad.petlogger.screens.pet.petmultiselection
 
+import RecyclerViewPaginator
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import com.hfad.petlogger.databinding.FragmentPetMultiSelectionSectionDialogBinding
@@ -35,6 +37,24 @@ class PetMultiSelectionSectionDialogFragment : DialogFragment() {
             lifecycleOwner = viewLifecycleOwner,
             context = requireContext()
         )()
+
+        RecyclerViewPaginator(
+            recyclerView = binding.petsList,
+            onLast = {viewModel.visibleOptionsOnLastPage()},
+            isLoading = {viewModel.visibleOptionsAreLoading()},
+            loadMore = {viewModel.loadFromVisibleOptions()}
+        )
+
+        binding.searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                viewModel.onSelectionOptionsQueryTextSubmit(query)
+                return true
+            }
+            override fun onQueryTextChange(newText: String?): Boolean {
+                viewModel.onSelectionOptionsQueryTextChange(newText)
+                return true
+            }
+        })
 
         binding.submitButton.setOnClickListener {
             viewModel.confirmSelection()

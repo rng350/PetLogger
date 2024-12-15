@@ -5,21 +5,22 @@ import androidx.lifecycle.LiveData
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.hfad.petlogger.common.search.GetBoundingSearchDatesUseCase
 import com.hfad.petlogger.common.search.ParseSearchQueryUseCase
+import com.hfad.petlogger.common.util.Constants
 import com.hfad.petlogger.common.util.Converter
 import com.hfad.petlogger.pets.Pet
 import com.hfad.petlogger.tags.Tag
 import java.time.OffsetDateTime
 
 class BuildPhotoSearchQueryUseCase(
-    private val photosAmt: Int,
+    private val get: Get = Get.Photo,
+    private val photosAmt: Int? = null,
     private val pickFrom: Pick? = null
 ) {
     private val parseSearchQuery = ParseSearchQueryUseCase(listOf("pet", "before", "after"))
     operator fun invoke(
         query: String,
-        lastPhotoDate: OffsetDateTime,
-        lastPhotoId: Long,
-        photoIdSelectionPool: List<Long>? = null
+        lastPhotoDate: OffsetDateTime = Constants.OFFSET_DATE_TIME_MAX_ALLOWED,
+        lastPhotoId: Long = Long.MAX_VALUE
     ): SimpleSQLiteQuery? {
         val parsedSearch = parseSearchQuery(query)
         // get bounding dates
@@ -55,7 +56,15 @@ class BuildPhotoSearchQueryUseCase(
             null -> {}
         }
 
-        queryBuilder.append("SELECT photo_table.* FROM photo_table ")
+        when (get) {
+            Get.OnlyIds -> {
+                queryBuilder.append("SELECT photo_table.photo_id ")
+            }
+            Get.Photo -> {
+                queryBuilder.append("SELECT photo_table.* ")
+            }
+        }
+        queryBuilder.append("FROM photo_table ")
 
         when (pickFrom) {
             is Pick.FromEvent -> {
@@ -113,14 +122,6 @@ class BuildPhotoSearchQueryUseCase(
             queryParams.addAll(searchedTags)
         }
 
-        photoIdSelectionPool?.let {
-            if (photoIdSelectionPool.isEmpty()) {
-                return null
-            }
-            queryBuilder.append("AND photo_table.photo_id IN ${photoIdSelectionPool.joinToString(prefix="(",separator=",",postfix=")"){"?"}} ")
-            queryParams.addAll(photoIdSelectionPool)
-        }
-
         queryBuilder.append("GROUP BY photo_table.photo_id ")
 
         val havingCountQuery = StringBuilder()
@@ -134,8 +135,11 @@ class BuildPhotoSearchQueryUseCase(
         }
         queryBuilder.append(havingCountQuery)
 
-        queryBuilder.append("ORDER BY datetime(photo_table.photo_date) DESC, photo_table.photo_id DESC LIMIT ?")
-        queryParams.add(photosAmt)
+        queryBuilder.append("ORDER BY datetime(photo_table.photo_date) DESC, photo_table.photo_id DESC ")
+        photosAmt?.let {
+            queryBuilder.append("LIMIT ? ")
+            queryParams.add(photosAmt)
+        }
 
         Log.d("PhotoQuery", "query: $queryBuilder")
         Log.d("PhotoQuery", "Params: ${queryParams.map{it.toString()}}")
@@ -147,5 +151,10 @@ class BuildPhotoSearchQueryUseCase(
         data class FromNote(val noteId: Long): Pick()
         data class FromEvent(val eventId: Long): Pick()
         data class FromTag(val tagId: Long): Pick()
+    }
+
+    sealed class Get {
+        object OnlyIds: Get()
+        object Photo: Get()
     }
 }

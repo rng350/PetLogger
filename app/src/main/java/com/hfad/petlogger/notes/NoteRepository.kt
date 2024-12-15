@@ -50,7 +50,7 @@ class NoteRepository(
     suspend fun insertNote(note: Note,
                            pets: List<Long> = listOf<Long>(),
                            events: List<Long> = listOf<Long>(),
-                           weights: List<Weight> = listOf<Weight>(),
+                           weights: List<Long> = listOf<Long>(),
                            photos: List<Photo> = listOf<Photo>(),
                            tags: List<Tag> = listOf<Tag>()): Long
     = withContext(Dispatchers.IO) {
@@ -69,7 +69,7 @@ class NoteRepository(
         }
         val weightsDeferred = weights.map {
             async {
-                insertWeightNote(noteId, it.id)
+                insertWeightNote(noteId = noteId, weightId = it)
             }
         }
         val photosDeferred = photos.map {

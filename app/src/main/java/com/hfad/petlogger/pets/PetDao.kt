@@ -239,5 +239,5 @@ interface PetDao {
     suspend fun searchPets(query: SimpleSQLiteQuery): List<PetWithProfilePic>
 
     @RawQuery
-    suspend fun searchPetIds(query: SimpleSQLiteQuery): List<String>
+    suspend fun searchPetIds(query: SimpleSQLiteQuery): List<Long>
 }

@@ -12,7 +12,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical">
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/dialogFragmentAppBarLayout"
@@ -30,24 +30,27 @@
                 app:titleCentered="true"
                 app:subtitleCentered="true"/>
         </com.google.android.material.appbar.AppBarLayout>
-
-        <ScrollView
-            android:id="@+id/events_list_scroll_view"
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/search_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:queryHint="@string/search_events"/>
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:fillViewport="true">
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/events_list"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:gravity="top"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
-        </ScrollView>
-
+        </androidx.core.widget.NestedScrollView>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="end"
+            android:gravity="center"
             android:orientation="horizontal">
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/cancel_button"
@@ -63,5 +66,4 @@
                 android:text="@string/ok" />
         </LinearLayout>
     </LinearLayout>
-
 </layout>

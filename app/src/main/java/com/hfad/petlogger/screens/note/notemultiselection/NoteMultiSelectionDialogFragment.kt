@@ -1,9 +1,11 @@
 package com.hfad.petlogger.screens.note.notemultiselection
 
+import RecyclerViewPaginator
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import com.hfad.petlogger.databinding.FragmentNoteMultiSelectionDialogBinding
@@ -41,6 +43,24 @@ class NoteMultiSelectionDialogFragment : DialogFragment() {
             recyclerView = binding.notesList,
             lifecycleOwner = viewLifecycleOwner
         ).invoke()
+
+        binding.searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                noteMultiSelectionViewModel.onSelectionOptionsQueryTextSubmit(query)
+                return true
+            }
+            override fun onQueryTextChange(newText: String?): Boolean {
+                noteMultiSelectionViewModel.onSelectionOptionsQueryTextChange(newText)
+                return true
+            }
+        })
+
+        RecyclerViewPaginator(
+            recyclerView = binding.notesList,
+            onLast = {noteMultiSelectionViewModel.visibleOptionsOnLastPage()},
+            isLoading = {noteMultiSelectionViewModel.visibleOptionsAreLoading()},
+            loadMore = {noteMultiSelectionViewModel.loadFromVisibleOptions()}
+        )
 
         return view
     }

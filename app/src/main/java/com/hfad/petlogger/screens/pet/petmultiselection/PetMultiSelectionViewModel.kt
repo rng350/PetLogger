@@ -6,20 +6,31 @@ import androidx.lifecycle.viewModelScope
 import com.hfad.petlogger.common.selectiontracker.MultiSelectionTracker
 import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
 import com.hfad.petlogger.pets.PetWithProfilePic
-import com.hfad.petlogger.common.usecases.GetItemsUseCase
+import com.hfad.petlogger.pets.usecases.GetAllPetsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.pets.usecases.GetMoreOfAllPetsUseCase
+import com.hfad.petlogger.pets.usecases.GetMoreOfSearchedPetsUseCase
+import com.hfad.petlogger.pets.usecases.GetSearchedPetsFromCurrentSelectionUseCaseFactory
+import kotlinx.coroutines.launch
 
 // should be included in main fragment too
 class PetMultiSelectionViewModel(
-    getAllPets: GetItemsUseCase<PetWithProfilePic>,
+    getAllPets: GetMoreOfAllPetsUseCase,
     getInitialSelection: GetMultipleInitialItemsUseCase<PetWithProfilePic>? = null,
+    getSearchedSelectionOptions: GetMoreOfSearchedPetsUseCase,
+    getAllCurrentSelectionDisplayFactory: GetAllPetsFromCurrentSelectionUseCaseFactory,
+    getSearchedCurrentSelectionDisplayFactory: GetSearchedPetsFromCurrentSelectionUseCaseFactory
 ) : ViewModel() {
     val selectionTracker = MultiSelectionTracker<PetWithProfilePic>(
-        allOptionsFetcher = getAllPets,
-        initialItemsUseCase = getInitialSelection,
+        getAllSelectionOptions = getAllPets,
+        getSearchedSelectionOptions = getSearchedSelectionOptions,
+        getInitialSelection = getInitialSelection,
+        getAllCurrentSelectionDisplayFactory = getAllCurrentSelectionDisplayFactory,
+        getSearchedCurrentSelectionDisplayFactory = getSearchedCurrentSelectionDisplayFactory,
         coroutineScope = viewModelScope
     )
     private var _currentSelectionChanged = false
     val currentSelectionChanged get() = _currentSelectionChanged
+    private var visibleSelectionOptionsLoading: Boolean = false
 
     fun getPetsToAdd(): List<Long> {
         return selectionTracker.getSelectionToAdd().map{it.petId}
@@ -38,6 +49,46 @@ class PetMultiSelectionViewModel(
         _currentSelectionChanged = false
     }
 
+    fun onCurrentSelectionDisplayQueryTextSubmit(query: String?) {
+        query?.let {
+            selectionTracker.searchFromCurrentSelectionDisplay(query)
+        }
+    }
+
+    fun onCurrentSelectionDisplayQueryTextChange(newText: String?) {
+        newText?.let {
+            selectionTracker.searchFromCurrentSelectionDisplay(newText)
+        }
+    }
+
+    fun onSelectionOptionsQueryTextSubmit(query: String?) {
+        query?.let {
+            selectionTracker.searchFromSelectionOptions(query)
+        }
+    }
+
+    fun onSelectionOptionsQueryTextChange(newText: String?) {
+        newText?.let {
+            selectionTracker.searchFromSelectionOptions(newText)
+        }
+    }
+
+    fun loadFromVisibleOptions() {
+        viewModelScope.launch {
+            visibleSelectionOptionsLoading = true
+            selectionTracker.loadVisibleSelectionOptions()
+            visibleSelectionOptionsLoading = false
+        }
+    }
+
+    fun visibleOptionsAreLoading(): Boolean {
+        return visibleSelectionOptionsLoading
+    }
+
+    fun visibleOptionsOnLastPage(): Boolean {
+        return selectionTracker.visibleSelectionOptionsOnLastPage()
+    }
+
     fun reset() {
         selectionTracker.resetSelection()
     }
@@ -48,12 +99,21 @@ class PetMultiSelectionViewModel(
 
     companion object {
         fun provideFactory(
-            getAllPets: GetItemsUseCase<PetWithProfilePic>,
-            getInitialSelection: GetMultipleInitialItemsUseCase<PetWithProfilePic>? = null)
-        : ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            getAllPets: GetMoreOfAllPetsUseCase,
+            getInitialSelection: GetMultipleInitialItemsUseCase<PetWithProfilePic>? = null,
+            getSearchedSelectionOptions: GetMoreOfSearchedPetsUseCase,
+            getAllCurrentSelectionDisplayFactory: GetAllPetsFromCurrentSelectionUseCaseFactory,
+            getSearchedCurrentSelectionDisplayFactory: GetSearchedPetsFromCurrentSelectionUseCaseFactory
+        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(PetMultiSelectionViewModel::class.java)) {
-                    return PetMultiSelectionViewModel(getAllPets, getInitialSelection) as T
+                    return PetMultiSelectionViewModel(
+                        getAllPets,
+                        getInitialSelection,
+                        getSearchedSelectionOptions,
+                        getAllCurrentSelectionDisplayFactory,
+                        getSearchedCurrentSelectionDisplayFactory
+                    ) as T
                 }
                 throw IllegalArgumentException("Unknown ViewModel")
             }

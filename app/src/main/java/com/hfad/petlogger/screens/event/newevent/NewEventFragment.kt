@@ -37,9 +37,20 @@ import com.hfad.petlogger.common.setAppBarTitle
 import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
 import com.hfad.petlogger.common.util.Constants
 import com.hfad.petlogger.common.util.Constants.Companion.defaultNullIdForNavigation
+import com.hfad.petlogger.notes.usecases.GetAllNotesFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.notes.usecases.GetMoreOfAllNotesUseCase
+import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesUseCase
+import com.hfad.petlogger.notes.usecases.GetSearchedNotesFromCurrentSelectionUseCaseFactory
 import com.hfad.petlogger.notes.usecases.GetSingleNoteUseCase
+import com.hfad.petlogger.pets.usecases.GetAllPetsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.pets.usecases.GetMoreOfAllPetsUseCase
+import com.hfad.petlogger.pets.usecases.GetMoreOfSearchedPetsUseCase
+import com.hfad.petlogger.pets.usecases.GetSearchedPetsFromCurrentSelectionUseCaseFactory
 import com.hfad.petlogger.pets.usecases.GetSinglePetUseCase
 import com.hfad.petlogger.photos.usecases.GetSinglePhotoUseCase
+import com.hfad.petlogger.tags.usecases.GetAllTagsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.tags.usecases.GetSearchedTagsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.tags.usecases.GetSearchedTagsUseCase
 import kotlinx.coroutines.*
 
 class NewEventFragment : Fragment() {
@@ -74,31 +85,58 @@ class NewEventFragment : Fragment() {
         binding.mediaSelectionViewModel = mediaSelectionViewModel
 
         val petRepository = PetRepository(database, mediaRepository)
-        val getAllPetsUseCase = GetAllPetsWithProfilePhotosUseCase(petRepository)
+        val getAllPetsUseCase = GetMoreOfAllPetsUseCase(petRepository, petsAmt = 10)
         val petId = NewEventFragmentArgs.fromBundle(requireArguments()).petId
         val getAssociatedPet = if (petId != defaultNullIdForNavigation) {
             GetMultipleInitialItemsUseCase.New(GetSinglePetUseCase(database.petDao, petId))
         } else null
+        val getSearchedPets = GetMoreOfSearchedPetsUseCase(database.petDao, petsAmt = 10)
+        val getAllCurrentSelectedPetsFactory = GetAllPetsFromCurrentSelectionUseCaseFactory()
+        val getSearchedCurrentSelectedPetsFactory = GetSearchedPetsFromCurrentSelectionUseCaseFactory(database.petDao)
         val petMultiSelectionViewModel = ViewModelProvider(this,
-            PetMultiSelectionViewModel.provideFactory(getAllPetsUseCase, getAssociatedPet)
+            PetMultiSelectionViewModel.provideFactory(
+                getAllPets = getAllPetsUseCase,
+                getInitialSelection = getAssociatedPet,
+                getSearchedSelectionOptions = getSearchedPets,
+                getAllCurrentSelectionDisplayFactory = getAllCurrentSelectedPetsFactory,
+                getSearchedCurrentSelectionDisplayFactory = getSearchedCurrentSelectedPetsFactory
+            )
         ).get(PetMultiSelectionViewModel::class.java)
         binding.petMultiSelectionViewModel = petMultiSelectionViewModel
 
         val noteRepository = NoteRepository(database, mediaRepository)
-        val getAllNotesUseCase = GetAllNotesUseCase(noteRepository)
+        val getAllNotes = GetMoreOfAllNotesUseCase(noteRepository, noteAmt = 10)
         val noteId = NewEventFragmentArgs.fromBundle(requireArguments()).noteId
         val getAssociatedNote = if (noteId != defaultNullIdForNavigation) {
             GetMultipleInitialItemsUseCase.New(GetSingleNoteUseCase(database.noteDao, noteId))
         } else null
+        val getSearchedNotesFromAll = GetMoreOfSearchedNotesUseCase(database.noteDao, notesAmt = 10)
+        val getAllNotesFromCurrentSelectionFactory = GetAllNotesFromCurrentSelectionUseCaseFactory()
+        val getSearchedNotesFromCurrentSelectionFactory = GetSearchedNotesFromCurrentSelectionUseCaseFactory(database.noteDao)
         val noteMultiSelectionViewModel = ViewModelProvider(this,
-            NoteMultiSelectionViewModel.provideFactory(getAllNotesUseCase, getAssociatedNote)
+            NoteMultiSelectionViewModel.provideFactory(
+                getAllNotes = getAllNotes,
+                getInitialSelection = getAssociatedNote,
+                getSearchedSelectionOptions = getSearchedNotesFromAll,
+                getAllNotesFromCurrentSelectionFactory = getAllNotesFromCurrentSelectionFactory,
+                getSearchedNotesFromCurrentSelectionFactory = getSearchedNotesFromCurrentSelectionFactory
+            )
         ).get(NoteMultiSelectionViewModel::class.java)
         binding.noteMultiSelectionViewModel = noteMultiSelectionViewModel
 
         val tagRepository = TagRepository(database)
         val getAllTags = GetAllTagsUseCase(tagRepository)
+        val getSearchedTagsFromAll = GetSearchedTagsUseCase(tagRepository)
+        val getAllTagsFromCurrentSelectionFactory = GetAllTagsFromCurrentSelectionUseCaseFactory()
+        val getSearchedTagsFromCurrentSelectionFactory = GetSearchedTagsFromCurrentSelectionUseCaseFactory(tagRepository)
         val tagMultiSelectionViewModel = ViewModelProvider(this,
-            TagMultiSelectionViewModel.provideFactory(tagRepository, getAllTags)
+            TagMultiSelectionViewModel.provideFactory(
+                tagRepository = tagRepository,
+                getAllTags = getAllTags,
+                getAllSearchedTagsUseCase = getSearchedTagsFromAll,
+                getAllCurrentSelectionFactory = getAllTagsFromCurrentSelectionFactory,
+                getSearchedTagsFromCurrentSelectionFactory = getSearchedTagsFromCurrentSelectionFactory
+            )
         ).get(TagMultiSelectionViewModel::class.java)
         binding.tagMultiSelectionViewModel = tagMultiSelectionViewModel
 

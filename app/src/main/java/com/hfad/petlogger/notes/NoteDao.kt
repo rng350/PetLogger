@@ -232,4 +232,7 @@ interface NoteDao {
 
     @RawQuery
     suspend fun searchNotes(query: SimpleSQLiteQuery): List<Note>
+
+    @RawQuery
+    suspend fun searchNoteIds(query: SimpleSQLiteQuery): List<Long>
 }

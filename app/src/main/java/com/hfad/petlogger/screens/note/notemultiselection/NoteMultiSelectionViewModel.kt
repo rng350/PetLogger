@@ -4,18 +4,32 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.hfad.petlogger.notes.Note
-import com.hfad.petlogger.common.usecases.GetItemsUseCase
 import com.hfad.petlogger.common.selectiontracker.MultiSelectionTracker
 import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
+import com.hfad.petlogger.notes.usecases.GetAllNotesFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.notes.usecases.GetMoreOfAllNotesUseCase
+import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesUseCase
+import com.hfad.petlogger.notes.usecases.GetSearchedNotesFromCurrentSelectionUseCaseFactory
+import kotlinx.coroutines.launch
 
-class NoteMultiSelectionViewModel(getAllNotes: GetItemsUseCase<Note>, getInitialSelection: GetMultipleInitialItemsUseCase<Note>? = null) : ViewModel() {
+class NoteMultiSelectionViewModel(
+    getAllNotes: GetMoreOfAllNotesUseCase,
+    getInitialSelection: GetMultipleInitialItemsUseCase<Note>? = null,
+    getSearchedSelectionOptions: GetMoreOfSearchedNotesUseCase,
+    getAllNotesFromCurrentSelectionFactory: GetAllNotesFromCurrentSelectionUseCaseFactory,
+    getSearchedNotesFromCurrentSelectionFactory: GetSearchedNotesFromCurrentSelectionUseCaseFactory
+) : ViewModel() {
     val selectionTracker = MultiSelectionTracker<Note>(
-        allOptionsFetcher = getAllNotes,
-        initialItemsUseCase = getInitialSelection,
+        getAllSelectionOptions = getAllNotes,
+        getInitialSelection = getInitialSelection,
+        getSearchedSelectionOptions = getSearchedSelectionOptions,
+        getAllCurrentSelectionDisplayFactory = getAllNotesFromCurrentSelectionFactory,
+        getSearchedCurrentSelectionDisplayFactory = getSearchedNotesFromCurrentSelectionFactory,
         coroutineScope = viewModelScope
     )
     private var _currentSelectionChanged = false
     val currentSelectionChanged get() = _currentSelectionChanged
+    private var visibleSelectionOptionsLoading: Boolean = false
 
     fun resetSelection() {
         selectionTracker.resetSelection()
@@ -38,6 +52,46 @@ class NoteMultiSelectionViewModel(getAllNotes: GetItemsUseCase<Note>, getInitial
         _currentSelectionChanged = false
     }
 
+    fun onCurrentSelectionDisplayQueryTextSubmit(query: String?) {
+        query?.let {
+            selectionTracker.searchFromCurrentSelectionDisplay(query)
+        }
+    }
+
+    fun onCurrentSelectionDisplayQueryTextChange(newText: String?) {
+        newText?.let {
+            selectionTracker.searchFromCurrentSelectionDisplay(newText)
+        }
+    }
+
+    fun onSelectionOptionsQueryTextSubmit(query: String?) {
+        query?.let {
+            selectionTracker.searchFromSelectionOptions(query)
+        }
+    }
+
+    fun onSelectionOptionsQueryTextChange(newText: String?) {
+        newText?.let {
+            selectionTracker.searchFromSelectionOptions(newText)
+        }
+    }
+
+    fun loadFromVisibleOptions() {
+        viewModelScope.launch {
+            visibleSelectionOptionsLoading = true
+            selectionTracker.loadVisibleSelectionOptions()
+            visibleSelectionOptionsLoading = false
+        }
+    }
+
+    fun visibleOptionsAreLoading(): Boolean {
+        return visibleSelectionOptionsLoading
+    }
+
+    fun visibleOptionsOnLastPage(): Boolean {
+        return selectionTracker.visibleSelectionOptionsOnLastPage()
+    }
+
     fun reset() {
         selectionTracker.resetSelection()
     }
@@ -48,11 +102,20 @@ class NoteMultiSelectionViewModel(getAllNotes: GetItemsUseCase<Note>, getInitial
 
     companion object {
         fun provideFactory(
-            getAllNotes: GetItemsUseCase<Note>, getInitialSelection: GetMultipleInitialItemsUseCase<Note>? = null
+            getAllNotes: GetMoreOfAllNotesUseCase,
+            getInitialSelection: GetMultipleInitialItemsUseCase<Note>? = null,
+            getSearchedSelectionOptions: GetMoreOfSearchedNotesUseCase,
+            getAllNotesFromCurrentSelectionFactory: GetAllNotesFromCurrentSelectionUseCaseFactory,
+            getSearchedNotesFromCurrentSelectionFactory: GetSearchedNotesFromCurrentSelectionUseCaseFactory
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(NoteMultiSelectionViewModel::class.java)) {
-                    return NoteMultiSelectionViewModel(getAllNotes, getInitialSelection) as T
+                    return NoteMultiSelectionViewModel(
+                        getAllNotes,
+                        getInitialSelection,
+                        getSearchedSelectionOptions,
+                        getAllNotesFromCurrentSelectionFactory,
+                        getSearchedNotesFromCurrentSelectionFactory) as T
                 }
                 throw IllegalArgumentException("Unknown ViewModel")
             }

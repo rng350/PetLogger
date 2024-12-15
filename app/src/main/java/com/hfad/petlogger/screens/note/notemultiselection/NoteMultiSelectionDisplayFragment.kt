@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
 import com.hfad.petlogger.databinding.FragmentNoteMultiSelectionDisplayBinding
 import com.hfad.petlogger.screens.sections.recyclerviews.SetupNoteMultiPickerSelectionDisplayUseCase
@@ -28,11 +29,22 @@ class NoteMultiSelectionDisplayFragment : Fragment() {
         binding.noteMultiSelectionViewModel = noteMultiSelectionViewModel
 
         SetupNoteMultiPickerSelectionDisplayUseCase(
-            selection = noteMultiSelectionViewModel.selectionTracker.currentSelection,
+            selection = noteMultiSelectionViewModel.selectionTracker.visibleCurrentSelection,
             selectionTracker = noteMultiSelectionViewModel.selectionTracker,
             recyclerView = binding.notesList,
             lifecycleOwner = viewLifecycleOwner,
         ).invoke()
+
+        binding.searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                noteMultiSelectionViewModel.onCurrentSelectionDisplayQueryTextSubmit(query)
+                return true
+            }
+            override fun onQueryTextChange(newText: String?): Boolean {
+                noteMultiSelectionViewModel.onCurrentSelectionDisplayQueryTextChange(newText)
+                return true
+            }
+        })
 
         binding.addNotesButton.setOnClickListener {
             binding.addNotesButton.isEnabled = false

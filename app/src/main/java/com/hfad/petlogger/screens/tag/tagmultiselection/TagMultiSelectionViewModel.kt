@@ -9,20 +9,32 @@ import com.hfad.petlogger.tags.usecases.GetSearchedTagsUseCase
 import com.hfad.petlogger.tags.TagRepository
 import com.hfad.petlogger.common.selectiontracker.MultiSelectionTracker
 import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
+import com.hfad.petlogger.common.usecases.factories.GetAllCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.tags.usecases.GetAllTagsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.tags.usecases.GetAllTagsUseCase
+import com.hfad.petlogger.tags.usecases.GetSearchedTagsFromCurrentSelectionUseCase
+import com.hfad.petlogger.tags.usecases.GetSearchedTagsFromCurrentSelectionUseCaseFactory
+import kotlinx.coroutines.launch
 
 class TagMultiSelectionViewModel(
     private val tagRepository: TagRepository,
-    private val getAllTags: GetItemsUseCase<Tag>,
+    private val getAllTags: GetAllTagsUseCase,
+    getAllSearchedTagsUseCase: GetSearchedTagsUseCase,
+    getAllCurrentSelectionFactory: GetAllTagsFromCurrentSelectionUseCaseFactory,
+    getSearchedTagsFromCurrentSelectionFactory: GetSearchedTagsFromCurrentSelectionUseCaseFactory,
     getInitialSelection: GetMultipleInitialItemsUseCase<Tag>? = null
 ) : ViewModel() {
     val selectionTracker = MultiSelectionTracker<Tag>(
-        allOptionsFetcher = getAllTags,
-        initialItemsUseCase = getInitialSelection,
+        getAllSelectionOptions = getAllTags,
+        getInitialSelection = getInitialSelection,
+        getSearchedSelectionOptions = getAllSearchedTagsUseCase,
+        getAllCurrentSelectionDisplayFactory = getAllCurrentSelectionFactory,
+        getSearchedCurrentSelectionDisplayFactory = getSearchedTagsFromCurrentSelectionFactory,
         coroutineScope = viewModelScope
     )
     private var _currentSelectionChanged = false
-    private var currentFetcherGetsAllTags = true
     val currentSelectionChanged get() = _currentSelectionChanged
+    private var visibleSelectionOptionsLoading: Boolean = false
 
     fun getTagsToAdd(): List<Tag> {
         return selectionTracker.getSelectionToAdd()
@@ -49,35 +61,65 @@ class TagMultiSelectionViewModel(
         selectionTracker.cancelProspectiveSelection()
     }
 
-    fun onQueryTextSubmit(query: String?) {
-        if (query != null) {
-            reinitializeGetterType(query)
+    fun onCurrentSelectionDisplayQueryTextSubmit(query: String?) {
+        query?.let {
+            selectionTracker.searchFromCurrentSelectionDisplay(query)
         }
     }
 
-    fun onQueryTextChanged(newText: String?) {
-        if (newText != null) {
-            reinitializeGetterType(newText)
+    fun onCurrentSelectionDisplayQueryTextChange(newText: String?) {
+        newText?.let {
+            selectionTracker.searchFromCurrentSelectionDisplay(newText)
         }
     }
 
-    private fun reinitializeGetterType(query: String) {
-        if (query.isNotEmpty()) {
-            selectionTracker.setVisibleSelectionOptions(GetSearchedTagsUseCase(tagRepository, query))
-            currentFetcherGetsAllTags = false
-        } else {
-            if (!currentFetcherGetsAllTags) {
-                selectionTracker.setVisibleSelectionOptions(getAllTags)
-                currentFetcherGetsAllTags = true
-            }
+    fun onSelectionOptionsQueryTextSubmit(query: String?) {
+        query?.let {
+            selectionTracker.searchFromSelectionOptions(query)
         }
+    }
+
+    fun onSelectionOptionsQueryTextChange(newText: String?) {
+        newText?.let {
+            selectionTracker.searchFromSelectionOptions(newText)
+        }
+    }
+
+    fun loadFromVisibleOptions() {
+        viewModelScope.launch {
+            visibleSelectionOptionsLoading = true
+            selectionTracker.loadVisibleSelectionOptions()
+            visibleSelectionOptionsLoading = false
+        }
+    }
+
+    fun visibleOptionsAreLoading(): Boolean {
+        return visibleSelectionOptionsLoading
+    }
+
+    fun visibleOptionsOnLastPage(): Boolean {
+        return selectionTracker.visibleSelectionOptionsOnLastPage()
     }
 
     companion object {
-        fun provideFactory(tagRepository: TagRepository, getAllTags: GetItemsUseCase<Tag>, getInitialSelection: GetMultipleInitialItemsUseCase<Tag>? = null): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+        fun provideFactory(
+            tagRepository: TagRepository,
+            getAllTags: GetAllTagsUseCase,
+            getAllSearchedTagsUseCase: GetSearchedTagsUseCase,
+            getAllCurrentSelectionFactory: GetAllTagsFromCurrentSelectionUseCaseFactory,
+            getSearchedTagsFromCurrentSelectionFactory: GetSearchedTagsFromCurrentSelectionUseCaseFactory,
+            getInitialSelection: GetMultipleInitialItemsUseCase<Tag>? = null
+        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(TagMultiSelectionViewModel::class.java)) {
-                    return TagMultiSelectionViewModel(tagRepository, getAllTags, getInitialSelection) as T
+                    return TagMultiSelectionViewModel(
+                        tagRepository,
+                        getAllTags,
+                        getAllSearchedTagsUseCase,
+                        getAllCurrentSelectionFactory,
+                        getSearchedTagsFromCurrentSelectionFactory,
+                        getInitialSelection
+                    ) as T
                 }
                 throw IllegalArgumentException("Unknown ViewModel")
             }

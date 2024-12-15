@@ -21,14 +21,14 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
-            <com.google.android.material.appbar.MaterialToolbar
+<!--            <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/dialogFragmentAppBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:title="Select Weights"
                 app:subtitle="@{@string/amt_without_limit_selected(String.valueOf(viewModel.selectionTracker.prospectiveSelection.size()))}"
                 app:titleCentered="true"
-                app:subtitleCentered="true"/>
+                app:subtitleCentered="true"/>-->
         </com.google.android.material.appbar.AppBarLayout>
 
         <ScrollView

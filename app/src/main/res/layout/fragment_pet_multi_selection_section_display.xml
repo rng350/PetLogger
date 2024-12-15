@@ -35,6 +35,11 @@
                     app:title="Associated Pets"
                     app:titleCentered="true"/>
             </com.google.android.material.appbar.AppBarLayout>
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/search_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:queryHint="@string/search_pets"/>
 
             <androidx.core.widget.NestedScrollView
                 android:id="@+id/pet_list_scroll_view"

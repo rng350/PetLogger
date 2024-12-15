@@ -24,7 +24,7 @@ class GetMoreOfSearchedNotesUseCase(
     private var _onLastPage = false
     override val onLastPage: Boolean
         get() = _onLastPage
-    val queryBuilder = BuildNoteSearchQueryUseCase(notesAmt, pickFrom)
+    val queryBuilder = BuildNoteSearchQueryUseCase(notesAmt = notesAmt, pickFrom =  pickFrom)
 
     override suspend fun invoke(): List<Note> = withContext(Dispatchers.IO) {
         val queryBuilt = queryBuilder(currentQuery, lastNoteEditedDate, lastNoteId)

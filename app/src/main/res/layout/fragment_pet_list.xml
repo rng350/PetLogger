@@ -20,7 +20,7 @@
                 android:id="@+id/search_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:queryHint="@string/search_photos"/>
+                app:queryHint="@string/search_pets"/>
             <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

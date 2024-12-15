@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexWrap
@@ -51,11 +52,22 @@ class TagMultiSelectionDisplayFragment : Fragment() {
         }
 
         SetupTagMultiPickerSelectionDisplayUseCase(
-            selection = tagMultiSelectionViewModel.selectionTracker.currentSelection,
+            selection = tagMultiSelectionViewModel.selectionTracker.visibleCurrentSelection,
             selectionTracker = tagMultiSelectionViewModel.selectionTracker,
             recyclerView = binding.tagList,
             lifecycleOwner = viewLifecycleOwner
         )()
+
+        binding.searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                tagMultiSelectionViewModel.onCurrentSelectionDisplayQueryTextSubmit(query)
+                return true
+            }
+            override fun onQueryTextChange(newText: String?): Boolean {
+                tagMultiSelectionViewModel.onCurrentSelectionDisplayQueryTextChange(newText)
+                return true
+            }
+        })
 
         return view
     }

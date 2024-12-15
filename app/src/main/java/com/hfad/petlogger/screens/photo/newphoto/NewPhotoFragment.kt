@@ -46,10 +46,26 @@ import com.hfad.petlogger.screens.event.eventmultiselection.EventMultiSelectionV
 import com.hfad.petlogger.common.setAppBarTitle
 import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
 import com.hfad.petlogger.common.util.Constants.Companion.defaultNullIdForNavigation
+import com.hfad.petlogger.events.EventRepository
+import com.hfad.petlogger.events.usecases.GetAllEventsFromCurrentSelectionUseCaseFactory
 import com.hfad.petlogger.events.usecases.GetAllEventsUseCase
+import com.hfad.petlogger.events.usecases.GetMoreOfAllEventsUseCase
+import com.hfad.petlogger.events.usecases.GetMoreOfSearchedEventsUseCase
+import com.hfad.petlogger.events.usecases.GetSearchedEventsFromCurrentSelectionUseCaseFactory
 import com.hfad.petlogger.events.usecases.GetSingleEventUseCase
+import com.hfad.petlogger.notes.usecases.GetAllNotesFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.notes.usecases.GetMoreOfAllNotesUseCase
+import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesUseCase
+import com.hfad.petlogger.notes.usecases.GetSearchedNotesFromCurrentSelectionUseCaseFactory
 import com.hfad.petlogger.notes.usecases.GetSingleNoteUseCase
+import com.hfad.petlogger.pets.usecases.GetAllPetsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.pets.usecases.GetMoreOfAllPetsUseCase
+import com.hfad.petlogger.pets.usecases.GetMoreOfSearchedPetsUseCase
+import com.hfad.petlogger.pets.usecases.GetSearchedPetsFromCurrentSelectionUseCaseFactory
 import com.hfad.petlogger.pets.usecases.GetSinglePetUseCase
+import com.hfad.petlogger.tags.usecases.GetAllTagsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.tags.usecases.GetSearchedTagsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.tags.usecases.GetSearchedTagsUseCase
 
 class NewPhotoFragment : Fragment() {
     private var _binding: FragmentNewPhotoBinding? = null
@@ -72,40 +88,78 @@ class NewPhotoFragment : Fragment() {
         ).get(NewPhotoViewModel::class.java)
 
         val petRepository = PetRepository(database, mediaRepository)
-        val getAllPetsUseCase = GetAllPetsWithProfilePhotosUseCase(petRepository)
+        val getAllPetsUseCase = GetMoreOfAllPetsUseCase(petRepository, petsAmt = 10)
         val petId = NewPhotoFragmentArgs.fromBundle(requireArguments()).petId
         val getInitialPet =
             if (petId != defaultNullIdForNavigation)
                 GetMultipleInitialItemsUseCase.New(GetSinglePetUseCase(database.petDao, petId))
             else null
+        val getSearchedPets = GetMoreOfSearchedPetsUseCase(database.petDao, petsAmt = 10)
+        val getAllPetsFromCurrentSelectionFactory = GetAllPetsFromCurrentSelectionUseCaseFactory()
+        val getSearchedPetsFromCurrentSelectionFactory = GetSearchedPetsFromCurrentSelectionUseCaseFactory(database.petDao)
         val petSelectorViewModel = ViewModelProvider(this,
-            PetMultiSelectionViewModel.provideFactory(getAllPetsUseCase, getInitialPet)
+            PetMultiSelectionViewModel.provideFactory(
+                getAllPetsUseCase,
+                getInitialPet,
+                getSearchedPets,
+                getAllPetsFromCurrentSelectionFactory,
+                getSearchedPetsFromCurrentSelectionFactory
+            )
         ).get(PetMultiSelectionViewModel::class.java)
 
-        val getAllEvents = GetAllEventsUseCase(database.eventDao)
+        val eventRepository = EventRepository(database, mediaRepository)
+        val getAllEvents = GetMoreOfAllEventsUseCase(eventRepository, eventAmt = 10)
         val eventId = NewPhotoFragmentArgs.fromBundle(requireArguments()).eventId
         val getInitialEvent =
             if (eventId != defaultNullIdForNavigation)
                 GetMultipleInitialItemsUseCase.New(GetSingleEventUseCase(database.eventDao, eventId))
             else null
-        val eventSelectionViewModel = ViewModelProvider(this, EventMultiSelectionViewModel.provideFactory(getAllEvents=getAllEvents, getAssociatedEvents = getInitialEvent)).get(
-            EventMultiSelectionViewModel::class.java)
+        val getSearchedEvents = GetMoreOfSearchedEventsUseCase(database.eventDao, eventAmt = 10)
+        val getAllEventsFromCurrentSelectionFactory = GetAllEventsFromCurrentSelectionUseCaseFactory()
+        val getSearchedEventsFromCurrentSelectionFactory = GetSearchedEventsFromCurrentSelectionUseCaseFactory(database.eventDao)
+        val eventSelectionViewModel = ViewModelProvider(this,
+            EventMultiSelectionViewModel.provideFactory(
+                getAllEvents=getAllEvents,
+                getAssociatedEvents = getInitialEvent,
+                getSearchedEvents = getSearchedEvents,
+                getAllEventsFromCurrentSelection = getAllEventsFromCurrentSelectionFactory,
+                getSearchedEventsFromCurrentSelectionFactory = getSearchedEventsFromCurrentSelectionFactory
+            )
+        ).get(EventMultiSelectionViewModel::class.java)
 
         val tagRepository = TagRepository(database)
         val getAllTags = GetAllTagsUseCase(tagRepository)
+        val getSearchedTagsFromAll = GetSearchedTagsUseCase(tagRepository)
+        val getAllTagsFromCurrentSelectionFactory = GetAllTagsFromCurrentSelectionUseCaseFactory()
+        val getSearchedTagsFromCurrentSelectionFactory = GetSearchedTagsFromCurrentSelectionUseCaseFactory(tagRepository)
         val tagMultiSelectionViewModel = ViewModelProvider(this,
-            TagMultiSelectionViewModel.provideFactory(tagRepository, getAllTags)
+            TagMultiSelectionViewModel.provideFactory(
+                tagRepository = tagRepository,
+                getAllTags = getAllTags,
+                getAllSearchedTagsUseCase = getSearchedTagsFromAll,
+                getAllCurrentSelectionFactory = getAllTagsFromCurrentSelectionFactory,
+                getSearchedTagsFromCurrentSelectionFactory = getSearchedTagsFromCurrentSelectionFactory
+            )
         ).get(TagMultiSelectionViewModel::class.java)
 
         val noteRepository = NoteRepository(database, mediaRepository)
-        val getAllNotes = GetAllNotesUseCase(noteRepository)
+        val getAllNotes = GetMoreOfAllNotesUseCase(noteRepository, noteAmt = 10)
         val noteId = NewPhotoFragmentArgs.fromBundle(requireArguments()).noteId
         val getInitialNote =
             if (noteId != defaultNullIdForNavigation)
                 GetMultipleInitialItemsUseCase.New(GetSingleNoteUseCase(database.noteDao, noteId))
             else null
+        val getSearchedNotesFromAll = GetMoreOfSearchedNotesUseCase(database.noteDao, notesAmt = 10)
+        val getAllNotesFromCurrentSelectionFactory = GetAllNotesFromCurrentSelectionUseCaseFactory()
+        val getSearchedNotesFromCurrentSelectionFactory = GetSearchedNotesFromCurrentSelectionUseCaseFactory(database.noteDao)
         val noteMultiSelectionViewModel = ViewModelProvider(this,
-            NoteMultiSelectionViewModel.provideFactory(getAllNotes, getInitialNote)
+            NoteMultiSelectionViewModel.provideFactory(
+                getAllNotes = getAllNotes,
+                getInitialSelection = getInitialNote,
+                getSearchedSelectionOptions = getSearchedNotesFromAll,
+                getAllNotesFromCurrentSelectionFactory = getAllNotesFromCurrentSelectionFactory,
+                getSearchedNotesFromCurrentSelectionFactory = getSearchedNotesFromCurrentSelectionFactory
+            )
         ).get(NoteMultiSelectionViewModel::class.java)
 
         setAppBarTitle(getString(R.string.new_photo_header))
