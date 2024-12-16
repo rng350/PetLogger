@@ -24,7 +24,6 @@ import com.hfad.petlogger.screens.tag.tagmultiselection.TagMultiSelectionViewMod
 import com.hfad.petlogger.common.TimePicker
 import com.hfad.petlogger.databinding.FragmentNewWeightBinding
 import com.hfad.petlogger.databinding.FragmentNewWeightDetailsBinding
-import com.hfad.petlogger.notes.usecases.GetAllNotesUseCase
 import com.hfad.petlogger.tags.usecases.GetAllTagsUseCase
 import com.hfad.petlogger.photos.MediaRepository
 import com.hfad.petlogger.notes.NoteRepository
@@ -105,7 +104,6 @@ class NewWeightFragment : Fragment() {
         val getSearchedTagsFromCurrentSelectionFactory = GetSearchedTagsFromCurrentSelectionUseCaseFactory(tagRepository)
         val tagMultiSelectionViewModel = ViewModelProvider(this,
             TagMultiSelectionViewModel.provideFactory(
-                tagRepository = tagRepository,
                 getAllTags = getAllTags,
                 getAllSearchedTagsUseCase = getSearchedTagsFromAll,
                 getAllCurrentSelectionFactory = getAllTagsFromCurrentSelectionFactory,

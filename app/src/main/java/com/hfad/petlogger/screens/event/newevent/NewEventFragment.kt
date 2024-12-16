@@ -25,8 +25,6 @@ import com.hfad.petlogger.common.TimePicker
 import com.hfad.petlogger.databinding.FragmentNewEventBinding
 import com.hfad.petlogger.databinding.FragmentNewEventDetailsBinding
 import com.hfad.petlogger.common.navigateSafe
-import com.hfad.petlogger.notes.usecases.GetAllNotesUseCase
-import com.hfad.petlogger.pets.usecases.GetAllPetsWithProfilePhotosUseCase
 import com.hfad.petlogger.tags.usecases.GetAllTagsUseCase
 import com.hfad.petlogger.events.EventRepository
 import com.hfad.petlogger.photos.MediaRepository
@@ -35,7 +33,6 @@ import com.hfad.petlogger.pets.PetRepository
 import com.hfad.petlogger.tags.TagRepository
 import com.hfad.petlogger.common.setAppBarTitle
 import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
-import com.hfad.petlogger.common.util.Constants
 import com.hfad.petlogger.common.util.Constants.Companion.defaultNullIdForNavigation
 import com.hfad.petlogger.notes.usecases.GetAllNotesFromCurrentSelectionUseCaseFactory
 import com.hfad.petlogger.notes.usecases.GetMoreOfAllNotesUseCase
@@ -131,7 +128,6 @@ class NewEventFragment : Fragment() {
         val getSearchedTagsFromCurrentSelectionFactory = GetSearchedTagsFromCurrentSelectionUseCaseFactory(tagRepository)
         val tagMultiSelectionViewModel = ViewModelProvider(this,
             TagMultiSelectionViewModel.provideFactory(
-                tagRepository = tagRepository,
                 getAllTags = getAllTags,
                 getAllSearchedTagsUseCase = getSearchedTagsFromAll,
                 getAllCurrentSelectionFactory = getAllTagsFromCurrentSelectionFactory,

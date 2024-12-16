@@ -36,7 +36,6 @@ import com.hfad.petlogger.common.observeOnce
 import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
 import com.hfad.petlogger.events.EventRepository
 import com.hfad.petlogger.events.usecases.GetAllEventsFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.notes.usecases.GetAllNotesUseCase
 import com.hfad.petlogger.tags.usecases.GetAllTagsUseCase
 import com.hfad.petlogger.weights.usecases.GetCheckableWeightsOfPetUseCase
 import com.hfad.petlogger.events.usecases.GetEventsOfPetUseCase
@@ -44,7 +43,6 @@ import com.hfad.petlogger.notes.usecases.GetNotesOfPetUseCase
 import com.hfad.petlogger.photos.usecases.GetPetProfilePhotoUseCase
 import com.hfad.petlogger.photos.usecases.GetPhotosOfPetUseCase
 import com.hfad.petlogger.tags.usecases.GetTagsOfPetUseCase
-import com.hfad.petlogger.events.usecases.GetAllEventsUseCase
 import com.hfad.petlogger.events.usecases.GetMoreOfAllEventsUseCase
 import com.hfad.petlogger.events.usecases.GetMoreOfSearchedEventsUseCase
 import com.hfad.petlogger.events.usecases.GetSearchedEventsFromCurrentSelectionUseCaseFactory
@@ -154,12 +152,11 @@ class EditPetFragment : Fragment() {
         val getSearchedTagsFromCurrentSelectionFactory = GetSearchedTagsFromCurrentSelectionUseCaseFactory(tagRepository)
         val tagMultiSelectionViewModel = ViewModelProvider(this,
             TagMultiSelectionViewModel.provideFactory(
-                tagRepository = tagRepository,
                 getAllTags = getAllTags,
-                getInitialSelection = getTagsOfPet,
                 getAllSearchedTagsUseCase = getSearchedTagsFromAll,
                 getAllCurrentSelectionFactory = getAllTagsFromCurrentSelectionFactory,
-                getSearchedTagsFromCurrentSelectionFactory = getSearchedTagsFromCurrentSelectionFactory
+                getSearchedTagsFromCurrentSelectionFactory = getSearchedTagsFromCurrentSelectionFactory,
+                getInitialSelection = getTagsOfPet
             )
         ).get(TagMultiSelectionViewModel::class.java)
         binding.tagMultiSelectionViewModel = tagMultiSelectionViewModel

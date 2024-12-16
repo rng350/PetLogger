@@ -24,7 +24,6 @@ import com.hfad.petlogger.common.TimePicker
 import com.hfad.petlogger.databinding.FragmentEditWeightBinding
 import com.hfad.petlogger.databinding.FragmentEditWeightDetailsBinding
 import com.hfad.petlogger.common.navigateSafe
-import com.hfad.petlogger.notes.usecases.GetAllNotesUseCase
 import com.hfad.petlogger.tags.usecases.GetAllTagsUseCase
 import com.hfad.petlogger.notes.usecases.GetNotesOfWeightUseCase
 import com.hfad.petlogger.tags.usecases.GetTagsOfWeightUseCase
@@ -107,12 +106,11 @@ class EditWeightFragment : Fragment() {
         val getSearchedTagsFromCurrentSelectionFactory = GetSearchedTagsFromCurrentSelectionUseCaseFactory(tagRepository)
         val tagMultiSelectionViewModel = ViewModelProvider(this,
             TagMultiSelectionViewModel.provideFactory(
-                tagRepository = tagRepository,
                 getAllTags = getAllTags,
-                getInitialSelection = getTagsOfWeight,
                 getAllSearchedTagsUseCase = getSearchedTagsFromAll,
                 getAllCurrentSelectionFactory = getAllTagsFromCurrentSelectionFactory,
-                getSearchedTagsFromCurrentSelectionFactory = getSearchedTagsFromCurrentSelectionFactory
+                getSearchedTagsFromCurrentSelectionFactory = getSearchedTagsFromCurrentSelectionFactory,
+                getInitialSelection = getTagsOfWeight
             )
         ).get(TagMultiSelectionViewModel::class.java)
         binding.tagMultiSelectionViewModel = tagMultiSelectionViewModel

@@ -4,21 +4,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.hfad.petlogger.tags.Tag
-import com.hfad.petlogger.common.usecases.GetItemsUseCase
 import com.hfad.petlogger.tags.usecases.GetSearchedTagsUseCase
-import com.hfad.petlogger.tags.TagRepository
 import com.hfad.petlogger.common.selectiontracker.MultiSelectionTracker
 import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
-import com.hfad.petlogger.common.usecases.factories.GetAllCurrentSelectionUseCaseFactory
 import com.hfad.petlogger.tags.usecases.GetAllTagsFromCurrentSelectionUseCaseFactory
 import com.hfad.petlogger.tags.usecases.GetAllTagsUseCase
-import com.hfad.petlogger.tags.usecases.GetSearchedTagsFromCurrentSelectionUseCase
 import com.hfad.petlogger.tags.usecases.GetSearchedTagsFromCurrentSelectionUseCaseFactory
 import kotlinx.coroutines.launch
 
 class TagMultiSelectionViewModel(
-    private val tagRepository: TagRepository,
-    private val getAllTags: GetAllTagsUseCase,
+    getAllTags: GetAllTagsUseCase,
     getAllSearchedTagsUseCase: GetSearchedTagsUseCase,
     getAllCurrentSelectionFactory: GetAllTagsFromCurrentSelectionUseCaseFactory,
     getSearchedTagsFromCurrentSelectionFactory: GetSearchedTagsFromCurrentSelectionUseCaseFactory,
@@ -103,7 +98,6 @@ class TagMultiSelectionViewModel(
 
     companion object {
         fun provideFactory(
-            tagRepository: TagRepository,
             getAllTags: GetAllTagsUseCase,
             getAllSearchedTagsUseCase: GetSearchedTagsUseCase,
             getAllCurrentSelectionFactory: GetAllTagsFromCurrentSelectionUseCaseFactory,
@@ -113,7 +107,6 @@ class TagMultiSelectionViewModel(
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(TagMultiSelectionViewModel::class.java)) {
                     return TagMultiSelectionViewModel(
-                        tagRepository,
                         getAllTags,
                         getAllSearchedTagsUseCase,
                         getAllCurrentSelectionFactory,

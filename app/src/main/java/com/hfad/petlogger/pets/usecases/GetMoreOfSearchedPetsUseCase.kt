@@ -20,12 +20,6 @@ class GetMoreOfSearchedPetsUseCase(
     private val queryBuilder = BuildPetSearchQueryUseCase(petsAmt = petsAmt, pickFrom =  pickFrom)
 
     override suspend fun invoke(): List<PetWithProfilePic> = withContext(Dispatchers.IO) {
-        val petIds = petDao.searchPetIds(SimpleSQLiteQuery(
-            "SELECT pet_breed \n" +
-                    "FROM pet_fts_table \n" +
-                    "WHERE 1=1"))
-        Log.d("SearchedPetsUseCase", "Breeds: $petIds")
-
         val queryBuilt = queryBuilder(currentQuery, lastPetId)
         queryBuilt?.let { query ->
             val petsFetched = petDao.searchPets(query)

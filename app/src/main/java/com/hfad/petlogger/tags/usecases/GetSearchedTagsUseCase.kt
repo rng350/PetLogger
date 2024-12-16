@@ -1,6 +1,6 @@
 package com.hfad.petlogger.tags.usecases
 
-import com.hfad.petlogger.common.usecases.GetItemsUseCase
+import android.util.Log
 import com.hfad.petlogger.common.usecases.GetSearchedItemsUseCase
 import com.hfad.petlogger.tags.Tag
 import com.hfad.petlogger.tags.TagRepository
@@ -15,7 +15,9 @@ class GetSearchedTagsUseCase(
 
     override suspend fun invoke(): List<Tag> {
         _onLastPage = true
-        return tagRepository.searchTagsByQuery(currentQuery)
+        val searchResults = tagRepository.searchTagsByQueryWithNewPossibleTag(currentQuery)
+        Log.d("GetSearchedTags", "Results: $searchResults")
+        return searchResults
     }
 
     override fun resetCurrentPoint() {

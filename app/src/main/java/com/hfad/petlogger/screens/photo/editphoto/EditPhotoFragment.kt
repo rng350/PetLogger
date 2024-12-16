@@ -26,8 +26,6 @@ import com.hfad.petlogger.screens.tag.tagmultiselection.TagMultiSelectionViewMod
 import com.hfad.petlogger.databinding.FragmentEditPhotoBinding
 import com.hfad.petlogger.databinding.FragmentEditPhotoDetailsBinding
 import com.hfad.petlogger.common.navigateSafe
-import com.hfad.petlogger.notes.usecases.GetAllNotesUseCase
-import com.hfad.petlogger.pets.usecases.GetAllPetsWithProfilePhotosUseCase
 import com.hfad.petlogger.tags.usecases.GetAllTagsUseCase
 import com.hfad.petlogger.events.usecases.GetEventsOfPhotoUseCase
 import com.hfad.petlogger.notes.usecases.GetNotesOfPhotoUseCase
@@ -41,7 +39,6 @@ import com.hfad.petlogger.common.setAppBarTitle
 import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
 import com.hfad.petlogger.events.EventRepository
 import com.hfad.petlogger.events.usecases.GetAllEventsFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.events.usecases.GetAllEventsUseCase
 import com.hfad.petlogger.events.usecases.GetMoreOfAllEventsUseCase
 import com.hfad.petlogger.events.usecases.GetMoreOfSearchedEventsUseCase
 import com.hfad.petlogger.events.usecases.GetSearchedEventsFromCurrentSelectionUseCaseFactory
@@ -133,12 +130,11 @@ class EditPhotoFragment : Fragment() {
         val getSearchedTagsFromCurrentSelectionFactory = GetSearchedTagsFromCurrentSelectionUseCaseFactory(tagRepository)
         val tagMultiSelectionViewModel = ViewModelProvider(this,
             TagMultiSelectionViewModel.provideFactory(
-                tagRepository = tagRepository,
                 getAllTags = getAllTags,
-                getInitialSelection = getTagsOfPhoto,
                 getAllSearchedTagsUseCase = getSearchedTagsFromAll,
                 getAllCurrentSelectionFactory = getAllTagsFromCurrentSelectionFactory,
-                getSearchedTagsFromCurrentSelectionFactory = getSearchedTagsFromCurrentSelectionFactory
+                getSearchedTagsFromCurrentSelectionFactory = getSearchedTagsFromCurrentSelectionFactory,
+                getInitialSelection = getTagsOfPhoto
             )
         ).get(TagMultiSelectionViewModel::class.java)
 

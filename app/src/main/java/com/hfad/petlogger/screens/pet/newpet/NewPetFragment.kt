@@ -23,7 +23,6 @@ import com.hfad.petlogger.screens.tag.tagmultiselection.TagMultiSelectionViewMod
 import com.hfad.petlogger.databinding.FragmentNewPetBinding
 import com.hfad.petlogger.databinding.FragmentNewPetDetailsBinding
 import com.hfad.petlogger.common.navigateSafe
-import com.hfad.petlogger.notes.usecases.GetAllNotesUseCase
 import com.hfad.petlogger.tags.usecases.GetAllTagsUseCase
 import com.hfad.petlogger.photos.MediaRepository
 import com.hfad.petlogger.notes.NoteRepository
@@ -103,7 +102,6 @@ class NewPetFragment : Fragment() {
         val getSearchedTagsFromCurrentSelectionUseCaseFactory = GetSearchedTagsFromCurrentSelectionUseCaseFactory(tagRepository)
         tagMultiSelectionViewModel = ViewModelProvider(this,
             TagMultiSelectionViewModel.provideFactory(
-                tagRepository = tagRepository,
                 getAllTags = getAllTags,
                 getAllSearchedTagsUseCase = getAllSearchedTags,
                 getAllCurrentSelectionFactory = getAllCurrentTagSelectionFactory,

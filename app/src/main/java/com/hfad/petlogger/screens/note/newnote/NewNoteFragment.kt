@@ -17,18 +17,14 @@ import com.hfad.petlogger.screens.pet.petmultiselection.PetMultiSelectionDisplay
 import com.hfad.petlogger.screens.pet.petmultiselection.PetMultiSelectionViewModel
 import com.hfad.petlogger.R
 import com.hfad.petlogger.screens.tag.tagmultiselection.TagMultiSelectionViewModel
-import com.hfad.petlogger.screens.weight.weightmultiselection.WeightMultiSelectionViewModel
 import com.hfad.petlogger.databinding.FragmentNewNoteBinding
 import com.hfad.petlogger.databinding.FragmentNewNoteDetailsBinding
 import com.hfad.petlogger.common.navigateSafe
-import com.hfad.petlogger.pets.usecases.GetAllPetsWithProfilePhotosUseCase
 import com.hfad.petlogger.tags.usecases.GetAllTagsUseCase
-import com.hfad.petlogger.weights.usecases.GetAllWeightsWithPetNamesUseCase
 import com.hfad.petlogger.photos.MediaRepository
 import com.hfad.petlogger.notes.NoteRepository
 import com.hfad.petlogger.pets.PetRepository
 import com.hfad.petlogger.tags.TagRepository
-import com.hfad.petlogger.weights.WeightRepository
 import com.hfad.petlogger.screens.event.eventmultiselection.EventMultiSelectionDisplayFragment
 import com.hfad.petlogger.screens.event.eventmultiselection.EventMultiSelectionViewModel
 import com.hfad.petlogger.screens.photo.mediaselection.MediaSelectionFragment
@@ -38,7 +34,6 @@ import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
 import com.hfad.petlogger.common.util.Constants.Companion.defaultNullIdForNavigation
 import com.hfad.petlogger.events.EventRepository
 import com.hfad.petlogger.events.usecases.GetAllEventsFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.events.usecases.GetAllEventsUseCase
 import com.hfad.petlogger.events.usecases.GetMoreOfAllEventsUseCase
 import com.hfad.petlogger.events.usecases.GetMoreOfSearchedEventsUseCase
 import com.hfad.petlogger.events.usecases.GetSearchedEventsFromCurrentSelectionUseCaseFactory
@@ -53,7 +48,6 @@ import com.hfad.petlogger.tags.usecases.GetAllTagsFromCurrentSelectionUseCaseFac
 import com.hfad.petlogger.tags.usecases.GetSearchedTagsFromCurrentSelectionUseCaseFactory
 import com.hfad.petlogger.tags.usecases.GetSearchedTagsUseCase
 import com.hfad.petlogger.tags.usecases.GetSingleTagUseCase
-import com.hfad.petlogger.weights.usecases.GetSingleWeightUseCase
 
 class NewNoteFragment : Fragment() {
     private var _binding: FragmentNewNoteBinding? = null
@@ -150,12 +144,11 @@ class NewNoteFragment : Fragment() {
         val getSearchedTagsFromCurrentSelectionFactory = GetSearchedTagsFromCurrentSelectionUseCaseFactory(tagRepository)
         tagMultiSelectionViewModel = ViewModelProvider(this,
             TagMultiSelectionViewModel.provideFactory(
-                tagRepository = tagRepository,
                 getAllTags = getAllTags,
-                getInitialSelection = getAssociatedTag,
                 getAllSearchedTagsUseCase = getSearchedTagsFromAll,
                 getAllCurrentSelectionFactory = getAllTagsFromCurrentSelectionFactory,
-                getSearchedTagsFromCurrentSelectionFactory = getSearchedTagsFromCurrentSelectionFactory
+                getSearchedTagsFromCurrentSelectionFactory = getSearchedTagsFromCurrentSelectionFactory,
+                getInitialSelection = getAssociatedTag
             )
         ).get(TagMultiSelectionViewModel::class.java)
 

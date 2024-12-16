@@ -1,5 +1,6 @@
 package com.hfad.petlogger.tags.usecases
 
+import android.util.Log
 import com.hfad.petlogger.common.usecases.GetItemsUseCase
 import com.hfad.petlogger.tags.Tag
 import com.hfad.petlogger.tags.TagRepository
@@ -11,7 +12,9 @@ class GetAllTagsUseCase(private val tagRepository: TagRepository): GetItemsUseCa
 
     override suspend fun invoke(): List<Tag> {
         _onLastPage = true
-        return tagRepository.getAllTags()
+        val allTags = tagRepository.getAllTags()
+        Log.d("GetAllTags", "AllTags: $allTags")
+        return allTags
     }
 
     override fun resetCurrentPoint() {

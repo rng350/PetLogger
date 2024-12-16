@@ -23,28 +23,22 @@ import com.hfad.petlogger.screens.pet.petmultiselection.PetMultiSelectionDisplay
 import com.hfad.petlogger.screens.pet.petmultiselection.PetMultiSelectionViewModel
 import com.hfad.petlogger.R
 import com.hfad.petlogger.screens.tag.tagmultiselection.TagMultiSelectionViewModel
-import com.hfad.petlogger.screens.weight.weightmultiselection.WeightMultiSelectionViewModel
 import com.hfad.petlogger.databinding.FragmentEditNoteBinding
 import com.hfad.petlogger.databinding.FragmentEditNoteDetailsBinding
 import com.hfad.petlogger.common.navigateSafe
-import com.hfad.petlogger.pets.usecases.GetAllPetsWithProfilePhotosUseCase
 import com.hfad.petlogger.tags.usecases.GetAllTagsUseCase
-import com.hfad.petlogger.weights.usecases.GetAllWeightsWithPetNamesUseCase
 import com.hfad.petlogger.events.usecases.GetEventsOfNoteUseCase
 import com.hfad.petlogger.pets.usecases.GetPetsOfNoteUseCase
 import com.hfad.petlogger.photos.usecases.GetPhotosOfNoteUseCase
 import com.hfad.petlogger.tags.usecases.GetTagsOfNoteUseCase
-import com.hfad.petlogger.weights.usecases.GetWeightsOfNoteUseCase
 import com.hfad.petlogger.photos.MediaRepository
 import com.hfad.petlogger.notes.NoteRepository
 import com.hfad.petlogger.pets.PetRepository
 import com.hfad.petlogger.tags.TagRepository
-import com.hfad.petlogger.weights.WeightRepository
 import com.hfad.petlogger.common.setAppBarTitle
 import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
 import com.hfad.petlogger.events.EventRepository
 import com.hfad.petlogger.events.usecases.GetAllEventsFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.events.usecases.GetAllEventsUseCase
 import com.hfad.petlogger.events.usecases.GetMoreOfAllEventsUseCase
 import com.hfad.petlogger.events.usecases.GetMoreOfSearchedEventsUseCase
 import com.hfad.petlogger.events.usecases.GetSearchedEventsFromCurrentSelectionUseCaseFactory
@@ -140,12 +134,11 @@ class EditNoteFragment : Fragment() {
         val getSearchedTagsFromCurrentSelectionFactory = GetSearchedTagsFromCurrentSelectionUseCaseFactory(tagRepository)
         val tagMultiSelectionViewModel = ViewModelProvider(this,
             TagMultiSelectionViewModel.provideFactory(
-                tagRepository,
                 getAllTags = getAllTags,
                 getAllSearchedTagsUseCase = getSearchedTagsFromAll,
-                getInitialSelection = getTagsOfNote,
                 getAllCurrentSelectionFactory = getAllTagsFromCurrentSelectionFactory,
-                getSearchedTagsFromCurrentSelectionFactory = getSearchedTagsFromCurrentSelectionFactory
+                getSearchedTagsFromCurrentSelectionFactory = getSearchedTagsFromCurrentSelectionFactory,
+                getInitialSelection = getTagsOfNote
             )
         ).get(TagMultiSelectionViewModel::class.java)
         binding.tagMultiSelectionViewModel = tagMultiSelectionViewModel

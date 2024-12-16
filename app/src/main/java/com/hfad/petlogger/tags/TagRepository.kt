@@ -194,6 +194,10 @@ class TagRepository(private val database: PetLoggerDatabase) {
     }
 
     suspend fun searchTagsByQuery(query: String): List<Tag> = withContext(Dispatchers.IO) {
+        tagDao.searchTagsByQuery(query)
+    }
+
+    suspend fun searchTagsByQueryWithNewPossibleTag(query: String): List<Tag> = withContext(Dispatchers.IO) {
         var searchResults = tagDao.searchTagsByQuery(query)
         if (searchResults.isNotEmpty()) {
             if (searchResults[0].tagName != query) {
