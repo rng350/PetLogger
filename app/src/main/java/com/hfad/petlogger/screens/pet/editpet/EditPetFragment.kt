@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
@@ -33,11 +34,11 @@ import com.hfad.petlogger.databinding.FragmentEditPetBinding
 import com.hfad.petlogger.databinding.FragmentEditPetDetailsBinding
 import com.hfad.petlogger.common.navigateSafe
 import com.hfad.petlogger.common.observeOnce
+import com.hfad.petlogger.common.selectiontracker.MultiDeselectionDisplay
 import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
 import com.hfad.petlogger.events.EventRepository
 import com.hfad.petlogger.events.usecases.GetAllEventsFromCurrentSelectionUseCaseFactory
 import com.hfad.petlogger.tags.usecases.GetAllTagsUseCase
-import com.hfad.petlogger.weights.usecases.GetCheckableWeightsOfPetUseCase
 import com.hfad.petlogger.events.usecases.GetEventsOfPetUseCase
 import com.hfad.petlogger.notes.usecases.GetNotesOfPetUseCase
 import com.hfad.petlogger.photos.usecases.GetPetProfilePhotoUseCase
@@ -57,12 +58,15 @@ import com.hfad.petlogger.tags.TagRepository
 import com.hfad.petlogger.tags.usecases.GetAllTagsFromCurrentSelectionUseCaseFactory
 import com.hfad.petlogger.tags.usecases.GetSearchedTagsFromCurrentSelectionUseCaseFactory
 import com.hfad.petlogger.tags.usecases.GetSearchedTagsUseCase
+import com.hfad.petlogger.weights.PetWeightForSelection
+import com.hfad.petlogger.weights.usecases.GetAllWeightsOfPetForSelectionUseCase
+import com.hfad.petlogger.weights.usecases.GetSearchedPetWeightsForSelectionUseCase
 
 class EditPetFragment : Fragment() {
     private var _binding: FragmentEditPetBinding? = null
     private val binding get() = _binding!!
     private var mediator: TabLayoutMediator? = null
-    lateinit var editPetViewModel: EditPetViewModel
+    private lateinit var editPetViewModel: EditPetViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -72,7 +76,7 @@ class EditPetFragment : Fragment() {
         val view = binding.root
         binding.lifecycleOwner = viewLifecycleOwner
 
-        val petID = EditPetFragmentArgs.fromBundle(requireArguments()).petId
+        val petId = EditPetFragmentArgs.fromBundle(requireArguments()).petId
 
         val application = requireNotNull(this.activity).application
         val database = PetLoggerDatabase.getInstance(application)
@@ -80,13 +84,19 @@ class EditPetFragment : Fragment() {
         val mediaRepository = MediaRepository(database, application.applicationContext)
         val petRepository = PetRepository(database, mediaRepository)
         editPetViewModel = ViewModelProvider(this,
-            EditPetViewModel.provideFactory(petRepository, petID)
+            EditPetViewModel.provideFactory(petRepository, petId)
         ).get(EditPetViewModel::class.java)
         binding.editPetViewModel = editPetViewModel
 
-        val getPetWeights = GetCheckableWeightsOfPetUseCase(petRepository, petID)
+        val getAllPetWeightsForSelection = GetAllWeightsOfPetForSelectionUseCase(database.weightDao, petId, weightsAmt = 10)
+        val getSearchedPetWeightsForSelection = GetSearchedPetWeightsForSelectionUseCase(database.weightDao, weightsAmt = 10, editPetViewModel.pet)
+        val getPetWeightDeselectionDisplay = MultiDeselectionDisplay<PetWeightForSelection>(
+            getAllAssociatedItems = getAllPetWeightsForSelection,
+            getSearchedItems = getSearchedPetWeightsForSelection,
+            coroutineScope = editPetViewModel.viewModelScope
+        )
         val petWeightsDeselectionViewModel = ViewModelProvider(this,
-            PetWeightDeselectionViewModel.provideFactory(getPetWeights)
+            PetWeightDeselectionViewModel.provideFactory(getPetWeightDeselectionDisplay)
         ).get(PetWeightDeselectionViewModel::class.java)
         binding.petWeightDeselectionViewModel = petWeightsDeselectionViewModel
 
@@ -100,7 +110,7 @@ class EditPetFragment : Fragment() {
 
         val eventRepository = EventRepository(database, mediaRepository)
         val getAllEvents = GetMoreOfAllEventsUseCase(eventRepository, eventAmt = 10)
-        val getEventsOfPet = GetMultipleInitialItemsUseCase.PreExisting(GetEventsOfPetUseCase(petRepository = petRepository, petId = petID))
+        val getEventsOfPet = GetMultipleInitialItemsUseCase.PreExisting(GetEventsOfPetUseCase(petRepository = petRepository, petId = petId))
         val getSearchedEvents = GetMoreOfSearchedEventsUseCase(database.eventDao, eventAmt = 10)
         val getAllEventsFromCurrentSelectionFactory = GetAllEventsFromCurrentSelectionUseCaseFactory()
         val getSearchedEventsFromCurrentSelectionFactory = GetSearchedEventsFromCurrentSelectionUseCaseFactory(database.eventDao)
@@ -115,13 +125,13 @@ class EditPetFragment : Fragment() {
         ).get(EventMultiSelectionViewModel::class.java)
         binding.eventMultiSelectionViewModel = eventMultiSelectionViewModel
 
-        val getPhotosOfPet = GetMultipleInitialItemsUseCase.PreExisting(GetPhotosOfPetUseCase(petRepository = petRepository, petId = petID))
+        val getPhotosOfPet = GetMultipleInitialItemsUseCase.PreExisting(GetPhotosOfPetUseCase(petRepository = petRepository, petId = petId))
         val mediaSelectionViewModel = ViewModelProvider(this,
             MediaSelectionViewModel.provideFactory(mediaRepository, getPhotosOfPet)
         ).get(MediaSelectionViewModel::class.java)
         binding.mediaSelectionViewModel = mediaSelectionViewModel
 
-        val getPetProfilePhoto = GetPetProfilePhotoUseCase(petRepository, petID)
+        val getPetProfilePhoto = GetPetProfilePhotoUseCase(petRepository, petId)
         val petProfilePhotoSelectionViewModel = ViewModelProvider(this,
             MediaSingleSelectionViewModel.provideFactory(mediaRepository, getPetProfilePhoto)
         ).get(MediaSingleSelectionViewModel::class.java)
@@ -129,7 +139,7 @@ class EditPetFragment : Fragment() {
 
         val noteRepository = NoteRepository(database, mediaRepository)
         val getAllNotes = GetMoreOfAllNotesUseCase(noteRepository, noteAmt = 10)
-        val getNotesOfPet = GetMultipleInitialItemsUseCase.PreExisting(GetNotesOfPetUseCase(petRepository, petID))
+        val getNotesOfPet = GetMultipleInitialItemsUseCase.PreExisting(GetNotesOfPetUseCase(petRepository, petId))
         val getSearchedNotesFromAll = GetMoreOfSearchedNotesUseCase(database.noteDao, notesAmt = 10)
         val getAllNotesFromCurrentSelectionFactory = GetAllNotesFromCurrentSelectionUseCaseFactory()
         val getSearchedNotesFromCurrentSelectionFactory = GetSearchedNotesFromCurrentSelectionUseCaseFactory(database.noteDao)
@@ -146,7 +156,7 @@ class EditPetFragment : Fragment() {
 
         val tagRepository = TagRepository(database)
         val getAllTags = GetAllTagsUseCase(tagRepository)
-        val getTagsOfPet = GetMultipleInitialItemsUseCase.PreExisting(GetTagsOfPetUseCase(petRepository, petID))
+        val getTagsOfPet = GetMultipleInitialItemsUseCase.PreExisting(GetTagsOfPetUseCase(petRepository, petId))
         val getSearchedTagsFromAll = GetSearchedTagsUseCase(tagRepository)
         val getAllTagsFromCurrentSelectionFactory = GetAllTagsFromCurrentSelectionUseCaseFactory()
         val getSearchedTagsFromCurrentSelectionFactory = GetSearchedTagsFromCurrentSelectionUseCaseFactory(tagRepository)
@@ -211,7 +221,7 @@ class EditPetFragment : Fragment() {
 
         editPetViewModel.doneUpdating.observe(viewLifecycleOwner) {isDoneUpdating ->
             if (isDoneUpdating) {
-                findNavController().navigateSafe(EditPetFragmentDirections.actionEditPetFragmentToViewPetFragment(petID))
+                findNavController().navigateSafe(EditPetFragmentDirections.actionEditPetFragmentToViewPetFragment(petId))
                 editPetViewModel.wentBack()
             }
         }

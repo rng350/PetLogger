@@ -155,4 +155,6 @@
     <string name="search_weights">Search Weights</string>
     <string name="search_photos">Search Photos</string>
     <string name="search_pets">Search Pets</string>
+    <string name="keeping">Keeping</string>
+    <string name="removing">Removing</string>
 </resources>

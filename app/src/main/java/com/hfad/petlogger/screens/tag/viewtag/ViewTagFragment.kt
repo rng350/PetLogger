@@ -204,7 +204,6 @@ class TaggedWeightsListFragment : Fragment() {
             weights = viewTagViewModel.taggedWeights,
             weightNavigator = viewTagViewModel.weightNavigator,
             recyclerView = binding.weightsList,
-            context = application.applicationContext,
             lifecycleScope = lifecycleScope,
             lifecycleOwner = viewLifecycleOwner
         )()

@@ -50,7 +50,6 @@ class MonitoringListFragment : Fragment() {
             weights = viewModel.weights,
             weightNavigator = viewModel.weightNavigator,
             recyclerView = binding.weightsList,
-            context = application.applicationContext,
             lifecycleScope = lifecycleScope,
             lifecycleOwner = viewLifecycleOwner
         ).invoke()

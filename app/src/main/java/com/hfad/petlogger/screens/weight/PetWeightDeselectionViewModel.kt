@@ -4,38 +4,67 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
 import com.hfad.petlogger.common.CheckableItem
+import com.hfad.petlogger.common.selectiontracker.MultiDeselectionDisplay
 import com.hfad.petlogger.weights.PetWeightForSelection
-import com.hfad.petlogger.common.usecases.GetItemsUseCase
-import com.hfad.petlogger.common.selectiontracker.NewSelectionTracker
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.StateFlow
 
-class PetWeightDeselectionViewModel(private val getWeights: GetItemsUseCase<CheckableItem<PetWeightForSelection>>) : ViewModel() {
-    private val _weights = MutableLiveData<List<CheckableItem<PetWeightForSelection>>>()
-    val weights: LiveData<List<CheckableItem<PetWeightForSelection>>> get() = _weights
-    val selectionTracker = NewSelectionTracker<PetWeightForSelection>()
-    init {
-        viewModelScope.launch {
-            _weights.value = getWeights() ?: listOf()
+class PetWeightDeselectionViewModel(val deselectionTrackerDisplay: MultiDeselectionDisplay<PetWeightForSelection>) : ViewModel() {
+    val weightDisplay: StateFlow<List<CheckableItem<PetWeightForSelection>>> get() = deselectionTrackerDisplay.currentDisplayedItems
+    private val _toKeepButtonChecked = MutableLiveData(true)
+    val toKeepButtonChecked: LiveData<Boolean> get() = _toKeepButtonChecked
+    private val _toRemoveButtonChecked = MutableLiveData(true)
+    val toRemoveButtonChecked: LiveData<Boolean> get() = _toRemoveButtonChecked
+
+    fun onQueryTextSubmit(query: String?) {
+        query?.let {
+            deselectionTrackerDisplay.newQuery(query)
+        }
+    }
+
+    fun onQueryTextChanged(newText: String?) {
+        newText?.let {
+            deselectionTrackerDisplay.newQuery(newText)
         }
     }
 
     fun getWeightsToRemove(): List<Long> {
-        val fromSelection = selectionTracker.selectionToAdd.value?.toList() ?: listOf()
-        return fromSelection.map { it.item.weightId }
+        return deselectionTrackerDisplay.getSelectionToRemove().map {it.weightId}
     }
+
     fun reset() {
-        selectionTracker.selectionToAdd.value?.forEach {
-            selectionTracker.remove(it)
+        deselectionTrackerDisplay.resetSelection()
+    }
+
+    fun isLoading(): Boolean {
+        return deselectionTrackerDisplay.isLoading()
+    }
+
+    fun onLastPage(): Boolean {
+        return deselectionTrackerDisplay.isLastPage()
+    }
+
+    fun loadMore() {
+        deselectionTrackerDisplay.loadMoreItems()
+    }
+
+    fun toggleToKeepButton() {
+        _toKeepButtonChecked.value?.let {
+            _toKeepButtonChecked.value = !it
+        }
+    }
+
+    fun toggleToRemoveButton() {
+        _toRemoveButtonChecked.value?.let {
+            _toRemoveButtonChecked.value = !it
         }
     }
 
     companion object {
-        fun provideFactory(getWeights: GetItemsUseCase<CheckableItem<PetWeightForSelection>>): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+        fun provideFactory(deselectionTrackerDisplay: MultiDeselectionDisplay<PetWeightForSelection>): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(PetWeightDeselectionViewModel::class.java)) {
-                    return PetWeightDeselectionViewModel(getWeights) as T
+                    return PetWeightDeselectionViewModel(deselectionTrackerDisplay) as T
                 }
                 throw IllegalArgumentException("Unknown ViewModel")
             }

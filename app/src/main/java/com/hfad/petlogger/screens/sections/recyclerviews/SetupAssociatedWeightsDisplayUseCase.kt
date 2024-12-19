@@ -1,6 +1,5 @@
 package com.hfad.petlogger.screens.sections.recyclerviews
 
-import android.content.Context
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.LifecycleOwner
@@ -20,7 +19,6 @@ class SetupAssociatedWeightsDisplayUseCase(
     private val weights: StateFlow<List<WeightForList>>,
     private val weightNavigator: Navigator,
     private val recyclerView: RecyclerView,
-    private val context: Context,
     private val lifecycleScope: LifecycleCoroutineScope,
     private val lifecycleOwner: LifecycleOwner
 ) {

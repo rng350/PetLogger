@@ -226,4 +226,16 @@ interface WeightDao {
 
     @RawQuery
     suspend fun getWeightsOfPetForDisplayList(query: SimpleSQLiteQuery): List<PetWeightForDisplayFetched>
+
+    @RawQuery
+    suspend fun searchWeightsOfPetForSelectionList(query: SimpleSQLiteQuery): List<PetWeightForSelectionFetched>
+
+    @Query("""
+        SELECT weight_id AS weightId, weight_grams AS weightGramsAmt, weight_datetime AS weightDateTime 
+        FROM weight_table 
+        WHERE weight_pet_id = :petId 
+        AND (datetime(weight_datetime), weight_id) < (datetime(:lastWeightDate), :lastWeightId) 
+        ORDER BY datetime(weight_datetime) DESC, weight_id DESC LIMIT :weightAmts
+    """)
+    suspend fun getPetWeightsForSelection(petId: Long, lastWeightDate: OffsetDateTime, lastWeightId: Long, weightAmts: Int): List<PetWeightForSelectionFetched>
 }
