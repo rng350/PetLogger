@@ -135,7 +135,11 @@ class MediaMultiSelectionDisplay<T>(
 
     fun resetSelection() {
         selectionTracker.resetSelection()
-        _currentDisplayedItems.update{it.onEach { item -> item.isChecked.value = false }}
+        val filteredSelection = selectionTracker.filterQueriedItemsForDisplay(
+            currentDisplayedItems.value.map{it.item},
+            currentDisplayMode
+        )
+        _currentDisplayedItems.update{ filteredSelection }
     }
 
     fun isLastPage(): Boolean {

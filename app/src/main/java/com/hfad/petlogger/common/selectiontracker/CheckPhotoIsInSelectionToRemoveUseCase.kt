@@ -49,7 +49,6 @@ class CheckPhotoIsInSelectionToRemoveUseCase: CheckItemIsInSelectionUseCase<Phot
     }
 
     override fun resetToCheckableItemList(newList: List<CheckableItem<Photo>>) {
-        photosInSelection.forEach { it.value.isChecked.value = false }
         photosInSelection.clear()
         photosInSelection.putAll(newList.onEach { it.isChecked.value = true }.associateBy { it.item.id })
     }

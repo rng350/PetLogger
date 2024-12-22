@@ -49,7 +49,6 @@ class CheckPhotoIsInCurrentSelectionUseCase: CheckItemIsInSelectionUseCase<Photo
     }
 
     override fun resetToCheckableItemList(newList: List<CheckableItem<Photo>>) {
-        photosInSelection.forEach { it.value.isChecked.value = true }
         photosInSelection.clear()
         photosInSelection.putAll(newList.onEach { it.isChecked.value = false }.associateBy { it.item.id })
     }
