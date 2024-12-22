@@ -1,5 +1,6 @@
 package com.hfad.petlogger.screens.photo.mediaselection
 
+import RecyclerViewPaginator
 import android.Manifest
 import android.os.Build
 import android.os.Bundle
@@ -11,12 +12,15 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.hfad.petlogger.R
 import com.hfad.petlogger.databinding.FragmentMediaSelectionBinding
 import com.hfad.petlogger.common.photoselection.AdjustablePickMultipleVisualMedia
+import com.hfad.petlogger.common.selectiontracker.MediaMultiSelectionTracker
 import com.hfad.petlogger.screens.sections.recyclerviews.SetupPhotoSelectionDisplayUseCase
 
 class MediaSelectionFragment : Fragment() {
@@ -38,14 +42,91 @@ class MediaSelectionFragment : Fragment() {
         binding.viewModel = viewModel
 
         SetupPhotoSelectionDisplayUseCase(
-            currentSelection = viewModel.currentPhotoSelection,
+            photos = viewModel.currentDisplayedPhotoSelection,
             recyclerView = binding.photoList,
             lifecycleOwner = viewLifecycleOwner,
+            lifecycleScope = lifecycleScope,
             context = requireContext(),
-            photoToggle = { photo -> viewModel.removePhotoFromSelection(photo) }
+            photoToggle = { photo -> viewModel.toggle(photo) }
         )()
 
-        multiPickupVisualMediaContract = AdjustablePickMultipleVisualMedia(viewModel.maxItems - (viewModel.currentPhotoSelection.value?.size ?: 0))
+        RecyclerViewPaginator(
+            recyclerView = binding.photoList,
+            onLast = {viewModel.onLastPage()},
+            isLoading = {viewModel.isLoading()},
+            loadMore = {viewModel.loadMore()}
+        )
+
+        binding.searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                viewModel.onSelectionOptionsQueryTextSubmit(query)
+                return true
+            }
+            override fun onQueryTextChange(newText: String?): Boolean {
+                viewModel.onSelectionOptionsQueryTextChange(newText)
+                return true
+            }
+        })
+
+        viewModel.toKeepButtonChecked.observe(viewLifecycleOwner) { isToggled ->
+            val bottomIconRes = if (isToggled) R.drawable.visibility_on_24px else R.drawable.visibility_off_24px
+            val bottomIcon = ContextCompat.getDrawable(requireContext(), bottomIconRes)
+            binding.toKeepButton.setCompoundDrawablesWithIntrinsicBounds(
+                null,
+                ContextCompat.getDrawable(requireContext(), R.drawable.selection_to_keep),
+                null,
+                bottomIcon
+            )
+        }
+
+        viewModel.toRemoveButtonChecked.observe(viewLifecycleOwner) { isToggled ->
+            val bottomIconRes = if (isToggled) R.drawable.visibility_on_24px else R.drawable.visibility_off_24px
+            val bottomIcon = ContextCompat.getDrawable(requireContext(), bottomIconRes)
+            binding.toRemoveButton.setCompoundDrawablesWithIntrinsicBounds(
+                null,
+                ContextCompat.getDrawable(requireContext(), R.drawable.selection_to_remove),
+                null,
+                bottomIcon
+            )
+        }
+
+        viewModel.toAddButtonChecked.observe(viewLifecycleOwner) { isToggled ->
+            val bottomIconRes = if (isToggled) R.drawable.visibility_on_24px else R.drawable.visibility_off_24px
+            val bottomIcon = ContextCompat.getDrawable(requireContext(), bottomIconRes)
+            binding.toAddButton.setCompoundDrawablesWithIntrinsicBounds(
+                null,
+                ContextCompat.getDrawable(requireContext(), R.drawable.selection_to_add),
+                null,
+                bottomIcon
+            )
+        }
+
+        binding.toKeepButton.setOnClickListener {
+            viewModel.toggleToKeepButton()
+            setDisplay(
+                toKeepButtonIsChecked = binding.toKeepButton.isChecked,
+                toRemoveButtonIsChecked = binding.toRemoveButton.isChecked,
+                toAddButtonIsChecked = binding.toAddButton.isChecked
+            )
+        }
+        binding.toRemoveButton.setOnClickListener {
+            viewModel.toggleToRemoveButton()
+            setDisplay(
+                toKeepButtonIsChecked = binding.toKeepButton.isChecked,
+                toRemoveButtonIsChecked = binding.toRemoveButton.isChecked,
+                toAddButtonIsChecked = binding.toAddButton.isChecked
+            )
+        }
+        binding.toAddButton.setOnClickListener {
+            viewModel.toggleToAddButton()
+            setDisplay(
+                toKeepButtonIsChecked = binding.toKeepButton.isChecked,
+                toRemoveButtonIsChecked = binding.toRemoveButton.isChecked,
+                toAddButtonIsChecked = binding.toAddButton.isChecked
+            )
+        }
+
+        multiPickupVisualMediaContract = AdjustablePickMultipleVisualMedia(viewModel.maxItems - viewModel.selectionSize)
 
         pickMultipleMedia =
             registerForActivityResult(multiPickupVisualMediaContract) { uris ->
@@ -128,7 +209,7 @@ class MediaSelectionFragment : Fragment() {
     }
 
     private fun launchImagePicker() {
-        val maxItems = viewModel.maxItems - (viewModel.currentPhotoSelection.value?.size ?: 0)
+        val maxItems = viewModel.maxItems - viewModel.selectionSize
         if (maxItems > 1) {
             multiPickupVisualMediaContract.updateMaxItems(maxItems)
             pickMultipleMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
@@ -147,5 +228,42 @@ class MediaSelectionFragment : Fragment() {
 
     private fun makePermissionsRequiredToast() {
         Toast.makeText(requireContext(), "Can't read files without permission.", Toast.LENGTH_LONG).show()
+    }
+
+    private fun setDisplay(
+        toKeepButtonIsChecked: Boolean,
+        toRemoveButtonIsChecked: Boolean,
+        toAddButtonIsChecked: Boolean
+    ) {
+        if (toKeepButtonIsChecked) {
+            if (toRemoveButtonIsChecked) {
+                if (toAddButtonIsChecked) {
+                    viewModel.setDisplayMode(MediaMultiSelectionTracker.Display.All)
+                }
+                else {
+                    viewModel.setDisplayMode(MediaMultiSelectionTracker.Display.SelectionToKeepAndRemove)
+                }
+            }
+            else if (toAddButtonIsChecked) {
+                viewModel.setDisplayMode(MediaMultiSelectionTracker.Display.SelectionToAddAndKeep)
+            }
+            else {
+                viewModel.setDisplayMode(MediaMultiSelectionTracker.Display.SelectionToKeep)
+            }
+        }
+        else if (toRemoveButtonIsChecked) {
+            if (toAddButtonIsChecked) {
+                viewModel.setDisplayMode(MediaMultiSelectionTracker.Display.SelectionToAddAndRemove)
+            }
+            else {
+                viewModel.setDisplayMode(MediaMultiSelectionTracker.Display.SelectionToRemove)
+            }
+        }
+        else if (toAddButtonIsChecked) {
+            viewModel.setDisplayMode(MediaMultiSelectionTracker.Display.SelectionToAdd)
+        }
+        else {
+            viewModel.setDisplayMode(MediaMultiSelectionTracker.Display.None)
+        }
     }
 }

@@ -1,0 +1,147 @@
+package com.hfad.petlogger.common.selectiontracker
+
+import androidx.lifecycle.MutableLiveData
+import com.hfad.petlogger.common.CheckableItem
+import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+
+class MediaMultiSelectionTracker<T>(
+    getInitialSelection: GetMultipleInitialItemsUseCase<T>? = null,
+    private val checkItemIsInToAddList: CheckItemIsInSelectionUseCase<T>,
+    private val checkItemIsInToRemoveList: CheckItemIsInSelectionUseCase<T>,
+    private val checkItemIsInToKeepList: CheckItemIsInSelectionUseCase<T>,
+    coroutineScope: CoroutineScope
+) {
+    private var initialSelectionToAdd: List<CheckableItem<T>> = listOf()
+    private var initialSelectionToKeep: List<CheckableItem<T>> = listOf()
+    private var _currentSelectionCount = 0
+    val currentSelectionCount: Int get() = _currentSelectionCount
+
+    init {
+        when (getInitialSelection) {
+            is GetMultipleInitialItemsUseCase.New -> {
+                coroutineScope.launch {
+                    val initialSelectionFetched = getInitialSelection.useCase()
+                    initialSelectionFetched?.let { item ->
+                        initialSelectionToAdd = listOf(item).map { CheckableItem(it, MutableLiveData(false)) }
+                        checkItemIsInToAddList.addCheckableItems(initialSelectionToAdd)
+                        _currentSelectionCount = initialSelectionToAdd.size
+                    }
+                }
+            }
+            is GetMultipleInitialItemsUseCase.PreExisting -> {
+                coroutineScope.launch {
+                    val initialSelectionFetched = getInitialSelection.useCase()
+                    initialSelectionToKeep = initialSelectionFetched.map { CheckableItem(it, MutableLiveData(false)) }
+                    checkItemIsInToKeepList.addItems(initialSelectionFetched)
+                    _currentSelectionCount = initialSelectionToKeep.size
+                }
+            }
+            null -> {}
+        }
+    }
+
+    fun toggle(checkableItem: CheckableItem<T>) {
+        // 1. Check what's got to be done...
+        // if in ToAdd, remove from it
+        if (checkItemIsInToAddList.containsCheckableItem(checkableItem) != null) {
+            checkItemIsInToAddList.removeCheckableItem(checkableItem)
+            _currentSelectionCount--
+        }
+        // if in ToRemove, remove from it & add to ToKeep
+        else if (checkItemIsInToRemoveList.containsCheckableItem(checkableItem) != null) {
+            val restoredItem = checkItemIsInToRemoveList.removeCheckableItem(checkableItem)
+            restoredItem?.let {
+                checkItemIsInToKeepList.addCheckableItem(restoredItem)
+            }
+            _currentSelectionCount++
+        }
+        // otherwise, it was in the ToKeep selection, so add to ToRemove
+        else {
+            val removedItem = checkItemIsInToKeepList.removeCheckableItem(checkableItem)
+            removedItem?.let {
+                checkItemIsInToRemoveList.addCheckableItem(removedItem)
+            }
+            _currentSelectionCount--
+        }
+        // 2. Reload current selection
+    }
+
+    // returns whether or not any change to the current selection has been made
+    fun addNewItems(items: List<T>): Boolean {
+        // to prevent unnecessary observer notifications and refreshing
+        var selectionToAddHasChanged = false
+        var selectionToRemoveHasChanged = false
+
+        for (item in items) {
+            if (checkItemIsInToRemoveList.containsItem(item) != null) {
+                val restoredItem = checkItemIsInToRemoveList.removeItem(item)
+                restoredItem?.let {
+                    checkItemIsInToKeepList.addCheckableItem(restoredItem)
+                    selectionToRemoveHasChanged = true
+                    _currentSelectionCount++
+                }
+            }
+            else if (checkItemIsInToAddList.containsItem(item)==null && checkItemIsInToKeepList.containsItem(item)==null) {
+                checkItemIsInToAddList.addItem(item)
+                selectionToAddHasChanged = true
+                _currentSelectionCount++
+            }
+        }
+        return selectionToAddHasChanged || selectionToRemoveHasChanged
+    }
+
+    fun filterQueriedItemsForDisplay(itemsToFilter: List<T>, displayMode: Display): List<CheckableItem<T>> {
+        return when (displayMode) {
+            Display.All -> {
+                (
+                    checkItemIsInToAddList.getList()
+                            + itemsToFilter.mapNotNull { checkItemIsInToKeepList.containsItem(it) ?: checkItemIsInToRemoveList.containsItem(it) }
+                )
+            }
+            Display.None -> {
+                listOf()
+            }
+            Display.SelectionToAdd -> {
+                checkItemIsInToAddList.getList()
+            }
+            Display.SelectionToAddAndKeep -> {
+                checkItemIsInToAddList.getList() + itemsToFilter.mapNotNull { checkItemIsInToKeepList.containsItem(it) }
+            }
+            Display.SelectionToAddAndRemove -> {
+                checkItemIsInToAddList.getList() + itemsToFilter.mapNotNull { checkItemIsInToRemoveList.containsItem(it) }
+            }
+            Display.SelectionToKeep -> {
+                itemsToFilter.mapNotNull { checkItemIsInToKeepList.containsItem(it) }
+            }
+            Display.SelectionToKeepAndRemove -> {
+                itemsToFilter.mapNotNull { checkItemIsInToKeepList.containsItem(it) ?: checkItemIsInToRemoveList.containsItem(it) }
+            }
+            Display.SelectionToRemove -> {
+                itemsToFilter.mapNotNull { checkItemIsInToRemoveList.containsItem(it) }
+            }
+        }
+    }
+
+    fun getSelectionToAdd(): List<T> = checkItemIsInToAddList.getList().map{it.item}
+    fun getSelectionToRemove(): List<T> = checkItemIsInToRemoveList.getList().map{it.item}
+
+    fun resetSelection() {
+        checkItemIsInToAddList.resetToCheckableItemList(initialSelectionToAdd)
+        checkItemIsInToKeepList.resetToCheckableItemList(initialSelectionToKeep)
+        checkItemIsInToRemoveList.resetToCheckableItemList(listOf<CheckableItem<T>>())
+        _currentSelectionCount = if (initialSelectionToKeep.isNotEmpty()) initialSelectionToKeep.size else initialSelectionToAdd.size
+    }
+
+    sealed class Display {
+        object All: Display()
+        object SelectionToAddAndKeep: Display()
+        object SelectionToKeepAndRemove: Display()
+        object SelectionToAddAndRemove: Display()
+        object SelectionToAdd: Display()
+        object SelectionToKeep: Display()
+        object SelectionToRemove: Display()
+        object None: Display()
+    }
+}

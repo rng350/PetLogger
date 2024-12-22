@@ -77,7 +77,11 @@ class NewEventFragment : Fragment() {
             GetMultipleInitialItemsUseCase.New(GetSinglePhotoUseCase(database.photoDao, photoId))
         } else null
         val mediaSelectionViewModel = ViewModelProvider(this,
-            MediaSelectionViewModel.provideFactory(mediaRepository = mediaRepository, fetchInitialSelection = getAssociatedPhoto, maxItems = 10)
+            MediaSelectionViewModel.provideFactory(
+                mediaRepository = mediaRepository,
+                maxItems = 10,
+                getInitialSelection = getAssociatedPhoto,
+            )
         ).get(MediaSelectionViewModel::class.java)
         binding.mediaSelectionViewModel = mediaSelectionViewModel
 

@@ -29,7 +29,6 @@ import com.hfad.petlogger.common.navigateSafe
 import com.hfad.petlogger.tags.usecases.GetAllTagsUseCase
 import com.hfad.petlogger.events.usecases.GetEventsOfNoteUseCase
 import com.hfad.petlogger.pets.usecases.GetPetsOfNoteUseCase
-import com.hfad.petlogger.photos.usecases.GetPhotosOfNoteUseCase
 import com.hfad.petlogger.tags.usecases.GetTagsOfNoteUseCase
 import com.hfad.petlogger.photos.MediaRepository
 import com.hfad.petlogger.notes.NoteRepository
@@ -46,6 +45,9 @@ import com.hfad.petlogger.pets.usecases.GetAllPetsFromCurrentSelectionUseCaseFac
 import com.hfad.petlogger.pets.usecases.GetMoreOfAllPetsUseCase
 import com.hfad.petlogger.pets.usecases.GetMoreOfSearchedPetsUseCase
 import com.hfad.petlogger.pets.usecases.GetSearchedPetsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.photos.usecases.BuildPhotoSearchQueryUseCase
+import com.hfad.petlogger.photos.usecases.GetMoreOfSearchedPhotosUseCase
+import com.hfad.petlogger.photos.usecases.GetMorePhotosOfNoteUseCase
 import com.hfad.petlogger.tags.usecases.GetAllTagsFromCurrentSelectionUseCaseFactory
 import com.hfad.petlogger.tags.usecases.GetSearchedTagsFromCurrentSelectionUseCaseFactory
 import com.hfad.petlogger.tags.usecases.GetSearchedTagsUseCase
@@ -112,9 +114,15 @@ class EditNoteFragment : Fragment() {
         ).get(PetMultiSelectionViewModel::class.java)
         binding.petMultiSelectionViewModel = petMultiSelectionViewModel
 
-        val getPhotosOfNote = GetMultipleInitialItemsUseCase.PreExisting(GetPhotosOfNoteUseCase(noteRepository, noteId))
+        val getPhotosOfNote = GetMultipleInitialItemsUseCase.PreExisting(GetMorePhotosOfNoteUseCase(noteRepository, noteId, photosAmt = 10))
+        val getSearchedPhotos = GetMoreOfSearchedPhotosUseCase(database.photoDao, photosAmt=10, pickFrom = BuildPhotoSearchQueryUseCase.Pick.FromNote(noteId))
         val mediaSelectionViewModel = ViewModelProvider(this,
-            MediaSelectionViewModel.provideFactory(mediaRepository, getPhotosOfNote, maxItems = 10)
+            MediaSelectionViewModel.provideFactory(
+                mediaRepository = mediaRepository,
+                maxItems = 10,
+                getInitialSelection = getPhotosOfNote,
+                getSearchedPhotos = getSearchedPhotos
+            )
         ).get(MediaSelectionViewModel::class.java)
         binding.mediaSelectionViewModel = mediaSelectionViewModel
 

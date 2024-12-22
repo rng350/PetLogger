@@ -157,4 +157,5 @@
     <string name="search_pets">Search Pets</string>
     <string name="keeping">Keeping</string>
     <string name="removing">Removing</string>
+    <string name="adding">Adding</string>
 </resources>

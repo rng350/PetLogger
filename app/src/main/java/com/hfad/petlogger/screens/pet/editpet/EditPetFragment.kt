@@ -42,7 +42,6 @@ import com.hfad.petlogger.tags.usecases.GetAllTagsUseCase
 import com.hfad.petlogger.events.usecases.GetEventsOfPetUseCase
 import com.hfad.petlogger.notes.usecases.GetNotesOfPetUseCase
 import com.hfad.petlogger.photos.usecases.GetPetProfilePhotoUseCase
-import com.hfad.petlogger.photos.usecases.GetPhotosOfPetUseCase
 import com.hfad.petlogger.tags.usecases.GetTagsOfPetUseCase
 import com.hfad.petlogger.events.usecases.GetMoreOfAllEventsUseCase
 import com.hfad.petlogger.events.usecases.GetMoreOfSearchedEventsUseCase
@@ -54,6 +53,9 @@ import com.hfad.petlogger.notes.usecases.GetMoreOfAllNotesUseCase
 import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesUseCase
 import com.hfad.petlogger.notes.usecases.GetSearchedNotesFromCurrentSelectionUseCaseFactory
 import com.hfad.petlogger.pets.PetRepository
+import com.hfad.petlogger.photos.usecases.BuildPhotoSearchQueryUseCase
+import com.hfad.petlogger.photos.usecases.GetMoreOfSearchedPhotosUseCase
+import com.hfad.petlogger.photos.usecases.GetMorePhotosOfPetUseCase
 import com.hfad.petlogger.tags.TagRepository
 import com.hfad.petlogger.tags.usecases.GetAllTagsFromCurrentSelectionUseCaseFactory
 import com.hfad.petlogger.tags.usecases.GetSearchedTagsFromCurrentSelectionUseCaseFactory
@@ -125,9 +127,15 @@ class EditPetFragment : Fragment() {
         ).get(EventMultiSelectionViewModel::class.java)
         binding.eventMultiSelectionViewModel = eventMultiSelectionViewModel
 
-        val getPhotosOfPet = GetMultipleInitialItemsUseCase.PreExisting(GetPhotosOfPetUseCase(petRepository = petRepository, petId = petId))
+        val getPhotosOfPet = GetMultipleInitialItemsUseCase.PreExisting(GetMorePhotosOfPetUseCase(petRepository = petRepository, petId = petId, photosAmt = 10))
+        val getSearchedPhotosOfPet = GetMoreOfSearchedPhotosUseCase(database.photoDao, photosAmt = 10, pickFrom = BuildPhotoSearchQueryUseCase.Pick.FromPet(petId))
         val mediaSelectionViewModel = ViewModelProvider(this,
-            MediaSelectionViewModel.provideFactory(mediaRepository, getPhotosOfPet)
+            MediaSelectionViewModel.provideFactory(
+                mediaRepository = mediaRepository,
+                maxItems = 10,
+                getInitialSelection = getPhotosOfPet,
+                getSearchedPhotos = getSearchedPhotosOfPet
+            )
         ).get(MediaSelectionViewModel::class.java)
         binding.mediaSelectionViewModel = mediaSelectionViewModel
 

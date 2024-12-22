@@ -76,8 +76,12 @@ class NewPetFragment : Fragment() {
             MediaSingleSelectionViewModel::class.java)
         binding.petProfilePhotoSelectionViewModel = profilePicSelectionViewModel
 
-        photoMultiSelectionViewModel = ViewModelProvider(this, MediaSelectionViewModel.provideFactory(mediaRepository = mediaRepository)).get(
-            MediaSelectionViewModel::class.java)
+        photoMultiSelectionViewModel = ViewModelProvider(this,
+            MediaSelectionViewModel.provideFactory(
+                mediaRepository = mediaRepository,
+                maxItems = 10
+            )
+        ).get(MediaSelectionViewModel::class.java)
         binding.photoSelectionViewModel = photoMultiSelectionViewModel
 
         val noteRepository = NoteRepository(database, mediaRepository)

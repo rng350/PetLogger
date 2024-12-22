@@ -30,7 +30,6 @@ import com.hfad.petlogger.common.navigateSafe
 import com.hfad.petlogger.tags.usecases.GetAllTagsUseCase
 import com.hfad.petlogger.notes.usecases.GetNotesOfEventUseCase
 import com.hfad.petlogger.pets.usecases.GetPetsOfEventUseCase
-import com.hfad.petlogger.photos.usecases.GetPhotosOfEventUseCase
 import com.hfad.petlogger.tags.usecases.GetTagsOfEventUseCase
 import com.hfad.petlogger.events.EventRepository
 import com.hfad.petlogger.photos.MediaRepository
@@ -47,6 +46,9 @@ import com.hfad.petlogger.pets.usecases.GetAllPetsFromCurrentSelectionUseCaseFac
 import com.hfad.petlogger.pets.usecases.GetMoreOfAllPetsUseCase
 import com.hfad.petlogger.pets.usecases.GetMoreOfSearchedPetsUseCase
 import com.hfad.petlogger.pets.usecases.GetSearchedPetsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.photos.usecases.BuildPhotoSearchQueryUseCase
+import com.hfad.petlogger.photos.usecases.GetMoreOfSearchedPhotosUseCase
+import com.hfad.petlogger.photos.usecases.GetMorePhotosOfEventUseCase
 import com.hfad.petlogger.tags.usecases.GetAllTagsFromCurrentSelectionUseCaseFactory
 import com.hfad.petlogger.tags.usecases.GetSearchedTagsFromCurrentSelectionUseCaseFactory
 import com.hfad.petlogger.tags.usecases.GetSearchedTagsUseCase
@@ -99,12 +101,14 @@ class EditEventFragment : Fragment() {
         ).get(PetMultiSelectionViewModel::class.java)
         binding.petMultiSelectionViewModel = petMultiSelectionViewModel
 
-        val getPhotosOfEventUseCase = GetMultipleInitialItemsUseCase.PreExisting(GetPhotosOfEventUseCase(eventID, eventRepository))
+        val getPhotosOfEvent = GetMultipleInitialItemsUseCase.PreExisting(GetMorePhotosOfEventUseCase(eventRepository, eventID, photosAmt = 10))
+        val getSearchedPhotosOfEvent = GetMoreOfSearchedPhotosUseCase(database.photoDao, photosAmt=10, pickFrom = BuildPhotoSearchQueryUseCase.Pick.FromEvent(eventID))
         val mediaSelectionViewModel = ViewModelProvider(this,
             MediaSelectionViewModel.provideFactory(
                 mediaRepository = mediaRepository,
-                fetchInitialSelection = getPhotosOfEventUseCase,
-                maxItems = 10
+                maxItems = 10,
+                getInitialSelection = getPhotosOfEvent,
+                getSearchedPhotos = getSearchedPhotosOfEvent
             )
         ).get(MediaSelectionViewModel::class.java)
         binding.mediaSelectionViewModel = mediaSelectionViewModel

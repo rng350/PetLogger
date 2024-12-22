@@ -11,65 +11,89 @@
             type="com.hfad.petlogger.screens.photo.mediaselection.MediaSelectionViewModel" />
     </data>
 
-    <com.google.android.material.card.MaterialCardView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="30dp"
-        android:padding="30dp">
-
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/search_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:queryHint="@string/search_photos"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <com.google.android.material.appbar.AppBarLayout
-                android:id="@+id/appBarLayout"
-                android:layout_width="match_parent"
+            android:orientation="horizontal">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/to_keep_button"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent">
-                <com.google.android.material.appbar.MaterialToolbar
-                    android:id="@+id/appBar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:title="@string/associated_photos"
-                    app:titleCentered="true"/>
-            </com.google.android.material.appbar.AppBarLayout>
-
-            <androidx.core.widget.NestedScrollView
-                android:id="@+id/photo_list_scroll_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/photo_list"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:gravity="top"
-                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                    app:spanCount="3"/>
-            </androidx.core.widget.NestedScrollView>
-            <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:text="@string/keeping"
+                android:clickable="true"
+                android:focusable="true"
+                android:checkable="true"
+                android:checked="@{viewModel.toKeepButtonChecked}"
+                android:drawableTop="@drawable/selection_to_keep"
+                android:drawableBottom="@drawable/visibility_on_24px"
+                app:iconGravity="start"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/to_add_button"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="horizontal">
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/addPhotosButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="10dp"
-                    android:text="@string/add_photos" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/resetButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="10dp"
-                    android:text="@string/reset" />
-            </LinearLayout>
+                android:layout_weight="1"
+                android:text="@string/adding"
+                android:drawableTop="@drawable/selection_to_add"
+                android:drawableBottom="@drawable/visibility_on_24px"
+                android:clickable="true"
+                android:focusable="true"
+                android:checkable="true"
+                android:checked="@{viewModel.toAddButtonChecked}"
+                app:iconGravity="start" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/to_remove_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/removing"
+                android:drawableTop="@drawable/selection_to_remove"
+                android:drawableBottom="@drawable/visibility_on_24px"
+                android:clickable="true"
+                android:focusable="true"
+                android:checkable="true"
+                android:checked="@{viewModel.toRemoveButtonChecked}"
+                app:iconGravity="start" />
         </LinearLayout>
-
-    </com.google.android.material.card.MaterialCardView>
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fillViewport="true">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/photo_list"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:gravity="top"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:spanCount="3"/>
+        </androidx.core.widget.NestedScrollView>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/addPhotosButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:text="@string/add_photos" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/resetButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:text="@string/reset" />
+        </LinearLayout>
+    </LinearLayout>
 </layout>

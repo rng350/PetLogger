@@ -130,8 +130,13 @@ class NewNoteFragment : Fragment() {
         val getAssociatedPhoto = if (assocPhotoId != defaultNullIdForNavigation) {
             GetMultipleInitialItemsUseCase.New(GetSinglePhotoUseCase(database.photoDao, assocPhotoId))
         } else null
-        mediaSelectionViewModel = ViewModelProvider(this, MediaSelectionViewModel.provideFactory(mediaRepository = mediaRepository, fetchInitialSelection = getAssociatedPhoto, maxItems = 10)).get(
-            MediaSelectionViewModel::class.java)
+        val mediaSelectionViewModel = ViewModelProvider(this,
+            MediaSelectionViewModel.provideFactory(
+                mediaRepository = mediaRepository,
+                maxItems = 10,
+                getInitialSelection = getAssociatedPhoto
+            )
+        ).get(MediaSelectionViewModel::class.java)
 
         val tagRepository = TagRepository(database)
         val getAllTags = GetAllTagsUseCase(tagRepository)
