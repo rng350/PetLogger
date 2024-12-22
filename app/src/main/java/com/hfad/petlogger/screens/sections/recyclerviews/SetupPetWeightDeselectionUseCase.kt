@@ -43,7 +43,8 @@ class SetupPetWeightDeselectionUseCase(
         DataItemBindingInterface<CheckableItem<PetWeightForSelection>, CheckableWeightItemDeleteBinding> {
         override fun bind(
             item: CheckableItem<PetWeightForSelection>,
-            binder: CheckableWeightItemDeleteBinding
+            binder: CheckableWeightItemDeleteBinding,
+            itemLifecycleOwner: LifecycleOwner
         ) {
             binder.checkableWeight = item
             binder.weightDisplay = item.item

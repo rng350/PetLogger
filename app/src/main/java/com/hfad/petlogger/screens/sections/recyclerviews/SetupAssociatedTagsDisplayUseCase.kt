@@ -41,7 +41,11 @@ class SetupAssociatedTagsDisplayUseCase(private val tags: StateFlow<List<Tag>>,
 
     private fun createTagItemBindingInterface() = object :
         DataItemBindingInterface<Tag, ItemTagBinding> {
-        override fun bind(item: Tag, binder: ItemTagBinding) {
+        override fun bind(
+            item: Tag,
+            binder: ItemTagBinding,
+            itemLifecycleOwner: LifecycleOwner
+        ) {
             binder.tag = item
 
             binder.tagChip.setOnClickListener { null }

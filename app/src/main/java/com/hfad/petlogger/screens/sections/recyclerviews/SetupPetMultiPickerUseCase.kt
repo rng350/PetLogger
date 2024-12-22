@@ -39,7 +39,11 @@ class SetupPetMultiPickerUseCase(private val petList: LiveData<List<CheckableIte
 
     private fun createCheckablePetWithProfilePhotoItemBindingInterface() = object:
         DataItemBindingInterface<CheckableItem<PetWithProfilePic>, CheckablePetItemBinding> {
-        override fun bind(item: CheckableItem<PetWithProfilePic>, binder: CheckablePetItemBinding) {
+        override fun bind(
+            item: CheckableItem<PetWithProfilePic>,
+            binder: CheckablePetItemBinding,
+            itemLifecycleOwner: LifecycleOwner
+        ) {
             binder.checkablePet = item
             binder.pet = item.item
 
@@ -63,7 +67,7 @@ class SetupPetMultiPickerUseCase(private val petList: LiveData<List<CheckableIte
             val observer = Observer<List<PetWithProfilePic>> {
                 binder.petCard.isChecked = selection.value?.contains(item.item) ?: false
             }
-            selection.observe(lifecycleOwner, observer)
+            selection.observe(itemLifecycleOwner, observer)
         }
     }
 }

@@ -41,7 +41,8 @@ class SetupAssociatedWeightsDisplayUseCase(
             = object : DataItemBindingInterface<WeightForList, WeightItemBinding> {
         override fun bind(
             item: WeightForList,
-            binder: WeightItemBinding
+            binder: WeightItemBinding,
+            itemLifecycleOwner: LifecycleOwner
         ) {
             binder.weight = item
 

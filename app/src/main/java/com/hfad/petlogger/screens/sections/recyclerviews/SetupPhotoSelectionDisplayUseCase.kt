@@ -48,7 +48,8 @@ class SetupPhotoSelectionDisplayUseCase(
         DataItemBindingInterface<CheckableItem<Photo>, ItemSelectedPhotoBinding> {
         override fun bind(
             item: CheckableItem<Photo>,
-            binder: ItemSelectedPhotoBinding
+            binder: ItemSelectedPhotoBinding,
+            itemLifecycleOwner: LifecycleOwner
         ) {
             binder.checkablePhoto = item
             Glide.with(context).clear(binder.photo)
@@ -59,13 +60,12 @@ class SetupPhotoSelectionDisplayUseCase(
                     .into(binder.photo)
             }
 
-            /*(binder.root.context as? LifecycleOwner)?.let { itemLifecycleOwner ->
-                item.isChecked.observe(itemLifecycleOwner, Observer {
-                    Log.d("PhotoItemBinder", "ITEM CHECKED -- ITEM: $item")
-                    Log.d("PhotoItemBinder", "ITEM CHECKED -- BINDER: $binder")
-                    binder.photoCard.isChecked = it
-                })
-            }*/
+
+            item.isChecked.observe(itemLifecycleOwner, Observer {
+                Log.d("PhotoItemBinder", "ITEM CHECKED -- ITEM: $item")
+                Log.d("PhotoItemBinder", "ITEM CHECKED -- BINDER: $binder")
+                binder.photoCard.isChecked = it
+            })
 
             binder.photoCard.setOnClickListener(null)
             binder.photoCard.setOnClickListener {

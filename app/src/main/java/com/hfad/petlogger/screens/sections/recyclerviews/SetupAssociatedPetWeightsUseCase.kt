@@ -42,7 +42,8 @@ class SetupAssociatedPetWeightsUseCase(private val weights: StateFlow<List<PetWe
             = object : DataItemBindingInterface<PetWeightForDisplay, PetWeightItemBinding> {
         override fun bind(
             item: PetWeightForDisplay,
-            binder: PetWeightItemBinding
+            binder: PetWeightItemBinding,
+            itemLifecycleOwner: LifecycleOwner
         ) {
             binder.weight = item
             binder.weightCard.setOnClickListener { null }

@@ -31,7 +31,11 @@ class SetupEventMultiPickerSelectionDisplayUseCase(private val selection: LiveDa
 
     private fun createCheckableEventItemBindingInterface() = object:
         DataItemBindingInterface<EventForList, EventItemBinding> {
-        override fun bind(item: EventForList, binder: EventItemBinding) {
+        override fun bind(
+            item: EventForList,
+            binder: EventItemBinding,
+            itemLifecycleOwner: LifecycleOwner
+        ) {
             binder.event = item
 
             binder.eventCard.setOnClickListener { null }

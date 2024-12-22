@@ -7,6 +7,9 @@ import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -26,7 +29,16 @@ class GenericRecyclerViewAdapter<T, U: ViewDataBinding>(
         holder.bind(item, bindingInterface)
     }
 
-    class DataItemViewHolder(val binding : ViewDataBinding) : RecyclerView.ViewHolder(binding.root) {
+    override fun onViewRecycled(holder: DataItemViewHolder) {
+        super.onViewRecycled(holder)
+        holder.onViewRecycled()
+    }
+
+    class DataItemViewHolder(val binding : ViewDataBinding) : RecyclerView.ViewHolder(binding.root), LifecycleOwner {
+        private val lifecycleRegistry = LifecycleRegistry(this)
+        override val lifecycle: Lifecycle
+            get() = lifecycleRegistry
+
         companion object {
             fun inflateFrom(parent: ViewGroup, layoutId: Int): DataItemViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
@@ -40,24 +52,27 @@ class GenericRecyclerViewAdapter<T, U: ViewDataBinding>(
             item: T,
             bindingInterface: DataItemBindingInterface<T, U>
         ) {
-            bindingInterface.bind(item, binding as U)
+            lifecycleRegistry.currentState = Lifecycle.State.STARTED
+            bindingInterface.bind(item, binding as U, this)
+        }
+
+        fun onViewRecycled() {
+            lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
         }
     }
 }
 
 interface DataItemBindingInterface<T, U: ViewDataBinding> {
-    fun bind(item: T, binder: U)
+    fun bind(item: T, binder: U, itemLifecycleOwner: LifecycleOwner)
 }
 
 class DataItemDiffUtilCallback<T> : DiffUtil.ItemCallback<T>() {
     override fun areItemsTheSame(oldItem: T & Any, newItem: T & Any): Boolean {
-        Log.e("adapter", "are items the same? ${oldItem.toString() == newItem.toString()}")
         return oldItem.toString() == newItem.toString()
     }
 
     @SuppressLint("DiffUtilEquals")
     override fun areContentsTheSame(oldItem: T & Any, newItem: T & Any): Boolean {
-        Log.e("adapter", "are contents the same? ${oldItem == newItem}")
         return oldItem == newItem
     }
 }

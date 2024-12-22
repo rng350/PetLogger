@@ -32,7 +32,11 @@ class SetupTagMultiPickerUseCase(private val tagList: LiveData<List<CheckableIte
 
     private fun createCheckableTagItemBindingInterface() = object:
         DataItemBindingInterface<CheckableItem<Tag>, CheckableTagItemBinding> {
-        override fun bind(item: CheckableItem<Tag>, binder: CheckableTagItemBinding) {
+        override fun bind(
+            item: CheckableItem<Tag>,
+            binder: CheckableTagItemBinding,
+            itemLifecycleOwner: LifecycleOwner
+        ) {
             binder.tag = item.item
             binder.tagChip.setOnClickListener { null }
             binder.tagChip.setOnClickListener {
@@ -41,7 +45,7 @@ class SetupTagMultiPickerUseCase(private val tagList: LiveData<List<CheckableIte
             val observer = Observer<List<Tag>> {
                 binder.tagChip.isChecked = selection.value?.contains(item.item) ?: false
             }
-            selection.observe(lifecycleOwner, observer)
+            selection.observe(itemLifecycleOwner, observer)
         }
     }
 }

@@ -31,7 +31,11 @@ class SetupWeightMultiPickerUseCase(private val weightList: LiveData<List<Checka
     }
     private fun createCheckableWeightItemBindingInterface() = object:
         DataItemBindingInterface<CheckableItem<WeightWithPetName>, CheckableWeightWNameItemBinding> {
-        override fun bind(item: CheckableItem<WeightWithPetName>, binder: CheckableWeightWNameItemBinding) {
+        override fun bind(
+            item: CheckableItem<WeightWithPetName>,
+            binder: CheckableWeightWNameItemBinding,
+            itemLifecycleOwner: LifecycleOwner
+        ) {
             binder.weight = item.item
 
             binder.weightCard.setOnClickListener { null }
@@ -42,7 +46,7 @@ class SetupWeightMultiPickerUseCase(private val weightList: LiveData<List<Checka
             val observer = Observer<List<WeightWithPetName>> {
                 binder.weightCard.isChecked = selection.value?.contains(item.item) ?: false
             }
-            selection.observe(lifecycleOwner, observer)
+            selection.observe(itemLifecycleOwner, observer)
         }
     }
 }

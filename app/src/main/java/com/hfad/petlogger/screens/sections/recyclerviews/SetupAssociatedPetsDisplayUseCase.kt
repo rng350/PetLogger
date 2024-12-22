@@ -45,7 +45,8 @@ class SetupAssociatedPetsDisplayUseCase(private val pets: StateFlow<List<PetWith
         DataItemBindingInterface<PetWithProfilePic, PetItemBinding> {
         override fun bind(
             item: PetWithProfilePic,
-            binder: PetItemBinding
+            binder: PetItemBinding,
+            itemLifecycleOwner: LifecycleOwner
         ) {
             binder.pet = item
             Glide.with(context).clear(binder.petProfileImage)

@@ -41,7 +41,8 @@ class SetupAssociatedNotesDisplayUseCase(private val notes: StateFlow<List<Note>
             = object : DataItemBindingInterface<Note, NoteItemBinding> {
         override fun bind(
             item: Note,
-            binder: NoteItemBinding
+            binder: NoteItemBinding,
+            itemLifecycleOwner: LifecycleOwner
         ) {
             binder.note = item
             binder.noteCard.setOnClickListener { null }

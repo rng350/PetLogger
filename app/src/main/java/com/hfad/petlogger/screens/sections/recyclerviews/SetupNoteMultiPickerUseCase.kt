@@ -32,7 +32,11 @@ class SetupNoteMultiPickerUseCase(private val noteList: LiveData<List<CheckableI
 
     private fun createCheckableNoteItemBindingInterface() = object:
         DataItemBindingInterface<CheckableItem<Note>, CheckableNoteShortItemBinding> {
-        override fun bind(item: CheckableItem<Note>, binder: CheckableNoteShortItemBinding) {
+        override fun bind(
+            item: CheckableItem<Note>,
+            binder: CheckableNoteShortItemBinding,
+            itemLifecycleOwner: LifecycleOwner
+        ) {
             binder.checkableNote = item
             binder.note = item.item
 
@@ -46,7 +50,7 @@ class SetupNoteMultiPickerUseCase(private val noteList: LiveData<List<CheckableI
             val observer = Observer<List<Note>> {
                 binder.noteCard.isChecked = selection.value?.contains(item.item) ?: false
             }
-            selection.observe(lifecycleOwner, observer)
+            selection.observe(itemLifecycleOwner, observer)
         }
     }
 }

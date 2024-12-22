@@ -31,7 +31,11 @@ class SetupTagMultiPickerSelectionDisplayUseCase(
 
     private fun createTagItemBindingInterface() = object :
         DataItemBindingInterface<Tag, ItemSelectedTagBinding> {
-        override fun bind(item: Tag, binder: ItemSelectedTagBinding) {
+        override fun bind(
+            item: Tag,
+            binder: ItemSelectedTagBinding,
+            itemLifecycleOwner: LifecycleOwner
+        ) {
             binder.tag = item
 
             binder.tagChip.setOnClickListener { null }

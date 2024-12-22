@@ -35,7 +35,11 @@ class SetupPetMultiPickerSelectionDisplayUseCase(private val selection: LiveData
 
     private fun createCheckablePetWithProfilePhotoItemBindingInterface() = object:
         DataItemBindingInterface<PetWithProfilePic, ItemSelectedPetBinding> {
-        override fun bind(item: PetWithProfilePic, binder: ItemSelectedPetBinding) {
+        override fun bind(
+            item: PetWithProfilePic,
+            binder: ItemSelectedPetBinding,
+            itemLifecycleOwner: LifecycleOwner
+        ) {
             binder.pet = item
 
             // clear previous requests on viewholder

@@ -40,7 +40,8 @@ class SetupAssociatedEventsDisplayUseCase(private val events: StateFlow<List<Eve
             = object : DataItemBindingInterface<EventForList, EventItemBinding> {
         override fun bind(
             item: EventForList,
-            binder: EventItemBinding
+            binder: EventItemBinding,
+            itemLifecycleOwner: LifecycleOwner
         ) {
             binder.event = item
             binder.eventCard.setOnClickListener { null }

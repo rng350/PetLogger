@@ -30,7 +30,11 @@ class SetupNoteMultiPickerSelectionDisplayUseCase(private val selection: LiveDat
 
     private fun createNoteItemBindingInterface() = object:
         DataItemBindingInterface<Note, NoteShortItemBinding> {
-        override fun bind(item: Note, binder: NoteShortItemBinding) {
+        override fun bind(
+            item: Note,
+            binder: NoteShortItemBinding,
+            itemLifecycleOwner: LifecycleOwner
+        ) {
             binder.note = item
 
             binder.noteCard.setOnClickListener { null }

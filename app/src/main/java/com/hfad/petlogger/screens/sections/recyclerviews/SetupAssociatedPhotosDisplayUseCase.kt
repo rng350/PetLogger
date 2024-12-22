@@ -44,7 +44,8 @@ class SetupAssociatedPhotosDisplayUseCase(private val photos: StateFlow<List<Pho
         DataItemBindingInterface<Photo, ItemSelectedPhotoBinding> {
         override fun bind(
             item: Photo,
-            binder: ItemSelectedPhotoBinding
+            binder: ItemSelectedPhotoBinding,
+            itemLifecycleOwner: LifecycleOwner
         ) {
             Glide.with(context).clear(binder.photo)
             item.let {

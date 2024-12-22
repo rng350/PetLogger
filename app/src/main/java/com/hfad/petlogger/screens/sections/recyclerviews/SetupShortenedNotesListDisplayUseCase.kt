@@ -42,7 +42,8 @@ class SetupShortenedNotesListDisplayUseCase(
             = object : DataItemBindingInterface<Note, NoteShortItemBinding> {
         override fun bind(
             item: Note,
-            binder: NoteShortItemBinding
+            binder: NoteShortItemBinding,
+            itemLifecycleOwner: LifecycleOwner
         ) {
             binder.note = item
             binder.noteCard.setOnClickListener { null }

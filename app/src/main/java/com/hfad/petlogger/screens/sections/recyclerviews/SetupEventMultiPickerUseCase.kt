@@ -32,7 +32,11 @@ class SetupEventMultiPickerUseCase(private val eventList: LiveData<List<Checkabl
 
     private fun createCheckableEventItemBindingInterface() = object:
         DataItemBindingInterface<CheckableItem<EventForList>, CheckableEventItemBinding> {
-        override fun bind(item: CheckableItem<EventForList>, binder: CheckableEventItemBinding) {
+        override fun bind(
+            item: CheckableItem<EventForList>,
+            binder: CheckableEventItemBinding,
+            itemLifecycleOwner: LifecycleOwner
+        ) {
             binder.checkableEvent = item
             binder.event = item.item
 
@@ -46,7 +50,7 @@ class SetupEventMultiPickerUseCase(private val eventList: LiveData<List<Checkabl
             val observer = Observer<List<EventForList>> {
                 binder.eventCard.isChecked = selection.value?.contains(item.item) ?: false
             }
-            selection.observe(lifecycleOwner, observer)
+            selection.observe(itemLifecycleOwner, observer)
         }
     }
 }

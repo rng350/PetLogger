@@ -31,7 +31,11 @@ class SetupWeightMultiPickerSelectionDisplayUseCase(private val selection: LiveD
 
     private fun createCheckableWeightItemBindingInterface() = object:
         DataItemBindingInterface<WeightWithPetName, ItemSelectedWeightBinding> {
-        override fun bind(item: WeightWithPetName, binder: ItemSelectedWeightBinding) {
+        override fun bind(
+            item: WeightWithPetName,
+            binder: ItemSelectedWeightBinding,
+            itemLifecycleOwner: LifecycleOwner
+        ) {
             binder.weight = item
             binder.weightCard.setOnClickListener { null }
             binder.weightCard.setOnClickListener {
