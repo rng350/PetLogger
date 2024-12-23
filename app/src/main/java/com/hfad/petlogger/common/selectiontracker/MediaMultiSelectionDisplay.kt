@@ -6,6 +6,7 @@ import com.hfad.petlogger.common.usecases.GetItemsUseCase
 import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
 import com.hfad.petlogger.common.usecases.GetSearchedItemsUseCase
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -17,29 +18,33 @@ import java.util.concurrent.atomic.AtomicBoolean
 // getAllAssociatedItems = The union of selection to keep & selection to remove at all times
 class MediaMultiSelectionDisplay<T>(
     getInitialSelection: GetMultipleInitialItemsUseCase<T>? = null,
-    getSearchedItemsArg: GetSearchedItemsUseCase<T>? = null,
+    private val getSearchedItems: GetSearchedItemsUseCase<T> =
+        object : GetSearchedItemsUseCase<T> {
+            override var currentQuery: String = ""
+            override val onLastPage: Boolean = true
+            override suspend fun invoke(): List<T> {
+                return listOf()
+            }
+            override fun resetCurrentPoint() {}
+        },
+    private val getAssociatedItemsPaginated: GetItemsUseCase<T> =
+        object: GetItemsUseCase<T> {
+            override val onLastPage: Boolean = true
+            override suspend fun invoke(): List<T> {
+                return listOf()
+            }
+            override fun resetCurrentPoint() {}
+        },
     private val coroutineScope: CoroutineScope,
     checkItemIsInToAddList: CheckItemIsInSelectionUseCase<T>,
     checkItemIsInToRemoveList: CheckItemIsInSelectionUseCase<T>,
     checkItemIsInToKeepList: CheckItemIsInSelectionUseCase<T>
 ) {
     private val selectionTracker = MediaMultiSelectionTracker(
-        getInitialSelection,
         checkItemIsInToAddList,
         checkItemIsInToRemoveList,
-        checkItemIsInToKeepList,
-        coroutineScope
+        checkItemIsInToKeepList
     )
-    private val getSearchedItems: GetSearchedItemsUseCase<T> =
-        getSearchedItemsArg
-            ?: object : GetSearchedItemsUseCase<T> {
-                override var currentQuery: String = ""
-                override val onLastPage: Boolean = true
-                override suspend fun invoke(): List<T> {
-                    return listOf()
-                }
-                override fun resetCurrentPoint() {}
-            }
     private val _currentDisplayedItems: MutableStateFlow<List<CheckableItem<T>>> = MutableStateFlow(listOf())
     val currentDisplayedItems: StateFlow<List<CheckableItem<T>>> = _currentDisplayedItems
         .stateIn(
@@ -48,24 +53,41 @@ class MediaMultiSelectionDisplay<T>(
             initialValue = listOf()
         )
     private var currentDisplayMode: MediaMultiSelectionTracker.Display = MediaMultiSelectionTracker.Display.All
-    private val getAllAssociatedItems: GetItemsUseCase<T> =
-        if (getInitialSelection is GetMultipleInitialItemsUseCase.PreExisting)
-            getInitialSelection.useCase
-        // get nothing if there's no initial selection to draw from
-        else object: GetItemsUseCase<T> {
-            override val onLastPage: Boolean = true
-            override suspend fun invoke(): List<T> {
-                return listOf()
-            }
-            override fun resetCurrentPoint() {}
-        }
-    private var currentItemFetcher: GetItemsUseCase<T> = getAllAssociatedItems
+    private var currentItemFetcher: GetItemsUseCase<T> = getAssociatedItemsPaginated
     private var allQueriedItems: List<T> = listOf()
     private var _isLoading: AtomicBoolean = AtomicBoolean(false)
     val currentSelectionCount: Int get() = selectionTracker.currentSelectionCount
 
     init {
-        reloadItems()
+        coroutineScope.launch {
+            _isLoading.set(true)
+            val initialSelectionFetched = async {
+                when (getInitialSelection) {
+                    is GetMultipleInitialItemsUseCase.New -> {
+                        val initialNewItem = getInitialSelection.useCase()
+                        initialNewItem?.let {
+                            selectionTracker.initializeSelectionToAdd(it)
+                        }
+                    }
+                    is GetMultipleInitialItemsUseCase.PreExisting -> {
+                        val initialNewItems = getInitialSelection.useCase()
+                        selectionTracker.initializeSelectionToKeep(initialNewItems)
+                    }
+                    null -> {}
+                }
+            }
+            val initialDisplaySelectionFetched = async {
+                allQueriedItems = getAssociatedItemsPaginated()
+            }
+            initialDisplaySelectionFetched.await()
+            initialSelectionFetched.await()
+            val filteredSelection = selectionTracker.filterQueriedItemsForDisplay(
+                allQueriedItems,
+                currentDisplayMode
+            )
+            _currentDisplayedItems.update { filteredSelection }
+            _isLoading.set(false)
+        }
     }
 
     fun toggleItem(checkableItem: CheckableItem<T>) {
@@ -88,8 +110,8 @@ class MediaMultiSelectionDisplay<T>(
             getSearchedItems.changeSearchQueryAndResetCurrentPoint(query)
             getSearchedItems
         } else {
-            getAllAssociatedItems.resetCurrentPoint()
-            getAllAssociatedItems
+            getAssociatedItemsPaginated.resetCurrentPoint()
+            getAssociatedItemsPaginated
         }
         reloadItems()
     }
@@ -120,7 +142,6 @@ class MediaMultiSelectionDisplay<T>(
 
     fun loadMoreItems() {
         coroutineScope.launch {
-            Log.d("MediaMultiSelDisplay", "LoadMore called...")
             _isLoading.set(true)
             val newQueriedItems = currentItemFetcher()
             val filteredSelection = selectionTracker.filterQueriedItemsForDisplay(

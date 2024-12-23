@@ -48,6 +48,7 @@ import com.hfad.petlogger.pets.usecases.GetSearchedPetsFromCurrentSelectionUseCa
 import com.hfad.petlogger.photos.usecases.BuildPhotoSearchQueryUseCase
 import com.hfad.petlogger.photos.usecases.GetMoreOfSearchedPhotosUseCase
 import com.hfad.petlogger.photos.usecases.GetMorePhotosOfNoteUseCase
+import com.hfad.petlogger.photos.usecases.GetPhotosOfNoteUseCase
 import com.hfad.petlogger.tags.usecases.GetAllTagsFromCurrentSelectionUseCaseFactory
 import com.hfad.petlogger.tags.usecases.GetSearchedTagsFromCurrentSelectionUseCaseFactory
 import com.hfad.petlogger.tags.usecases.GetSearchedTagsUseCase
@@ -114,13 +115,15 @@ class EditNoteFragment : Fragment() {
         ).get(PetMultiSelectionViewModel::class.java)
         binding.petMultiSelectionViewModel = petMultiSelectionViewModel
 
-        val getPhotosOfNote = GetMultipleInitialItemsUseCase.PreExisting(GetMorePhotosOfNoteUseCase(noteRepository, noteId, photosAmt = 10))
+        val getPhotosOfNote = GetMultipleInitialItemsUseCase.PreExisting(GetPhotosOfNoteUseCase(noteRepository, noteId))
+        val getMorePhotosOfNoteUse = GetMorePhotosOfNoteUseCase(noteRepository, noteId, photosAmt = 10)
         val getSearchedPhotos = GetMoreOfSearchedPhotosUseCase(database.photoDao, photosAmt=10, pickFrom = BuildPhotoSearchQueryUseCase.Pick.FromNote(noteId))
         val mediaSelectionViewModel = ViewModelProvider(this,
             MediaSelectionViewModel.provideFactory(
                 mediaRepository = mediaRepository,
                 maxItems = 10,
                 getInitialSelection = getPhotosOfNote,
+                getAssociatedItems = getMorePhotosOfNoteUse,
                 getSearchedPhotos = getSearchedPhotos
             )
         ).get(MediaSelectionViewModel::class.java)

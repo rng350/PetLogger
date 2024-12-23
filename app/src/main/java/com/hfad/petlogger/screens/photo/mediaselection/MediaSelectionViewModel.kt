@@ -12,6 +12,7 @@ import com.hfad.petlogger.common.selectiontracker.CheckPhotoIsInCurrentSelection
 import com.hfad.petlogger.common.selectiontracker.CheckPhotoIsInSelectionToRemoveUseCase
 import com.hfad.petlogger.common.selectiontracker.MediaMultiSelectionDisplay
 import com.hfad.petlogger.common.selectiontracker.MediaMultiSelectionTracker
+import com.hfad.petlogger.common.usecases.GetItemsUseCase
 import com.hfad.petlogger.photos.Photo
 import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
 import com.hfad.petlogger.common.usecases.GetSearchedItemsUseCase
@@ -23,17 +24,29 @@ class MediaSelectionViewModel(
     private val mediaRepository: MediaRepository,
     val maxItems: Int = Int.MAX_VALUE,
     getInitialSelection: GetMultipleInitialItemsUseCase<Photo>? = null,
+    getAssociatedItems: GetItemsUseCase<Photo>? = null,
     getSearchedPhotos: GetSearchedItemsUseCase<Photo>? = null
 ) : ViewModel() {
     private val mediaSelectionDisplay: MediaMultiSelectionDisplay<Photo> =
-        MediaMultiSelectionDisplay<Photo> (
-            getInitialSelection = getInitialSelection,
-            getSearchedItemsArg = getSearchedPhotos,
-            coroutineScope = viewModelScope,
-            checkItemIsInToAddList = CheckPhotoIsInCurrentSelectionUseCase(),
-            checkItemIsInToRemoveList = CheckPhotoIsInSelectionToRemoveUseCase(),
-            checkItemIsInToKeepList = CheckPhotoIsInCurrentSelectionUseCase()
-        )
+        if (getAssociatedItems!=null && getSearchedPhotos!=null) {
+            MediaMultiSelectionDisplay<Photo> (
+                getInitialSelection = getInitialSelection,
+                getSearchedItems = getSearchedPhotos,
+                getAssociatedItemsPaginated = getAssociatedItems,
+                coroutineScope = viewModelScope,
+                checkItemIsInToAddList = CheckPhotoIsInCurrentSelectionUseCase(),
+                checkItemIsInToRemoveList = CheckPhotoIsInSelectionToRemoveUseCase(),
+                checkItemIsInToKeepList = CheckPhotoIsInCurrentSelectionUseCase()
+            )
+         } else {
+            MediaMultiSelectionDisplay<Photo> (
+                getInitialSelection = getInitialSelection,
+                coroutineScope = viewModelScope,
+                checkItemIsInToAddList = CheckPhotoIsInCurrentSelectionUseCase(),
+                checkItemIsInToRemoveList = CheckPhotoIsInSelectionToRemoveUseCase(),
+                checkItemIsInToKeepList = CheckPhotoIsInCurrentSelectionUseCase()
+            )
+        }
     val currentDisplayedPhotoSelection: StateFlow<List<CheckableItem<Photo>>> get() = mediaSelectionDisplay.currentDisplayedItems
     val selectionSize: Int get() = mediaSelectionDisplay.currentSelectionCount
     private val _toKeepButtonChecked = MutableLiveData(true)
@@ -115,6 +128,7 @@ class MediaSelectionViewModel(
             mediaRepository: MediaRepository,
             maxItems: Int = Int.MAX_VALUE,
             getInitialSelection: GetMultipleInitialItemsUseCase<Photo>? = null,
+            getAssociatedItems: GetItemsUseCase<Photo>? = null,
             getSearchedPhotos: GetSearchedItemsUseCase<Photo>? = null
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -123,6 +137,7 @@ class MediaSelectionViewModel(
                         mediaRepository,
                         maxItems,
                         getInitialSelection,
+                        getAssociatedItems,
                         getSearchedPhotos
                     ) as T
                 }

@@ -1,7 +1,6 @@
 package com.hfad.petlogger.screens.sections.recyclerviews
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.LifecycleOwner
@@ -60,18 +59,13 @@ class SetupPhotoSelectionDisplayUseCase(
                     .into(binder.photo)
             }
 
-
             item.isChecked.observe(itemLifecycleOwner, Observer {
-                Log.d("PhotoItemBinder", "ITEM CHECKED -- ITEM: $item")
-                Log.d("PhotoItemBinder", "ITEM CHECKED -- BINDER: $binder")
                 binder.photoCard.isChecked = it
             })
 
             binder.photoCard.setOnClickListener(null)
             binder.photoCard.setOnClickListener {
                 photoToggle(item)
-                /*Log.d("PhotoItemBinder", "ITEM *clicked* -- ITEM: $item")
-                Log.d("PhotoItemBinder", "ITEM *clicked* -- BINDER: $binder")*/
             }
         }
     }

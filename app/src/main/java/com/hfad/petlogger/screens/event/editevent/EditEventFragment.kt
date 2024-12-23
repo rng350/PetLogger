@@ -49,6 +49,7 @@ import com.hfad.petlogger.pets.usecases.GetSearchedPetsFromCurrentSelectionUseCa
 import com.hfad.petlogger.photos.usecases.BuildPhotoSearchQueryUseCase
 import com.hfad.petlogger.photos.usecases.GetMoreOfSearchedPhotosUseCase
 import com.hfad.petlogger.photos.usecases.GetMorePhotosOfEventUseCase
+import com.hfad.petlogger.photos.usecases.GetPhotosOfEventUseCase
 import com.hfad.petlogger.tags.usecases.GetAllTagsFromCurrentSelectionUseCaseFactory
 import com.hfad.petlogger.tags.usecases.GetSearchedTagsFromCurrentSelectionUseCaseFactory
 import com.hfad.petlogger.tags.usecases.GetSearchedTagsUseCase
@@ -101,13 +102,15 @@ class EditEventFragment : Fragment() {
         ).get(PetMultiSelectionViewModel::class.java)
         binding.petMultiSelectionViewModel = petMultiSelectionViewModel
 
-        val getPhotosOfEvent = GetMultipleInitialItemsUseCase.PreExisting(GetMorePhotosOfEventUseCase(eventRepository, eventID, photosAmt = 10))
+        val getPhotosOfEvent = GetMultipleInitialItemsUseCase.PreExisting(GetPhotosOfEventUseCase(eventID, eventRepository))
+        val getPhotosOfEventPaginated = GetMorePhotosOfEventUseCase(eventRepository, eventID, photosAmt = 10)
         val getSearchedPhotosOfEvent = GetMoreOfSearchedPhotosUseCase(database.photoDao, photosAmt=10, pickFrom = BuildPhotoSearchQueryUseCase.Pick.FromEvent(eventID))
         val mediaSelectionViewModel = ViewModelProvider(this,
             MediaSelectionViewModel.provideFactory(
                 mediaRepository = mediaRepository,
                 maxItems = 10,
                 getInitialSelection = getPhotosOfEvent,
+                getAssociatedItems = getPhotosOfEventPaginated,
                 getSearchedPhotos = getSearchedPhotosOfEvent
             )
         ).get(MediaSelectionViewModel::class.java)

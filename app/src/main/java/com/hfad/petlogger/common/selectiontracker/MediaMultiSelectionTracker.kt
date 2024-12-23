@@ -1,45 +1,34 @@
 package com.hfad.petlogger.common.selectiontracker
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.hfad.petlogger.common.CheckableItem
 import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MediaMultiSelectionTracker<T>(
-    getInitialSelection: GetMultipleInitialItemsUseCase<T>? = null,
     private val checkItemIsInToAddList: CheckItemIsInSelectionUseCase<T>,
     private val checkItemIsInToRemoveList: CheckItemIsInSelectionUseCase<T>,
-    private val checkItemIsInToKeepList: CheckItemIsInSelectionUseCase<T>,
-    coroutineScope: CoroutineScope
+    private val checkItemIsInToKeepList: CheckItemIsInSelectionUseCase<T>
 ) {
     private var initialSelectionToAdd: List<CheckableItem<T>> = listOf()
     private var initialSelectionToKeep: List<CheckableItem<T>> = listOf()
     private var _currentSelectionCount = 0
     val currentSelectionCount: Int get() = _currentSelectionCount
 
-    init {
-        when (getInitialSelection) {
-            is GetMultipleInitialItemsUseCase.New -> {
-                coroutineScope.launch {
-                    val initialSelectionFetched = getInitialSelection.useCase()
-                    initialSelectionFetched?.let { item ->
-                        initialSelectionToAdd = listOf(item).map { CheckableItem(it, MutableLiveData(false)) }
-                        checkItemIsInToAddList.addCheckableItems(initialSelectionToAdd)
-                        _currentSelectionCount = initialSelectionToAdd.size
-                    }
-                }
-            }
-            is GetMultipleInitialItemsUseCase.PreExisting -> {
-                coroutineScope.launch {
-                    val initialSelectionFetched = getInitialSelection.useCase()
-                    initialSelectionToKeep = initialSelectionFetched.map { CheckableItem(it, MutableLiveData(false)) }
-                    checkItemIsInToKeepList.addItems(initialSelectionFetched)
-                    _currentSelectionCount = initialSelectionToKeep.size
-                }
-            }
-            null -> {}
-        }
+    fun initializeSelectionToKeep(itemsList: List<T>) {
+        initialSelectionToKeep = itemsList.map { CheckableItem(it, MutableLiveData(false)) }
+        checkItemIsInToKeepList.addCheckableItems(initialSelectionToKeep)
+        _currentSelectionCount = initialSelectionToKeep.size
+    }
+
+    fun initializeSelectionToAdd(item: T) {
+        initialSelectionToAdd = listOf(CheckableItem(item, MutableLiveData(false)))
+        checkItemIsInToAddList.addCheckableItems(initialSelectionToAdd)
+        _currentSelectionCount = initialSelectionToAdd.size
     }
 
     fun toggle(checkableItem: CheckableItem<T>) {
@@ -95,10 +84,7 @@ class MediaMultiSelectionTracker<T>(
     fun filterQueriedItemsForDisplay(itemsToFilter: List<T>, displayMode: Display): List<CheckableItem<T>> {
         return when (displayMode) {
             Display.All -> {
-                (
-                    checkItemIsInToAddList.getList()
-                            + itemsToFilter.mapNotNull { checkItemIsInToKeepList.containsItem(it) ?: checkItemIsInToRemoveList.containsItem(it) }
-                )
+                checkItemIsInToAddList.getList() + itemsToFilter.mapNotNull { checkItemIsInToKeepList.containsItem(it) ?: checkItemIsInToRemoveList.containsItem(it) }
             }
             Display.None -> {
                 listOf()

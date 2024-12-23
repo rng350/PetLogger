@@ -126,7 +126,8 @@ class MediaSelectionFragment : Fragment() {
             )
         }
 
-        multiPickupVisualMediaContract = AdjustablePickMultipleVisualMedia(viewModel.maxItems - viewModel.selectionSize)
+        // 50 is just an arbitrary value -- the max items will be recalculated every time the user tries to launch the image picker
+        multiPickupVisualMediaContract = AdjustablePickMultipleVisualMedia(50)
 
         pickMultipleMedia =
             registerForActivityResult(multiPickupVisualMediaContract) { uris ->
