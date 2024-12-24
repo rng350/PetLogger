@@ -12,75 +12,79 @@
             name="associatedTagsDisplayViewModel"
             type="com.hfad.petlogger.screens.sections.associatedentities.AssociatedTagsDisplayViewModel" />
     </data>
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/eventTitleTextField"
+        android:layout_height="match_parent">
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/event_title_header" >
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/eventTitleText"
+            android:orientation="vertical">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/eventTitleTextField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@{viewEventViewModel.event.title}"
-                android:enabled="false"/>
-        </com.google.android.material.textfield.TextInputLayout>
+                android:hint="@string/event_title_header" >
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/eventTitleText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{viewEventViewModel.event.title}"
+                    android:enabled="false"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/eventDateTextField"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/event_date_header">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/eventDateText"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/eventDateTextField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@{viewEventViewModel.eventDate.toString()}"
-                android:enabled="false"/>
-        </com.google.android.material.textfield.TextInputLayout>
+                android:hint="@string/event_date_header">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/eventDateText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{viewEventViewModel.eventDate.toString()}"
+                    android:enabled="false"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/eventTimeTextField"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/time_header">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/eventTimeText"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/eventTimeTextField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@{viewEventViewModel.eventTime.toString()}"
-                android:enabled="false"/>
-        </com.google.android.material.textfield.TextInputLayout>
+                android:hint="@string/time_header">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/eventTimeText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{viewEventViewModel.eventTime.toString()}"
+                    android:enabled="false"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/eventDetailsTextField"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/event_details_header">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/eventDetailsText"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/eventDetailsTextField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@{viewEventViewModel.event.details}"
-                android:enabled="false"/>
-        </com.google.android.material.textfield.TextInputLayout>
+                android:hint="@string/event_details_header">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/eventDetailsText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{viewEventViewModel.event.details}"
+                    android:enabled="false"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/associated_pets_fragment_container_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:name="com.hfad.petlogger.screens.sections.associatedentities.AssociatedPetsSectionFragment"
-            tools:layout="@layout/fragment_associated_pets_section" />
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/associated_pets_fragment_container_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:name="com.hfad.petlogger.screens.sections.associatedentities.AssociatedPetsSectionFragment"
+                tools:layout="@layout/fragment_associated_pets_section" />
 
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/associated_tags_fragment_container_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:name="com.hfad.petlogger.screens.sections.associatedentities.AssociatedTagsDisplayFragment"
-            tools:layout="@layout/fragment_associated_tags_display" />
-    </LinearLayout>
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/associated_tags_fragment_container_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:name="com.hfad.petlogger.screens.sections.associatedentities.AssociatedTagsDisplayFragment"
+                tools:layout="@layout/fragment_associated_tags_display" />
+        </LinearLayout>
+    </ScrollView>
 </layout>
