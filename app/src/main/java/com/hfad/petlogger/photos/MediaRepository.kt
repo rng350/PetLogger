@@ -2,8 +2,11 @@ package com.hfad.petlogger.photos
 
 import android.content.ContentUris
 import android.content.Context
+import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
+import android.media.ExifInterface
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
@@ -26,6 +29,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.FileDescriptor
+import java.io.FileOutputStream
+import java.io.InputStream
 import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.ZoneId
@@ -294,29 +300,77 @@ class MediaRepository(
     // 2a. if so, try to save files
     // 2b. if not, create a toaster saying there's not enough space
     private suspend fun saveToLocalStorage(photo: Photo): Photo? = withContext(Dispatchers.IO) {
-        val fileName = generateFilename(photo.date)
-        var height = 0
-        var width = 0
+        try {
+            val inputStream = context.contentResolver.openInputStream(photo.contentUri) ?: return@withContext null
 
-        context.contentResolver.openInputStream(photo.contentUri).use { input ->
-            context.openFileOutput(fileName, Context.MODE_PRIVATE).use { output ->
-                val options = BitmapFactory.Options()
-                BitmapFactory.decodeStream(input, null, options)!!.compress(
-                    Bitmap.CompressFormat.JPEG,
-                    100,
-                    output
-                )
-                height = options.outHeight
-                width = options.outWidth
+            val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+            BitmapFactory.decodeStream(inputStream, null, options)
+            inputStream.close()
+
+            val scaledInputStream = context.contentResolver.openInputStream(photo.contentUri) ?: return@withContext null
+            options.inSampleSize = calculateInSampleSize(options, 1024, 1024)
+            options.inJustDecodeBounds = false
+            val bitmap = BitmapFactory.decodeStream(scaledInputStream, null, options)
+            scaledInputStream.close()
+
+            if (bitmap == null) return@withContext null
+
+            val tempFile = File(context.cacheDir, "temp_image")
+            context.contentResolver.openInputStream(photo.contentUri)?.use { input ->
+                tempFile.outputStream().use { output -> input.copyTo(output) }
             }
+            val exif = ExifInterface(tempFile.absolutePath)
+            val rotationAngle = when (exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)) {
+                ExifInterface.ORIENTATION_ROTATE_90 -> 90
+                ExifInterface.ORIENTATION_ROTATE_180 -> 180
+                ExifInterface.ORIENTATION_ROTATE_270 -> 270
+                else -> 0
+            }
+
+            val correctedBitmap = if (rotationAngle != 0) {
+                val matrix = Matrix().apply { postRotate(rotationAngle.toFloat()) }
+                Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+            } else {
+                bitmap
+            }
+
+            val fileName = generateFilename(photo.date)
+            val file = File(context.filesDir, fileName)
+            file.outputStream().use { output ->
+                correctedBitmap.compress(Bitmap.CompressFormat.JPEG, 85, output)
+            }
+
+            correctedBitmap.recycle()
+            tempFile.delete()
+
+            val fileSize = file.length().toDouble()
+            return@withContext Photo(
+                photo.id,
+                photo.title,
+                fileName,
+                file.toUri(),
+                correctedBitmap.width,
+                correctedBitmap.height,
+                fileSize,
+                photo.date
+            )
+        } catch (e: Exception) {
+            Log.e("MediaRepository", "${e.printStackTrace()}")
+            return@withContext null
+        }
+    }
+
+    private fun calculateInSampleSize(options: BitmapFactory.Options, maxWidth: Int, maxHeight: Int): Int {
+        val (height: Int, width: Int) = options.outHeight to options.outWidth
+        var inSampleSize = 1
+
+        if (height > maxHeight || width > maxWidth) {
+            val heightRatio = Math.round(height.toFloat() / maxHeight.toFloat())
+            val widthRatio = Math.round(width.toFloat() / maxWidth.toFloat())
+            inSampleSize = if (heightRatio < widthRatio) heightRatio else widthRatio
         }
 
-        val createdFile = File(context.filesDir, fileName)
-        if (createdFile.exists()) {
-            val fileSize = createdFile.size
-            return@withContext Photo(photo.id, photo.title, fileName, createdFile.toUri(), width, height, fileSize, photo.date)
-        }
-        return@withContext null
+        return inSampleSize
     }
 
     // filename format
