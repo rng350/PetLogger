@@ -20,6 +20,7 @@ class NewWeightViewModel(
     var details: MutableLiveData<String> = MutableLiveData<String>()
     private val unitConverter = MeasuringUnitConverter()
     private var _unitType: String? = null
+    val goToViewWeight = MutableLiveData<Long>()
 
     fun submitWeight(
         petId: Long,
@@ -40,13 +41,17 @@ class NewWeightViewModel(
                 weightNotes = it
             }
             viewModelScope.launch {
-                weightRepository.addWeight(
+                val weightAdded = weightRepository.addWeight(
                     weight = Weight(petId = petId, weightGrams = convertedWeightAmt, weightDateTime = weightDateTime, weightNotes = weightNotes),
                     notes = notes,
                     tags = tags
                 )
+                goToViewWeight.value = weightAdded.id
             }
         }
+    }
+
+    fun clearAll() {
     }
 
     fun setWeightUnitType(unitType: String) {

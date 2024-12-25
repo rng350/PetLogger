@@ -22,6 +22,7 @@ import com.hfad.petlogger.screens.pet.petsingleselection.PetSingleSelectionViewM
 import com.hfad.petlogger.R
 import com.hfad.petlogger.screens.tag.tagmultiselection.TagMultiSelectionViewModel
 import com.hfad.petlogger.common.TimePicker
+import com.hfad.petlogger.common.navigateSafe
 import com.hfad.petlogger.databinding.FragmentNewWeightBinding
 import com.hfad.petlogger.databinding.FragmentNewWeightDetailsBinding
 import com.hfad.petlogger.tags.usecases.GetAllTagsUseCase
@@ -137,6 +138,14 @@ class NewWeightFragment : Fragment() {
 
         binding.backButton.setOnClickListener {
             findNavController().popBackStack()
+        }
+
+        newWeightViewModel.goToViewWeight.observe(viewLifecycleOwner) {weightId ->
+            weightId?.let {
+                newWeightViewModel.goToViewWeight.value = null
+                newWeightViewModel.clearAll()
+                findNavController().navigateSafe(NewWeightFragmentDirections.actionNewWeightFragmentToViewWeightFragment(weightId))
+            }
         }
 
         return view

@@ -154,6 +154,9 @@
             android:name="petId"
             app:argType="long"
             android:defaultValue="-1L" />
+        <action
+            android:id="@+id/action_newWeightFragment_to_viewWeightFragment"
+            app:destination="@id/viewWeightFragment" />
     </fragment>
     <fragment
         android:id="@+id/petListFragment"
