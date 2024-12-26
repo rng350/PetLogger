@@ -7,29 +7,43 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.get
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 import com.hfad.petlogger.common.PetLoggerDatabase
 import com.hfad.petlogger.R
 import com.hfad.petlogger.databinding.FragmentViewTagBinding
-import com.hfad.petlogger.databinding.FragmentViewTaggedEventsBinding
-import com.hfad.petlogger.databinding.FragmentViewTaggedNotesBinding
-import com.hfad.petlogger.databinding.FragmentViewTaggedPetsBinding
-import com.hfad.petlogger.databinding.FragmentViewTaggedPhotosBinding
-import com.hfad.petlogger.databinding.FragmentViewTaggedWeightsBinding
 import com.hfad.petlogger.common.navigateSafe
-import com.hfad.petlogger.screens.sections.recyclerviews.SetupAssociatedEventsDisplayUseCase
-import com.hfad.petlogger.screens.sections.recyclerviews.SetupAssociatedNotesDisplayUseCase
-import com.hfad.petlogger.screens.sections.recyclerviews.SetupAssociatedPetsDisplayUseCase
-import com.hfad.petlogger.screens.sections.recyclerviews.SetupAssociatedPhotosDisplayUseCase
-import com.hfad.petlogger.screens.sections.recyclerviews.SetupAssociatedWeightsDisplayUseCase
 import com.hfad.petlogger.tags.TagRepository
 import com.hfad.petlogger.common.setAppBarTitle
+import com.hfad.petlogger.events.usecases.BuildEventSearchQueryUseCase
+import com.hfad.petlogger.events.usecases.GetMoreEventsOfTagUseCase
+import com.hfad.petlogger.events.usecases.GetMoreOfSearchedEventsUseCase
+import com.hfad.petlogger.notes.usecases.BuildNoteSearchQueryUseCase
+import com.hfad.petlogger.notes.usecases.GetMoreNotesOfTagUseCase
+import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesUseCase
+import com.hfad.petlogger.pets.usecases.BuildPetSearchQueryUseCase
+import com.hfad.petlogger.pets.usecases.GetMoreOfSearchedPetsUseCase
+import com.hfad.petlogger.pets.usecases.GetMorePetsOfTagUseCase
+import com.hfad.petlogger.photos.usecases.BuildPhotoSearchQueryUseCase
+import com.hfad.petlogger.photos.usecases.GetMoreOfSearchedPhotosUseCase
+import com.hfad.petlogger.photos.usecases.GetMorePhotosOfTagUseCase
+import com.hfad.petlogger.screens.event.EventListViewModel
+import com.hfad.petlogger.screens.note.NoteListViewModel
+import com.hfad.petlogger.screens.pet.PetListViewModel
+import com.hfad.petlogger.screens.photo.FullGalleryViewModel
+import com.hfad.petlogger.screens.sections.associatedentities.AssociatedEventsDisplayFragment
+import com.hfad.petlogger.screens.sections.associatedentities.AssociatedNotesDisplayFragment
+import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPetsDisplayFragment
+import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPhotosDisplayFragment
+import com.hfad.petlogger.screens.sections.associatedentities.AssociatedWeightsForGeneralDisplayFragment
+import com.hfad.petlogger.screens.weight.MonitoringListViewModel
+import com.hfad.petlogger.weights.usecases.BuildWeightSearchQueryUseCase
+import com.hfad.petlogger.weights.usecases.GetMoreWeightsOfTagUseCase
+import com.hfad.petlogger.weights.usecases.GetSearchedWeightsForGeneralDisplayUseCase
 
 class ViewTagFragment : Fragment() {
     private var _binding: FragmentViewTagBinding? = null
@@ -75,36 +89,86 @@ class ViewTagFragment : Fragment() {
         }
         mediator?.attach()
 
-        viewTagViewModel.petNavigator.navigateTo.observe(viewLifecycleOwner, Observer {
+        val getPetsOfTag = GetMorePetsOfTagUseCase(database.petDao, tagId, petsAmt=10)
+        val getSearchedPetsOfTag = GetMoreOfSearchedPetsUseCase(database.petDao, petsAmt=10, pickFrom = BuildPetSearchQueryUseCase.Pick.FromTag(viewTagViewModel.tag))
+        val petListViewModel = ViewModelProvider(this, PetListViewModel.provideFactory(getPetsOfTag, getSearchedPetsOfTag)).get(PetListViewModel::class.java)
+        binding.petListViewModel = petListViewModel
+
+        val getWeightsOfTag = GetMoreWeightsOfTagUseCase(database.weightDao, tagId, weightsAmt = 10)
+        val getSearchedWeightsOfTag = GetSearchedWeightsForGeneralDisplayUseCase(database.weightDao, weightsAmt = 10, pickFrom = BuildWeightSearchQueryUseCase.Pick.FromTag(viewTagViewModel.tag))
+        val weightListViewModel = ViewModelProvider(this, MonitoringListViewModel.provideFactory(getWeightsOfTag, getSearchedWeightsOfTag)).get(MonitoringListViewModel::class.java)
+        binding.monitoringListViewModel = weightListViewModel
+
+        val getEventsOfTag = GetMoreEventsOfTagUseCase(database.eventDao, tagId, eventsAmt = 10)
+        val getSearchedEventsOfTag = GetMoreOfSearchedEventsUseCase(database.eventDao, eventAmt = 10, pickFrom = BuildEventSearchQueryUseCase.Pick.FromTag(tagId))
+        val eventListViewModel = ViewModelProvider(this, EventListViewModel.provideFactory(getEventsOfTag, getSearchedEventsOfTag)).get(EventListViewModel::class.java)
+        binding.eventListViewModel = eventListViewModel
+
+        val getNotesOfTag = GetMoreNotesOfTagUseCase(database.noteDao, tagId, notesAmt = 10)
+        val getSearchedNotesOfTag = GetMoreOfSearchedNotesUseCase(database.noteDao, notesAmt = 10, pickFrom = BuildNoteSearchQueryUseCase.Pick.FromTag(tagId))
+        val noteListViewModel = ViewModelProvider(this, NoteListViewModel.provideFactory(getNotesOfTag, getSearchedNotesOfTag)).get(NoteListViewModel::class.java)
+        binding.noteListViewModel = noteListViewModel
+
+        val getPhotosOfTag = GetMorePhotosOfTagUseCase(database.photoDao, tagId, photosAmt = 10)
+        val getSearchedPhotosOfTag = GetMoreOfSearchedPhotosUseCase(database.photoDao, photosAmt = 10, pickFrom = BuildPhotoSearchQueryUseCase.Pick.FromTag(tagId))
+        val photoListViewModel = ViewModelProvider(this, FullGalleryViewModel.provideFactory(getPhotosOfTag, getSearchedPhotosOfTag)).get(FullGalleryViewModel::class.java)
+        binding.photoListViewModel = photoListViewModel
+
+        petListViewModel.petNavigator.navigateTo.observe(viewLifecycleOwner, Observer {
             it?.let {
-                viewTagViewModel.petNavigator.onNavigated()
+                petListViewModel.petNavigator.onNavigated()
                 findNavController().navigateSafe(ViewTagFragmentDirections.actionViewTagFragmentToViewPetFragment(it))
             }
         })
-        viewTagViewModel.weightNavigator.navigateTo.observe(viewLifecycleOwner, Observer {
+        weightListViewModel.weightNavigator.navigateTo.observe(viewLifecycleOwner, Observer {
             it?.let {
-                viewTagViewModel.weightNavigator.onNavigated()
+                weightListViewModel.weightNavigator.onNavigated()
                 findNavController().navigateSafe(ViewTagFragmentDirections.actionViewTagFragmentToViewWeightFragment(it))
             }
         })
-        viewTagViewModel.eventNavigator.navigateTo.observe(viewLifecycleOwner, Observer {
+        eventListViewModel.eventNavigator.navigateTo.observe(viewLifecycleOwner, Observer {
             it?.let {
-                viewTagViewModel.eventNavigator.onNavigated()
+                eventListViewModel.eventNavigator.onNavigated()
                 findNavController().navigateSafe(ViewTagFragmentDirections.actionViewTagFragmentToViewEventFragment(it))
             }
         })
-        viewTagViewModel.noteNavigator.navigateTo.observe(viewLifecycleOwner, Observer {
+        noteListViewModel.noteNavigator.navigateTo.observe(viewLifecycleOwner, Observer {
             it?.let {
-                viewTagViewModel.noteNavigator.onNavigated()
+                noteListViewModel.noteNavigator.onNavigated()
                 findNavController().navigateSafe(ViewTagFragmentDirections.actionViewTagFragmentToViewNoteFragment(it))
             }
         })
-        viewTagViewModel.photoNavigator.navigateTo.observe(viewLifecycleOwner, Observer {
+        photoListViewModel.photoNavigator.navigateTo.observe(viewLifecycleOwner, Observer {
             it?.let {
-                viewTagViewModel.photoNavigator.onNavigated()
+                photoListViewModel.photoNavigator.onNavigated()
                 findNavController().navigateSafe(ViewTagFragmentDirections.actionViewTagFragmentToViewPhotoFragment(it))
             }
         })
+
+        weightListViewModel.newWeightNavigator.makeNewEntity.observe(viewLifecycleOwner) { shouldMakeNewWeight ->
+            if (shouldMakeNewWeight) {
+                findNavController().navigateSafe(ViewTagFragmentDirections.actionViewTagFragmentToNewWeightFragment(tagId=tagId))
+                weightListViewModel.newWeightNavigator.onNavigatedToNewEntityScreen()
+            }
+        }
+        eventListViewModel.newEventNavigator.makeNewEntity.observe(viewLifecycleOwner) { shouldMakeNewEvent ->
+            if (shouldMakeNewEvent) {
+                findNavController().navigateSafe(ViewTagFragmentDirections.actionViewTagFragmentToNewEventFragment(tagId=tagId))
+                eventListViewModel.newEventNavigator.onNavigatedToNewEntityScreen()
+            }
+        }
+        noteListViewModel.newNoteNavigator.makeNewEntity.observe(viewLifecycleOwner) { shouldMakeNewNote ->
+            if (shouldMakeNewNote) {
+                findNavController().navigateSafe(ViewTagFragmentDirections.actionViewTagFragmentToNewNoteFragment(tagId=tagId))
+                noteListViewModel.newNoteNavigator.onNavigatedToNewEntityScreen()
+            }
+        }
+        photoListViewModel.newPhotoNavigator.makeNewEntity.observe(viewLifecycleOwner) { shouldMakeNewPhoto ->
+            if (shouldMakeNewPhoto) {
+                findNavController().navigateSafe(ViewTagFragmentDirections.actionViewTagFragmentToNewPhotoFragment(tagId=tagId))
+                photoListViewModel.newPhotoNavigator.onNavigatedToNewEntityScreen()
+            }
+        }
 
         return view
     }
@@ -118,183 +182,16 @@ class ViewTagFragment : Fragment() {
     }
 }
 
-class TaggedPetsListFragment : Fragment() {
-    private var _binding: FragmentViewTaggedPetsBinding? = null
-    val binding: FragmentViewTaggedPetsBinding get() = _binding!!
-    private val viewTagViewModel: ViewTagViewModel by viewModels({requireParentFragment()})
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentViewTaggedPetsBinding.inflate(inflater, container, false)
-        val view = binding.root
-        binding.viewTagViewModel = viewTagViewModel
-        binding.lifecycleOwner = viewLifecycleOwner
-
-        val application = requireNotNull(this.activity).application
-        SetupAssociatedPetsDisplayUseCase(
-            pets = viewTagViewModel.taggedPets,
-            petNavigator = viewTagViewModel.petNavigator,
-            recyclerView = binding.petsList,
-            context = application.applicationContext,
-            lifecycleScope = lifecycleScope,
-            lifecycleOwner = viewLifecycleOwner
-        )()
-
-        return view
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding?.petsList?.adapter = null
-        _binding = null
-    }
-}
-
-class TaggedEventsListFragment : Fragment() {
-    private var _binding: FragmentViewTaggedEventsBinding? = null
-    val binding: FragmentViewTaggedEventsBinding get() = _binding!!
-    val viewTagViewModel: ViewTagViewModel by viewModels({requireParentFragment()})
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentViewTaggedEventsBinding.inflate(inflater, container, false)
-        val view = binding.root
-        binding.viewTagViewModel = viewTagViewModel
-        binding.lifecycleOwner = viewLifecycleOwner
-
-        SetupAssociatedEventsDisplayUseCase(
-            events = viewTagViewModel.taggedEvents,
-            eventNavigator = viewTagViewModel.eventNavigator,
-            recyclerView = binding.eventsList,
-            lifecycleScope = lifecycleScope,
-            lifecycleOwner = viewLifecycleOwner
-        )()
-
-        return view
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding?.eventsList?.adapter = null
-        _binding = null
-    }
-}
-
-class TaggedWeightsListFragment : Fragment() {
-    private var _binding: FragmentViewTaggedWeightsBinding? = null
-    val binding: FragmentViewTaggedWeightsBinding get() = _binding!!
-    private val viewTagViewModel: ViewTagViewModel by viewModels({requireParentFragment()})
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentViewTaggedWeightsBinding.inflate(inflater, container, false)
-        val view = binding.root
-        binding.viewTagViewModel = viewTagViewModel
-        binding.lifecycleOwner = viewLifecycleOwner
-
-        val application = requireNotNull(this.activity).application
-
-        SetupAssociatedWeightsDisplayUseCase(
-            weights = viewTagViewModel.taggedWeights,
-            weightNavigator = viewTagViewModel.weightNavigator,
-            recyclerView = binding.weightsList,
-            lifecycleScope = lifecycleScope,
-            lifecycleOwner = viewLifecycleOwner
-        )()
-
-        return view
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding?.weightsList?.adapter = null
-        _binding = null
-    }
-}
-
-class TaggedNotesListFragment : Fragment() {
-    private var _binding: FragmentViewTaggedNotesBinding? = null
-    val binding: FragmentViewTaggedNotesBinding get() = _binding!!
-    private val viewTagViewModel: ViewTagViewModel by viewModels({requireParentFragment()})
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentViewTaggedNotesBinding.inflate(inflater, container, false)
-        val view = binding.root
-        binding.viewTagViewModel = viewTagViewModel
-        binding.lifecycleOwner = viewLifecycleOwner
-
-        SetupAssociatedNotesDisplayUseCase(
-            notes = viewTagViewModel.taggedNotes,
-            noteNavigator = viewTagViewModel.noteNavigator,
-            recyclerView = binding.notesList,
-            lifecycleScope = lifecycleScope,
-            lifecycleOwner = viewLifecycleOwner
-        )()
-
-        return view
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding?.notesList?.adapter = null
-        _binding = null
-    }
-}
-
-class TaggedMediaListFragment : Fragment() {
-    private var _binding: FragmentViewTaggedPhotosBinding? = null
-    val binding: FragmentViewTaggedPhotosBinding get() = _binding!!
-    private val viewTagViewModel: ViewTagViewModel by viewModels({requireParentFragment()})
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentViewTaggedPhotosBinding.inflate(inflater, container, false)
-        val view = binding.root
-        binding.viewTagViewModel = viewTagViewModel
-        binding.lifecycleOwner = viewLifecycleOwner
-
-        val application = requireNotNull(this.activity).application
-
-        SetupAssociatedPhotosDisplayUseCase(
-            photos = viewTagViewModel.taggedPhotos,
-            photoNavigator = viewTagViewModel.photoNavigator,
-            recyclerView = binding.photoList,
-            context = application.applicationContext,
-            lifecycleScope = lifecycleScope,
-            lifecycleOwner = viewLifecycleOwner
-        )()
-
-        return view
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding?.photoList?.adapter = null
-        _binding = null
-    }
-}
-
 class ViewTagViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle): FragmentStateAdapter(fragmentManager, lifecycle) {
     override fun getItemCount(): Int = 5
 
     override fun createFragment(position: Int): Fragment {
         return when (position) {
-            0 -> TaggedPetsListFragment()
-            1 -> TaggedWeightsListFragment()
-            2 -> TaggedEventsListFragment()
-            3 -> TaggedNotesListFragment()
-            4 -> TaggedMediaListFragment()
+            0 -> AssociatedPetsDisplayFragment()
+            1 -> AssociatedWeightsForGeneralDisplayFragment()
+            2 -> AssociatedEventsDisplayFragment()
+            3 -> AssociatedNotesDisplayFragment()
+            4 -> AssociatedPhotosDisplayFragment()
             else -> throw IllegalStateException("Invalid position $position")
         }
     }

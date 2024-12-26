@@ -63,6 +63,7 @@ import com.hfad.petlogger.pets.usecases.GetSinglePetUseCase
 import com.hfad.petlogger.tags.usecases.GetAllTagsFromCurrentSelectionUseCaseFactory
 import com.hfad.petlogger.tags.usecases.GetSearchedTagsFromCurrentSelectionUseCaseFactory
 import com.hfad.petlogger.tags.usecases.GetSearchedTagsUseCase
+import com.hfad.petlogger.tags.usecases.GetSingleTagUseCase
 
 class NewPhotoFragment : Fragment() {
     private var _binding: FragmentNewPhotoBinding? = null
@@ -129,12 +130,18 @@ class NewPhotoFragment : Fragment() {
         val getSearchedTagsFromAll = GetSearchedTagsUseCase(tagRepository)
         val getAllTagsFromCurrentSelectionFactory = GetAllTagsFromCurrentSelectionUseCaseFactory()
         val getSearchedTagsFromCurrentSelectionFactory = GetSearchedTagsFromCurrentSelectionUseCaseFactory(tagRepository)
+        val tagId = NewPhotoFragmentArgs.fromBundle(requireArguments()).tagId
+        val getInitialTag =
+            if (tagId != defaultNullIdForNavigation)
+                GetMultipleInitialItemsUseCase.New(GetSingleTagUseCase(database.tagDao, tagId))
+            else null
         val tagMultiSelectionViewModel = ViewModelProvider(this,
             TagMultiSelectionViewModel.provideFactory(
                 getAllTags = getAllTags,
                 getAllSearchedTagsUseCase = getSearchedTagsFromAll,
                 getAllCurrentSelectionFactory = getAllTagsFromCurrentSelectionFactory,
-                getSearchedTagsFromCurrentSelectionFactory = getSearchedTagsFromCurrentSelectionFactory
+                getSearchedTagsFromCurrentSelectionFactory = getSearchedTagsFromCurrentSelectionFactory,
+                getInitialSelection = getInitialTag
             )
         ).get(TagMultiSelectionViewModel::class.java)
 

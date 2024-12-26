@@ -131,6 +131,16 @@ interface PetDao {
             "ORDER BY petId ASC LIMIT :amtLimit")
     suspend fun getAllPetsWithProfilePhotosPaginated(lastPetId: Long, amtLimit: Int): List<PetWithProfilePic>
 
+    @Query("SELECT pet_table.pet_id AS petId, pet_table.pet_name AS petName, photo_table.photo_uri AS petProfilePicUri " +
+            "FROM pet_table " +
+            "LEFT JOIN pet_profile_photo_table ON pet_table.pet_id=pet_profile_photo_table.pet_id " +
+            "LEFT JOIN photo_table ON pet_profile_photo_table.photo_id=photo_table.photo_id " +
+            "JOIN pet_tag_table ON pet_tag_table.pet_id=pet_table.pet_id " +
+            "WHERE pet_table.pet_id > :lastPetId " +
+            "AND pet_tag_table.tag_id=:tagId " +
+            "ORDER BY pet_table.pet_id ASC LIMIT :amtLimit")
+    suspend fun getAllPetsOfTagPaginated(tagId: Long, lastPetId: Long, amtLimit: Int): List<PetWithProfilePic>
+
     @Query("SELECT pet_table.pet_name AS petName, pet_table.pet_id AS petId, photo_table.photo_uri AS petProfilePicUri " +
             "FROM pet_table " +
             "LEFT JOIN pet_profile_photo_table ON pet_table.pet_id=pet_profile_photo_table.pet_id " +

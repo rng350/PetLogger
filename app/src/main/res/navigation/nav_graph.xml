@@ -157,6 +157,10 @@
         <action
             android:id="@+id/action_newWeightFragment_to_viewWeightFragment"
             app:destination="@id/viewWeightFragment" />
+        <argument
+            android:name="tagId"
+            app:argType="long"
+            android:defaultValue="-1L" />
     </fragment>
     <fragment
         android:id="@+id/petListFragment"
@@ -360,6 +364,10 @@
             android:name="noteId"
             app:argType="long"
             android:defaultValue="-1L" />
+        <argument
+            android:name="tagId"
+            app:argType="long"
+            android:defaultValue="-1L" />
     </fragment>
     <fragment
         android:id="@+id/viewPhotoFragment"
@@ -439,5 +447,8 @@
         <action
             android:id="@+id/action_viewTagFragment_to_newPhotoFragment"
             app:destination="@id/newPhotoFragment" />
+        <action
+            android:id="@+id/action_viewTagFragment_to_newWeightFragment"
+            app:destination="@id/newWeightFragment" />
     </fragment>
 </navigation>

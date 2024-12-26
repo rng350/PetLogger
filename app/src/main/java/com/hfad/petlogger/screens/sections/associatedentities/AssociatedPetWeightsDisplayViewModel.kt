@@ -1,10 +1,8 @@
 package com.hfad.petlogger.screens.sections.associatedentities
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.hfad.petlogger.weights.Weight
 import com.hfad.petlogger.common.usecases.GetItemsUseCase
 import com.hfad.petlogger.common.usecases.GetSearchedItemsUseCase
 import com.hfad.petlogger.common.util.Navigator
@@ -21,7 +19,7 @@ class AssociatedPetWeightsDisplayViewModel(
     private val getSearchedWeights: GetSearchedItemsUseCase<PetWeightForDisplay>
 ): ViewModel() {
     private val _weights: MutableStateFlow<List<PetWeightForDisplay>> = MutableStateFlow<List<PetWeightForDisplay>>(listOf())
-    private var currentEventGetter: GetItemsUseCase<PetWeightForDisplay> = getInitialWeights
+    private var currentWeightGetter: GetItemsUseCase<PetWeightForDisplay> = getInitialWeights
     val weights: StateFlow<List<PetWeightForDisplay>> = _weights.asStateFlow()
     val weightNavigator = Navigator()
     val newPetWeightNavigator = NewEntityNavigator()
@@ -42,7 +40,7 @@ class AssociatedPetWeightsDisplayViewModel(
     private fun reload() {
         viewModelScope.launch {
             isLoading = true
-            val loadedWeights = currentEventGetter()
+            val loadedWeights = currentWeightGetter()
             _weights.update { loadedWeights }
             isLoading = false
         }
@@ -71,10 +69,10 @@ class AssociatedPetWeightsDisplayViewModel(
     private fun reinitializeGetterType(query: String) {
         if (query.isNotEmpty()) {
             getSearchedWeights.changeSearchQueryAndResetCurrentPoint(query)
-            currentEventGetter = getSearchedWeights
+            currentWeightGetter = getSearchedWeights
         } else {
-            currentEventGetter = getInitialWeights
-            currentEventGetter.resetCurrentPoint()
+            currentWeightGetter = getInitialWeights
+            currentWeightGetter.resetCurrentPoint()
         }
         reload()
     }

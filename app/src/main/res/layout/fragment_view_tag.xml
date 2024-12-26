@@ -10,28 +10,37 @@
             name="viewTagViewModel"
             type="com.hfad.petlogger.screens.tag.viewtag.ViewTagViewModel" />
         <variable
+            name="petListViewModel"
+            type="com.hfad.petlogger.screens.pet.PetListViewModel" />
+        <variable
+            name="monitoringListViewModel"
+            type="com.hfad.petlogger.screens.weight.MonitoringListViewModel" />
+        <variable
+            name="eventListViewModel"
+            type="com.hfad.petlogger.screens.event.EventListViewModel" />
+        <variable
             name="noteListViewModel"
             type="com.hfad.petlogger.screens.note.NoteListViewModel" />
+        <variable
+            name="photoListViewModel"
+            type="com.hfad.petlogger.screens.photo.FullGalleryViewModel" />
     </data>
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true">
-        <LinearLayout
+        android:orientation="vertical">
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/tabLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:tabMode="fixed"
-                app:tabGravity="fill"/>
-            <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/viewPager"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-        </LinearLayout>
-    </ScrollView>
+            app:tabMode="fixed"
+            app:tabGravity="fill"/>
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fillViewport="true"/>
+    </LinearLayout>
 </layout>

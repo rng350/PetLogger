@@ -41,6 +41,15 @@ interface PhotoDao {
     """)
     suspend fun getAllPhotosPaginated(lastPhotoDate: OffsetDateTime, lastPhotoId: Long, amtLimit: Int): List<Photo>
 
+    @Query("""
+        SELECT * FROM photo_table 
+        JOIN photo_tag_table ON photo_table.photo_id=photo_tag_table.photo_id 
+        WHERE (datetime(photo_table.photo_date), photo_table.photo_id) < (datetime(:lastPhotoDate), :lastPhotoId) 
+        AND photo_tag_table.tag_id=:tagId 
+        ORDER BY datetime(photo_table.photo_date) DESC, photo_table.photo_id DESC LIMIT :amtLimit
+    """)
+    suspend fun getPhotosOfTagPaginated(tagId: Long, lastPhotoDate: OffsetDateTime, lastPhotoId: Long, amtLimit: Int): List<Photo>
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(photoEvent: PhotoEvent)
 

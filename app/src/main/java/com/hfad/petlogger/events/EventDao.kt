@@ -35,6 +35,15 @@ interface EventDao {
     """)
     suspend fun getAllEventsPaginated(lastEventDate: OffsetDateTime, lastEventId: Long, amtLimit: Int): List<Event>
 
+    @Query("""
+        SELECT * FROM event_table 
+        JOIN event_tag_table ON event_table.event_id=event_tag_table.event_id 
+        WHERE (datetime(event_table.event_date), event_table.event_id) < (datetime(:lastEventDate), :lastEventId) 
+        AND event_tag_table.tag_id=:tagId 
+        ORDER BY datetime(event_date) DESC, event_table.event_id DESC LIMIT :amtLimit
+    """)
+    suspend fun getEventsOfTagPaginated(tagId: Long, lastEventDate: OffsetDateTime, lastEventId: Long, amtLimit: Int): List<Event>
+
     @Query("SELECT pet_table.pet_name AS petName, pet_table.pet_id AS petId, photo_table.photo_uri AS petProfilePicUri " +
             "FROM pet_table " +
             "LEFT JOIN event_pet_table ON pet_table.pet_id=event_pet_table.pet_id " +

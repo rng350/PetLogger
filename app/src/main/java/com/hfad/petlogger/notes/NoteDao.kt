@@ -33,10 +33,19 @@ interface NoteDao {
 
     @Query("""
         SELECT * FROM note_table 
-        WHERE (datetime(note_last_updated), note_id) < (datetime(:lastNoteEditedDate), :lastNoteId)
+        WHERE (datetime(note_last_updated), note_id) < (datetime(:lastNoteEditedDate), :lastNoteId) 
         ORDER BY datetime(note_last_updated) DESC, note_id DESC LIMIT :amtLimit
     """)
     suspend fun getAllNotesPaginated(lastNoteEditedDate: OffsetDateTime, lastNoteId: Long, amtLimit: Int): List<Note>
+
+    @Query("""
+        SELECT * FROM note_table 
+        JOIN note_tag_table ON note_table.note_id=note_tag_table.note_id 
+        WHERE (datetime(note_table.note_last_updated), note_table.note_id) < (datetime(:lastNoteEditedDate), :lastNoteId) 
+        AND note_tag_table.tag_id=:tagId
+        ORDER BY datetime(note_table.note_last_updated) DESC, note_table.note_id DESC LIMIT :amtLimit
+    """)
+    suspend fun getAllNotesOfTagPaginated(tagId: Long, lastNoteEditedDate: OffsetDateTime, lastNoteId: Long, amtLimit: Int): List<Note>
 
     @Transaction
     suspend fun insertNewNote(note: Note): Note {

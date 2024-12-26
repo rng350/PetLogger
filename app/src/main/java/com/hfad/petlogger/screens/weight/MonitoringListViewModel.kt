@@ -8,6 +8,7 @@ import com.hfad.petlogger.weights.WeightForList
 import com.hfad.petlogger.common.usecases.GetItemsUseCase
 import com.hfad.petlogger.common.usecases.GetSearchedItemsUseCase
 import com.hfad.petlogger.common.util.Navigator
+import com.hfad.petlogger.common.util.NewEntityNavigator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,6 +23,7 @@ class MonitoringListViewModel(
     private var currentWeightGetter: GetItemsUseCase<WeightForList> = getInitialWeightsUseCase
     val weights: StateFlow<List<WeightForList>> = _weights.asStateFlow()
     val weightNavigator = Navigator()
+    val newWeightNavigator = NewEntityNavigator()
     private var isLoading: Boolean = false
     init {
         reload()

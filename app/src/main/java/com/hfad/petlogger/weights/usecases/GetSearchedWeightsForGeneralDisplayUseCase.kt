@@ -8,9 +8,10 @@ import com.hfad.petlogger.weights.WeightForList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class GetSearchedWeightsFromAllForDisplayUseCase(
+class GetSearchedWeightsForGeneralDisplayUseCase(
     private val weightDao: WeightDao,
-    private val weightsAmt: Int
+    private val weightsAmt: Int,
+    pickFrom: BuildWeightSearchQueryUseCase.Pick? = null
 ): GetSearchedItemsUseCase<WeightForList> {
     private var lastWeightDate = Constants.OFFSET_DATE_TIME_MAX_ALLOWED
     private var lastWeightId = Long.MAX_VALUE
@@ -20,7 +21,7 @@ class GetSearchedWeightsFromAllForDisplayUseCase(
         weightsAmt = weightsAmt,
         parseSearchQuery = ParseSearchQueryUseCase(listOf("pet", "before", "after")),
         getWeightFor = BuildWeightSearchQueryUseCase.GetWeightFor.GeneralDisplayList,
-        pickFrom = null
+        pickFrom = pickFrom
     )
     override val onLastPage: Boolean get() = _onLastPage
 

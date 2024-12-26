@@ -85,6 +85,28 @@ interface WeightDao {
     """)
     suspend fun getAllWeightsPaginated(lastWeightDateTime: OffsetDateTime, lastWeightId: Long, amtLimit: Int): List<WeightForListFetched>
 
+    @Query("""
+            SELECT 
+            wt_1.weight_id AS weightId,
+            wt_1.weight_grams AS weightGramsAmt,
+            wt_1.weight_datetime AS weightDateTime,
+            pet_table.pet_name AS weightPetName, 
+            (
+                SELECT wt_2.weight_grams 
+                FROM weight_table wt_2 
+                WHERE wt_2.weight_pet_id=wt_1.weight_pet_id 
+                AND (datetime(wt_2.weight_datetime), wt_2.weight_id) < (datetime(wt_1.weight_datetime), wt_1.weight_id)
+                ORDER BY datetime(wt_2.weight_datetime) DESC, wt_2.weight_id DESC LIMIT 1
+            ) AS prevWeightGramsAmt 
+        FROM weight_table wt_1 
+        JOIN pet_table ON wt_1.weight_pet_id=pet_table.pet_id 
+        JOIN weight_tag_table ON weight_tag_table.weight_id=wt_1.weight_id 
+        WHERE (datetime(wt_1.weight_datetime), wt_1.weight_id) < (datetime(:lastWeightDateTime), :lastWeightId) 
+        AND weight_tag_table.tag_id=:tagId 
+        ORDER BY datetime(wt_1.weight_datetime) DESC, wt_1.weight_id DESC LIMIT :amtLimit
+    """)
+    suspend fun getAllWeightsOfTagPaginated(tagId: Long, lastWeightDateTime: OffsetDateTime, lastWeightId: Long, amtLimit: Int): List<WeightForListFetched>
+
     @Query("SELECT * FROM weight_table " +
             "WHERE weight_pet_id=:petId " +
             "AND weight_datetime < :weightDateTimeInString " +

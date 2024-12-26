@@ -19,7 +19,7 @@ import com.hfad.petlogger.weights.usecases.GetMoreOfAllWeightsUseCase
 import com.hfad.petlogger.weights.WeightRepository
 import com.hfad.petlogger.common.setAppBarTitle
 import com.hfad.petlogger.screens.sections.recyclerviews.SetupAssociatedWeightsDisplayUseCase
-import com.hfad.petlogger.weights.usecases.GetSearchedWeightsFromAllForDisplayUseCase
+import com.hfad.petlogger.weights.usecases.GetSearchedWeightsForGeneralDisplayUseCase
 
 class MonitoringListFragment : Fragment() {
     private var _binding: FragmentMonitoringListBinding? = null
@@ -37,7 +37,7 @@ class MonitoringListFragment : Fragment() {
         val database = PetLoggerDatabase.getInstance(application)
         val weightRepository = WeightRepository(database)
         val getWeightsUseCase = GetMoreOfAllWeightsUseCase(weightRepository, weightsAmt = 15)
-        val getSearchedWeights = GetSearchedWeightsFromAllForDisplayUseCase(database.weightDao, weightsAmt = 15)
+        val getSearchedWeights = GetSearchedWeightsForGeneralDisplayUseCase(database.weightDao, weightsAmt = 15)
         viewModel = ViewModelProvider(this,
             MonitoringListViewModel.provideFactory(getWeightsUseCase, getSearchedWeights)
         ).get(MonitoringListViewModel::class.java)
