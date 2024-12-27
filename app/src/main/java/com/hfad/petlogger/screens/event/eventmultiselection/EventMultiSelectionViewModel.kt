@@ -5,11 +5,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.hfad.petlogger.common.selectiontracker.MultiSelectionTracker
 import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
-import com.hfad.petlogger.common.usecases.GetItemsUseCase
 import com.hfad.petlogger.events.EventForList
-import com.hfad.petlogger.events.usecases.GetAllEventsFromCurrentSelectionUseCase
 import com.hfad.petlogger.events.usecases.GetAllEventsFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.events.usecases.GetAllEventsUseCase
 import com.hfad.petlogger.events.usecases.GetMoreOfAllEventsUseCase
 import com.hfad.petlogger.events.usecases.GetMoreOfSearchedEventsUseCase
 import com.hfad.petlogger.events.usecases.GetSearchedEventsFromCurrentSelectionUseCaseFactory

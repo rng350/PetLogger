@@ -4,28 +4,16 @@ import com.hfad.petlogger.common.util.Constants
 import com.hfad.petlogger.common.usecases.GetItemsUseCase
 import com.hfad.petlogger.photos.MediaRepository
 import com.hfad.petlogger.photos.Photo
+import java.time.OffsetDateTime
 
 class GetMoreOfAllPhotosUseCase(
     private val mediaRepository: MediaRepository,
     private val photosAmt: Int
-): GetItemsUseCase<Photo> {
-    private var lastPhotoDate = Constants.OFFSET_DATE_TIME_MAX_ALLOWED
-    private var lastPhotoId = Long.MAX_VALUE
-    private var _onLastPage = false
-    override val onLastPage: Boolean
-        get() = _onLastPage
-
-    override suspend fun invoke(): List<Photo> {
-        val photos = mediaRepository.getAllPhotosPaginated(lastPhotoDate, lastPhotoId, photosAmt)
-        lastPhotoDate = photos.lastOrNull()?.date ?: Constants.OFFSET_DATE_TIME_MAX_ALLOWED
-        lastPhotoId = photos.lastOrNull()?.id ?: Long.MAX_VALUE
-        _onLastPage = photos.size < photosAmt
-        return photos
-    }
-
-    override fun resetCurrentPoint() {
-        lastPhotoDate = Constants.OFFSET_DATE_TIME_MAX_ALLOWED
-        lastPhotoId = Long.MAX_VALUE
-        _onLastPage = false
+): GetPaginatedPhotosUseCase(photosAmt) {
+    override suspend fun fetchPhotos(
+        lastPhotoDate: OffsetDateTime,
+        lastPhotoId: Long
+    ): List<Photo> {
+        return mediaRepository.getAllPhotosPaginated(lastPhotoDate, lastPhotoId, photosAmt)
     }
 }

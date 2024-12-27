@@ -8,21 +8,9 @@ class GetMorePetsOfPhotoUseCase(
     private val mediaRepository: MediaRepository,
     private val photoId: Long,
     private val petsAmt: Int
-): GetItemsUseCase<PetWithProfilePic> {
-    private var lastPetId = Long.MIN_VALUE
-    private var _onLastPage = false
-    override val onLastPage: Boolean
-        get() = _onLastPage
-
-    override suspend fun invoke(): List<PetWithProfilePic> {
-        val pets = mediaRepository.getPetsOfPhotoPaginated(photoId, lastPetId, petsAmt)
-        lastPetId = pets.lastOrNull()?.petId ?: Long.MAX_VALUE
-        _onLastPage = pets.size < petsAmt
-        return pets
+): GetPaginatedPetsUseCase(petsAmt) {
+    override suspend fun fetchPets(lastPetId: Long): List<PetWithProfilePic> {
+        return mediaRepository.getPetsOfPhotoPaginated(photoId, lastPetId, petsAmt)
     }
 
-    override fun resetCurrentPoint() {
-        lastPetId = Long.MIN_VALUE
-        _onLastPage = false
-    }
 }
