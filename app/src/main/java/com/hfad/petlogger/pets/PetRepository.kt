@@ -168,35 +168,12 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
         tagsRemoved.awaitAll()
     }
 
-    suspend fun setPetProfilePhoto(petId: Long, photoId: Long) = withContext(Dispatchers.IO) {
-        photoDao.insert(PetProfilePhoto(petID = petId, photoID = photoId))
-    }
-
     suspend fun getPetProfilePhoto(petId: Long): Photo? = withContext(Dispatchers.IO) {
         petDao.getPetProfilePhoto(petId)
     }
 
-    fun getPetPhotos(petId: Long): Flow<List<Photo>> {
-        return petDao.getPetPhotos(petId)
-    }
-
     suspend fun getPetPhotosAsList(petId: Long): List<Photo> = withContext(Dispatchers.IO) {
         petDao.getPetPhotosAsList(petId)
-    }
-
-    fun getPetEvents(petId: Long): Flow<List<EventForList>> {
-        val getDateDisplayUseCase = GetDateDisplayUseCase()
-        val getTimeDisplayUseCase = GetTimeDisplayUseCase()
-        return petDao
-            .getPetEvents(petId)
-            .map { it
-                .sortedByDescending { event -> event.date }
-                .map { event -> EventForList(
-                    eventId = event.eventId,
-                    eventDate = getDateDisplayUseCase(event.date),
-                    eventTime = getTimeDisplayUseCase(event.date),
-                    eventTitle = event.title) }
-            }.flowOn(Dispatchers.IO)
     }
 
     suspend fun getPetWeightsPaginated(
@@ -206,12 +183,6 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
         amtLimit: Int
     ): List<PetWeightForDisplayFetched> = withContext(Dispatchers.IO) {
         petDao.getWeightsOfPetPaginated(petId, lastWeightDate, lastWeightId, amtLimit)
-    }
-
-    suspend fun getCheckablePetEventsAsList(petId: Long): List<CheckableItem<Event>> = withContext(Dispatchers.IO) {
-        petDao.getEventsOfPet(petId).map {event ->
-            CheckableItem(event)
-        }
     }
 
     suspend fun getPetEventsAsList(petId: Long): List<Event> = withContext(Dispatchers.IO) {
@@ -227,21 +198,6 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
         Log.d("PetRepository", "getPetEventsPaginated, LastEventDate: ${lastEventDate}")
         petDao.getEventsOfPetPaginated(petId, lastEventDate, lastEventId, eventAmt)
         //petDao.getEventsOfPetPaginatedCC(petId, lastEventDate, eventAmt)
-    }
-
-    suspend fun getCheckablePetWeightsWithTextFields(petId: Long): List<CheckableItem<PetWeightForSelection>> = withContext(Dispatchers.IO) {
-        val getDateDisplay = GetDateDisplayUseCase()
-        val getTimeDisplay = GetTimeDisplayUseCase()
-        petDao.getWeightsOfPet(petId).map { weight ->
-            CheckableItem(
-                PetWeightForSelection(
-                    weight.id,
-                    getDateDisplay(weight.weightDateTime),
-                    getTimeDisplay(weight.weightDateTime),
-                    "${weight.weightGrams}g"
-                )
-            )
-        }
     }
 
     suspend fun addPetPhotos(petId: Long, photos: List<Photo> = listOf<Photo>(), profilePic: Photo? = null) = withContext(Dispatchers.IO) {
@@ -332,47 +288,6 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
         petDao.getAllTagsOfPetAlphabeticalOrder(petId)
     }
 
-    suspend fun getCheckablePets(): List<CheckableItem<PetWithProfilePic>> = withContext(Dispatchers.IO) {
-        fetchCheckablePets()
-    }
-    suspend fun getCheckablePets(petIdSelection: HashSet<Long>?): List<CheckableItem<PetWithProfilePic>> = withContext(Dispatchers.IO) {
-        fetchCheckablePets(petIdSelection)
-    }
-
-    suspend fun getCheckablePets(petSelection: Pet): List<CheckableItem<PetWithProfilePic>> = withContext(Dispatchers.IO) {
-        fetchCheckablePets(hashSetOf(petSelection.petID))
-    }
-
-    suspend fun getCheckablePets(selectedPetId: Long? = null): List<CheckableItem<PetWithProfilePic>> = withContext(Dispatchers.IO) {
-        if (selectedPetId != null) {
-            fetchCheckablePets(hashSetOf(selectedPetId))
-        } else {
-            fetchCheckablePets()
-        }
-    }
-
-    suspend fun getCheckablePets(selectedPetIds: List<Long>): List<CheckableItem<PetWithProfilePic>> = withContext(Dispatchers.IO) {
-        fetchCheckablePets(selectedPetIds.toHashSet())
-    }
-
-    private suspend fun fetchCheckablePets(petIdSelection: HashSet<Long>? = null): List<CheckableItem<PetWithProfilePic>> = withContext(Dispatchers.IO) {
-        val allFetchedPets = async {
-            petDao.getAllPetsWithProfilePhotos()
-        }
-        val allPets = allFetchedPets.await()
-
-        val checkablePetList = allPets.map {
-            val checked = petIdSelection?.contains(it.petId) ?: false
-            CheckableItem<PetWithProfilePic>(it, MutableLiveData(checked))
-        }
-
-        checkablePetList ?: listOf()
-    }
-
-    fun getAllPetsAsFlow(): Flow<List<PetWithProfilePic>> {
-        return petDao.getAllPetsWithProfilePhotosAsFlow()
-    }
-
     suspend fun getPetNotesPaginated(
         petId: Long,
         lastNoteUpdateDate: OffsetDateTime,
@@ -400,9 +315,5 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
 
     suspend fun getTagsOfPet(petId: Long): List<Tag> = withContext(Dispatchers.IO) {
         petDao.getAllTagsOfPet(petId)
-    }
-
-    suspend fun getSearchedNotesOfPetPaginated(petId: Long, query: String, lastNoteUpdateDate: OffsetDateTime, lastNoteId: Long, noteAmt: Int): List<Note> = withContext(Dispatchers.IO) {
-        petDao.getSearchedNotesOfPetPaginated(petId, query, lastNoteUpdateDate, lastNoteId, noteAmt)
     }
 }

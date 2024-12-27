@@ -151,40 +151,8 @@ class EventRepository(private val database: PetLoggerDatabase,
         eventPetDao.insert(eventPet)
     }
 
-    fun getPhotosOfEventAsFlow(eventId: Long): Flow<List<Photo>> {
-        return eventDao.getPhotosOfEventAsFlow(eventId)
-    }
-
     suspend fun getPhotosOfEvent(eventId: Long): List<Photo> = withContext(Dispatchers.IO) {
         eventDao.fetchPhotosOfEvent(eventId)
-    }
-
-    fun getPetsWithProfilePicOfEventAsFlow(eventId: Long): Flow<List<PetWithProfilePic>> {
-        return eventDao.getPetsOfEventWithProfilePhotosAsFlow(eventId)
-    }
-
-    fun getAllEventsAsFlow(): Flow<List<EventForList>> {
-        val getDateDisplayUseCase = GetDateDisplayUseCase()
-        val getTimeDisplayUseCase = GetTimeDisplayUseCase()
-/*        return eventDao
-            .getAllEventsAsFlow()
-            .map { it
-                .sortedByDescending { event -> event.date }
-                .map { event -> EventForList(
-                    eventId = event.eventId,
-                    eventDate = getDateDisplayUseCase(event.date),
-                    eventTime = getTimeDisplayUseCase(event.date),
-                    eventTitle = event.title) }
-            }.flowOn(Dispatchers.IO)*/
-        return eventDao
-            .getAllEventsAsFlow()
-            .map { it
-                .map { event -> EventForList(
-                    eventId = event.eventId,
-                    eventDate = getDateDisplayUseCase(event.date),
-                    eventTime = getTimeDisplayUseCase(event.date),
-                    eventTitle = event.title) }
-            }.flowOn(Dispatchers.IO)
     }
 
     suspend fun getNotesOfEvent(eventId: Long): List<Note> = withContext(Dispatchers.IO) {
@@ -197,10 +165,6 @@ class EventRepository(private val database: PetLoggerDatabase,
 
     suspend fun getPhotosOfEventPaginated(eventId: Long, lastPhotoDate: OffsetDateTime, lastPhotoId: Long, amtLimit: Int): List<Photo> = withContext(Dispatchers.IO) {
         eventDao.getPhotosOfEventPaginated(eventId, lastPhotoDate, lastPhotoId, amtLimit)
-    }
-
-    fun getNotesOfEventAsFlow(eventId: Long): Flow<List<Note>> {
-        return eventDao.getNotesOfEventAsFlow(eventId)
     }
 
     suspend fun getAllEventsPaginated(lastEventDate: OffsetDateTime, lastEventId: Long, amtLimit: Int): List<Event> = withContext(Dispatchers.IO) {
@@ -219,7 +183,4 @@ class EventRepository(private val database: PetLoggerDatabase,
         eventDao.getAllTagsOfEvent(eventId)
     }
 
-    suspend fun getSearchedNotesOfEvent(eventId: Long, query: String, lastNoteUpdateDate: OffsetDateTime, lastNoteId: Long, noteAmt: Int): List<Note> = withContext(Dispatchers.IO) {
-        eventDao.getSearchedNotesOfEventPaginated(eventId, query, lastNoteUpdateDate, lastNoteId, noteAmt)
-    }
 }

@@ -38,11 +38,6 @@ class NoteRepository(
         noteDao.get(noteId)
     }
 
-    suspend fun getPetsOfNote(noteId: Long): List<Pet>
-    = withContext(Dispatchers.IO) {
-        noteDao.getPetsOfNote(noteId)
-    }
-
     suspend fun getAllNotes(): List<Note> {
         return noteDao.getAll()
     }
@@ -187,14 +182,6 @@ class NoteRepository(
         noteDao.attachPhoto(PhotoNote(photoId, noteId))
     }
 
-    fun getPhotosOfNoteAsFlow(noteId: Long): Flow<List<Photo>> {
-        return noteDao.getPhotosOfNote(noteId)
-    }
-
-    fun getPetsWithProfilePicsOfNoteAsFlow(noteId: Long): Flow<List<PetWithProfilePic>> {
-        return noteDao.getPetsWithProfilePicOfNoteAsFlow(noteId)
-    }
-
     suspend fun getEventsOfNote(noteId: Long): List<Event> = withContext(Dispatchers.IO) {
         noteDao.getEventsOfNote(noteId)
     }
@@ -221,25 +208,6 @@ class NoteRepository(
             .sortedByDescending { it.weight.weightDateTime }
     }
 
-    fun getEventsOfNoteAsFlow(noteId: Long): Flow<List<EventForList>> {
-        val getDateDisplayUseCase = GetDateDisplayUseCase()
-        val getTimeDisplayUseCase = GetTimeDisplayUseCase()
-        return noteDao
-            .getEventsOfNoteAsFlow(noteId)
-            .map { it
-                .sortedByDescending { event -> event.date }
-                .map { event -> EventForList(
-                    eventId = event.eventId,
-                    eventDate = getDateDisplayUseCase(event.date),
-                    eventTime = getTimeDisplayUseCase(event.date),
-                    eventTitle = event.title) }
-            }.flowOn(Dispatchers.IO)
-    }
-
-    fun getAllNotesAsFlow(): Flow<List<Note>> {
-        return noteDao.getAllNotesAsFlow()
-    }
-
     suspend fun getNoteEventsAsListPaginated(
         noteId: Long,
         lastEventDate: OffsetDateTime = OffsetDateTime.MAX,
@@ -261,7 +229,4 @@ class NoteRepository(
         noteDao.getPetsOfNotePaginated(noteId, lastPetId, petsAmt)
     }
 
-    suspend fun getSearchedNotesFromAllPaginated(query: String, lastNoteUpdateDate: OffsetDateTime, lastNoteId: Long, noteAmt: Int): List<Note> = withContext(Dispatchers.IO) {
-        noteDao.getSearchedNotesFromAllPaginated(query, lastNoteUpdateDate, lastNoteId, noteAmt)
-    }
 }

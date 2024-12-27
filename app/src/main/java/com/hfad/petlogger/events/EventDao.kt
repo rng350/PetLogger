@@ -141,24 +141,6 @@ interface EventDao {
     """)
     suspend fun getAllTagsOfEvent(eventId: Long): List<Tag>
 
-    @Query("""
-        SELECT note_table.* 
-        FROM note_table 
-        JOIN note_table_fts ON note_table.note_id=note_table_fts.note_id
-        JOIN event_note_table ON event_note_table.note_id=note_table.note_id
-        WHERE note_table_fts MATCH :query 
-        AND event_note_table.event_id=:eventId 
-        AND (datetime(note_table.note_last_updated), note_table.note_id) < (datetime(:lastNoteUpdateDate), :lastNoteId) 
-        ORDER BY datetime(note_table.note_last_updated) DESC, note_table.note_id DESC LIMIT :noteAmt
-    """)
-    suspend fun getSearchedNotesOfEventPaginated(
-        eventId: Long,
-        query: String,
-        lastNoteUpdateDate: OffsetDateTime,
-        lastNoteId: Long,
-        noteAmt: Int
-    ): List<Note>
-
     @RawQuery
     suspend fun searchEvents(dynamicQuery: SupportSQLiteQuery): List<Event>
 

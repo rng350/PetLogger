@@ -31,28 +31,8 @@ class WeightRepository(private val database: PetLoggerDatabase) {
         weightDao.getWeightDetails(weightId)
     }
 
-    fun getWeight(weightId: Long): Flow<Weight> {
-        return weightDao.getWeightAsFlow(weightId).onEach { Log.d("getWeight", "Got Weight: ${it}") }
-    }
-
     suspend fun getWeightFullDetails(weightId: Long): WeightFullDetailsState = withContext(Dispatchers.IO) {
         weightDao.getFullWeightDetails(weightId).toState()
-    }
-
-    fun getPetOfWeight(weightId: Long): Flow<PetWithProfilePic> {
-        return weightDao.getPetWithProfilePicOfWeight(weightId).flowOn(Dispatchers.IO)
-    }
-
-    fun getAllWeightsForDisplay(): Flow<List<WeightForList>> {
-        return weightDao
-            .getWeightsWithPetNameAndPhoto()
-            .map { list ->
-                list.sortedByDescending { weight ->
-                    weight.weightDateTime
-                }.map { weight ->
-                    weight.toWeightForList()
-                }
-            }.flowOn(Dispatchers.IO)
     }
 
     suspend fun getAllWithPetNames(): List<WeightWithPetName> = withContext(Dispatchers.IO) {
@@ -61,14 +41,6 @@ class WeightRepository(private val database: PetLoggerDatabase) {
         sorted.map {
             WeightWithPetName(it.weight, it.assocPet.petName)
         }
-    }
-
-    fun getPreviousWeight(weightId: Long, weightDateTime: OffsetDateTime): Flow<Weight?> {
-        return weightDao.getPreviousWeight(weightId, Converter.fromOffsetDateTime(weightDateTime)!!)
-    }
-
-    fun getPreviousWeight(weightId: Long): Flow<Weight> {
-        return weightDao.getPreviousWeight(weightId).flowOn(Dispatchers.IO)
     }
 
     suspend fun addWeight(
@@ -159,16 +131,6 @@ class WeightRepository(private val database: PetLoggerDatabase) {
         amtLimit: Int
     ): List<Note> = withContext(Dispatchers.IO) {
         weightDao.getNotesOfWeightPaginated(weightId, lastNoteEditedDate, lastNoteId, amtLimit)
-    }
-
-    suspend fun getSearchedNotesOfWeightPaginated(
-        weightId: Long,
-        query: String,
-        lastNoteUpdateDate: OffsetDateTime,
-        lastNoteId: Long,
-        noteAmt: Int
-    ): List<Note> = withContext(Dispatchers.IO) {
-        weightDao.getSearchedNotesOfWeightPaginated(weightId, query, lastNoteUpdateDate, lastNoteId, noteAmt)
     }
 
     suspend fun getAllWeightsPaginated(lastWeightDateTime: OffsetDateTime, lastWeightId: Long, weightsAmt: Int): List<WeightForListFetched> = withContext(Dispatchers.IO) {

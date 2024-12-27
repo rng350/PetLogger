@@ -27,26 +27,6 @@ class TagRepository(private val database: PetLoggerDatabase) {
         tagDao.getTag(tagId)
     }
 
-    fun getPetsOfTagAsFlow(tagId: Long): Flow<List<PetWithProfilePic>> {
-        return tagDao.getPetsOfTag(tagId)
-    }
-
-    fun getEventsOfTagAsFlow(tagId: Long): Flow<List<EventForList>> {
-        return tagDao.getEventsOfTag(tagId).map { it.map { event -> event.toEventForList() }}
-    }
-
-    fun getWeightsOfTagAsFlow(tagId: Long): Flow<List<WeightForList>> {
-        return tagDao.getWeightsOfTag(tagId).map { it.map { weight -> weight.toWeightForList() } }
-    }
-
-    fun getNotesOfTagAsFlow(tagId: Long): Flow<List<Note>> {
-        return tagDao.getNotesOfTag(tagId)
-    }
-
-    fun getPhotosOfTagAsFlow(tagId: Long): Flow<List<Photo>> {
-        return tagDao.getPhotosOfTag(tagId)
-    }
-
     suspend fun getTagByName(tagName: String): Tag? = withContext(Dispatchers.IO) {
         tagDao.getTagByName(tagName)
     }
