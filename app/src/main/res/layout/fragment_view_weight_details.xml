@@ -48,7 +48,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
                         android:clickable="false"
-                        android:focusable="false">
+                        android:focusable="false"
+                        app:cardCornerRadius="0dp"
+                        app:strokeWidth="0dp">
                         <TextView
                             android:id="@+id/pet_name"
                             android:layout_width="wrap_content"
@@ -67,7 +69,8 @@
                 android:layout_marginHorizontal="10dp"
                 android:layout_marginTop="10dp"
                 android:clickable="false"
-                android:focusable="false">
+                android:focusable="false"
+                app:strokeWidth="0dp">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -79,7 +82,8 @@
                         app:cardCornerRadius="0dp"
                         app:cardBackgroundColor="@color/dark_beigeish"
                         android:clickable="false"
-                        android:focusable="false">
+                        android:focusable="false"
+                        app:strokeWidth="0dp">
                         <com.google.android.material.textview.MaterialTextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -94,7 +98,8 @@
                         app:cardCornerRadius="0dp"
                         app:cardBackgroundColor="@color/beigeish"
                         android:clickable="false"
-                        android:focusable="false">
+                        android:focusable="false"
+                        app:strokeWidth="0dp">
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
@@ -115,7 +120,8 @@
                                 android:layout_gravity="center"
                                 app:boxBackgroundColor="@color/beigeish"
                                 android:layout_weight="1"
-                                android:hint="@string/unit">
+                                android:hint="@string/unit"
+                                app:strokeWidth="0dp">
                                 <com.google.android.material.textfield.MaterialAutoCompleteTextView
                                     android:id="@+id/weightUnitDropDownList"
                                     android:layout_width="match_parent"
@@ -132,7 +138,8 @@
                         app:cardCornerRadius="0dp"
                         app:cardBackgroundColor="@color/slightly_darker_beigeish"
                         android:clickable="false"
-                        android:focusable="false">
+                        android:focusable="false"
+                        app:strokeWidth="0dp">
                         <com.google.android.material.textview.MaterialTextView
                             android:id="@+id/weightDateTimeText"
                             android:layout_width="wrap_content"
@@ -152,7 +159,8 @@
                 android:layout_marginTop="10dp"
                 android:focusable="true"
                 android:clickable="true"
-                android:visibility="gone">
+                android:visibility="gone"
+                app:strokeWidth="0dp">
                 <LinearLayout
                     android:id="@+id/previousWeightLayout"
                     android:layout_width="match_parent"
@@ -165,7 +173,8 @@
                         app:cardCornerRadius="0dp"
                         app:cardBackgroundColor="@color/dark_beigeish"
                         android:clickable="false"
-                        android:focusable="false">
+                        android:focusable="false"
+                        app:strokeWidth="0dp">
                         <com.google.android.material.textview.MaterialTextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -181,7 +190,8 @@
                         app:cardCornerRadius="0dp"
                         app:cardBackgroundColor="@color/beigeish"
                         android:clickable="false"
-                        android:focusable="false">
+                        android:focusable="false"
+                        app:strokeWidth="0dp">
                         <com.google.android.material.textview.MaterialTextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -196,7 +206,8 @@
                         app:cardCornerRadius="0dp"
                         app:cardBackgroundColor="@color/slightly_darker_beigeish"
                         android:clickable="false"
-                        android:focusable="false">
+                        android:focusable="false"
+                        app:strokeWidth="0dp">
                         <com.google.android.material.textview.MaterialTextView
                             android:id="@+id/prevWeightDateTimeText"
                             android:layout_width="wrap_content"
@@ -216,7 +227,8 @@
                 android:layout_marginVertical="10dp"
                 android:clickable="false"
                 android:focusable="false"
-                android:visibility="gone">
+                android:visibility="gone"
+                app:strokeWidth="0dp">
                 <LinearLayout
                     android:id="@+id/weightsComparisonLayout"
                     android:layout_width="match_parent"
@@ -229,7 +241,8 @@
                         app:cardCornerRadius="0dp"
                         app:cardBackgroundColor="@color/dark_beigeish"
                         android:clickable="false"
-                        android:focusable="false">
+                        android:focusable="false"
+                        app:strokeWidth="0dp">
                         <com.google.android.material.textview.MaterialTextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -244,7 +257,8 @@
                         app:cardCornerRadius="0dp"
                         app:cardBackgroundColor="@color/beigeish"
                         android:clickable="false"
-                        android:focusable="false">
+                        android:focusable="false"
+                        app:strokeWidth="0dp">
                         <com.google.android.material.textview.MaterialTextView
                             android:id="@+id/weightAmtDifferenceText"
                             android:layout_width="wrap_content"
@@ -261,7 +275,8 @@
                         app:cardCornerRadius="0dp"
                         app:cardBackgroundColor="@color/slightly_darker_beigeish"
                         android:clickable="false"
-                        android:focusable="false">
+                        android:focusable="false"
+                        app:strokeWidth="0dp">
                         <com.google.android.material.textview.MaterialTextView
                             android:id="@+id/weightPeriodElapsedText"
                             android:layout_width="wrap_content"
@@ -278,7 +293,8 @@
                         app:cardCornerRadius="0dp"
                         app:cardBackgroundColor="@color/beigeish"
                         android:clickable="false"
-                        android:focusable="false">
+                        android:focusable="false"
+                        app:strokeWidth="0dp">
                         <com.google.android.material.textview.MaterialTextView
                             android:id="@+id/weightTimeOfDayDifferenceText"
                             android:layout_width="wrap_content"
@@ -295,7 +311,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:visibility="gone">
+                android:visibility="gone"
+                app:strokeWidth="0dp">
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
