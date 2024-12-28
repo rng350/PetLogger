@@ -18,6 +18,8 @@ class EditWeightViewModel(private val weightRepository: WeightRepository, privat
     val weightDateTime = SelectableDateTime()
     private val _goToWeightsList = MutableLiveData(false)
     val goToWeightsList: LiveData<Boolean> get() = _goToWeightsList
+    private val _goToViewWeight = MutableLiveData(false)
+    val goToViewWeight: LiveData<Boolean> get() = _goToViewWeight
     init {
         viewModelScope.launch {
             val fetchedWeightDetails = async {
@@ -49,6 +51,7 @@ class EditWeightViewModel(private val weightRepository: WeightRepository, privat
                     tagsToAdd = tagsToAdd,
                     tagsToRemove = tagsToRemove
                 )
+                _goToViewWeight.value = true
             }
         }
     }
@@ -66,6 +69,10 @@ class EditWeightViewModel(private val weightRepository: WeightRepository, privat
 
     fun onNavigateToWeightsList() {
         _goToWeightsList.value = false
+    }
+
+    fun onNavigateToViewWeight() {
+        _goToViewWeight.value = false
     }
 
     companion object {

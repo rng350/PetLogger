@@ -160,6 +160,12 @@ class EditWeightFragment : Fragment() {
                 findNavController().navigateSafe(EditWeightFragmentDirections.actionEditWeightFragmentToMonitoringListFragment())
             }
         }
+        editWeightViewModel.goToViewWeight.observe(viewLifecycleOwner) {
+            if (it == true) {
+                editWeightViewModel.onNavigateToViewWeight()
+                findNavController().navigateSafe(EditWeightFragmentDirections.actionEditWeightFragmentToViewWeightFragment(weightId))
+            }
+        }
 
         return view
     }
