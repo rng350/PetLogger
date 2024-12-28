@@ -23,7 +23,8 @@
         android:clickable="true"
         android:checkable="true"
         android:focusable="true"
-        app:checkedIcon="@drawable/ic_baseline_delete_24">
+        app:checkedIcon="@drawable/ic_baseline_delete_24"
+        app:strokeWidth="0dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -34,7 +35,9 @@
                 app:cardBackgroundColor="@color/beigeish"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
-                android:layout_weight="2">
+                android:layout_weight="2"
+                app:cardCornerRadius="0dp"
+                app:strokeWidth="0dp">
                 <TextView
                     android:id="@+id/weight_date"
                     android:layout_width="wrap_content"
@@ -48,7 +51,9 @@
                 app:cardBackgroundColor="@color/dark_beigeish"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                app:cardCornerRadius="0dp"
+                app:strokeWidth="0dp">
                 <TextView
                     android:id="@+id/weight_time"
                     android:layout_width="wrap_content"
@@ -62,7 +67,9 @@
                 app:cardBackgroundColor="@color/beigeish"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                app:cardCornerRadius="0dp"
+                app:strokeWidth="0dp">
                 <TextView
                     android:id="@+id/weight_grams"
                     android:layout_width="wrap_content"

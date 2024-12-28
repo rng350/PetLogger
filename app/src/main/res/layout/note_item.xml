@@ -20,7 +20,8 @@
         android:clickable="true"
         android:focusable="true"
         android:padding="5dp"
-        app:cardBackgroundColor="@color/beigeish">
+        app:cardBackgroundColor="@color/beigeish"
+        app:strokeWidth="0dp">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

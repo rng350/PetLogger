@@ -15,7 +15,8 @@
         android:layout_margin="3dp"
         android:padding="10dp"
         app:cardElevation="4dp"
-        app:cardCornerRadius="4dp">
+        app:cardCornerRadius="4dp"
+        app:strokeWidth="0dp">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -27,7 +28,8 @@
                 app:cardCornerRadius="0dp"
                 app:cardBackgroundColor="@color/dark_beigeish"
                 android:clickable="false"
-                android:focusable="false">
+                android:focusable="false"
+                app:strokeWidth="0dp">
                 <TextView
                     android:id="@+id/weight_date"
                     android:layout_width="wrap_content"
@@ -44,7 +46,8 @@
                 app:cardCornerRadius="0dp"
                 app:cardBackgroundColor="@color/dark_beigeish"
                 android:clickable="false"
-                android:focusable="false">
+                android:focusable="false"
+                app:strokeWidth="0dp">
                 <TextView
                     android:id="@+id/weight_time"
                     android:layout_width="wrap_content"
@@ -61,7 +64,8 @@
                 app:cardCornerRadius="0dp"
                 app:cardBackgroundColor="@color/beigeish"
                 android:clickable="false"
-                android:focusable="false">
+                android:focusable="false"
+                app:strokeWidth="0dp">
                 <TextView
                     android:id="@+id/weight_grams"
                     android:layout_width="wrap_content"
@@ -78,7 +82,8 @@
                 app:cardCornerRadius="0dp"
                 app:cardBackgroundColor="@color/dark_beigeish"
                 android:clickable="false"
-                android:focusable="false">
+                android:focusable="false"
+                app:strokeWidth="0dp">
                 <TextView
                     android:id="@+id/weight_difference_grams"
                     android:layout_width="wrap_content"
