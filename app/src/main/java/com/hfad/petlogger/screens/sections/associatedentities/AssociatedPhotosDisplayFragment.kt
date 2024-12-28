@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import com.hfad.petlogger.databinding.FragmentFullGalleryBinding
 import com.hfad.petlogger.screens.photo.FullGalleryViewModel
 import com.hfad.petlogger.screens.sections.recyclerviews.SetupAssociatedPhotosDisplayUseCase
+import com.hfad.petlogger.screens.sections.recyclerviews.decorators.PhotoItemSpacingDecoration
 
 class AssociatedPhotosDisplayFragment : Fragment() {
     private var _binding: FragmentFullGalleryBinding? = null
@@ -35,6 +36,8 @@ class AssociatedPhotosDisplayFragment : Fragment() {
             lifecycleScope,
             viewLifecycleOwner
         )()
+
+        binding.gallery.addItemDecoration(PhotoItemSpacingDecoration())
 
         RecyclerViewPaginator(
             recyclerView = binding.gallery,

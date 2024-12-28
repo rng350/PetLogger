@@ -22,6 +22,7 @@ import com.hfad.petlogger.databinding.FragmentMediaSelectionBinding
 import com.hfad.petlogger.common.photoselection.AdjustablePickMultipleVisualMedia
 import com.hfad.petlogger.common.selectiontracker.MediaMultiSelectionTracker
 import com.hfad.petlogger.screens.sections.recyclerviews.SetupPhotoSelectionDisplayUseCase
+import com.hfad.petlogger.screens.sections.recyclerviews.decorators.PhotoItemSpacingDecoration
 
 class MediaSelectionFragment : Fragment() {
     private var _binding: FragmentMediaSelectionBinding? = null
@@ -49,6 +50,8 @@ class MediaSelectionFragment : Fragment() {
             context = requireContext(),
             photoToggle = { photo -> viewModel.toggle(photo) }
         )()
+
+        binding.photoList.addItemDecoration(PhotoItemSpacingDecoration())
 
         RecyclerViewPaginator(
             recyclerView = binding.photoList,

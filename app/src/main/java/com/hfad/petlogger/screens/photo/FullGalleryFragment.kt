@@ -20,6 +20,7 @@ import com.hfad.petlogger.photos.MediaRepository
 import com.hfad.petlogger.common.setAppBarTitle
 import com.hfad.petlogger.photos.usecases.GetMoreOfSearchedPhotosUseCase
 import com.hfad.petlogger.screens.sections.recyclerviews.SetupAssociatedPhotosDisplayUseCase
+import com.hfad.petlogger.screens.sections.recyclerviews.decorators.PhotoItemSpacingDecoration
 
 class FullGalleryFragment : Fragment() {
     private var _binding: FragmentFullGalleryBinding? = null
@@ -54,6 +55,8 @@ class FullGalleryFragment : Fragment() {
             lifecycleScope = lifecycleScope,
             lifecycleOwner = viewLifecycleOwner
         ).invoke()
+
+        binding.gallery.addItemDecoration(PhotoItemSpacingDecoration())
 
         RecyclerViewPaginator(
             recyclerView = binding.gallery,

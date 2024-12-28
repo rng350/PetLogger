@@ -16,7 +16,6 @@
         android:id="@+id/pet_card"
         android:layout_width="125dp"
         android:layout_height="150dp"
-        android:layout_margin="8dp"
         android:background="@color/white"
         app:cardElevation="4dp"
         app:cardCornerRadius="4dp"
