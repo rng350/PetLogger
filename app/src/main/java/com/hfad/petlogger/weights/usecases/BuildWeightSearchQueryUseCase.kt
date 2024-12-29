@@ -134,9 +134,9 @@ class BuildWeightSearchQueryUseCase(
     }
 
     sealed class GetWeightFor {
-        object GeneralSelectionList: GetWeightFor()
-        object GeneralDisplayList: GetWeightFor()
-        object PetDisplayList: GetWeightFor()
-        object PetSelectionList: GetWeightFor()
+        data object GeneralSelectionList: GetWeightFor()
+        data object GeneralDisplayList: GetWeightFor()
+        data object PetDisplayList: GetWeightFor()
+        data object PetSelectionList: GetWeightFor()
     }
 }

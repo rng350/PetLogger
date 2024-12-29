@@ -154,7 +154,7 @@ class BuildPhotoSearchQueryUseCase(
     }
 
     sealed class Get {
-        object OnlyIds: Get()
-        object Photo: Get()
+        data object OnlyIds: Get()
+        data object Photo: Get()
     }
 }

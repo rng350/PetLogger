@@ -180,7 +180,7 @@ class BuildNoteSearchQueryUseCase(
     }
 
     sealed class Get {
-        object OnlyIds: Get()
-        object Note: Get()
+        data object OnlyIds: Get()
+        data object Note: Get()
     }
 }

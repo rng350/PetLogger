@@ -134,7 +134,7 @@ class BuildPetSearchQueryUseCase(
     }
 
     sealed class Get {
-        object OnlyIds: Get()
-        object PetWithProfilePic: Get()
+        data object OnlyIds: Get()
+        data object PetWithProfilePic: Get()
     }
 }

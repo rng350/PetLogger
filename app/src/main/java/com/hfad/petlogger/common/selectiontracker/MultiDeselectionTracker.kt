@@ -40,9 +40,9 @@ class MultiDeselectionTracker<T> {
     }
 
     sealed class Display {
-        object All: Display()
-        object SelectionToKeep: Display()
-        object SelectionToRemove: Display()
-        object None: Display()
+        data object All: Display()
+        data object SelectionToKeep: Display()
+        data object SelectionToRemove: Display()
+        data object None: Display()
     }
 }

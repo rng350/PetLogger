@@ -121,13 +121,13 @@ class MediaMultiSelectionTracker<T>(
     }
 
     sealed class Display {
-        object All: Display()
-        object SelectionToAddAndKeep: Display()
-        object SelectionToKeepAndRemove: Display()
-        object SelectionToAddAndRemove: Display()
-        object SelectionToAdd: Display()
-        object SelectionToKeep: Display()
-        object SelectionToRemove: Display()
-        object None: Display()
+        data object All: Display()
+        data object SelectionToAddAndKeep: Display()
+        data object SelectionToKeepAndRemove: Display()
+        data object SelectionToAddAndRemove: Display()
+        data object SelectionToAdd: Display()
+        data object SelectionToKeep: Display()
+        data object SelectionToRemove: Display()
+        data object None: Display()
     }
 }

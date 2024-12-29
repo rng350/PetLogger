@@ -169,7 +169,7 @@ class BuildEventSearchQueryUseCase(
     }
 
     sealed class Get {
-        object OnlyIds: Get()
-        object Event: Get()
+        data object OnlyIds: Get()
+        data object Event: Get()
     }
 }

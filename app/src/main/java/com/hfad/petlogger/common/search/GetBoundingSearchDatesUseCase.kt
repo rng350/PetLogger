@@ -48,8 +48,8 @@ class GetBoundingSearchDatesUseCase {
     }
 
     sealed class Result {
-        object Invalid: Result()
-        object NoBoundingSearchDates: Result()
+        data object Invalid: Result()
+        data object NoBoundingSearchDates: Result()
         data class BoundingSearchDates(val startDate: OffsetDateTime, val endDate: OffsetDateTime): Result()
         data class BoundingStartSearchDate(val startDate: OffsetDateTime): Result()
         data class BoundingEndSearchDate(val endDate: OffsetDateTime): Result()
