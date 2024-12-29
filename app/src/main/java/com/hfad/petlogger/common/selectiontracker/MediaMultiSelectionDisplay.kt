@@ -157,7 +157,7 @@ class MediaMultiSelectionDisplay<T>(
     fun resetSelection() {
         selectionTracker.resetSelection()
         val filteredSelection = selectionTracker.filterQueriedItemsForDisplay(
-            currentDisplayedItems.value.map{it.item},
+            allQueriedItems,
             currentDisplayMode
         )
         _currentDisplayedItems.update{ filteredSelection }
