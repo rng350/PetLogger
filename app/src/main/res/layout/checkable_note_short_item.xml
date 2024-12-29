@@ -15,19 +15,20 @@
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/note_card"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_margin="8dp"
-        android:background="@color/white"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginVertical="3dp"
         app:cardElevation="4dp"
         app:cardCornerRadius="4dp"
         android:clickable="true"
         android:focusable="true"
         android:checkable="true"
-        android:padding="5dp"
+        app:cardBackgroundColor="@color/beigeish"
         app:strokeWidth="0dp">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:padding="12dp"
             android:orientation="vertical">
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/note_title"
@@ -37,6 +38,11 @@
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:text="@{note.title}"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginVertical="5dp"
+                android:background="@color/dark_beigeish"/>
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/note_description"
                 android:layout_width="match_parent"
@@ -44,7 +50,7 @@
                 android:layout_gravity="center"
                 android:textSize="12sp"
                 android:text="@{note.details}"
-                android:maxLines="2"
+                android:maxLines="1"
                 android:ellipsize="end"/>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
