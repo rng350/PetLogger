@@ -6,10 +6,7 @@ import androidx.sqlite.db.SimpleSQLiteQuery
 import com.hfad.petlogger.common.search.GetBoundingSearchDatesUseCase
 import com.hfad.petlogger.common.search.ParseSearchQueryUseCase
 import com.hfad.petlogger.common.util.Converter
-import com.hfad.petlogger.pets.Pet
 import com.hfad.petlogger.tags.Tag
-import com.hfad.petlogger.weights.WeightFullDetailsState
-import kotlinx.coroutines.flow.StateFlow
 import java.time.OffsetDateTime
 
 class BuildWeightSearchQueryUseCase(
@@ -27,17 +24,6 @@ class BuildWeightSearchQueryUseCase(
 
         val nonCategorizedSearch = parsedSearch[null]?:listOf()
 
-        if (pickFrom is Pick.FromPet) {
-            val petsSearched = parsedSearch["pet"]?.toHashSet()
-            petsSearched?.size?.let {
-                if (it > 1) return null
-            }
-            pickFrom.pet.value?.petName.let { name ->
-                if (petsSearched?.contains(name) == false && petsSearched.size == 1) {
-                    return null
-                }
-            }
-        }
         // allow only one pet: prefix
         if ((parsedSearch["pet"]?.size ?: 0) > 1) {
             return null
@@ -103,7 +89,7 @@ class BuildWeightSearchQueryUseCase(
             queryParams.add(searchedPetName)
         }
         if (pickFrom is Pick.FromPet) {
-            pickFrom.pet.value?.petID?.let { petId ->
+            pickFrom.petId.let { petId ->
                 queryBuilder.append("AND wt_1.weight_pet_id = ? ")
                 queryParams.add(petId)
             }
@@ -130,7 +116,7 @@ class BuildWeightSearchQueryUseCase(
 
     sealed class Pick {
         data class FromTag(val tag: LiveData<Tag>): Pick()
-        data class FromPet(val pet: LiveData<Pet>): Pick()
+        data class FromPet(val petId: Long): Pick()
     }
 
     sealed class GetWeightFor {

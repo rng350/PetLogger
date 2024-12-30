@@ -36,18 +36,30 @@ interface PetDao {
     @Query("SELECT * FROM pet_table WHERE pet_id=:petId")
     suspend fun getPet(petId: Long): Pet
 
-    @Query("SELECT pet_table.pet_id AS petId, " +
-            "pet_table.pet_name AS petName, " +
-            "pet_table.pet_dob AS petDOB, " +
-            "pet_table.pet_species AS petSpecies, " +
-            "pet_table.pet_breed AS petBreed, " +
-            "pet_table.pet_sex AS petSex," +
-            "photo_table.photo_uri AS petProfilePicUri " +
-            "FROM pet_table " +
-            "LEFT JOIN pet_profile_photo_table ON pet_table.pet_id=pet_profile_photo_table.pet_id " +
-            "LEFT JOIN photo_table ON pet_profile_photo_table.photo_id=photo_table.photo_id " +
-            "WHERE pet_table.pet_id=:petId LIMIT 1")
-    suspend fun getPetDetails(petId: Long): PetDetails
+    @Query("""
+            SELECT 
+                pet_table.pet_id AS petId, 
+                pet_table.pet_name AS petName, 
+                pet_table.pet_dob AS petDateOfBirth, 
+                pet_table.pet_species AS petSpecies, 
+                pet_table.pet_breed AS petBreed, 
+                pet_table.pet_sex AS petSex, 
+                photo_table.photo_uri AS petProfilePicUri, 
+                weight_grams AS latestPetWeightGrams, 
+                weight_datetime AS latestPetWeightDateTime, 
+                passed_away_pet_table.pet_date_of_passing AS petDateOfPassing 
+            FROM pet_table 
+            LEFT JOIN pet_profile_photo_table ON pet_table.pet_id=pet_profile_photo_table.pet_id 
+            LEFT JOIN photo_table ON pet_profile_photo_table.photo_id=photo_table.photo_id 
+            LEFT JOIN passed_away_pet_table ON pet_table.pet_id=passed_away_pet_table.pet_id 
+            LEFT JOIN (SELECT weight_table.weight_grams, weight_table.weight_pet_id, weight_table.weight_datetime
+                FROM weight_table 
+                WHERE weight_pet_id=:petId 
+                ORDER BY datetime(weight_datetime) DESC, weight_id DESC LIMIT 1
+            ) ON weight_pet_id = pet_table.pet_id
+            WHERE pet_table.pet_id=:petId LIMIT 1
+    """)
+    suspend fun getPetDetails(petId: Long): PetDetailsFetched?
 
     @Query("SELECT * FROM pet_table WHERE pet_id=:petId")
     suspend fun getAsync(petId: Long): Pet?

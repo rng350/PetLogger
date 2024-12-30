@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.Observer
 import com.hfad.petlogger.databinding.FragmentViewPetBinding
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -36,11 +35,11 @@ import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPetWeigh
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPhotosDisplayFragment
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedTagsDisplayViewModel
 import com.hfad.petlogger.common.setAppBarTitle
-import com.hfad.petlogger.common.util.GetPeriodDisplayUseCase
 import com.hfad.petlogger.events.usecases.BuildEventSearchQueryUseCase
 import com.hfad.petlogger.events.usecases.GetMoreOfSearchedEventsUseCase
 import com.hfad.petlogger.notes.usecases.BuildNoteSearchQueryUseCase
 import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesUseCase
+import com.hfad.petlogger.pets.usecases.GetPetDetailsUseCase
 import com.hfad.petlogger.photos.usecases.BuildPhotoSearchQueryUseCase
 import com.hfad.petlogger.photos.usecases.GetMoreOfSearchedPhotosUseCase
 import com.hfad.petlogger.screens.event.EventListViewModel
@@ -68,9 +67,9 @@ class ViewPetFragment : Fragment() {
         val petId = ViewPetFragmentArgs.fromBundle(requireArguments()).petId
         val mediaRepository = MediaRepository(database, application.applicationContext)
         val petRepository = PetRepository(database, mediaRepository)
-        val getPetAgeDisplay = GetPeriodDisplayUseCase()
+        val getPetDetails = GetPetDetailsUseCase(database.petDao, petId)
         val viewPetViewModel = ViewModelProvider(this,
-            ViewPetViewModel.provideFactory(petRepository, petId, getPetAgeDisplay)
+            ViewPetViewModel.provideFactory(getPetDetails)
         ).get(ViewPetViewModel::class.java)
         binding.viewPetViewModel = viewPetViewModel
 
@@ -81,7 +80,7 @@ class ViewPetFragment : Fragment() {
         binding.eventListViewModel = eventListViewModel
 
         val getAssociatedWeights = GetMoreWeightsOfPetUseCase(petRepository, petId, weightsAmt = 10)
-        val getSearchedWeights = GetSearchedWeightsOfPetForDisplayUseCase(database.weightDao, weightsAmt = 15, pet = viewPetViewModel.pet)
+        val getSearchedWeights = GetSearchedWeightsOfPetForDisplayUseCase(database.weightDao, weightsAmt = 15, petId)
         val associatedWeightsDisplayViewModel = ViewModelProvider(this, AssociatedPetWeightsDisplayViewModel.provideFactory(getAssociatedWeights, getSearchedWeights)).get(
             AssociatedPetWeightsDisplayViewModel::class.java)
         binding.associatedPetWeightsDisplayViewModel = associatedWeightsDisplayViewModel
@@ -107,12 +106,28 @@ class ViewPetFragment : Fragment() {
             AssociatedTagsDisplayViewModel::class.java)
         binding.associatedTagsDisplayViewModel = associatedTagsDisplayViewModel
 
-        viewPetViewModel.pet.observe(viewLifecycleOwner, Observer {
-            it?.let {
-                setAppBarTitle(it.petName, getString(R.string.viewing_details))
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewPetViewModel.status.collectLatest { status ->
+                    when (status) {
+                        is ViewPetViewModel.Status.Loaded -> {
+                            when (status.result) {
+                                GetPetDetailsUseCase.Result.Failure -> {
+                                    setAppBarTitle(getString(R.string.pet_not_found))
+                                }
+                                is GetPetDetailsUseCase.Result.Success -> {
+                                    val fetchedPetName = status.result.fetchedPet.petName
+                                    setAppBarTitle(fetchedPetName, getString(R.string.viewing_details))
+                                }
+                            }
+                        }
+                        ViewPetViewModel.Status.Loading -> {
+                            setAppBarTitle(getString(R.string.loading_pet))
+                        }
+                    }
+                }
             }
-        })
-
+        }
 
         associatedWeightsDisplayViewModel.weightNavigator.navigateTo.observe(viewLifecycleOwner) {weightId ->
             weightId?.let {
@@ -191,14 +206,6 @@ class ViewPetFragment : Fragment() {
         }
         mediator?.attach()
 
-        lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                associatedWeightsDisplayViewModel.weights.collectLatest{petWeights ->
-                    viewPetViewModel.setLatestWeight(petWeights)
-                }
-            }
-        }
-
         return view
     }
 
@@ -240,12 +247,45 @@ class PetDetailsFragment(): Fragment() {
         binding.viewPetViewModel = viewPetViewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        viewPetViewModel.petProfilePhoto.observe(viewLifecycleOwner, Observer { it ->
-            Glide.with(requireContext())
-                .load(it.contentUri)
-                .apply(RequestOptions().placeholder(R.drawable.placeholder))
-                .into(binding.petPhoto)
-        })
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewPetViewModel.status.collectLatest { status ->
+                    when (status) {
+                        is ViewPetViewModel.Status.Loaded -> {
+                            when (status.result) {
+                                GetPetDetailsUseCase.Result.Failure -> {
+                                    binding.loadingFailedLayout.visibility = View.VISIBLE
+                                    binding.petDetailsLayout.visibility = View.GONE
+                                    binding.loadingScreenLayout.visibility = View.GONE
+                                }
+                                is GetPetDetailsUseCase.Result.Success -> {
+                                    binding.loadingFailedLayout.visibility = View.GONE
+                                    binding.petDetailsLayout.visibility = View.VISIBLE
+                                    binding.loadingScreenLayout.visibility = View.GONE
+
+                                    status.result.fetchedPet.petProfilePicUri?.let {
+                                        Glide.with(requireContext())
+                                            .load(it)
+                                            .apply(RequestOptions().placeholder(R.drawable.placeholder))
+                                            .into(binding.petPhoto)
+                                    }
+
+                                    if (status.result.fetchedPet.petDateOfPassing.isNotEmpty()) {
+                                        binding.petDateOfPassingTextField.visibility = View.VISIBLE
+                                    }
+                                }
+                            }
+                        }
+                        ViewPetViewModel.Status.Loading -> {
+                            setAppBarTitle(getString(R.string.loading_pet))
+                            binding.loadingFailedLayout.visibility = View.GONE
+                            binding.petDetailsLayout.visibility = View.GONE
+                            binding.loadingScreenLayout.visibility = View.VISIBLE
+                        }
+                    }
+                }
+            }
+        }
 
         return view
     }

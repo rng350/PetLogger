@@ -8,58 +8,54 @@ import com.hfad.petlogger.pets.PetRepository
 import com.hfad.petlogger.common.util.GetDateDisplayUseCase
 import com.hfad.petlogger.common.util.GetDateTimeDisplayUseCase
 import com.hfad.petlogger.common.util.GetPeriodDisplayUseCase
+import com.hfad.petlogger.pets.PetDetailsForDisplay
+import com.hfad.petlogger.pets.usecases.GetPetDetailsUseCase
 import com.hfad.petlogger.weights.PetWeightForDisplay
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class ViewPetViewModel (
-    private val petRepository: PetRepository,
-    private val petID: Long,
-    private val getPetAgeDisplay: GetPeriodDisplayUseCase,
-    notAvailableString: String
+    getPetDetails: GetPetDetailsUseCase
 ): ViewModel() {
-    private val _pet : MutableLiveData<Pet> = MutableLiveData<Pet>()
-    val pet: LiveData<Pet> get() = _pet
-    val petProfilePhoto = MutableLiveData<Photo>()
-    val petBirthdate : MutableLiveData<String> = MutableLiveData<String>(notAvailableString)
-    val petAge : MutableLiveData<String> = MutableLiveData<String>(notAvailableString)
-    val mostRecentWeightAmtDisplay: MutableLiveData<String> = MutableLiveData<String>(notAvailableString)
-    val mostRecentWeightDateDisplay: MutableLiveData<String> = MutableLiveData<String>(notAvailableString)
-    val getDateTime = GetDateTimeDisplayUseCase()
-    val getDate = GetDateDisplayUseCase()
+    private val _status: MutableStateFlow<Status> = MutableStateFlow(Status.Loading)
+    val status: StateFlow<Status> = _status
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = Status.Loading
+        )
+    private val _petDetails : MutableStateFlow<PetDetailsForDisplay> = MutableStateFlow<PetDetailsForDisplay>(PetDetailsForDisplay())
+    val petDetails: StateFlow<PetDetailsForDisplay> get() = _petDetails
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = PetDetailsForDisplay()
+        )
 
     init {
         viewModelScope.launch {
-            _pet.value = async {
-                petRepository.getPet(petID)
-            }.await()
-            _pet.value?.let {
-                it.petDOB?.let {
-                    petBirthdate.value = getDate(it)
-                    petAge.value = getPetAgeDisplay(it)
-                }
+            val fetchedPetDetails = getPetDetails()
+            if (fetchedPetDetails is GetPetDetailsUseCase.Result.Success) {
+                _petDetails.value = fetchedPetDetails.fetchedPet
             }
-        }
-        viewModelScope.launch {
-            val fetchedPetProfilePhoto = petRepository.getPetProfilePhoto(petID)
-            fetchedPetProfilePhoto?.let {
-                petProfilePhoto.value = it
-            }
+            _status.value = Status.Loaded(fetchedPetDetails)
         }
     }
 
-    fun setLatestWeight(weights: List<PetWeightForDisplay>) {
-        if (weights.isNotEmpty()) {
-            mostRecentWeightAmtDisplay.value = weights[0].weightGramsAmt
-            mostRecentWeightDateDisplay.value = "${weights[0].weightDate} at ${weights[0].weightTime}"
-        }
+    sealed class Status {
+        data object Loading: Status()
+        data class Loaded(val result: GetPetDetailsUseCase.Result): Status()
     }
 
     companion object {
-        fun provideFactory(petRepository: PetRepository, petID: Long, getPetAgeDisplay: GetPeriodDisplayUseCase, notAvailableString: String = "N/A"): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+        fun provideFactory(getPetDetails: GetPetDetailsUseCase): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(ViewPetViewModel::class.java)) {
-                    return ViewPetViewModel(petRepository, petID, getPetAgeDisplay, notAvailableString) as T
+                    return ViewPetViewModel(getPetDetails) as T
                 }
                 throw IllegalArgumentException("Unknown ViewModel")
             }

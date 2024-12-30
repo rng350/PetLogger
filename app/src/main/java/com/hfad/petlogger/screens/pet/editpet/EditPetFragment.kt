@@ -92,7 +92,7 @@ class EditPetFragment : Fragment() {
         binding.editPetViewModel = editPetViewModel
 
         val getAllPetWeightsForSelection = GetAllWeightsOfPetForSelectionUseCase(database.weightDao, petId, weightsAmt = 10)
-        val getSearchedPetWeightsForSelection = GetSearchedPetWeightsForSelectionUseCase(database.weightDao, weightsAmt = 10, editPetViewModel.pet)
+        val getSearchedPetWeightsForSelection = GetSearchedPetWeightsForSelectionUseCase(database.weightDao, weightsAmt = 10, petId)
         val getPetWeightDeselectionDisplay = MultiDeselectionDisplay<PetWeightForSelection>(
             getAllAssociatedItems = getAllPetWeightsForSelection,
             getSearchedItems = getSearchedPetWeightsForSelection,

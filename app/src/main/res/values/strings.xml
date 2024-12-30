@@ -14,7 +14,7 @@
     <string name="pet_breed_header">Breed</string>
     <string name="edit_pet_button">Edit Pet</string>
     <string name="pet_sex_header">Sex</string>
-    <string name="pet_dob_header">Birthdate</string>
+    <string name="pet_dob_header">Date of Birth</string>
     <string name="input_event_date">+Event Date</string>
     <string name="input_event_time">+Event Time</string>
     <string name="pets_involved_button">+Pet(s)</string>
@@ -158,4 +158,9 @@
     <string name="keeping">Keeping</string>
     <string name="removing">Removing</string>
     <string name="adding">Adding</string>
+    <string name="loading_pet">Loading Pet</string>
+    <string name="failed_to_load">Failed to load</string>
+    <string name="pet_date_of_passing_header">Date of Passing</string>
+    <string name="loading">Loading...</string>
+    <string name="pet_not_found">Pet Not Found</string>
 </resources>

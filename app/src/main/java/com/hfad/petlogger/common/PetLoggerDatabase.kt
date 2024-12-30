@@ -32,6 +32,7 @@ import com.hfad.petlogger.events.Event
 import com.hfad.petlogger.events.EventFts
 import com.hfad.petlogger.notes.Note
 import com.hfad.petlogger.notes.NoteFts
+import com.hfad.petlogger.pets.PassedAwayPet
 import com.hfad.petlogger.pets.Pet
 import com.hfad.petlogger.pets.PetFts
 import com.hfad.petlogger.photos.Photo
@@ -43,6 +44,7 @@ import com.hfad.petlogger.weights.Weight
         Pet::class,
         PetFts::class,
         PetPhoto::class,
+        PassedAwayPet::class,
 
         Event::class,
         EventPet::class,
@@ -68,7 +70,7 @@ import com.hfad.petlogger.weights.Weight
         NoteTag::class,
         PhotoTag::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false)
 @TypeConverters(
     Converter::class,

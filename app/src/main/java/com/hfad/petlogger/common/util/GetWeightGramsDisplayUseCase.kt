@@ -6,9 +6,11 @@ class GetWeightGramsDisplayUseCase {
     private val kilogramsUnit = "kg"
     private val measuringUnitConverter = MeasuringUnitConverter()
 
-    operator fun invoke(weightGramsAmt: Int, autoConvertToKg: Boolean = true): String {
-        return if (autoConvertToKg && weightGramsAmt>GRAMS_THRESHOLD) {
-            "${measuringUnitConverter.gramsToKilograms(weightGramsAmt)}$kilogramsUnit"
-        } else "$weightGramsAmt$gramsUnit"
+    operator fun invoke(weightGramsAmt: Int?, autoConvertToKg: Boolean = true): String {
+        return if (weightGramsAmt != null) {
+            if (autoConvertToKg && weightGramsAmt>GRAMS_THRESHOLD) {
+                "${measuringUnitConverter.gramsToKilograms(weightGramsAmt)}$kilogramsUnit"
+            } else "$weightGramsAmt$gramsUnit"
+        } else "N/A"
     }
 }

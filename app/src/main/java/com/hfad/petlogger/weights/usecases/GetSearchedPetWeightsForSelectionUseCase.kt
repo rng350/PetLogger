@@ -1,10 +1,8 @@
 package com.hfad.petlogger.weights.usecases
 
-import androidx.lifecycle.LiveData
 import com.hfad.petlogger.common.search.ParseSearchQueryUseCase
 import com.hfad.petlogger.common.usecases.GetSearchedItemsUseCase
 import com.hfad.petlogger.common.util.Constants
-import com.hfad.petlogger.pets.Pet
 import com.hfad.petlogger.weights.PetWeightForSelection
 import com.hfad.petlogger.weights.WeightDao
 import kotlinx.coroutines.Dispatchers
@@ -13,7 +11,7 @@ import kotlinx.coroutines.withContext
 class GetSearchedPetWeightsForSelectionUseCase(
     private val weightDao: WeightDao,
     private val weightsAmt: Int,
-    pet: LiveData<Pet>
+    private val petId: Long
 ): GetSearchedItemsUseCase<PetWeightForSelection> {
     private var lastWeightDate = Constants.OFFSET_DATE_TIME_MAX_ALLOWED
     private var lastWeightId = Long.MAX_VALUE
@@ -25,7 +23,7 @@ class GetSearchedPetWeightsForSelectionUseCase(
         weightsAmt = weightsAmt,
         parseSearchQuery = ParseSearchQueryUseCase(listOf("before", "after")),
         getWeightFor = BuildWeightSearchQueryUseCase.GetWeightFor.PetSelectionList,
-        pickFrom = BuildWeightSearchQueryUseCase.Pick.FromPet(pet)
+        pickFrom = BuildWeightSearchQueryUseCase.Pick.FromPet(petId)
     )
 
     override suspend fun invoke(): List<PetWeightForSelection> = withContext(Dispatchers.IO) {
