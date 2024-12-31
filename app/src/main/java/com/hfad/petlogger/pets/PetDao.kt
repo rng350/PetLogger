@@ -127,6 +127,9 @@ interface PetDao {
             "ORDER BY datetime(note_last_updated) DESC, note_table.note_id DESC LIMIT :amtLimit")
     suspend fun getNotesOfPetPaginated(petId: Long, lastNoteEditedDate: OffsetDateTime, lastNoteId: Long, amtLimit: Int): List<Note>
 
+    @Insert
+    suspend fun insertDateOfPassing(passedAwayPet: PassedAwayPet)
+
     @Upsert
     suspend fun upsertDateOfPassing(passedAwayPet: PassedAwayPet)
 

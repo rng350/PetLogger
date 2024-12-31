@@ -7,10 +7,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
@@ -42,6 +45,7 @@ import com.hfad.petlogger.tags.usecases.GetSearchedTagsUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 
@@ -78,8 +82,7 @@ class NewPetFragment : Fragment() {
 
         photoMultiSelectionViewModel = ViewModelProvider(this,
             MediaSelectionViewModel.provideFactory(
-                mediaRepository = mediaRepository,
-                maxItems = 10
+                mediaRepository = mediaRepository
             )
         ).get(MediaSelectionViewModel::class.java)
         binding.photoSelectionViewModel = photoMultiSelectionViewModel
@@ -214,6 +217,26 @@ class NewPetDetailsFragment() : Fragment() {
             }
             Log.d("pet_sex_selection", "${binding.petSexSelection.checkedRadioButtonId} : ${newPetViewModel.petSex}")
         }
+
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    newPetViewModel.petStatus.collectLatest {
+                        when (it) {
+                            NewPetViewModel.PetStatus.Active -> {
+                                binding.petDateOfPassingLinearLayout.visibility = View.GONE
+                                binding.petStatusDropDown.setText("Active", false)
+                            }
+                            NewPetViewModel.PetStatus.PassedAway -> {
+                                binding.petDateOfPassingLinearLayout.visibility = View.VISIBLE
+                                binding.petStatusDropDown.setText("Passed Away", false)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         binding.addPetBirthDateButton.isEnabled = true
         binding.addPetBirthDateButton.setOnClickListener {
             binding.addPetBirthDateButton.isEnabled = false
@@ -224,7 +247,40 @@ class NewPetDetailsFragment() : Fragment() {
                 binding.addPetBirthDateButton.isEnabled = true
             }
         }
+
+        binding.addPetDateOfPassingButton.isEnabled = true
+        binding.addPetDateOfPassingButton.setOnClickListener {
+            binding.addPetDateOfPassingButton.isEnabled = false
+            CoroutineScope(Dispatchers.Main.immediate).launch {
+                DatePicker.generate(newPetViewModel.petDateOfPassing)
+                    .show(parentFragmentManager, "DATE_PICKER")
+                delay(200)
+                binding.addPetDateOfPassingButton.isEnabled = true
+            }
+        }
         return view
+    }
+
+    override fun onStop() {
+        super.onStop()
+        binding.addPetBirthDateButton.isEnabled = true
+        binding.addPetDateOfPassingButton.isEnabled = true
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        val statusOptions = listOf("Active", "Passed Away")
+        val adapter = ArrayAdapter<String>(requireContext(), com.google.android.material.R.layout.support_simple_spinner_dropdown_item, statusOptions)
+        binding.petStatusDropDown.setAdapter(adapter)
+        adapter.notifyDataSetChanged()
+        binding.petStatusDropDown.setOnItemClickListener { _, _, position, _ ->
+            if (position == 1) {
+                newPetViewModel.setPetStatus(NewPetViewModel.PetStatus.PassedAway)
+            } else {
+                newPetViewModel.setPetStatus(NewPetViewModel.PetStatus.Active)
+            }
+        }
     }
 
     override fun onDestroyView() {

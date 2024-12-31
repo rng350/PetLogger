@@ -37,10 +37,12 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
     private val photoDao = database.photoDao
     private val noteDao = database.noteDao
     private val eventPetDao = database.eventPetDao
+
     suspend fun addPet(
         pet: Pet,
         events: List<Long> = listOf<Long>(),
         photos: List<Photo> = listOf<Photo>(),
+        petDateOfPassing: LocalDate? = null,
         profilePic: Photo? = null,
         notes: List<Note> = listOf<Note>(),
         tags: List<Tag> = listOf<Tag>()
@@ -61,12 +63,18 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
         val notesAdded = async {
             noteDao.attachPets(notes.map{ note -> PetNote(petId=petId, noteId=note.id) })
         }
+        val petDateOfPassingInserted = async {
+            petDateOfPassing?.let {
+                petDao.insertDateOfPassing(PassedAwayPet(petId, petDateOfPassing))
+            }
+        }
         val tagRepository = TagRepository(database)
         val tagsAdded = tags.map { tag ->
             async {
                 attachPetToTag(tagRepository, petId, tag)
             }
         }
+        petDateOfPassingInserted.await()
         eventsAdded.await()
         notesAdded.await()
         tagsAdded.awaitAll()

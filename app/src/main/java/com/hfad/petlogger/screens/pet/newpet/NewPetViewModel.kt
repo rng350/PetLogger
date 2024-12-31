@@ -11,6 +11,8 @@ import com.hfad.petlogger.photos.Photo
 import com.hfad.petlogger.tags.Tag
 import com.hfad.petlogger.pets.PetRepository
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class NewPetViewModel(private val petRepository: PetRepository) : ViewModel() {
@@ -20,8 +22,11 @@ class NewPetViewModel(private val petRepository: PetRepository) : ViewModel() {
     private var _petSex : String = ""
     val petSex: String
         get() = _petSex
-    var petDOB : SelectableDateOptional = SelectableDateOptional()
+    val petDOB : SelectableDateOptional = SelectableDateOptional()
+    val petDateOfPassing : SelectableDateOptional = SelectableDateOptional()
     val goToViewPet = MutableLiveData<Long>()
+    private val _petStatus = MutableStateFlow<PetStatus>(PetStatus.Active)
+    val petStatus: StateFlow<PetStatus> get() = _petStatus
 
     fun reset() {
         petName = ""
@@ -46,7 +51,14 @@ class NewPetViewModel(private val petRepository: PetRepository) : ViewModel() {
                 pet.petSex = _petSex
                 pet.petDOB = petDOB.selectedDate
                 val addedPetId = async {
-                    petRepository.addPet(pet = pet, photos = petPhotos, profilePic = petProfilePhoto, notes=notes, tags=tags)
+                    petRepository.addPet(
+                        pet = pet,
+                        petDateOfPassing = if (petStatus.value is PetStatus.PassedAway) petDateOfPassing.selectedDate else null,
+                        photos = petPhotos,
+                        profilePic = petProfilePhoto,
+                        notes=notes,
+                        tags=tags
+                    )
                 }.await()
                 goToViewPet.value = addedPetId
             }
@@ -57,8 +69,17 @@ class NewPetViewModel(private val petRepository: PetRepository) : ViewModel() {
         _petSex = newPetSex
     }
 
+    fun setPetStatus(newPetStatus: PetStatus) {
+        _petStatus.value = newPetStatus
+    }
+
     fun clear() {
 
+    }
+
+    sealed class PetStatus {
+        data object Active: PetStatus()
+        data object PassedAway: PetStatus()
     }
 
     companion object {
