@@ -29,6 +29,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import java.time.LocalDate
 import java.time.OffsetDateTime
 
 class PetRepository(private val database: PetLoggerDatabase, private val mediaRepository: MediaRepository) {
@@ -90,6 +91,7 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
 
     suspend fun updatePet(
         pet: Pet,
+        petDateOfPassing: LocalDate? = null,
         eventsToAdd: List<Long> = listOf<Long>(),
         eventsToRemove: List<Long> = listOf<Long>(),
         weightsToAdd: List<Weight> = listOf<Weight>(),
@@ -107,6 +109,13 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
         val weightDao = database.weightDao
         val petUpdated = async {
             petDao.update(pet)
+        }
+        val petDateOfPassingUpdated = async {
+            if (petDateOfPassing != null) {
+                petDao.upsertDateOfPassing(PassedAwayPet(pet.petID, petDateOfPassing))
+            } else {
+                petDao.removeDateOfPassing(PassedAwayPet(pet.petID, LocalDate.now()))
+            }
         }
         val petEventsInserted = async {
             petDao.insert(eventsToAdd.map { eventId -> EventPet(eventId=eventId, petId=pet.petID) })
@@ -154,6 +163,7 @@ class PetRepository(private val database: PetLoggerDatabase, private val mediaRe
             }
         }
         petUpdated.await()
+        petDateOfPassingUpdated.await()
         petEventsInserted.await()
         petEventsDeleted.await()
         petWeightsInserted.await()

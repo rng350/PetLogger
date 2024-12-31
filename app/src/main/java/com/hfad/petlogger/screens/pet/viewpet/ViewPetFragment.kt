@@ -39,7 +39,7 @@ import com.hfad.petlogger.events.usecases.BuildEventSearchQueryUseCase
 import com.hfad.petlogger.events.usecases.GetMoreOfSearchedEventsUseCase
 import com.hfad.petlogger.notes.usecases.BuildNoteSearchQueryUseCase
 import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesUseCase
-import com.hfad.petlogger.pets.usecases.GetPetDetailsUseCase
+import com.hfad.petlogger.pets.usecases.GetPetDetailsForDisplayUseCase
 import com.hfad.petlogger.photos.usecases.BuildPhotoSearchQueryUseCase
 import com.hfad.petlogger.photos.usecases.GetMoreOfSearchedPhotosUseCase
 import com.hfad.petlogger.screens.event.EventListViewModel
@@ -67,7 +67,7 @@ class ViewPetFragment : Fragment() {
         val petId = ViewPetFragmentArgs.fromBundle(requireArguments()).petId
         val mediaRepository = MediaRepository(database, application.applicationContext)
         val petRepository = PetRepository(database, mediaRepository)
-        val getPetDetails = GetPetDetailsUseCase(database.petDao, petId)
+        val getPetDetails = GetPetDetailsForDisplayUseCase(database.petDao, petId)
         val viewPetViewModel = ViewModelProvider(this,
             ViewPetViewModel.provideFactory(getPetDetails)
         ).get(ViewPetViewModel::class.java)
@@ -112,10 +112,10 @@ class ViewPetFragment : Fragment() {
                     when (status) {
                         is ViewPetViewModel.Status.Loaded -> {
                             when (status.result) {
-                                GetPetDetailsUseCase.Result.Failure -> {
+                                GetPetDetailsForDisplayUseCase.Result.Failure -> {
                                     setAppBarTitle(getString(R.string.pet_not_found))
                                 }
-                                is GetPetDetailsUseCase.Result.Success -> {
+                                is GetPetDetailsForDisplayUseCase.Result.Success -> {
                                     val fetchedPetName = status.result.fetchedPet.petName
                                     setAppBarTitle(fetchedPetName, getString(R.string.viewing_details))
                                 }
@@ -253,12 +253,12 @@ class PetDetailsFragment(): Fragment() {
                     when (status) {
                         is ViewPetViewModel.Status.Loaded -> {
                             when (status.result) {
-                                GetPetDetailsUseCase.Result.Failure -> {
+                                GetPetDetailsForDisplayUseCase.Result.Failure -> {
                                     binding.loadingFailedLayout.visibility = View.VISIBLE
                                     binding.petDetailsLayout.visibility = View.GONE
                                     binding.loadingScreenLayout.visibility = View.GONE
                                 }
-                                is GetPetDetailsUseCase.Result.Success -> {
+                                is GetPetDetailsForDisplayUseCase.Result.Success -> {
                                     binding.loadingFailedLayout.visibility = View.GONE
                                     binding.petDetailsLayout.visibility = View.VISIBLE
                                     binding.loadingScreenLayout.visibility = View.GONE

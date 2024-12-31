@@ -59,7 +59,22 @@ interface PetDao {
             ) ON weight_pet_id = pet_table.pet_id
             WHERE pet_table.pet_id=:petId LIMIT 1
     """)
-    suspend fun getPetDetails(petId: Long): PetDetailsFetched?
+    suspend fun getPetDetailsForDisplay(petId: Long): PetDetailsForDisplayFetched?
+
+    @Query("""
+            SELECT 
+                pet_table.pet_id AS petId, 
+                pet_table.pet_name AS petName, 
+                pet_table.pet_dob AS petDateOfBirth, 
+                pet_table.pet_species AS petSpecies, 
+                pet_table.pet_breed AS petBreed, 
+                pet_table.pet_sex AS petSex, 
+                passed_away_pet_table.pet_date_of_passing AS petDateOfPassing 
+            FROM pet_table 
+            LEFT JOIN passed_away_pet_table ON pet_table.pet_id=passed_away_pet_table.pet_id 
+            WHERE pet_table.pet_id=:petId
+    """)
+    suspend fun getPetDetailsForEdit(petId: Long): PetDetailsForEdit?
 
     @Query("SELECT * FROM pet_table WHERE pet_id=:petId")
     suspend fun getAsync(petId: Long): Pet?
@@ -111,6 +126,12 @@ interface PetDao {
             "AND (datetime(note_last_updated), note_table.note_id) < (datetime(:lastNoteEditedDate), :lastNoteId) " +
             "ORDER BY datetime(note_last_updated) DESC, note_table.note_id DESC LIMIT :amtLimit")
     suspend fun getNotesOfPetPaginated(petId: Long, lastNoteEditedDate: OffsetDateTime, lastNoteId: Long, amtLimit: Int): List<Note>
+
+    @Upsert
+    suspend fun upsertDateOfPassing(passedAwayPet: PassedAwayPet)
+
+    @Delete
+    suspend fun removeDateOfPassing(passedAwayPet: PassedAwayPet)
 
     @Insert
     suspend fun insert(petEvent: EventPet)

@@ -1,16 +1,19 @@
 package com.hfad.petlogger.screens.pet.editpet
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -19,7 +22,6 @@ import com.hfad.petlogger.common.ConfirmActionUseCase
 import com.hfad.petlogger.common.DatePicker
 import com.hfad.petlogger.screens.event.eventmultiselection.EventMultiSelectionDisplayFragment
 import com.hfad.petlogger.screens.event.eventmultiselection.EventMultiSelectionViewModel
-import com.hfad.petlogger.MainActivity
 import com.hfad.petlogger.screens.photo.mediaselection.MediaSelectionFragment
 import com.hfad.petlogger.screens.photo.mediaselection.MediaSelectionViewModel
 import com.hfad.petlogger.screens.photo.mediaselection.MediaSingleSelectionViewModel
@@ -33,8 +35,8 @@ import com.hfad.petlogger.screens.tag.tagmultiselection.TagMultiSelectionViewMod
 import com.hfad.petlogger.databinding.FragmentEditPetBinding
 import com.hfad.petlogger.databinding.FragmentEditPetDetailsBinding
 import com.hfad.petlogger.common.navigateSafe
-import com.hfad.petlogger.common.observeOnce
 import com.hfad.petlogger.common.selectiontracker.MultiDeselectionDisplay
+import com.hfad.petlogger.common.setAppBarTitle
 import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
 import com.hfad.petlogger.events.EventRepository
 import com.hfad.petlogger.events.usecases.GetAllEventsFromCurrentSelectionUseCaseFactory
@@ -53,6 +55,7 @@ import com.hfad.petlogger.notes.usecases.GetMoreOfAllNotesUseCase
 import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesUseCase
 import com.hfad.petlogger.notes.usecases.GetSearchedNotesFromCurrentSelectionUseCaseFactory
 import com.hfad.petlogger.pets.PetRepository
+import com.hfad.petlogger.pets.usecases.GetPetDetailsForEditUseCase
 import com.hfad.petlogger.photos.usecases.BuildPhotoSearchQueryUseCase
 import com.hfad.petlogger.photos.usecases.GetMoreOfSearchedPhotosUseCase
 import com.hfad.petlogger.photos.usecases.GetMorePhotosOfPetUseCase
@@ -64,6 +67,8 @@ import com.hfad.petlogger.tags.usecases.GetSearchedTagsUseCase
 import com.hfad.petlogger.weights.PetWeightForSelection
 import com.hfad.petlogger.weights.usecases.GetAllWeightsOfPetForSelectionUseCase
 import com.hfad.petlogger.weights.usecases.GetSearchedPetWeightsForSelectionUseCase
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class EditPetFragment : Fragment() {
     private var _binding: FragmentEditPetBinding? = null
@@ -86,8 +91,9 @@ class EditPetFragment : Fragment() {
 
         val mediaRepository = MediaRepository(database, application.applicationContext)
         val petRepository = PetRepository(database, mediaRepository)
+        val getPetDetailsForEdit = GetPetDetailsForEditUseCase(database.petDao, petId)
         editPetViewModel = ViewModelProvider(this,
-            EditPetViewModel.provideFactory(petRepository, petId)
+            EditPetViewModel.provideFactory(petId, petRepository, getPetDetailsForEdit)
         ).get(EditPetViewModel::class.java)
         binding.editPetViewModel = editPetViewModel
 
@@ -103,13 +109,13 @@ class EditPetFragment : Fragment() {
         ).get(PetWeightDeselectionViewModel::class.java)
         binding.petWeightDeselectionViewModel = petWeightsDeselectionViewModel
 
-        editPetViewModel.pet.observe(viewLifecycleOwner, Observer {
-            it?.let {
-                val mainActivity = (activity as MainActivity)
-                mainActivity.setTopAppBarTitle(it.petName)
-                mainActivity.setTopAppBarSubtitle(getString(R.string.editing_pet_details))
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                editPetViewModel.initialPetName.collectLatest {
+                    setAppBarTitle(it, getString(R.string.editing_pet_details))
+                }
             }
-        })
+        }
 
         val eventRepository = EventRepository(database, mediaRepository)
         val getAllEvents = GetMoreOfAllEventsUseCase(eventRepository, eventAmt = 10)
@@ -229,17 +235,20 @@ class EditPetFragment : Fragment() {
             confirmAction()
         }
 
-        editPetViewModel.doneUpdating.observe(viewLifecycleOwner) {isDoneUpdating ->
-            if (isDoneUpdating) {
-                findNavController().navigateSafe(EditPetFragmentDirections.actionEditPetFragmentToViewPetFragment(petId))
-                editPetViewModel.wentBack()
-            }
-        }
-
-        editPetViewModel.goToPetList.observe(viewLifecycleOwner) {shouldGo ->
-            if (shouldGo) {
-                this.findNavController().navigateSafe(EditPetFragmentDirections.actionEditPetFragmentToPetListFragment())
-                editPetViewModel.wentToPetList()
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                editPetViewModel.doneUpdating.collectLatest { doneUpdating ->
+                    if (doneUpdating) {
+                        findNavController().navigateSafe(EditPetFragmentDirections.actionEditPetFragmentToViewPetFragment(petId))
+                        editPetViewModel.wentBack()
+                    }
+                }
+                editPetViewModel.goToPetList.collectLatest { shouldGo ->
+                    if (shouldGo) {
+                        findNavController().navigateSafe(EditPetFragmentDirections.actionEditPetFragmentToPetListFragment())
+                        editPetViewModel.wentToPetList()
+                    }
+                }
             }
         }
 
@@ -273,7 +282,6 @@ class EditPetDetailsFragment : Fragment() {
     private var _binding: FragmentEditPetDetailsBinding? = null
     val binding: FragmentEditPetDetailsBinding get() = _binding!!
     private val editPetViewModel: EditPetViewModel by viewModels({requireParentFragment()})
-    private val tagMultiSelectionViewModel: TagMultiSelectionViewModel by viewModels({requireParentFragment()})
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -285,20 +293,40 @@ class EditPetDetailsFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
 
         binding.editPetViewModel = editPetViewModel
-        // initialize sex pick
-        editPetViewModel.pet.observeOnce(viewLifecycleOwner, Observer {
-            when(it.petSex) {
-                "Male" -> {
-                    binding.petSexMale.isChecked = true
+
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    editPetViewModel.petSex.collectLatest {
+                        when(it) {
+                            "Male" -> {
+                                binding.petSexMale.isChecked = true
+                            }
+                            "Female" -> {
+                                binding.petSexFemale.isChecked = true
+                            }
+                            "Other" -> {
+                                binding.petSexOther.isChecked = true
+                            }
+                        }
+                    }
                 }
-                "Female" -> {
-                    binding.petSexFemale.isChecked = true
-                }
-                "Other" -> {
-                    binding.petSexOther.isChecked = true
+                launch {
+                    editPetViewModel.petStatus.collectLatest {
+                        when (it) {
+                            EditPetViewModel.PetStatus.Active -> {
+                                binding.petDateOfPassingLinearLayout.visibility = View.GONE
+                                binding.petStatusDropDown.setText("Active", false)
+                            }
+                            EditPetViewModel.PetStatus.PassedAway -> {
+                                binding.petDateOfPassingLinearLayout.visibility = View.VISIBLE
+                                binding.petStatusDropDown.setText("Passed Away", false)
+                            }
+                        }
+                    }
                 }
             }
-        })
+        }
 
         binding.petSexSelection.setOnCheckedChangeListener { radioGroup, i ->
             when(binding.petSexSelection.checkedRadioButtonId) {
@@ -310,10 +338,30 @@ class EditPetDetailsFragment : Fragment() {
         }
 
         binding.addPetBirthDateButton.setOnClickListener {
-            DatePicker.generate(editPetViewModel.newPetDOB).show(parentFragmentManager, "DATE_PICKER")
+            DatePicker.generate(editPetViewModel.newPetDOB).show(parentFragmentManager, "DATE_OF_BIRTH_PICKER")
+        }
+
+        binding.addPetDateOfPassingButton.setOnClickListener {
+            DatePicker.generate(editPetViewModel.newPetDateOfPassing).show(parentFragmentManager, "DATE_OF_PASSING_PICKER")
         }
 
         return view
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        val statusOptions = listOf("Active", "Passed Away")
+        val adapter = ArrayAdapter<String>(requireContext(), com.google.android.material.R.layout.support_simple_spinner_dropdown_item, statusOptions)
+        binding.petStatusDropDown.setAdapter(adapter)
+        adapter.notifyDataSetChanged()
+        binding.petStatusDropDown.setOnItemClickListener { _, _, position, _ ->
+            if (position == 1) {
+                editPetViewModel.setPetStatus(EditPetViewModel.PetStatus.PassedAway)
+            } else {
+                editPetViewModel.setPetStatus(EditPetViewModel.PetStatus.Active)
+            }
+        }
     }
 
     override fun onDestroyView() {

@@ -163,4 +163,5 @@
     <string name="pet_date_of_passing_header">Date of Passing</string>
     <string name="loading">Loading...</string>
     <string name="pet_not_found">Pet Not Found</string>
+    <string name="status">Status</string>
 </resources>
