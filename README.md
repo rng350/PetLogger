@@ -1,9 +1,10 @@
 # **PetLogger**
-PetLogger is a native Android application for Android for monitoring your pets' health.
+PetLogger is a native Android application for monitoring your pets' health.
 
-Note: Your device needs to be at least Android 5.0 in order to run the app on your phone.
+Although this remains a work-in-progress, enough has been done for it to achieve its primary purpose.
 
-Also, this project still remains a work-in-progress, although enough has been done for it to achieve its primary purpose.
+## **Requirements**
+Note: Your device needs to have at least Android 5.0 installed in order to run the app.
 
 ## **Features**
 The app features multiple entity types with very inter-connected relationships.
@@ -18,7 +19,6 @@ Weight logs are attached to only a single pet.
 ### **Event Logs**
 Event logs may be attached to multiple pets.
 ### **Notes**
-Notes
 ### **Photos**
 ### **Tags**
 You may attach tags to pets, pet weight logs, event logs, notes, and photos. The intended purpose of tags is to facilitate data searching and organization.
