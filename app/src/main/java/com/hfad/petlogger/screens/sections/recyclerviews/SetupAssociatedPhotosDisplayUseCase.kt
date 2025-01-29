@@ -9,11 +9,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.hfad.petlogger.R
-import com.hfad.petlogger.databinding.ItemSelectedPhotoBinding
-import com.hfad.petlogger.photos.Photo
 import com.hfad.petlogger.common.recyclerviews.DataItemBindingInterface
 import com.hfad.petlogger.common.recyclerviews.GenericRecyclerViewAdapter
 import com.hfad.petlogger.common.util.Navigator
+import com.hfad.petlogger.databinding.ItemPhotoBinding
+import com.hfad.petlogger.photos.Photo
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -26,8 +26,8 @@ class SetupAssociatedPhotosDisplayUseCase(private val photos: StateFlow<List<Pho
                                           private val lifecycleOwner: LifecycleOwner
 ) {
     operator fun invoke() {
-        val adapter = GenericRecyclerViewAdapter<Photo, ItemSelectedPhotoBinding>(
-            layoutId = R.layout.item_selected_photo,
+        val adapter = GenericRecyclerViewAdapter<Photo, ItemPhotoBinding>(
+            layoutId = R.layout.item_photo,
             bindingInterface = createPhotosAssociatedDisplayItemBindingInterface()
         )
         recyclerView.adapter = adapter
@@ -41,10 +41,10 @@ class SetupAssociatedPhotosDisplayUseCase(private val photos: StateFlow<List<Pho
         }
     }
     private fun createPhotosAssociatedDisplayItemBindingInterface() = object:
-        DataItemBindingInterface<Photo, ItemSelectedPhotoBinding> {
+        DataItemBindingInterface<Photo, ItemPhotoBinding> {
         override fun bind(
             item: Photo,
-            binder: ItemSelectedPhotoBinding,
+            binder: ItemPhotoBinding,
             itemLifecycleOwner: LifecycleOwner
         ) {
             Glide.with(context).clear(binder.photo)

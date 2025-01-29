@@ -1,20 +1,19 @@
 package com.hfad.petlogger.screens.sections.recyclerviews
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.hfad.petlogger.common.CheckableItem
 import com.hfad.petlogger.R
-import com.hfad.petlogger.databinding.CheckablePetItemBinding
-import com.hfad.petlogger.pets.PetWithProfilePic
+import com.hfad.petlogger.common.CheckableItem
 import com.hfad.petlogger.common.recyclerviews.DataItemBindingInterface
 import com.hfad.petlogger.common.recyclerviews.GenericRecyclerViewAdapter
 import com.hfad.petlogger.common.selectiontracker.MultiSelectionTracker
+import com.hfad.petlogger.databinding.PetItemCellBinding
+import com.hfad.petlogger.pets.PetWithProfilePic
 
 class SetupPetMultiPickerUseCase(private val petList: LiveData<List<CheckableItem<PetWithProfilePic>>>,
                                  private val selection: LiveData<List<PetWithProfilePic>>,
@@ -24,13 +23,11 @@ class SetupPetMultiPickerUseCase(private val petList: LiveData<List<CheckableIte
                                  private val context: Context
 ) {
     operator fun invoke() {
-        val adapter = GenericRecyclerViewAdapter<CheckableItem<PetWithProfilePic>, CheckablePetItemBinding>(
-            layoutId = R.layout.checkable_pet_item,
+        val adapter = GenericRecyclerViewAdapter<CheckableItem<PetWithProfilePic>, PetItemCellBinding>(
+            layoutId = R.layout.pet_item_cell,
             bindingInterface = createCheckablePetWithProfilePhotoItemBindingInterface()
         )
         recyclerView.adapter = adapter
-
-        Log.d("SetupRV", "Pet list: ${petList.value}")
 
         petList.observe(lifecycleOwner, Observer {
             adapter.submitList(it.toMutableList())
@@ -38,13 +35,13 @@ class SetupPetMultiPickerUseCase(private val petList: LiveData<List<CheckableIte
     }
 
     private fun createCheckablePetWithProfilePhotoItemBindingInterface() = object:
-        DataItemBindingInterface<CheckableItem<PetWithProfilePic>, CheckablePetItemBinding> {
+        DataItemBindingInterface<CheckableItem<PetWithProfilePic>, PetItemCellBinding> {
         override fun bind(
             item: CheckableItem<PetWithProfilePic>,
-            binder: CheckablePetItemBinding,
+            binder: PetItemCellBinding,
             itemLifecycleOwner: LifecycleOwner
         ) {
-            binder.checkablePet = item
+            binder.petCard.isCheckable = true
             binder.pet = item.item
 
             // clear previous requests on viewholder

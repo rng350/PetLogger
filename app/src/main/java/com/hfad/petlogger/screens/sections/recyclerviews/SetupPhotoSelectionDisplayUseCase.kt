@@ -11,10 +11,10 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.hfad.petlogger.R
 import com.hfad.petlogger.common.CheckableItem
-import com.hfad.petlogger.databinding.ItemSelectedPhotoBinding
-import com.hfad.petlogger.photos.Photo
 import com.hfad.petlogger.common.recyclerviews.DataItemBindingInterface
 import com.hfad.petlogger.common.recyclerviews.GenericRecyclerViewAdapter
+import com.hfad.petlogger.databinding.ItemPhotoBinding
+import com.hfad.petlogger.photos.Photo
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -28,8 +28,8 @@ class SetupPhotoSelectionDisplayUseCase(
     private val photoToggle: (photo: CheckableItem<Photo>) -> Unit
 ) {
     operator fun invoke() {
-        val adapter = GenericRecyclerViewAdapter<CheckableItem<Photo>, ItemSelectedPhotoBinding>(
-            layoutId = R.layout.item_selected_photo,
+        val adapter = GenericRecyclerViewAdapter<CheckableItem<Photo>, ItemPhotoBinding>(
+            layoutId = R.layout.item_photo,
             bindingInterface = createPhotoSelectionDisplayItemBindingInterface()
         )
         recyclerView.adapter = adapter
@@ -44,13 +44,13 @@ class SetupPhotoSelectionDisplayUseCase(
     }
 
     private fun createPhotoSelectionDisplayItemBindingInterface() = object:
-        DataItemBindingInterface<CheckableItem<Photo>, ItemSelectedPhotoBinding> {
+        DataItemBindingInterface<CheckableItem<Photo>, ItemPhotoBinding> {
         override fun bind(
             item: CheckableItem<Photo>,
-            binder: ItemSelectedPhotoBinding,
+            binder: ItemPhotoBinding,
             itemLifecycleOwner: LifecycleOwner
         ) {
-            binder.checkablePhoto = item
+            binder.photoCard.isCheckable = true
             Glide.with(context).clear(binder.photo)
             item.let {
                 Glide.with(context)

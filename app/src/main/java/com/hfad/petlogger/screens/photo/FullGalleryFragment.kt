@@ -56,7 +56,7 @@ class FullGalleryFragment : Fragment() {
             lifecycleOwner = viewLifecycleOwner
         ).invoke()
 
-        binding.gallery.addItemDecoration(PhotoItemSpacingDecoration())
+        //binding.gallery.addItemDecoration(PhotoItemSpacingDecoration())
 
         RecyclerViewPaginator(
             recyclerView = binding.gallery,

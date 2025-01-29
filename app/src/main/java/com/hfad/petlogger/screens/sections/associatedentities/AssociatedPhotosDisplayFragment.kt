@@ -37,7 +37,7 @@ class AssociatedPhotosDisplayFragment : Fragment() {
             viewLifecycleOwner
         )()
 
-        binding.gallery.addItemDecoration(PhotoItemSpacingDecoration())
+        //binding.gallery.addItemDecoration(PhotoItemSpacingDecoration())
 
         RecyclerViewPaginator(
             recyclerView = binding.gallery,

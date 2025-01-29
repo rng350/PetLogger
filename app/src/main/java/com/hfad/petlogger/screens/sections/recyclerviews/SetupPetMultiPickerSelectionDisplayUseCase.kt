@@ -8,12 +8,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.hfad.petlogger.R
-import com.hfad.petlogger.databinding.ItemSelectedPetBinding
-import com.hfad.petlogger.pets.PetWithProfilePic
 import com.hfad.petlogger.common.recyclerviews.DataItemBindingInterface
 import com.hfad.petlogger.common.recyclerviews.GenericRecyclerViewAdapter
 import com.hfad.petlogger.common.selectiontracker.MultiSelectionTracker
 import com.hfad.petlogger.databinding.PetItemCellBinding
+import com.hfad.petlogger.pets.PetWithProfilePic
 
 class SetupPetMultiPickerSelectionDisplayUseCase(private val selection: LiveData<List<PetWithProfilePic>>,
                                                  private val selectionTracker: MultiSelectionTracker<PetWithProfilePic>,
@@ -21,7 +20,6 @@ class SetupPetMultiPickerSelectionDisplayUseCase(private val selection: LiveData
                                                  private val lifecycleOwner: LifecycleOwner,
                                                  private val context: Context
 ) {
-
     operator fun invoke() {
         val adapter = GenericRecyclerViewAdapter<PetWithProfilePic, PetItemCellBinding>(
             layoutId = R.layout.pet_item_cell,
