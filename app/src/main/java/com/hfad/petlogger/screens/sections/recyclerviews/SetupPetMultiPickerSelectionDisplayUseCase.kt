@@ -13,6 +13,7 @@ import com.hfad.petlogger.pets.PetWithProfilePic
 import com.hfad.petlogger.common.recyclerviews.DataItemBindingInterface
 import com.hfad.petlogger.common.recyclerviews.GenericRecyclerViewAdapter
 import com.hfad.petlogger.common.selectiontracker.MultiSelectionTracker
+import com.hfad.petlogger.databinding.PetItemCellBinding
 
 class SetupPetMultiPickerSelectionDisplayUseCase(private val selection: LiveData<List<PetWithProfilePic>>,
                                                  private val selectionTracker: MultiSelectionTracker<PetWithProfilePic>,
@@ -22,8 +23,8 @@ class SetupPetMultiPickerSelectionDisplayUseCase(private val selection: LiveData
 ) {
 
     operator fun invoke() {
-        val adapter = GenericRecyclerViewAdapter<PetWithProfilePic, ItemSelectedPetBinding>(
-            layoutId = R.layout.item_selected_pet,
+        val adapter = GenericRecyclerViewAdapter<PetWithProfilePic, PetItemCellBinding>(
+            layoutId = R.layout.pet_item_cell,
             bindingInterface = createCheckablePetWithProfilePhotoItemBindingInterface()
         )
         recyclerView.adapter = adapter
@@ -34,10 +35,10 @@ class SetupPetMultiPickerSelectionDisplayUseCase(private val selection: LiveData
     }
 
     private fun createCheckablePetWithProfilePhotoItemBindingInterface() = object:
-        DataItemBindingInterface<PetWithProfilePic, ItemSelectedPetBinding> {
+        DataItemBindingInterface<PetWithProfilePic, PetItemCellBinding> {
         override fun bind(
             item: PetWithProfilePic,
-            binder: ItemSelectedPetBinding,
+            binder: PetItemCellBinding,
             itemLifecycleOwner: LifecycleOwner
         ) {
             binder.pet = item

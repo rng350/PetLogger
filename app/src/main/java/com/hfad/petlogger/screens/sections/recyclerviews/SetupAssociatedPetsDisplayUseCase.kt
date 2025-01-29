@@ -9,11 +9,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.hfad.petlogger.R
-import com.hfad.petlogger.databinding.PetItemBinding
-import com.hfad.petlogger.pets.PetWithProfilePic
 import com.hfad.petlogger.common.recyclerviews.DataItemBindingInterface
 import com.hfad.petlogger.common.recyclerviews.GenericRecyclerViewAdapter
 import com.hfad.petlogger.common.util.Navigator
+import com.hfad.petlogger.databinding.PetItemCellBinding
+import com.hfad.petlogger.pets.PetWithProfilePic
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -26,8 +26,8 @@ class SetupAssociatedPetsDisplayUseCase(private val pets: StateFlow<List<PetWith
                                         private val lifecycleOwner: LifecycleOwner
 ) {
     operator fun invoke() {
-        val adapter = GenericRecyclerViewAdapter<PetWithProfilePic, PetItemBinding>(
-            layoutId = R.layout.pet_item,
+        val adapter = GenericRecyclerViewAdapter<PetWithProfilePic, PetItemCellBinding>(
+            layoutId = R.layout.pet_item_cell,
             bindingInterface = createPetsAssociatedDisplayItemBindingInterface()
         )
         recyclerView.adapter = adapter
@@ -42,10 +42,10 @@ class SetupAssociatedPetsDisplayUseCase(private val pets: StateFlow<List<PetWith
     }
 
     private fun createPetsAssociatedDisplayItemBindingInterface() = object:
-        DataItemBindingInterface<PetWithProfilePic, PetItemBinding> {
+        DataItemBindingInterface<PetWithProfilePic, PetItemCellBinding> {
         override fun bind(
             item: PetWithProfilePic,
-            binder: PetItemBinding,
+            binder: PetItemCellBinding,
             itemLifecycleOwner: LifecycleOwner
         ) {
             binder.pet = item
