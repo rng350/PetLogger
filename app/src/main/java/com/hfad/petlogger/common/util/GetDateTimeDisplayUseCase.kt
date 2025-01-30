@@ -8,11 +8,13 @@ class GetDateTimeDisplayUseCase {
     private val dateDisplayUseCase = GetDateDisplayUseCase()
     private val timeDisplayUseCase = GetTimeDisplayUseCase()
 
-    operator fun invoke(dateTime: OffsetDateTime): String {
+    operator fun invoke(dateTime: OffsetDateTime?): String {
+        if (dateTime==null) return "N/A"
         return invoke(dateTime.atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime())
     }
 
-    operator fun invoke(dateTime: LocalDateTime): String {
+    operator fun invoke(dateTime: LocalDateTime?): String {
+        if (dateTime==null) return "N/A"
         return "${dateDisplayUseCase(dateTime)} at ${timeDisplayUseCase.invoke(dateTime)}"
     }
 }

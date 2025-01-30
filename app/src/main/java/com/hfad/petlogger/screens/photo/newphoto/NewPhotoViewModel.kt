@@ -7,20 +7,19 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.hfad.petlogger.common.util.GetDateTimeDisplayUseCase
 import com.hfad.petlogger.notes.Note
+import com.hfad.petlogger.photos.MediaRepository
 import com.hfad.petlogger.photos.Photo
 import com.hfad.petlogger.tags.Tag
-import com.hfad.petlogger.photos.MediaRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import java.time.ZoneId
 
 class NewPhotoViewModel(private val mediaRepository: MediaRepository) : ViewModel() {
     val photo = MutableLiveData<Photo?>(null)
     val photoTitle = MutableLiveData<String>("")
     val photoFilesizeReadable: String get() = String.format("%.2f", photo.value?.size)
-    //val photoDate: String get() = photo.value?.date?.toString() ?: "N/A"
-    private val _photoDate: MutableLiveData<String> = MutableLiveData<String>("N/A")
+    private val _photoDate: MutableLiveData<String> = MutableLiveData<String>("")
     val photoDate: LiveData<String> get() = _photoDate
     val _goBack: MutableLiveData<Boolean> = MutableLiveData(false)
     val goBack: LiveData<Boolean> get() = _goBack
@@ -30,14 +29,7 @@ class NewPhotoViewModel(private val mediaRepository: MediaRepository) : ViewMode
             val photos = mediaRepository.retrievePhotos(context, listOf<Uri>(uri))
             if (photos.isNotEmpty()) {
                 photo.value = photos[0]
-                _photoDate.value =
-                    photo.
-                    value?.
-                    date?.
-                    atZoneSameInstant(ZoneId.systemDefault())?.
-                    toLocalDateTime().
-                    toString()
-                        ?: "N/A"
+                _photoDate.value = GetDateTimeDisplayUseCase().invoke(photo.value?.date)
             }
         }
     }

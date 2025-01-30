@@ -4,14 +4,19 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import com.hfad.petlogger.common.SelectableDateTime
+import com.hfad.petlogger.common.util.GetDateDisplayUseCase
 import com.hfad.petlogger.events.Event
 import com.hfad.petlogger.notes.Note
 import com.hfad.petlogger.photos.Photo
 import com.hfad.petlogger.tags.Tag
 import com.hfad.petlogger.events.EventRepository
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class EditEventViewModel(private val eventRepository: EventRepository, eventID: Long): ViewModel() {
@@ -21,6 +26,16 @@ class EditEventViewModel(private val eventRepository: EventRepository, eventID: 
     val newEventDetails = MutableLiveData<String>()
     private val _goToEventsList = MutableLiveData(false)
     val goToEventsList: LiveData<Boolean> get() = _goToEventsList
+    val eventDateDisplay: StateFlow<String> = eventDateTime.dateDisplay.asFlow().stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = ""
+    )
+    val eventTimeDisplay: StateFlow<String> = eventDateTime.timeDisplay.asFlow().stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = ""
+    )
 
     private val _goToViewEvent = MutableLiveData(false)
     val goToViewEvent: LiveData<Boolean> get() = _goToViewEvent

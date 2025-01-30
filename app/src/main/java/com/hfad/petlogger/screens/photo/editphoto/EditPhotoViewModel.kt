@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.hfad.petlogger.common.util.GetDateTimeDisplayUseCase
 import com.hfad.petlogger.notes.Note
 import com.hfad.petlogger.photos.Photo
 import com.hfad.petlogger.tags.Tag
@@ -15,7 +16,7 @@ import kotlinx.coroutines.launch
 class EditPhotoViewModel(private val mediaRepository: MediaRepository, private val photoId: Long) : ViewModel() {
     private val photoInitial = MutableLiveData<Photo>()
     val photoNew = MutableLiveData<Photo>()
-    private val _photoDate: MutableLiveData<String> = MutableLiveData<String>("N/A")
+    private val _photoDate: MutableLiveData<String> = MutableLiveData<String>("")
     val photoDate: LiveData<String> get() = _photoDate
     private val _goToGalleryList = MutableLiveData(false)
     val goToGalleryList: LiveData<Boolean> get() = _goToGalleryList
@@ -27,6 +28,7 @@ class EditPhotoViewModel(private val mediaRepository: MediaRepository, private v
         viewModelScope.launch {
             photoInitial.value = mediaRepository.getPhoto(photoId)
             photoNew.value = photoInitial.value?.copy()
+            _photoDate.value = GetDateTimeDisplayUseCase().invoke(photoInitial.value?.date)
         }
     }
 

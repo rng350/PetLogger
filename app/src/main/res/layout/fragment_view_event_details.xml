@@ -42,7 +42,7 @@
                     android:id="@+id/eventDateText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@{viewEventViewModel.eventDate.toString()}"
+                    android:text="@{viewEventViewModel.eventDate}"
                     android:enabled="false"/>
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -55,7 +55,7 @@
                     android:id="@+id/eventTimeText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@{viewEventViewModel.eventTime.toString()}"
+                    android:text="@{viewEventViewModel.eventTime}"
                     android:enabled="false"/>
             </com.google.android.material.textfield.TextInputLayout>
 
