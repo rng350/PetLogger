@@ -13,7 +13,7 @@ import com.hfad.petlogger.common.recyclerviews.DataItemBindingInterface
 import com.hfad.petlogger.common.recyclerviews.GenericRecyclerViewAdapter
 import com.hfad.petlogger.common.selectiontracker.SingleSelectionTracker
 import com.hfad.petlogger.databinding.PetItemCellBinding
-import com.hfad.petlogger.pets.PetWithProfilePic
+import com.hfad.petlogger.pets.data.PetWithProfilePic
 
 class SetupSinglePetPickerUseCase(private val petList: LiveData<List<CheckableItem<PetWithProfilePic>>>,
                                   private val currentSelection: LiveData<PetWithProfilePic?>,

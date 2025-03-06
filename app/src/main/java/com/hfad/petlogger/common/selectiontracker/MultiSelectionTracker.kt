@@ -4,11 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.hfad.petlogger.common.CheckableItem
 import com.hfad.petlogger.common.copyOf
+import com.hfad.petlogger.common.usecases.GetItemsUseCase
+import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
+import com.hfad.petlogger.common.usecases.GetSearchedItemsUseCase
 import com.hfad.petlogger.common.usecases.factories.GetAllCurrentSelectionUseCaseFactory
 import com.hfad.petlogger.common.usecases.factories.GetSearchedCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
-import com.hfad.petlogger.common.usecases.GetItemsUseCase
-import com.hfad.petlogger.common.usecases.GetSearchedItemsUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch

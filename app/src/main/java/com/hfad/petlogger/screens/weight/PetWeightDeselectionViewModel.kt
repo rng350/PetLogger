@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.hfad.petlogger.common.CheckableItem
 import com.hfad.petlogger.common.selectiontracker.MultiDeselectionDisplay
-import com.hfad.petlogger.weights.PetWeightForSelection
+import com.hfad.petlogger.weights.data.PetWeightForSelection
 import kotlinx.coroutines.flow.StateFlow
 
 class PetWeightDeselectionViewModel(val deselectionTrackerDisplay: MultiDeselectionDisplay<PetWeightForSelection>) : ViewModel() {

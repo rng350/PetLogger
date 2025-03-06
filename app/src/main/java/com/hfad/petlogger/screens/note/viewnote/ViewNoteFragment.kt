@@ -1,45 +1,42 @@
 package com.hfad.petlogger.screens.note.viewnote
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
-import com.hfad.petlogger.common.PetLoggerDatabase
 import com.hfad.petlogger.R
+import com.hfad.petlogger.common.PetLoggerDatabase
+import com.hfad.petlogger.common.navigateSafe
 import com.hfad.petlogger.databinding.FragmentViewNoteBinding
 import com.hfad.petlogger.databinding.FragmentViewNoteDetailsBinding
-import com.hfad.petlogger.common.navigateSafe
-import com.hfad.petlogger.events.usecases.GetMoreEventsOfNoteUseCase
-import com.hfad.petlogger.pets.usecases.GetMorePetsOfNoteUseCase
-import com.hfad.petlogger.photos.usecases.GetMorePhotosOfNoteUseCase
-import com.hfad.petlogger.tags.usecases.GetTagsOfNoteUseCase
-import com.hfad.petlogger.photos.MediaRepository
-import com.hfad.petlogger.notes.NoteRepository
-import com.hfad.petlogger.tags.TagRepository
-import com.hfad.petlogger.screens.sections.associatedentities.AssociatedEventsDisplayFragment
-import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPetsDisplayFragment
-import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPetsDisplayViewModel
-import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPhotosDisplayFragment
-import com.hfad.petlogger.screens.sections.associatedentities.AssociatedTagsDisplayViewModel
-import com.hfad.petlogger.common.setAppBarTitle
-import com.hfad.petlogger.events.usecases.BuildEventSearchQueryUseCase
-import com.hfad.petlogger.events.usecases.GetMoreOfSearchedEventsUseCase
-import com.hfad.petlogger.pets.usecases.BuildPetSearchQueryUseCase
-import com.hfad.petlogger.pets.usecases.GetMoreOfSearchedPetsUseCase
-import com.hfad.petlogger.photos.usecases.BuildPhotoSearchQueryUseCase
-import com.hfad.petlogger.photos.usecases.GetMoreOfSearchedPhotosUseCase
+import com.hfad.petlogger.events.domain.usecases.BuildEventSearchQueryUseCase
+import com.hfad.petlogger.events.domain.usecases.GetMoreEventsOfNoteUseCase
+import com.hfad.petlogger.events.domain.usecases.GetMoreOfSearchedEventsUseCase
+import com.hfad.petlogger.notes.domain.NoteRepository
+import com.hfad.petlogger.pets.domain.usecases.BuildPetSearchQueryUseCase
+import com.hfad.petlogger.pets.domain.usecases.GetMoreOfSearchedPetsUseCase
+import com.hfad.petlogger.pets.domain.usecases.GetMorePetsOfNoteUseCase
+import com.hfad.petlogger.photos.domain.MediaRepository
+import com.hfad.petlogger.photos.domain.usecases.BuildPhotoSearchQueryUseCase
+import com.hfad.petlogger.photos.domain.usecases.GetMoreOfSearchedPhotosUseCase
+import com.hfad.petlogger.photos.domain.usecases.GetMorePhotosOfNoteUseCase
 import com.hfad.petlogger.screens.event.EventListViewModel
 import com.hfad.petlogger.screens.pet.PetListViewModel
 import com.hfad.petlogger.screens.photo.FullGalleryViewModel
+import com.hfad.petlogger.screens.sections.associatedentities.AssociatedEventsDisplayFragment
+import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPetsDisplayFragment
+import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPhotosDisplayFragment
+import com.hfad.petlogger.screens.sections.associatedentities.AssociatedTagsDisplayViewModel
+import com.hfad.petlogger.tags.domain.TagRepository
+import com.hfad.petlogger.tags.domain.usecases.GetTagsOfNoteUseCase
 
 class ViewNoteFragment : Fragment() {
     private var _binding: FragmentViewNoteBinding? = null
@@ -95,20 +92,17 @@ class ViewNoteFragment : Fragment() {
             AssociatedTagsDisplayViewModel::class.java)
         binding.associatedTagsDisplayViewModel = associatedTagsViewModel
 
-        viewNoteViewModel.note.observe(viewLifecycleOwner, Observer {
-            it?.let {
-                setAppBarTitle(title = it.title.ifEmpty { getString(R.string.view_untitled_note_header) }, subtitle = getString(
-                    R.string.viewing_note_details
-                ))
-            }
-        })
-
-        binding.editButton.setOnClickListener {
-            findNavController().navigateSafe(ViewNoteFragmentDirections.actionViewNoteFragmentToEditNoteFragment(noteId))
-        }
-
-        binding.backButton.setOnClickListener {
+        binding.viewNoteTopAppBar.setNavigationOnClickListener {
             findNavController().popBackStack()
+        }
+        binding.viewNoteTopAppBar.setOnMenuItemClickListener { menuItem ->
+            when(menuItem.itemId) {
+                R.id.edit -> {
+                    findNavController().navigateSafe(ViewNoteFragmentDirections.actionViewNoteFragmentToEditNoteFragment(noteId))
+                    true
+                }
+                else -> false
+            }
         }
 
         binding.viewPager.offscreenPageLimit = 4

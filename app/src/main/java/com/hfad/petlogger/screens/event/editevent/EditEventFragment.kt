@@ -1,58 +1,56 @@
 package com.hfad.petlogger.screens.event.editevent
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
-import com.hfad.petlogger.common.ConfirmActionUseCase
-import com.hfad.petlogger.common.DatePicker
-import com.hfad.petlogger.screens.photo.mediaselection.MediaSelectionFragment
-import com.hfad.petlogger.screens.photo.mediaselection.MediaSelectionViewModel
-import com.hfad.petlogger.screens.note.notemultiselection.NoteMultiSelectionDisplayFragment
-import com.hfad.petlogger.screens.note.notemultiselection.NoteMultiSelectionViewModel
-import com.hfad.petlogger.common.PetLoggerDatabase
-import com.hfad.petlogger.screens.pet.petmultiselection.PetMultiSelectionViewModel
 import com.hfad.petlogger.R
-import com.hfad.petlogger.screens.tag.tagmultiselection.TagMultiSelectionViewModel
-import com.hfad.petlogger.common.TimePicker
+import com.hfad.petlogger.common.PetLoggerDatabase
+import com.hfad.petlogger.common.datetimeselection.DatePicker
+import com.hfad.petlogger.common.datetimeselection.TimePicker
+import com.hfad.petlogger.common.navigateSafe
+import com.hfad.petlogger.common.usecases.ConfirmActionUseCase
+import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
 import com.hfad.petlogger.databinding.FragmentEditEventBinding
 import com.hfad.petlogger.databinding.FragmentEditEventDetailsBinding
-import com.hfad.petlogger.common.navigateSafe
-import com.hfad.petlogger.tags.usecases.GetAllTagsUseCase
-import com.hfad.petlogger.notes.usecases.GetNotesOfEventUseCase
-import com.hfad.petlogger.pets.usecases.GetPetsOfEventUseCase
-import com.hfad.petlogger.tags.usecases.GetTagsOfEventUseCase
-import com.hfad.petlogger.events.EventRepository
-import com.hfad.petlogger.photos.MediaRepository
-import com.hfad.petlogger.notes.NoteRepository
-import com.hfad.petlogger.pets.PetRepository
-import com.hfad.petlogger.tags.TagRepository
-import com.hfad.petlogger.common.setAppBarTitle
-import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
-import com.hfad.petlogger.notes.usecases.GetAllNotesFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.notes.usecases.GetMoreOfAllNotesUseCase
-import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesUseCase
-import com.hfad.petlogger.notes.usecases.GetSearchedNotesFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.pets.usecases.GetAllPetsFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.pets.usecases.GetMoreOfAllPetsUseCase
-import com.hfad.petlogger.pets.usecases.GetMoreOfSearchedPetsUseCase
-import com.hfad.petlogger.pets.usecases.GetSearchedPetsFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.photos.usecases.BuildPhotoSearchQueryUseCase
-import com.hfad.petlogger.photos.usecases.GetMoreOfSearchedPhotosUseCase
-import com.hfad.petlogger.photos.usecases.GetMorePhotosOfEventUseCase
-import com.hfad.petlogger.photos.usecases.GetPhotosOfEventUseCase
-import com.hfad.petlogger.tags.usecases.GetAllTagsFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.tags.usecases.GetSearchedTagsFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.tags.usecases.GetSearchedTagsUseCase
+import com.hfad.petlogger.events.domain.EventRepository
+import com.hfad.petlogger.notes.domain.NoteRepository
+import com.hfad.petlogger.notes.domain.usecases.GetAllNotesFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.notes.domain.usecases.GetMoreOfAllNotesUseCase
+import com.hfad.petlogger.notes.domain.usecases.GetMoreOfSearchedNotesUseCase
+import com.hfad.petlogger.notes.domain.usecases.GetNotesOfEventUseCase
+import com.hfad.petlogger.notes.domain.usecases.GetSearchedNotesFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.pets.domain.PetRepository
+import com.hfad.petlogger.pets.domain.usecases.GetAllPetsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.pets.domain.usecases.GetMoreOfAllPetsUseCase
+import com.hfad.petlogger.pets.domain.usecases.GetMoreOfSearchedPetsUseCase
+import com.hfad.petlogger.pets.domain.usecases.GetPetsOfEventUseCase
+import com.hfad.petlogger.pets.domain.usecases.GetSearchedPetsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.photos.domain.MediaRepository
+import com.hfad.petlogger.photos.domain.usecases.BuildPhotoSearchQueryUseCase
+import com.hfad.petlogger.photos.domain.usecases.GetMoreOfSearchedPhotosUseCase
+import com.hfad.petlogger.photos.domain.usecases.GetMorePhotosOfEventUseCase
+import com.hfad.petlogger.photos.domain.usecases.GetPhotosOfEventUseCase
+import com.hfad.petlogger.screens.note.notemultiselection.NoteMultiSelectionDisplayFragment
+import com.hfad.petlogger.screens.note.notemultiselection.NoteMultiSelectionViewModel
+import com.hfad.petlogger.screens.pet.petmultiselection.PetMultiSelectionViewModel
+import com.hfad.petlogger.screens.photo.mediaselection.MediaSelectionFragment
+import com.hfad.petlogger.screens.photo.mediaselection.MediaSelectionViewModel
+import com.hfad.petlogger.screens.tag.tagmultiselection.TagMultiSelectionViewModel
+import com.hfad.petlogger.tags.domain.TagRepository
+import com.hfad.petlogger.tags.domain.usecases.GetAllTagsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.tags.domain.usecases.GetAllTagsUseCase
+import com.hfad.petlogger.tags.domain.usecases.GetSearchedTagsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.tags.domain.usecases.GetSearchedTagsUseCase
+import com.hfad.petlogger.tags.domain.usecases.GetTagsOfEventUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -150,12 +148,6 @@ class EditEventFragment : Fragment() {
         ).get(TagMultiSelectionViewModel::class.java)
         binding.tagMultiSelectionViewModel = tagMultiSelectionViewModel
 
-        editEventViewModel.event.observe(viewLifecycleOwner, Observer {
-            it?.let {
-                setAppBarTitle(title = it.title, subtitle = getString(R.string.editing_event_details))
-            }
-        })
-
         binding.viewPager.offscreenPageLimit = 3
         binding.viewPager.adapter = EditEventViewPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
         mediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
@@ -168,22 +160,11 @@ class EditEventFragment : Fragment() {
         }
         mediator?.attach()
 
-        binding.submitChangesButton.setOnClickListener {
-            editEventViewModel.submitChanges(
-                petsToAdd = petMultiSelectionViewModel.getPetsToAdd(),
-                petsToRemove = petMultiSelectionViewModel.getPetsToRemove(),
-                photosToAdd = mediaSelectionViewModel.getPhotosToAdd(),
-                photosToRemove = mediaSelectionViewModel.getPhotosToRemove(),
-                notesToAdd = noteMultiSelectionViewModel.getNotesToAdd(),
-                notesToRemove = noteMultiSelectionViewModel.getNotesToRemove(),
-                tagsToAdd = tagMultiSelectionViewModel.getTagsToAdd(),
-                tagsToRemove = tagMultiSelectionViewModel.getTagsToRemove()
-            )
-        }
-        binding.cancelButton.setOnClickListener {
+        binding.editEventTopAppBar.setNavigationOnClickListener {
             this.findNavController().popBackStack()
         }
-        val confirmAction = ConfirmActionUseCase(
+
+        val confirmDelete = ConfirmActionUseCase(
             dialogTitle = resources.getString(R.string.confirm_event_deletion_title),
             dialogMessage = resources.getString(R.string.confirm_event_deletion_message),
             onPositiveButtonClick = { dialog, which ->
@@ -192,9 +173,29 @@ class EditEventFragment : Fragment() {
             },
             context = requireContext()
         )
-        binding.deleteEventButton.setOnClickListener {
-            confirmAction()
+        binding.editEventTopAppBar.setOnMenuItemClickListener { menuItem ->
+            when(menuItem.itemId) {
+                R.id.delete -> {
+                    confirmDelete()
+                    true
+                }
+                R.id.submit -> {
+                    editEventViewModel.submitChanges(
+                        petsToAdd = petMultiSelectionViewModel.getPetsToAdd(),
+                        petsToRemove = petMultiSelectionViewModel.getPetsToRemove(),
+                        photosToAdd = mediaSelectionViewModel.getPhotosToAdd(),
+                        photosToRemove = mediaSelectionViewModel.getPhotosToRemove(),
+                        notesToAdd = noteMultiSelectionViewModel.getNotesToAdd(),
+                        notesToRemove = noteMultiSelectionViewModel.getNotesToRemove(),
+                        tagsToAdd = tagMultiSelectionViewModel.getTagsToAdd(),
+                        tagsToRemove = tagMultiSelectionViewModel.getTagsToRemove()
+                    )
+                    true
+                }
+                else -> false
+            }
         }
+
         editEventViewModel.goToEventsList.observe(viewLifecycleOwner) {
             if (it == true) {
                 editEventViewModel.onNavigateToEventsList()

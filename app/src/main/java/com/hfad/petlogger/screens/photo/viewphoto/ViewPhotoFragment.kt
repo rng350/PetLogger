@@ -1,45 +1,43 @@
 package com.hfad.petlogger.screens.photo.viewphoto
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.tabs.TabLayoutMediator
-import com.hfad.petlogger.common.PetLoggerDatabase
 import com.hfad.petlogger.R
+import com.hfad.petlogger.common.PetLoggerDatabase
+import com.hfad.petlogger.common.navigateSafe
 import com.hfad.petlogger.databinding.FragmentViewPhotoBinding
 import com.hfad.petlogger.databinding.FragmentViewPhotoDetailsBinding
-import com.hfad.petlogger.common.navigateSafe
-import com.hfad.petlogger.tags.usecases.GetAllTagsOfPhotoAlphabeticalOrderUseCase
-import com.hfad.petlogger.events.usecases.GetMoreEventsOfPhotoUseCase
-import com.hfad.petlogger.notes.usecases.GetMoreNotesOfPhotoUseCase
-import com.hfad.petlogger.pets.usecases.GetMorePetsOfPhotoUseCase
-import com.hfad.petlogger.photos.MediaRepository
-import com.hfad.petlogger.screens.sections.associatedentities.AssociatedEventsDisplayFragment
-import com.hfad.petlogger.screens.sections.associatedentities.AssociatedNotesDisplayFragment
-import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPetsDisplayFragment
-import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPetsDisplayViewModel
-import com.hfad.petlogger.screens.sections.associatedentities.AssociatedTagsDisplayViewModel
-import com.hfad.petlogger.common.setAppBarTitle
-import com.hfad.petlogger.events.usecases.BuildEventSearchQueryUseCase
-import com.hfad.petlogger.events.usecases.GetMoreOfSearchedEventsUseCase
-import com.hfad.petlogger.notes.usecases.BuildNoteSearchQueryUseCase
-import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesUseCase
-import com.hfad.petlogger.pets.usecases.BuildPetSearchQueryUseCase
-import com.hfad.petlogger.pets.usecases.GetMoreOfSearchedPetsUseCase
+import com.hfad.petlogger.events.domain.usecases.BuildEventSearchQueryUseCase
+import com.hfad.petlogger.events.domain.usecases.GetMoreEventsOfPhotoUseCase
+import com.hfad.petlogger.events.domain.usecases.GetMoreOfSearchedEventsUseCase
+import com.hfad.petlogger.notes.domain.usecases.BuildNoteSearchQueryUseCase
+import com.hfad.petlogger.notes.domain.usecases.GetMoreNotesOfPhotoUseCase
+import com.hfad.petlogger.notes.domain.usecases.GetMoreOfSearchedNotesUseCase
+import com.hfad.petlogger.pets.domain.usecases.BuildPetSearchQueryUseCase
+import com.hfad.petlogger.pets.domain.usecases.GetMoreOfSearchedPetsUseCase
+import com.hfad.petlogger.pets.domain.usecases.GetMorePetsOfPhotoUseCase
+import com.hfad.petlogger.photos.domain.MediaRepository
 import com.hfad.petlogger.screens.event.EventListViewModel
 import com.hfad.petlogger.screens.note.NoteListViewModel
 import com.hfad.petlogger.screens.pet.PetListViewModel
+import com.hfad.petlogger.screens.sections.associatedentities.AssociatedEventsDisplayFragment
+import com.hfad.petlogger.screens.sections.associatedentities.AssociatedNotesDisplayFragment
+import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPetsDisplayFragment
+import com.hfad.petlogger.screens.sections.associatedentities.AssociatedTagsDisplayViewModel
+import com.hfad.petlogger.tags.domain.usecases.GetAllTagsOfPhotoAlphabeticalOrderUseCase
 
 class ViewPhotoFragment : Fragment() {
     private var _binding: FragmentViewPhotoBinding? = null
@@ -62,8 +60,6 @@ class ViewPhotoFragment : Fragment() {
             ViewPhotoViewModel.provideFactory(mediaRepository, photoId)
         ).get(ViewPhotoViewModel::class.java)
         binding.viewPhotoViewModel = viewPhotoViewModel
-
-        setAppBarTitle(getString(R.string.viewing_photo_details))
 
         val getPetsOfPhotoForDisplayUseCase = GetMorePetsOfPhotoUseCase(mediaRepository, photoId, petsAmt = 10)
         val getSearchedPets = GetMoreOfSearchedPetsUseCase(database.petDao, petsAmt = 10, BuildPetSearchQueryUseCase.Pick.FromPhoto(photoId))
@@ -142,12 +138,17 @@ class ViewPhotoFragment : Fragment() {
             }
         }
 
-        binding.editButton.setOnClickListener{
-            findNavController().navigateSafe(ViewPhotoFragmentDirections.actionViewPhotoFragmentToEditPhotoFragment(photoId))
-        }
-
-        binding.backButton.setOnClickListener{
+        binding.viewPhotoTopAppBar.setNavigationOnClickListener {
             findNavController().popBackStack()
+        }
+        binding.viewPhotoTopAppBar.setOnMenuItemClickListener { menuItem ->
+            when(menuItem.itemId) {
+                R.id.edit -> {
+                    findNavController().navigateSafe(ViewPhotoFragmentDirections.actionViewPhotoFragmentToEditPhotoFragment(photoId))
+                    true
+                }
+                else -> false
+            }
         }
 
         return view

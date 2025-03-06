@@ -24,14 +24,14 @@ import com.hfad.petlogger.R
 import com.hfad.petlogger.databinding.FragmentViewWeightBinding
 import com.hfad.petlogger.databinding.FragmentViewWeightDetailsBinding
 import com.hfad.petlogger.common.navigateSafe
-import com.hfad.petlogger.tags.usecases.GetAllTagsOfWeightAlphabeticalOrderUseCase
-import com.hfad.petlogger.notes.usecases.GetMoreNotesOfWeightUseCase
-import com.hfad.petlogger.weights.WeightRepository
+import com.hfad.petlogger.tags.domain.usecases.GetAllTagsOfWeightAlphabeticalOrderUseCase
+import com.hfad.petlogger.notes.domain.usecases.GetMoreNotesOfWeightUseCase
+import com.hfad.petlogger.weights.domain.WeightRepository
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedNotesDisplayFragment
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedTagsDisplayViewModel
-import com.hfad.petlogger.common.setAppBarTitle
-import com.hfad.petlogger.notes.usecases.BuildNoteSearchQueryUseCase
-import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesUseCase
+import com.hfad.petlogger.common.usecases.GetPossessiveFormUseCase
+import com.hfad.petlogger.notes.domain.usecases.BuildNoteSearchQueryUseCase
+import com.hfad.petlogger.notes.domain.usecases.GetMoreOfSearchedNotesUseCase
 import com.hfad.petlogger.screens.note.NoteListViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -77,11 +77,9 @@ class ViewWeightFragment : Fragment() {
                 viewModel.fullWeightDetails.collectLatest { weightState ->
                     weightState?.let {
                         if (activity != null && isAdded) {
-                            // App Bar Title
-                            val topAppBarTitleRemainder = if (it.weightPet.petName[it.weightPet.petName.length-1].lowercaseChar() != 's') "\'s Weight" else "\' Weight"
-                            val title = "${it.weightPet.petName}${topAppBarTitleRemainder}"
-                            val subtitle = it.curWeight.weightDateTimeDisplay
-                            setAppBarTitle(title = title, subtitle = subtitle)
+                            val getPossessiveForm = GetPossessiveFormUseCase()
+                            binding.viewWeightTopAppBar.title = getString(R.string.viewing_pets_weight, getPossessiveForm(it.weightPet.petName))
+                            binding.viewWeightTopAppBar.subtitle = it.curWeight.weightDateTimeDisplay
                         }
                     }
                 }
@@ -95,14 +93,19 @@ class ViewWeightFragment : Fragment() {
             }
         }
 
-        binding.editWeight.setOnClickListener{
-            viewModel.fullWeightDetails.value?.let { weight ->
-                findNavController().navigateSafe(ViewWeightFragmentDirections.actionViewWeightFragmentToEditWeightFragment(weightId = weightId, petId = weight.weightPet.petId))
-            }
-        }
-
-        binding.back.setOnClickListener{
+        binding.viewWeightTopAppBar.setNavigationOnClickListener {
             findNavController().popBackStack()
+        }
+        binding.viewWeightTopAppBar.setOnMenuItemClickListener { menuItem ->
+            when(menuItem.itemId) {
+                R.id.edit -> {
+                    viewModel.fullWeightDetails.value?.let { weight ->
+                        findNavController().navigateSafe(ViewWeightFragmentDirections.actionViewWeightFragmentToEditWeightFragment(weightId = weightId, petId = weight.weightPet.petId))
+                    }
+                    true
+                }
+                else -> false
+            }
         }
 
         noteListViewModel.noteNavigator.navigateTo.observe(viewLifecycleOwner, Observer { noteId ->

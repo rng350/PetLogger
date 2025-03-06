@@ -5,8 +5,8 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import com.hfad.petlogger.common.util.Constants.Companion.noteTagTableHeader
 import com.hfad.petlogger.common.util.Constants.Companion.tagIdField
-import com.hfad.petlogger.notes.Note
-import com.hfad.petlogger.tags.Tag
+import com.hfad.petlogger.notes.data.Note
+import com.hfad.petlogger.tags.data.Tag
 
 @Entity(
     tableName = noteTagTableHeader,

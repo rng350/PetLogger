@@ -3,13 +3,13 @@ package com.hfad.petlogger.screens.note.notemultiselection
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.hfad.petlogger.notes.Note
 import com.hfad.petlogger.common.selectiontracker.MultiSelectionTracker
 import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
-import com.hfad.petlogger.notes.usecases.GetAllNotesFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.notes.usecases.GetMoreOfAllNotesUseCase
-import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesUseCase
-import com.hfad.petlogger.notes.usecases.GetSearchedNotesFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.notes.data.Note
+import com.hfad.petlogger.notes.domain.usecases.GetAllNotesFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.notes.domain.usecases.GetMoreOfAllNotesUseCase
+import com.hfad.petlogger.notes.domain.usecases.GetMoreOfSearchedNotesUseCase
+import com.hfad.petlogger.notes.domain.usecases.GetSearchedNotesFromCurrentSelectionUseCaseFactory
 import kotlinx.coroutines.launch
 
 class NoteMultiSelectionViewModel(

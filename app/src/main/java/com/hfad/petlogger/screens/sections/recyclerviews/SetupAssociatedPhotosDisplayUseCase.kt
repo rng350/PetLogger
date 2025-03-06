@@ -13,7 +13,7 @@ import com.hfad.petlogger.common.recyclerviews.DataItemBindingInterface
 import com.hfad.petlogger.common.recyclerviews.GenericRecyclerViewAdapter
 import com.hfad.petlogger.common.util.Navigator
 import com.hfad.petlogger.databinding.ItemPhotoBinding
-import com.hfad.petlogger.photos.Photo
+import com.hfad.petlogger.photos.data.Photo
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

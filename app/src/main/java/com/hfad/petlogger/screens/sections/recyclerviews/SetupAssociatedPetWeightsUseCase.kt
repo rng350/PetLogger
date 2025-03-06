@@ -7,11 +7,10 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
 import com.hfad.petlogger.R
 import com.hfad.petlogger.databinding.PetWeightItemBinding
-import com.hfad.petlogger.weights.Weight
 import com.hfad.petlogger.common.recyclerviews.DataItemBindingInterface
 import com.hfad.petlogger.common.recyclerviews.GenericRecyclerViewAdapter
 import com.hfad.petlogger.common.util.Navigator
-import com.hfad.petlogger.weights.PetWeightForDisplay
+import com.hfad.petlogger.weights.data.PetWeightForDisplay
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

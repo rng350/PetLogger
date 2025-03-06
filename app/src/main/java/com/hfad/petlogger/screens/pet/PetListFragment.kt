@@ -1,25 +1,23 @@
 package com.hfad.petlogger.screens.pet
 
 import RecyclerViewPaginator
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.common.PetLoggerDatabase
-import com.hfad.petlogger.R
-import com.hfad.petlogger.databinding.FragmentPetListBinding
 import com.hfad.petlogger.common.navigateSafe
-import com.hfad.petlogger.pets.usecases.GetMoreOfAllPetsUseCase
-import com.hfad.petlogger.photos.MediaRepository
-import com.hfad.petlogger.pets.PetRepository
-import com.hfad.petlogger.common.setAppBarTitle
-import com.hfad.petlogger.pets.usecases.GetMoreOfSearchedPetsUseCase
+import com.hfad.petlogger.databinding.FragmentPetListBinding
+import com.hfad.petlogger.pets.domain.PetRepository
+import com.hfad.petlogger.pets.domain.usecases.GetMoreOfAllPetsUseCase
+import com.hfad.petlogger.pets.domain.usecases.GetMoreOfSearchedPetsUseCase
+import com.hfad.petlogger.photos.domain.MediaRepository
 import com.hfad.petlogger.screens.sections.recyclerviews.SetupAssociatedPetsDisplayUseCase
 
 class PetListFragment : Fragment() {
@@ -74,6 +72,14 @@ class PetListFragment : Fragment() {
             }
         })
 
+        if (findNavController().previousBackStackEntry == null) {
+            binding.petListTopAppBar.navigationIcon = null
+        } else {
+            binding.petListTopAppBar.setNavigationOnClickListener {
+                findNavController().popBackStack()
+            }
+        }
+
         binding.addPetButton.setOnClickListener {
             findNavController().navigateSafe(PetListFragmentDirections.actionPetListFragmentToNewPetFragment())
         }
@@ -84,8 +90,6 @@ class PetListFragment : Fragment() {
                 viewModel.petNavigator.onNavigated()
             }
         })
-
-        setAppBarTitle(getString(R.string.pet_list_header))
 
         return view
     }

@@ -19,25 +19,25 @@ import com.hfad.petlogger.common.associationentities.PhotoNote
 import com.hfad.petlogger.common.associationentities.PhotoTag
 import com.hfad.petlogger.common.associationentities.WeightNote
 import com.hfad.petlogger.common.associationentities.WeightTag
-import com.hfad.petlogger.events.EventDao
-import com.hfad.petlogger.dao.EventPetDao
-import com.hfad.petlogger.notes.NoteDao
-import com.hfad.petlogger.pets.PetDao
-import com.hfad.petlogger.photos.PhotoDao
-import com.hfad.petlogger.tags.TagDao
-import com.hfad.petlogger.weights.WeightDao
 import com.hfad.petlogger.common.util.Converter
 import com.hfad.petlogger.common.util.URIConverter
-import com.hfad.petlogger.events.Event
-import com.hfad.petlogger.events.EventFts
-import com.hfad.petlogger.notes.Note
-import com.hfad.petlogger.notes.NoteFts
-import com.hfad.petlogger.pets.PassedAwayPet
-import com.hfad.petlogger.pets.Pet
-import com.hfad.petlogger.pets.PetFts
-import com.hfad.petlogger.photos.Photo
-import com.hfad.petlogger.tags.Tag
-import com.hfad.petlogger.weights.Weight
+import com.hfad.petlogger.dao.EventPetDao
+import com.hfad.petlogger.events.data.Event
+import com.hfad.petlogger.events.data.EventDao
+import com.hfad.petlogger.events.data.EventFts
+import com.hfad.petlogger.notes.data.Note
+import com.hfad.petlogger.notes.data.NoteDao
+import com.hfad.petlogger.notes.data.NoteFts
+import com.hfad.petlogger.pets.data.PassedAwayPet
+import com.hfad.petlogger.pets.data.Pet
+import com.hfad.petlogger.pets.data.PetDao
+import com.hfad.petlogger.pets.data.PetFts
+import com.hfad.petlogger.photos.data.Photo
+import com.hfad.petlogger.photos.data.PhotoDao
+import com.hfad.petlogger.tags.data.Tag
+import com.hfad.petlogger.tags.data.TagDao
+import com.hfad.petlogger.weights.data.Weight
+import com.hfad.petlogger.weights.data.WeightDao
 
 @Database(
     entities = [

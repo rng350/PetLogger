@@ -12,14 +12,12 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.common.PetLoggerDatabase
-import com.hfad.petlogger.R
 import com.hfad.petlogger.databinding.FragmentMonitoringListBinding
 import com.hfad.petlogger.common.navigateSafe
-import com.hfad.petlogger.weights.usecases.GetMoreOfAllWeightsUseCase
-import com.hfad.petlogger.weights.WeightRepository
-import com.hfad.petlogger.common.setAppBarTitle
+import com.hfad.petlogger.weights.domain.usecases.GetMoreOfAllWeightsUseCase
+import com.hfad.petlogger.weights.domain.WeightRepository
 import com.hfad.petlogger.screens.sections.recyclerviews.SetupAssociatedWeightsDisplayUseCase
-import com.hfad.petlogger.weights.usecases.GetSearchedWeightsForGeneralDisplayUseCase
+import com.hfad.petlogger.weights.domain.usecases.GetSearchedWeightsForGeneralDisplayUseCase
 
 class MonitoringListFragment : Fragment() {
     private var _binding: FragmentMonitoringListBinding? = null
@@ -44,8 +42,6 @@ class MonitoringListFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        setAppBarTitle(getString(R.string.weight_list_header))
-
         SetupAssociatedWeightsDisplayUseCase(
             weights = viewModel.weights,
             weightNavigator = viewModel.weightNavigator,
@@ -60,6 +56,14 @@ class MonitoringListFragment : Fragment() {
             isLoading = {viewModel.isLoading()},
             onLast = {viewModel.onLastPage()}
         )
+
+        if (findNavController().previousBackStackEntry == null) {
+            binding.weightListTopAppBar.navigationIcon = null
+        } else {
+            binding.weightListTopAppBar.setNavigationOnClickListener {
+                findNavController().popBackStack()
+            }
+        }
 
         binding.searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {

@@ -1,6 +1,5 @@
 package com.hfad.petlogger.common.selectiontracker
 
-import android.util.Log
 import com.hfad.petlogger.common.CheckableItem
 import com.hfad.petlogger.common.usecases.GetItemsUseCase
 import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase

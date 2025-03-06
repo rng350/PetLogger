@@ -4,9 +4,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.hfad.petlogger.notes.Note
-import com.hfad.petlogger.notes.NoteRepository
 import com.hfad.petlogger.common.util.GetDateTimeDisplayUseCase
+import com.hfad.petlogger.notes.data.Note
+import com.hfad.petlogger.notes.domain.NoteRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 

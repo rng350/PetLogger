@@ -1,8 +1,10 @@
 package com.hfad.petlogger.screens.pet.viewpet
 
-import androidx.lifecycle.*
-import com.hfad.petlogger.pets.PetDetailsForDisplay
-import com.hfad.petlogger.pets.usecases.GetPetDetailsForDisplayUseCase
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import com.hfad.petlogger.pets.data.PetDetailsForDisplay
+import com.hfad.petlogger.pets.domain.usecases.GetPetDetailsForDisplayUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -19,7 +21,9 @@ class ViewPetViewModel (
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = Status.Loading
         )
-    private val _petDetails : MutableStateFlow<PetDetailsForDisplay> = MutableStateFlow<PetDetailsForDisplay>(PetDetailsForDisplay())
+    private val _petDetails : MutableStateFlow<PetDetailsForDisplay> = MutableStateFlow<PetDetailsForDisplay>(
+        PetDetailsForDisplay()
+    )
     val petDetails: StateFlow<PetDetailsForDisplay> get() = _petDetails
         .stateIn(
             scope = viewModelScope,

@@ -1,12 +1,16 @@
 package com.hfad.petlogger.screens.event.newevent
 
-import androidx.lifecycle.*
-import com.hfad.petlogger.common.SelectableDateTime
-import com.hfad.petlogger.events.Event
-import com.hfad.petlogger.notes.Note
-import com.hfad.petlogger.photos.Photo
-import com.hfad.petlogger.tags.Tag
-import com.hfad.petlogger.events.EventRepository
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import com.hfad.petlogger.common.datetimeselection.SelectableDateTime
+import com.hfad.petlogger.events.data.Event
+import com.hfad.petlogger.events.domain.EventRepository
+import com.hfad.petlogger.notes.data.Note
+import com.hfad.petlogger.photos.data.Photo
+import com.hfad.petlogger.tags.data.Tag
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 

@@ -1,10 +1,10 @@
 package com.hfad.petlogger.screens.event.newevent
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -12,43 +12,45 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
-import com.hfad.petlogger.common.DatePicker
-import com.hfad.petlogger.screens.photo.mediaselection.MediaSelectionFragment
-import com.hfad.petlogger.screens.photo.mediaselection.MediaSelectionViewModel
-import com.hfad.petlogger.screens.note.notemultiselection.NoteMultiSelectionDisplayFragment
-import com.hfad.petlogger.screens.note.notemultiselection.NoteMultiSelectionViewModel
-import com.hfad.petlogger.common.PetLoggerDatabase
-import com.hfad.petlogger.screens.pet.petmultiselection.PetMultiSelectionViewModel
 import com.hfad.petlogger.R
-import com.hfad.petlogger.screens.tag.tagmultiselection.TagMultiSelectionViewModel
-import com.hfad.petlogger.common.TimePicker
-import com.hfad.petlogger.databinding.FragmentNewEventBinding
-import com.hfad.petlogger.databinding.FragmentNewEventDetailsBinding
+import com.hfad.petlogger.common.PetLoggerDatabase
+import com.hfad.petlogger.common.datetimeselection.DatePicker
+import com.hfad.petlogger.common.datetimeselection.TimePicker
 import com.hfad.petlogger.common.navigateSafe
-import com.hfad.petlogger.tags.usecases.GetAllTagsUseCase
-import com.hfad.petlogger.events.EventRepository
-import com.hfad.petlogger.photos.MediaRepository
-import com.hfad.petlogger.notes.NoteRepository
-import com.hfad.petlogger.pets.PetRepository
-import com.hfad.petlogger.tags.TagRepository
-import com.hfad.petlogger.common.setAppBarTitle
 import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
 import com.hfad.petlogger.common.util.Constants.Companion.defaultNullIdForNavigation
-import com.hfad.petlogger.notes.usecases.GetAllNotesFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.notes.usecases.GetMoreOfAllNotesUseCase
-import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesUseCase
-import com.hfad.petlogger.notes.usecases.GetSearchedNotesFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.notes.usecases.GetSingleNoteUseCase
-import com.hfad.petlogger.pets.usecases.GetAllPetsFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.pets.usecases.GetMoreOfAllPetsUseCase
-import com.hfad.petlogger.pets.usecases.GetMoreOfSearchedPetsUseCase
-import com.hfad.petlogger.pets.usecases.GetSearchedPetsFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.pets.usecases.GetSinglePetUseCase
-import com.hfad.petlogger.photos.usecases.GetSinglePhotoUseCase
-import com.hfad.petlogger.tags.usecases.GetAllTagsFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.tags.usecases.GetSearchedTagsFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.tags.usecases.GetSearchedTagsUseCase
-import kotlinx.coroutines.*
+import com.hfad.petlogger.databinding.FragmentNewEventBinding
+import com.hfad.petlogger.databinding.FragmentNewEventDetailsBinding
+import com.hfad.petlogger.events.domain.EventRepository
+import com.hfad.petlogger.notes.domain.NoteRepository
+import com.hfad.petlogger.notes.domain.usecases.GetAllNotesFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.notes.domain.usecases.GetMoreOfAllNotesUseCase
+import com.hfad.petlogger.notes.domain.usecases.GetMoreOfSearchedNotesUseCase
+import com.hfad.petlogger.notes.domain.usecases.GetSearchedNotesFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.notes.domain.usecases.GetSingleNoteUseCase
+import com.hfad.petlogger.pets.domain.PetRepository
+import com.hfad.petlogger.pets.domain.usecases.GetAllPetsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.pets.domain.usecases.GetMoreOfAllPetsUseCase
+import com.hfad.petlogger.pets.domain.usecases.GetMoreOfSearchedPetsUseCase
+import com.hfad.petlogger.pets.domain.usecases.GetSearchedPetsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.pets.domain.usecases.GetSinglePetUseCase
+import com.hfad.petlogger.photos.domain.MediaRepository
+import com.hfad.petlogger.photos.domain.usecases.GetSinglePhotoUseCase
+import com.hfad.petlogger.screens.note.notemultiselection.NoteMultiSelectionDisplayFragment
+import com.hfad.petlogger.screens.note.notemultiselection.NoteMultiSelectionViewModel
+import com.hfad.petlogger.screens.pet.petmultiselection.PetMultiSelectionViewModel
+import com.hfad.petlogger.screens.photo.mediaselection.MediaSelectionFragment
+import com.hfad.petlogger.screens.photo.mediaselection.MediaSelectionViewModel
+import com.hfad.petlogger.screens.tag.tagmultiselection.TagMultiSelectionViewModel
+import com.hfad.petlogger.tags.domain.TagRepository
+import com.hfad.petlogger.tags.domain.usecases.GetAllTagsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.tags.domain.usecases.GetAllTagsUseCase
+import com.hfad.petlogger.tags.domain.usecases.GetSearchedTagsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.tags.domain.usecases.GetSearchedTagsUseCase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class NewEventFragment : Fragment() {
     private var _binding: FragmentNewEventBinding? = null
@@ -140,8 +142,6 @@ class NewEventFragment : Fragment() {
         ).get(TagMultiSelectionViewModel::class.java)
         binding.tagMultiSelectionViewModel = tagMultiSelectionViewModel
 
-        setAppBarTitle(getString(R.string.new_event_header))
-
         binding.viewPager.offscreenPageLimit = 3
         binding.viewPager.adapter = NewEventViewPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
         mediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
@@ -154,18 +154,23 @@ class NewEventFragment : Fragment() {
         }
         mediator?.attach()
 
-
-        binding.submitEventButton.setOnClickListener {
-            newEventViewModel.submitEvent(
-                pets = petMultiSelectionViewModel.getPetsToAdd(),
-                photos = mediaSelectionViewModel.getPhotosToAdd(),
-                notes = noteMultiSelectionViewModel.getNotesToAdd(),
-                tags = tagMultiSelectionViewModel.getTagsToAdd()
-            )
+        binding.newEventTopAppBar.setNavigationOnClickListener {
+            findNavController().popBackStack()
         }
 
-        binding.backButton.setOnClickListener {
-            findNavController().popBackStack()
+        binding.newEventTopAppBar.setOnMenuItemClickListener { menuItem ->
+            when(menuItem.itemId) {
+                R.id.submit -> {
+                    newEventViewModel.submitEvent(
+                        pets = petMultiSelectionViewModel.getPetsToAdd(),
+                        photos = mediaSelectionViewModel.getPhotosToAdd(),
+                        notes = noteMultiSelectionViewModel.getNotesToAdd(),
+                        tags = tagMultiSelectionViewModel.getTagsToAdd()
+                    )
+                    true
+                }
+                else -> false
+            }
         }
 
         newEventViewModel.carryOn.observe(viewLifecycleOwner) {

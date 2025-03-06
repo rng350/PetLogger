@@ -20,6 +20,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:padding="4dp"
             android:orientation="vertical">
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/loading_screen_layout"
@@ -112,6 +113,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:baselineAligned="false"
                     android:orientation="horizontal">
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/petSpeciesTextField"
@@ -132,6 +134,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:layout_marginHorizontal="4dp"
                         android:hint="@string/pet_breed_header">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/petBreedText"
@@ -158,12 +161,14 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:baselineAligned="false"
                     android:orientation="horizontal">
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/petWeightAmtTextField"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
+                        android:layout_marginEnd="2dp"
                         android:hint="@string/pet_latest_weight_header">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/petWeightAmtText"
@@ -178,6 +183,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="3"
+                        android:layout_marginStart="2dp"
                         android:hint="@string/pet_weighing_date_header">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/petWeighingDateText"
@@ -195,6 +201,6 @@
                     android:name="com.hfad.petlogger.screens.sections.associatedentities.AssociatedTagsDisplayFragment"
                     tools:layout="@layout/fragment_associated_tags_display" />
             </LinearLayout>
-            </LinearLayout>
+        </LinearLayout>
     </ScrollView>
 </layout>

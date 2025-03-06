@@ -6,7 +6,7 @@
     <data>
         <variable
             name="note"
-            type="com.hfad.petlogger.notes.Note" />
+            type="com.hfad.petlogger.notes.data.Note" />
     </data>
 
     <com.google.android.material.card.MaterialCardView

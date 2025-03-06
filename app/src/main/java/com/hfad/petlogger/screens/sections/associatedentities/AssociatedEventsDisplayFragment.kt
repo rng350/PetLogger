@@ -27,6 +27,8 @@ class AssociatedEventsDisplayFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = eventListViewModel
 
+        binding.eventListTopAppBarLayout.visibility = View.GONE
+
         SetupAssociatedEventsDisplayUseCase(
             eventListViewModel.event,
             eventListViewModel.eventNavigator,

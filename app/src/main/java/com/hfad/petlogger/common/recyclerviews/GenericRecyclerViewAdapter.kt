@@ -1,7 +1,6 @@
 package com.hfad.petlogger.common.recyclerviews
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes

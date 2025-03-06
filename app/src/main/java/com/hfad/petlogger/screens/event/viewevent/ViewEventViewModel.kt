@@ -1,14 +1,16 @@
 package com.hfad.petlogger.screens.event.viewevent
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import com.hfad.petlogger.common.util.GetDateDisplayUseCase
 import com.hfad.petlogger.common.util.GetTimeDisplayUseCase
-import com.hfad.petlogger.events.EventDao
-import com.hfad.petlogger.events.Event
+import com.hfad.petlogger.events.data.Event
+import com.hfad.petlogger.events.data.EventDao
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.LocalTime
 
 class ViewEventViewModel(val eventDao: EventDao, private val eventID: Long): ViewModel() {
     private val _event: MutableLiveData<Event> = MutableLiveData<Event>()

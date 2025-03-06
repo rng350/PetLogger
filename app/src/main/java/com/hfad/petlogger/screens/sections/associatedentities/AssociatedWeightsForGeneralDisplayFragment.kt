@@ -28,6 +28,8 @@ class AssociatedWeightsForGeneralDisplayFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = monitoringListViewModel
 
+        binding.weightListTopAppBar.visibility = View.GONE
+
         binding.addWeightButton.setOnClickListener {
             monitoringListViewModel.newWeightNavigator.navigateToNewEntityScreen()
         }

@@ -2,7 +2,7 @@ package com.hfad.petlogger.common.selectiontracker
 
 import androidx.lifecycle.MutableLiveData
 import com.hfad.petlogger.common.CheckableItem
-import com.hfad.petlogger.photos.Photo
+import com.hfad.petlogger.photos.data.Photo
 
 class CheckPhotoIsInSelectionToRemoveUseCase: CheckItemIsInSelectionUseCase<Photo> {
     private var photosInSelection = LinkedHashMap<Long, CheckableItem<Photo>>()

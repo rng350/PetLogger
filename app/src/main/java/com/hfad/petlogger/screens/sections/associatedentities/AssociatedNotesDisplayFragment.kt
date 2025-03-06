@@ -2,11 +2,11 @@ package com.hfad.petlogger.screens.sections.associatedentities
 
 import RecyclerViewPaginator
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.hfad.petlogger.databinding.FragmentNoteListBinding
@@ -26,6 +26,7 @@ class AssociatedNotesDisplayFragment : Fragment() {
         val view = binding.root
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = noteListViewModel
+        binding.noteListTopAppBarLayout.visibility = View.GONE
 
         SetupAssociatedNotesDisplayUseCase(
             notes = noteListViewModel.notes,

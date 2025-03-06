@@ -7,9 +7,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.hfad.petlogger.photos.Photo
+import com.hfad.petlogger.photos.data.Photo
 import com.hfad.petlogger.common.usecases.GetSingleItemUseCase
-import com.hfad.petlogger.photos.MediaRepository
+import com.hfad.petlogger.photos.domain.MediaRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 

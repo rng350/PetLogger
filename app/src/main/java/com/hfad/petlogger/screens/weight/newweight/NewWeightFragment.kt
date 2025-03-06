@@ -14,39 +14,38 @@ import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
-import com.hfad.petlogger.common.DatePicker
+import com.hfad.petlogger.common.datetimeselection.DatePicker
 import com.hfad.petlogger.screens.note.notemultiselection.NoteMultiSelectionDisplayFragment
 import com.hfad.petlogger.screens.note.notemultiselection.NoteMultiSelectionViewModel
 import com.hfad.petlogger.common.PetLoggerDatabase
 import com.hfad.petlogger.screens.pet.petsingleselection.PetSingleSelectionViewModel
 import com.hfad.petlogger.R
 import com.hfad.petlogger.screens.tag.tagmultiselection.TagMultiSelectionViewModel
-import com.hfad.petlogger.common.TimePicker
+import com.hfad.petlogger.common.datetimeselection.TimePicker
 import com.hfad.petlogger.common.navigateSafe
 import com.hfad.petlogger.databinding.FragmentNewWeightBinding
 import com.hfad.petlogger.databinding.FragmentNewWeightDetailsBinding
-import com.hfad.petlogger.tags.usecases.GetAllTagsUseCase
-import com.hfad.petlogger.photos.MediaRepository
-import com.hfad.petlogger.notes.NoteRepository
-import com.hfad.petlogger.pets.PetRepository
-import com.hfad.petlogger.tags.TagRepository
-import com.hfad.petlogger.weights.WeightRepository
-import com.hfad.petlogger.common.setAppBarTitle
+import com.hfad.petlogger.tags.domain.usecases.GetAllTagsUseCase
+import com.hfad.petlogger.photos.domain.MediaRepository
+import com.hfad.petlogger.notes.domain.NoteRepository
+import com.hfad.petlogger.pets.domain.PetRepository
+import com.hfad.petlogger.tags.domain.TagRepository
+import com.hfad.petlogger.weights.domain.WeightRepository
 import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
 import com.hfad.petlogger.common.usecases.GetSingleInitialItemUseCase
 import com.hfad.petlogger.common.util.Constants.Companion.defaultNullIdForNavigation
-import com.hfad.petlogger.notes.usecases.GetAllNotesFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.notes.usecases.GetMoreOfAllNotesUseCase
-import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesUseCase
-import com.hfad.petlogger.notes.usecases.GetSearchedNotesFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.pets.PetWithProfilePic
-import com.hfad.petlogger.pets.usecases.GetAllPetsWithProfilePhotosUseCase
-import com.hfad.petlogger.pets.usecases.GetSinglePetUseCase
-import com.hfad.petlogger.tags.Tag
-import com.hfad.petlogger.tags.usecases.GetAllTagsFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.tags.usecases.GetSearchedTagsFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.tags.usecases.GetSearchedTagsUseCase
-import com.hfad.petlogger.tags.usecases.GetSingleTagUseCase
+import com.hfad.petlogger.notes.domain.usecases.GetAllNotesFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.notes.domain.usecases.GetMoreOfAllNotesUseCase
+import com.hfad.petlogger.notes.domain.usecases.GetMoreOfSearchedNotesUseCase
+import com.hfad.petlogger.notes.domain.usecases.GetSearchedNotesFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.pets.data.PetWithProfilePic
+import com.hfad.petlogger.pets.domain.usecases.GetAllPetsWithProfilePhotosUseCase
+import com.hfad.petlogger.pets.domain.usecases.GetSinglePetUseCase
+import com.hfad.petlogger.tags.data.Tag
+import com.hfad.petlogger.tags.domain.usecases.GetAllTagsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.tags.domain.usecases.GetSearchedTagsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.tags.domain.usecases.GetSearchedTagsUseCase
+import com.hfad.petlogger.tags.domain.usecases.GetSingleTagUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -121,8 +120,6 @@ class NewWeightFragment : Fragment() {
         ).get(TagMultiSelectionViewModel::class.java)
         binding.tagMultiSelectionViewModel = tagMultiSelectionViewModel
 
-        setAppBarTitle(getString(R.string.new_weight_header))
-
         binding.viewPager.offscreenPageLimit = 2
         binding.viewPager.adapter = NewWeightViewPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
         mediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
@@ -134,17 +131,23 @@ class NewWeightFragment : Fragment() {
         }
         mediator?.attach()
 
-        binding.submitWeightButton.setOnClickListener {
-            petSingleSelectionViewModel.selectionTracker.currentSelection.value?.petId?.let{ petId ->
-                newWeightViewModel.submitWeight(
-                    petId = petId,
-                    notes = noteMultiSelectionViewModel.getNotesToAdd(),
-                    tags = tagMultiSelectionViewModel.getTagsToAdd()
-                )
+        binding.newWeightTopAppBar.setOnMenuItemClickListener { menuItem ->
+            when(menuItem.itemId) {
+                R.id.submit -> {
+                    petSingleSelectionViewModel.selectionTracker.currentSelection.value?.petId?.let{ petId ->
+                        newWeightViewModel.submitWeight(
+                            petId = petId,
+                            notes = noteMultiSelectionViewModel.getNotesToAdd(),
+                            tags = tagMultiSelectionViewModel.getTagsToAdd()
+                        )
+                    }
+                    true
+                }
+                else -> false
             }
         }
 
-        binding.backButton.setOnClickListener {
+        binding.newWeightTopAppBar.setNavigationOnClickListener {
             findNavController().popBackStack()
         }
 
@@ -226,6 +229,7 @@ class NewWeightDetailsFragment() : Fragment() {
 
         val arrayAdapter = ArrayAdapter<String>(requireContext(), com.google.android.material.R.layout.support_simple_spinner_dropdown_item, items)
         binding.weightUnitDropDownList.setAdapter(arrayAdapter)
+        binding.weightUnitDropDownList.setText(newWeightViewModel.unitType, false)
         arrayAdapter.notifyDataSetChanged()
 
         binding.weightUnitDropDownList.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->

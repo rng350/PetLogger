@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.hfad.petlogger.common.CheckableItem
 import com.hfad.petlogger.R
 import com.hfad.petlogger.databinding.CheckableWeightWNameItemBinding
-import com.hfad.petlogger.weights.WeightWithPetName
+import com.hfad.petlogger.weights.data.WeightWithPetName
 import com.hfad.petlogger.common.recyclerviews.DataItemBindingInterface
 import com.hfad.petlogger.common.recyclerviews.GenericRecyclerViewAdapter
 import com.hfad.petlogger.common.selectiontracker.MultiSelectionTracker

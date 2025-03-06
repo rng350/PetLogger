@@ -13,10 +13,10 @@ import com.hfad.petlogger.common.selectiontracker.CheckPhotoIsInSelectionToRemov
 import com.hfad.petlogger.common.selectiontracker.MediaMultiSelectionDisplay
 import com.hfad.petlogger.common.selectiontracker.MediaMultiSelectionTracker
 import com.hfad.petlogger.common.usecases.GetItemsUseCase
-import com.hfad.petlogger.photos.Photo
 import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
 import com.hfad.petlogger.common.usecases.GetSearchedItemsUseCase
-import com.hfad.petlogger.photos.MediaRepository
+import com.hfad.petlogger.photos.data.Photo
+import com.hfad.petlogger.photos.domain.MediaRepository
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 

@@ -11,7 +11,6 @@ class ParseSearchQueryUseCase(private val prefixes: List<String> = listOf()) {
     operator fun invoke(query: String): Map<String?, List<String>> {
         val quotedMatches = mutableMapOf<String?, MutableList<String>>()
 
-        // Parse through any tokens with quoted strings
         val contextPattern = Regex("(?:${prefixRegex}#)?\"(.*?)\"")
         contextPattern.findAll(query).forEach { matchResult ->
             var prefix: String? = null
@@ -28,10 +27,7 @@ class ParseSearchQueryUseCase(private val prefixes: List<String> = listOf()) {
             quotedMatches.getOrPut(prefix){ mutableListOf() }.add(if (prefix==null) "\"$content\"" else content)
         }
 
-        // Remove all quoted strings from the query
         val strippedInput = query.replace(contextPattern, "").trim()
-
-        // Split the remaining query into tokens
         val tokens = strippedInput.split("\\s+".toRegex()).filter { it.isNotBlank() }
 
         // Parse tokens, handling prefixes with conditions
@@ -41,7 +37,6 @@ class ParseSearchQueryUseCase(private val prefixes: List<String> = listOf()) {
         while (i < tokens.size) {
             val token = tokens[i]
             if (prefixPatternInline.containsMatchIn(token)) {
-                // Handle case where a prefix is detected
                 var prefix = prefixPatternInline.find(token)!!.value // Extract prefix
                 val value = token.removePrefix(prefix)
                 prefix = prefix.removeSuffix(":")

@@ -6,45 +6,48 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
-import com.hfad.petlogger.common.ConfirmActionUseCase
-import com.hfad.petlogger.common.DatePicker
+import com.hfad.petlogger.common.usecases.ConfirmActionUseCase
+import com.hfad.petlogger.common.datetimeselection.DatePicker
 import com.hfad.petlogger.screens.note.notemultiselection.NoteMultiSelectionDisplayFragment
 import com.hfad.petlogger.screens.note.notemultiselection.NoteMultiSelectionViewModel
 import com.hfad.petlogger.common.PetLoggerDatabase
 import com.hfad.petlogger.screens.pet.petsingleselection.PetSingleSelectionViewModel
 import com.hfad.petlogger.R
 import com.hfad.petlogger.screens.tag.tagmultiselection.TagMultiSelectionViewModel
-import com.hfad.petlogger.common.TimePicker
+import com.hfad.petlogger.common.datetimeselection.TimePicker
 import com.hfad.petlogger.databinding.FragmentEditWeightBinding
 import com.hfad.petlogger.databinding.FragmentEditWeightDetailsBinding
 import com.hfad.petlogger.common.navigateSafe
-import com.hfad.petlogger.tags.usecases.GetAllTagsUseCase
-import com.hfad.petlogger.notes.usecases.GetNotesOfWeightUseCase
-import com.hfad.petlogger.tags.usecases.GetTagsOfWeightUseCase
-import com.hfad.petlogger.photos.MediaRepository
-import com.hfad.petlogger.notes.NoteRepository
-import com.hfad.petlogger.pets.PetRepository
-import com.hfad.petlogger.tags.TagRepository
-import com.hfad.petlogger.weights.WeightRepository
-import com.hfad.petlogger.common.setAppBarTitle
+import com.hfad.petlogger.tags.domain.usecases.GetAllTagsUseCase
+import com.hfad.petlogger.notes.domain.usecases.GetNotesOfWeightUseCase
+import com.hfad.petlogger.tags.domain.usecases.GetTagsOfWeightUseCase
+import com.hfad.petlogger.photos.domain.MediaRepository
+import com.hfad.petlogger.notes.domain.NoteRepository
+import com.hfad.petlogger.pets.domain.PetRepository
+import com.hfad.petlogger.tags.domain.TagRepository
+import com.hfad.petlogger.weights.domain.WeightRepository
 import com.hfad.petlogger.common.usecases.GetSingleInitialItemUseCase
 import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
-import com.hfad.petlogger.notes.usecases.GetAllNotesFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.notes.usecases.GetMoreOfAllNotesUseCase
-import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesUseCase
-import com.hfad.petlogger.notes.usecases.GetSearchedNotesFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.pets.PetWithProfilePic
-import com.hfad.petlogger.pets.usecases.GetAllPetsWithProfilePhotosUseCase
-import com.hfad.petlogger.pets.usecases.GetSinglePetUseCase
-import com.hfad.petlogger.tags.usecases.GetAllTagsFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.tags.usecases.GetSearchedTagsFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.tags.usecases.GetSearchedTagsUseCase
+import com.hfad.petlogger.common.usecases.GetPossessiveFormUseCase
+import com.hfad.petlogger.notes.domain.usecases.GetAllNotesFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.notes.domain.usecases.GetMoreOfAllNotesUseCase
+import com.hfad.petlogger.notes.domain.usecases.GetMoreOfSearchedNotesUseCase
+import com.hfad.petlogger.notes.domain.usecases.GetSearchedNotesFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.pets.data.PetWithProfilePic
+import com.hfad.petlogger.pets.domain.usecases.GetAllPetsWithProfilePhotosUseCase
+import com.hfad.petlogger.pets.domain.usecases.GetSinglePetUseCase
+import com.hfad.petlogger.tags.domain.usecases.GetAllTagsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.tags.domain.usecases.GetSearchedTagsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.tags.domain.usecases.GetSearchedTagsUseCase
+import com.hfad.petlogger.weights.domain.usecases.GetSingleWeightUseCase
 
 class EditWeightFragment : Fragment() {
     private var _binding: FragmentEditWeightBinding? = null
@@ -66,7 +69,7 @@ class EditWeightFragment : Fragment() {
         val petId = EditWeightFragmentArgs.fromBundle(requireArguments()).petId
         val weightRepository = WeightRepository(database)
         val editWeightViewModel = ViewModelProvider(this,
-            EditWeightViewModel.provideFactory(weightRepository, weightId)
+            EditWeightViewModel.provideFactory(weightRepository, GetSingleWeightUseCase(database.weightDao, weightId))
         ).get(EditWeightViewModel::class.java)
         binding.viewModel = editWeightViewModel
 
@@ -115,7 +118,17 @@ class EditWeightFragment : Fragment() {
         ).get(TagMultiSelectionViewModel::class.java)
         binding.tagMultiSelectionViewModel = tagMultiSelectionViewModel
 
-        setAppBarTitle(getString(R.string.edit_weight_header))
+        editWeightViewModel.weightPetName.observe(viewLifecycleOwner) { petName ->
+            petName?.let {
+                val getPossessiveForm = GetPossessiveFormUseCase()
+                binding.editWeightTopAppBar.title = getString(R.string.editing_pet_weight, getPossessiveForm(petName))
+            }
+        }
+        editWeightViewModel.initWeightDateTimeDisplay.observe(viewLifecycleOwner) { initWeightDateTimeDisplay ->
+            initWeightDateTimeDisplay?.let {
+                binding.editWeightTopAppBar.subtitle = it
+            }
+        }
 
         binding.viewPager.offscreenPageLimit = 2
         binding.viewPager.adapter = EditWeightViewPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
@@ -128,21 +141,10 @@ class EditWeightFragment : Fragment() {
         }
         mediator?.attach()
 
-        binding.submitButton.setOnClickListener {
-            petPickerViewModel.selectionTracker.currentSelection.value?.petId?.let { petId ->
-                editWeightViewModel.submitChanges(
-                    petId = petId,
-                    notesToAdd = noteMultiPickerViewModel.getNotesToAdd(),
-                    notesToRemove = noteMultiPickerViewModel.getNotesToRemove(),
-                    tagsToAdd = tagMultiSelectionViewModel.getTagsToAdd(),
-                    tagsToRemove = tagMultiSelectionViewModel.getTagsToRemove()
-                )
-            }
-        }
-        binding.cancelButton.setOnClickListener{
+        binding.editWeightTopAppBar.setNavigationOnClickListener {
             findNavController().popBackStack()
         }
-        val confirmAction = ConfirmActionUseCase(
+        val confirmDelete = ConfirmActionUseCase(
             dialogTitle = resources.getString(R.string.confirm_weight_deletion_title),
             dialogMessage = resources.getString(R.string.confirm_weight_deletion_message),
             onPositiveButtonClick = { dialog, which ->
@@ -151,8 +153,26 @@ class EditWeightFragment : Fragment() {
             },
             context = requireContext()
         )
-        binding.deleteButton.setOnClickListener {
-            confirmAction()
+        binding.editWeightTopAppBar.setOnMenuItemClickListener { menuItem ->
+            when(menuItem.itemId) {
+                R.id.delete -> {
+                    confirmDelete()
+                    true
+                }
+                R.id.submit -> {
+                    petPickerViewModel.selectionTracker.currentSelection.value?.petId?.let { petId ->
+                        editWeightViewModel.submitChanges(
+                            petId = petId,
+                            notesToAdd = noteMultiPickerViewModel.getNotesToAdd(),
+                            notesToRemove = noteMultiPickerViewModel.getNotesToRemove(),
+                            tagsToAdd = tagMultiSelectionViewModel.getTagsToAdd(),
+                            tagsToRemove = tagMultiSelectionViewModel.getTagsToRemove()
+                        )
+                    }
+                    true
+                }
+                else -> false
+            }
         }
         editWeightViewModel.goToWeightsList.observe(viewLifecycleOwner) {
             if (it == true) {
@@ -216,6 +236,20 @@ class EditWeightDetailsFragment() : Fragment() {
                 .show(parentFragmentManager, "TIMEPICKER")
         }
         return view
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val items = listOf("grams", "kilograms", "pounds", "ounces")
+
+        val arrayAdapter = ArrayAdapter<String>(requireContext(), com.google.android.material.R.layout.support_simple_spinner_dropdown_item, items)
+        binding.weightUnitDropDownList.setAdapter(arrayAdapter)
+        binding.weightUnitDropDownList.setText(editWeightViewModel.unitType, false)
+        arrayAdapter.notifyDataSetChanged()
+
+        binding.weightUnitDropDownList.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
+            editWeightViewModel.setWeightUnitType(parent.getItemAtPosition(position).toString())
+        }
     }
 
     override fun onDestroyView() {

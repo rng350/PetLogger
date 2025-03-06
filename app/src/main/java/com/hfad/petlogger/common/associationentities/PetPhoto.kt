@@ -3,8 +3,8 @@ package com.hfad.petlogger.common.associationentities
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
-import com.hfad.petlogger.pets.Pet
-import com.hfad.petlogger.photos.Photo
+import com.hfad.petlogger.pets.data.Pet
+import com.hfad.petlogger.photos.data.Photo
 
 @Entity(
     tableName = "pet_photo_table",

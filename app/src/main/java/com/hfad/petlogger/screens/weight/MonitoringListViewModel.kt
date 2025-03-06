@@ -1,10 +1,9 @@
 package com.hfad.petlogger.screens.weight
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.hfad.petlogger.weights.WeightForList
+import com.hfad.petlogger.weights.data.WeightForList
 import com.hfad.petlogger.common.usecases.GetItemsUseCase
 import com.hfad.petlogger.common.usecases.GetSearchedItemsUseCase
 import com.hfad.petlogger.common.util.Navigator

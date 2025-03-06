@@ -1,19 +1,17 @@
 package com.hfad.petlogger.screens.pet.editpet
 
-import android.util.Log
-import androidx.lifecycle.*
-import com.hfad.petlogger.common.SelectableDateOptional
-import com.hfad.petlogger.notes.Note
-import com.hfad.petlogger.pets.Pet
-import com.hfad.petlogger.pets.PetRepository
-import com.hfad.petlogger.pets.usecases.GetPetDetailsForEditUseCase
-import com.hfad.petlogger.photos.Photo
-import com.hfad.petlogger.tags.Tag
-import com.hfad.petlogger.weights.Weight
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import com.hfad.petlogger.common.datetimeselection.SelectableDateOptional
+import com.hfad.petlogger.notes.data.Note
+import com.hfad.petlogger.pets.data.Pet
+import com.hfad.petlogger.pets.domain.PetRepository
+import com.hfad.petlogger.pets.domain.usecases.GetPetDetailsForEditUseCase
+import com.hfad.petlogger.photos.data.Photo
+import com.hfad.petlogger.tags.data.Tag
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class EditPetViewModel(

@@ -1,57 +1,56 @@
 package com.hfad.petlogger.screens.note.editnote
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
-import com.hfad.petlogger.common.ConfirmActionUseCase
-import com.hfad.petlogger.screens.event.eventmultiselection.EventMultiSelectionDisplayFragment
-import com.hfad.petlogger.screens.event.eventmultiselection.EventMultiSelectionViewModel
-import com.hfad.petlogger.screens.photo.mediaselection.MediaSelectionFragment
-import com.hfad.petlogger.screens.photo.mediaselection.MediaSelectionViewModel
-import com.hfad.petlogger.common.PetLoggerDatabase
-import com.hfad.petlogger.screens.pet.petmultiselection.PetMultiSelectionDisplayFragment
-import com.hfad.petlogger.screens.pet.petmultiselection.PetMultiSelectionViewModel
 import com.hfad.petlogger.R
-import com.hfad.petlogger.screens.tag.tagmultiselection.TagMultiSelectionViewModel
+import com.hfad.petlogger.common.PetLoggerDatabase
+import com.hfad.petlogger.common.navigateSafe
+import com.hfad.petlogger.common.usecases.ConfirmActionUseCase
+import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
 import com.hfad.petlogger.databinding.FragmentEditNoteBinding
 import com.hfad.petlogger.databinding.FragmentEditNoteDetailsBinding
-import com.hfad.petlogger.common.navigateSafe
-import com.hfad.petlogger.tags.usecases.GetAllTagsUseCase
-import com.hfad.petlogger.events.usecases.GetEventsOfNoteUseCase
-import com.hfad.petlogger.pets.usecases.GetPetsOfNoteUseCase
-import com.hfad.petlogger.tags.usecases.GetTagsOfNoteUseCase
-import com.hfad.petlogger.photos.MediaRepository
-import com.hfad.petlogger.notes.NoteRepository
-import com.hfad.petlogger.pets.PetRepository
-import com.hfad.petlogger.tags.TagRepository
-import com.hfad.petlogger.common.setAppBarTitle
-import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
-import com.hfad.petlogger.events.EventRepository
-import com.hfad.petlogger.events.usecases.GetAllEventsFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.events.usecases.GetMoreOfAllEventsUseCase
-import com.hfad.petlogger.events.usecases.GetMoreOfSearchedEventsUseCase
-import com.hfad.petlogger.events.usecases.GetSearchedEventsFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.pets.usecases.GetAllPetsFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.pets.usecases.GetMoreOfAllPetsUseCase
-import com.hfad.petlogger.pets.usecases.GetMoreOfSearchedPetsUseCase
-import com.hfad.petlogger.pets.usecases.GetSearchedPetsFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.photos.usecases.BuildPhotoSearchQueryUseCase
-import com.hfad.petlogger.photos.usecases.GetMoreOfSearchedPhotosUseCase
-import com.hfad.petlogger.photos.usecases.GetMorePhotosOfNoteUseCase
-import com.hfad.petlogger.photos.usecases.GetPhotosOfNoteUseCase
-import com.hfad.petlogger.tags.usecases.GetAllTagsFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.tags.usecases.GetSearchedTagsFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.tags.usecases.GetSearchedTagsUseCase
+import com.hfad.petlogger.events.domain.EventRepository
+import com.hfad.petlogger.events.domain.usecases.GetAllEventsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.events.domain.usecases.GetEventsOfNoteUseCase
+import com.hfad.petlogger.events.domain.usecases.GetMoreOfAllEventsUseCase
+import com.hfad.petlogger.events.domain.usecases.GetMoreOfSearchedEventsUseCase
+import com.hfad.petlogger.events.domain.usecases.GetSearchedEventsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.notes.domain.NoteRepository
+import com.hfad.petlogger.pets.domain.PetRepository
+import com.hfad.petlogger.pets.domain.usecases.GetAllPetsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.pets.domain.usecases.GetMoreOfAllPetsUseCase
+import com.hfad.petlogger.pets.domain.usecases.GetMoreOfSearchedPetsUseCase
+import com.hfad.petlogger.pets.domain.usecases.GetPetsOfNoteUseCase
+import com.hfad.petlogger.pets.domain.usecases.GetSearchedPetsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.photos.domain.MediaRepository
+import com.hfad.petlogger.photos.domain.usecases.BuildPhotoSearchQueryUseCase
+import com.hfad.petlogger.photos.domain.usecases.GetMoreOfSearchedPhotosUseCase
+import com.hfad.petlogger.photos.domain.usecases.GetMorePhotosOfNoteUseCase
+import com.hfad.petlogger.photos.domain.usecases.GetPhotosOfNoteUseCase
+import com.hfad.petlogger.screens.event.eventmultiselection.EventMultiSelectionDisplayFragment
+import com.hfad.petlogger.screens.event.eventmultiselection.EventMultiSelectionViewModel
+import com.hfad.petlogger.screens.pet.petmultiselection.PetMultiSelectionDisplayFragment
+import com.hfad.petlogger.screens.pet.petmultiselection.PetMultiSelectionViewModel
+import com.hfad.petlogger.screens.photo.mediaselection.MediaSelectionFragment
+import com.hfad.petlogger.screens.photo.mediaselection.MediaSelectionViewModel
+import com.hfad.petlogger.screens.tag.tagmultiselection.TagMultiSelectionViewModel
+import com.hfad.petlogger.tags.domain.TagRepository
+import com.hfad.petlogger.tags.domain.usecases.GetAllTagsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.tags.domain.usecases.GetAllTagsUseCase
+import com.hfad.petlogger.tags.domain.usecases.GetSearchedTagsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.tags.domain.usecases.GetSearchedTagsUseCase
+import com.hfad.petlogger.tags.domain.usecases.GetTagsOfNoteUseCase
 
 class EditNoteFragment : Fragment() {
 
@@ -167,24 +166,11 @@ class EditNoteFragment : Fragment() {
         }
         mediator?.attach()
 
-        binding.backButton.setOnClickListener {
+        binding.editNoteTopAppBar.setNavigationOnClickListener {
             findNavController().popBackStack()
         }
 
-        binding.submitButton.setOnClickListener {
-            editNoteViewModel.submitChanges(
-                eventsToAdd = eventMultiSelectionViewModel.getEventsToAdd(),
-                eventsToRemove = eventMultiSelectionViewModel.getEventsToRemove(),
-                petsToAdd = petMultiSelectionViewModel.getPetsToAdd(),
-                petsToRemove = petMultiSelectionViewModel.getPetsToRemove(),
-                photosToAdd = mediaSelectionViewModel.getPhotosToAdd(),
-                photosToRemove = mediaSelectionViewModel.getPhotosToRemove(),
-                tagsToAdd = tagMultiSelectionViewModel.getTagsToAdd(),
-                tagsToRemove = tagMultiSelectionViewModel.getTagsToRemove()
-            )
-        }
-
-        val confirmAction = ConfirmActionUseCase(
+        val confirmDelete = ConfirmActionUseCase(
             dialogTitle = resources.getString(R.string.confirm_note_deletion_title),
             dialogMessage = resources.getString(R.string.confirm_note_deletion_message),
             onPositiveButtonClick = { dialog, which ->
@@ -193,17 +179,28 @@ class EditNoteFragment : Fragment() {
             },
             context = requireContext()
         )
-        binding.deleteButton.setOnClickListener {
-            confirmAction()
-        }
-
-        editNoteViewModel.fetchedNote.observe(viewLifecycleOwner, Observer {
-            it?.let {
-                setAppBarTitle(title = it.title.ifEmpty { getString(R.string.view_untitled_note_header) }, subtitle = getString(
-                    R.string.editing_note_details
-                ))
+        binding.editNoteTopAppBar.setOnMenuItemClickListener { menuItem ->
+            when(menuItem.itemId) {
+                R.id.delete -> {
+                    confirmDelete()
+                    true
+                }
+                R.id.submit -> {
+                    editNoteViewModel.submitChanges(
+                        eventsToAdd = eventMultiSelectionViewModel.getEventsToAdd(),
+                        eventsToRemove = eventMultiSelectionViewModel.getEventsToRemove(),
+                        petsToAdd = petMultiSelectionViewModel.getPetsToAdd(),
+                        petsToRemove = petMultiSelectionViewModel.getPetsToRemove(),
+                        photosToAdd = mediaSelectionViewModel.getPhotosToAdd(),
+                        photosToRemove = mediaSelectionViewModel.getPhotosToRemove(),
+                        tagsToAdd = tagMultiSelectionViewModel.getTagsToAdd(),
+                        tagsToRemove = tagMultiSelectionViewModel.getTagsToRemove()
+                    )
+                    true
+                }
+                else -> false
             }
-        })
+        }
 
         editNoteViewModel.goBack.observe(viewLifecycleOwner, Observer {
             if (it == true) {

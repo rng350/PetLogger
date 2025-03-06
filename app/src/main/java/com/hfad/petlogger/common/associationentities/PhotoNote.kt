@@ -4,8 +4,8 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
-import com.hfad.petlogger.notes.Note
-import com.hfad.petlogger.photos.Photo
+import com.hfad.petlogger.notes.data.Note
+import com.hfad.petlogger.photos.data.Photo
 
 @Entity(
     tableName = "photo_note_table",

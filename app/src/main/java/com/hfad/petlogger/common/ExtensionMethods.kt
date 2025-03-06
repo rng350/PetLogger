@@ -1,14 +1,12 @@
 package com.hfad.petlogger.common
 
 import android.net.Uri
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.NavOptions
-import com.hfad.petlogger.MainActivity
 import java.io.File
 
 val File.size get() = if (!exists()) 0.0 else length().toDouble()
@@ -52,15 +50,6 @@ fun <T> List<T>.copyOf(): List<T> {
 
 fun <T> List<T>.mutableCopyOf(): MutableList<T> {
     return mutableListOf<T>().also { it.addAll(this) }
-}
-
-fun Fragment.setAppBarTitle(title: String, subtitle: String? = null) {
-    val mainActivity = (activity as MainActivity)
-    mainActivity.setTopAppBarTitle(title)
-    mainActivity.disableTopAppBarSubtitle()
-    subtitle?.let {
-        mainActivity.setTopAppBarSubtitle(it)
-    }
 }
 
 // prevent a crash that occurs when quick successive calls to Navigation functions are made

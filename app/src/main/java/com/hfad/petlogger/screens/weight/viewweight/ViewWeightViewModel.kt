@@ -3,8 +3,8 @@ package com.hfad.petlogger.screens.weight.viewweight
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.hfad.petlogger.weights.WeightFullDetailsState
-import com.hfad.petlogger.weights.WeightRepository
+import com.hfad.petlogger.weights.data.WeightFullDetailsState
+import com.hfad.petlogger.weights.domain.WeightRepository
 import com.hfad.petlogger.common.util.MeasuringUnitConverter
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

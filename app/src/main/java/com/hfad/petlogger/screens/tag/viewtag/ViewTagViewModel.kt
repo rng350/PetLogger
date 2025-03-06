@@ -5,17 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.hfad.petlogger.events.EventForList
-import com.hfad.petlogger.notes.Note
-import com.hfad.petlogger.pets.PetWithProfilePic
-import com.hfad.petlogger.photos.Photo
-import com.hfad.petlogger.tags.Tag
-import com.hfad.petlogger.weights.WeightForList
-import com.hfad.petlogger.tags.TagRepository
-import com.hfad.petlogger.common.util.Navigator
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.stateIn
+import com.hfad.petlogger.tags.data.Tag
+import com.hfad.petlogger.tags.domain.TagRepository
 import kotlinx.coroutines.launch
 
 class ViewTagViewModel(tagRepository: TagRepository, tagId: Long) : ViewModel() {

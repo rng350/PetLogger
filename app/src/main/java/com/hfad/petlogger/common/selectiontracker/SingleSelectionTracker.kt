@@ -3,8 +3,8 @@ package com.hfad.petlogger.common.selectiontracker
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.hfad.petlogger.common.CheckableItem
-import com.hfad.petlogger.common.usecases.GetSingleInitialItemUseCase
 import com.hfad.petlogger.common.usecases.GetItemsUseCase
+import com.hfad.petlogger.common.usecases.GetSingleInitialItemUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch

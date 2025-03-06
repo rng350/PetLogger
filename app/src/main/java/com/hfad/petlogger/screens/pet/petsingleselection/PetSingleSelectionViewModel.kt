@@ -3,10 +3,10 @@ package com.hfad.petlogger.screens.pet.petsingleselection
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.hfad.petlogger.pets.PetWithProfilePic
 import com.hfad.petlogger.common.selectiontracker.SingleSelectionTracker
 import com.hfad.petlogger.common.usecases.GetSingleInitialItemUseCase
-import com.hfad.petlogger.pets.usecases.GetAllPetsWithProfilePhotosUseCase
+import com.hfad.petlogger.pets.data.PetWithProfilePic
+import com.hfad.petlogger.pets.domain.usecases.GetAllPetsWithProfilePhotosUseCase
 
 class PetSingleSelectionViewModel(getAllPets: GetAllPetsWithProfilePhotosUseCase, val initialPetSelected: GetSingleInitialItemUseCase<PetWithProfilePic>? = null) : ViewModel() {
     val selectionTracker = SingleSelectionTracker<PetWithProfilePic>(

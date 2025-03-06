@@ -26,7 +26,6 @@
     <string name="event_date_header">Date</string>
     <string name="event_details_header">Details</string>
     <string name="event_pets_involved_header">Pets Involved</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="time_header">Time</string>
     <string name="input_weight_date">+Weight Date</string>
@@ -52,6 +51,7 @@
     <string name="new_photos_header">New Photos</string>
     <string name="photos_header">Photos</string>
     <!-- ViewWeight Screen -->
+    <string name="viewing_pets_weight">Viewing %s Weight</string>
     <string name="weightGramsDisplay">%s grams</string>
     <string name="previous_weight">Previous Weight: %s gram(s)</string>
     <string name="weight_difference_plus">(+%s gram(s))</string>
@@ -61,15 +61,14 @@
     <string name="viewing_details">Viewing Details</string>
     <string name="editing_details">Editing Details</string>
     <string name="event_list_header">Event List</string>
-    <string name="viewing_event_details">Viewing Event Details</string>
-    <string name="editing_event_details">Editing Event Details</string>
+    <string name="viewing_event_details">Viewing Event</string>
+    <string name="editing_event_details">Editing Event</string>
     <string name="note_list_header">Note List</string>
     <string name="new_event_header">New Event</string>
     <string name="new_pet_header">New Pet</string>
     <string name="new_weight_header">New Weight</string>
     <string name="weight_list_header">Weights List</string>
     <string name="media_gallery_header">Media Gallery</string>
-    <string name="edit_weight_header">Editing Weight</string>
     <string name="weight">Weight</string>
     <string name="edit_weight_button">Edit Weight</string>
     <string name="date">Date</string>
@@ -79,12 +78,12 @@
     <string name="clear">Clear</string>
     <string name="add_note">Add Note</string>
     <string name="edit_note_button">Edit Note</string>
-    <string name="viewing_note_details">Viewing Note Details</string>
+    <string name="viewing_note_details">Viewing Note</string>
     <string name="reset">Reset</string>
     <string name="new_note_header">New Note</string>
     <string name="view_untitled_note_header">Untitled Note</string>
-    <string name="editing_pet_details">Editing Pet Details</string>
-    <string name="editing_note_details">Editing Note Details</string>
+    <string name="editing_pet_details">Editing Pet</string>
+    <string name="editing_note_details">Editing Note</string>
     <string name="pet_list_header">Pet List</string>
     <string name="ok">Ok</string>
     <string name="add_events">Add Events</string>
@@ -99,8 +98,8 @@
     <string name="file_size_header">Size</string>
     <string name="clear_photo">Clear Photo</string>
     <string name="edit_button">Edit</string>
-    <string name="viewing_photo_details">Viewing Photo Details\n</string>
-    <string name="editing_photo_details">Editing Photo Details</string>
+    <string name="viewing_photo_details">Viewing Photo</string>
+    <string name="editing_photo_details">Editing Photo</string>
     <string name="last_updated">Last Updated</string>
     <string name="selected_photo">Selected Photo</string>
     <string name="associated_weights">Associated Weights</string>
@@ -164,4 +163,7 @@
     <string name="loading">Loading...</string>
     <string name="pet_not_found">Pet Not Found</string>
     <string name="status">Status</string>
+    <string name="viewing_pet">Viewing Pet</string>
+    <string name="edit">Edit</string>
+    <string name="editing_pet_weight">Editing %s Weight</string>
 </resources>

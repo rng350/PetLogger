@@ -9,7 +9,7 @@ import com.hfad.petlogger.common.recyclerviews.DataItemBindingInterface
 import com.hfad.petlogger.common.recyclerviews.GenericRecyclerViewAdapter
 import com.hfad.petlogger.common.selectiontracker.MultiSelectionTracker
 import com.hfad.petlogger.databinding.EventItemBinding
-import com.hfad.petlogger.events.EventForList
+import com.hfad.petlogger.events.data.EventForList
 
 class SetupEventMultiPickerSelectionDisplayUseCase(private val selection: LiveData<List<EventForList>>,
                                                    private val selectionTracker: MultiSelectionTracker<EventForList>,

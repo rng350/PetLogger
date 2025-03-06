@@ -22,6 +22,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:padding="4dp"
             android:orientation="vertical">
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/pet_profile_pic_selection_fragment_container_view"
@@ -54,8 +55,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/pet_species_header"
+                    android:layout_marginEnd="2dp"
                     android:layout_weight="1">
-
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -68,8 +69,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/pet_breed_header"
+                    android:layout_marginStart="2dp"
                     android:layout_weight="1">
-
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -84,37 +85,33 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-
                 <com.google.android.material.radiobutton.MaterialRadioButton
                     android:id="@+id/petSexMale"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/pet_sex_male" />
-
                 <com.google.android.material.radiobutton.MaterialRadioButton
                     android:id="@+id/petSexFemale"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/pet_sex_female" />
-
                 <com.google.android.material.radiobutton.MaterialRadioButton
                     android:id="@+id/petSexOther"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/pet_sex_other" />
             </RadioGroup>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/petBirthDateLayout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:hint="@string/pet_birthdate">
-
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/petBirthDateDisplay"
                         android:layout_width="match_parent"

@@ -5,11 +5,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.hfad.petlogger.R
-import com.hfad.petlogger.databinding.ItemSelectedTagBinding
-import com.hfad.petlogger.tags.Tag
 import com.hfad.petlogger.common.recyclerviews.DataItemBindingInterface
 import com.hfad.petlogger.common.recyclerviews.GenericRecyclerViewAdapter
 import com.hfad.petlogger.common.selectiontracker.MultiSelectionTracker
+import com.hfad.petlogger.databinding.ItemTagBinding
+import com.hfad.petlogger.tags.data.Tag
 
 class SetupTagMultiPickerSelectionDisplayUseCase(
     private val selection: LiveData<List<Tag>>,
@@ -18,8 +18,8 @@ class SetupTagMultiPickerSelectionDisplayUseCase(
     private val lifecycleOwner: LifecycleOwner
 ) {
     operator fun invoke() {
-        val adapter = GenericRecyclerViewAdapter<Tag, ItemSelectedTagBinding>(
-            layoutId = R.layout.item_selected_tag,
+        val adapter = GenericRecyclerViewAdapter<Tag, ItemTagBinding>(
+            layoutId = R.layout.item_tag,
             bindingInterface = createTagItemBindingInterface()
         )
         recyclerView.adapter = adapter
@@ -30,10 +30,10 @@ class SetupTagMultiPickerSelectionDisplayUseCase(
     }
 
     private fun createTagItemBindingInterface() = object :
-        DataItemBindingInterface<Tag, ItemSelectedTagBinding> {
+        DataItemBindingInterface<Tag, ItemTagBinding> {
         override fun bind(
             item: Tag,
-            binder: ItemSelectedTagBinding,
+            binder: ItemTagBinding,
             itemLifecycleOwner: LifecycleOwner
         ) {
             binder.tag = item

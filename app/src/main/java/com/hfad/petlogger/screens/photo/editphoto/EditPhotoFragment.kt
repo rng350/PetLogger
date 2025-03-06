@@ -1,58 +1,57 @@
 package com.hfad.petlogger.screens.photo.editphoto
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
-import com.hfad.petlogger.common.ConfirmActionUseCase
+import com.hfad.petlogger.R
+import com.hfad.petlogger.common.PetLoggerDatabase
+import com.hfad.petlogger.common.navigateSafe
+import com.hfad.petlogger.common.usecases.ConfirmActionUseCase
+import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
+import com.hfad.petlogger.databinding.FragmentEditPhotoBinding
+import com.hfad.petlogger.databinding.FragmentEditPhotoDetailsBinding
+import com.hfad.petlogger.events.domain.EventRepository
+import com.hfad.petlogger.events.domain.usecases.GetAllEventsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.events.domain.usecases.GetEventsOfPhotoUseCase
+import com.hfad.petlogger.events.domain.usecases.GetMoreOfAllEventsUseCase
+import com.hfad.petlogger.events.domain.usecases.GetMoreOfSearchedEventsUseCase
+import com.hfad.petlogger.events.domain.usecases.GetSearchedEventsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.notes.domain.NoteRepository
+import com.hfad.petlogger.notes.domain.usecases.GetAllNotesFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.notes.domain.usecases.GetMoreOfAllNotesUseCase
+import com.hfad.petlogger.notes.domain.usecases.GetMoreOfSearchedNotesUseCase
+import com.hfad.petlogger.notes.domain.usecases.GetNotesOfPhotoUseCase
+import com.hfad.petlogger.notes.domain.usecases.GetSearchedNotesFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.pets.domain.PetRepository
+import com.hfad.petlogger.pets.domain.usecases.GetAllPetsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.pets.domain.usecases.GetMoreOfAllPetsUseCase
+import com.hfad.petlogger.pets.domain.usecases.GetMoreOfSearchedPetsUseCase
+import com.hfad.petlogger.pets.domain.usecases.GetPetsOfPhotoUseCase
+import com.hfad.petlogger.pets.domain.usecases.GetSearchedPetsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.photos.domain.MediaRepository
 import com.hfad.petlogger.screens.event.eventmultiselection.EventMultiSelectionDisplayFragment
 import com.hfad.petlogger.screens.event.eventmultiselection.EventMultiSelectionViewModel
 import com.hfad.petlogger.screens.note.notemultiselection.NoteMultiSelectionDisplayFragment
 import com.hfad.petlogger.screens.note.notemultiselection.NoteMultiSelectionViewModel
-import com.hfad.petlogger.common.PetLoggerDatabase
 import com.hfad.petlogger.screens.pet.petmultiselection.PetMultiSelectionDisplayFragment
 import com.hfad.petlogger.screens.pet.petmultiselection.PetMultiSelectionViewModel
-import com.hfad.petlogger.R
 import com.hfad.petlogger.screens.tag.tagmultiselection.TagMultiSelectionViewModel
-import com.hfad.petlogger.databinding.FragmentEditPhotoBinding
-import com.hfad.petlogger.databinding.FragmentEditPhotoDetailsBinding
-import com.hfad.petlogger.common.navigateSafe
-import com.hfad.petlogger.tags.usecases.GetAllTagsUseCase
-import com.hfad.petlogger.events.usecases.GetEventsOfPhotoUseCase
-import com.hfad.petlogger.notes.usecases.GetNotesOfPhotoUseCase
-import com.hfad.petlogger.pets.usecases.GetPetsOfPhotoUseCase
-import com.hfad.petlogger.tags.usecases.GetTagsOfPhotoUseCase
-import com.hfad.petlogger.photos.MediaRepository
-import com.hfad.petlogger.notes.NoteRepository
-import com.hfad.petlogger.pets.PetRepository
-import com.hfad.petlogger.tags.TagRepository
-import com.hfad.petlogger.common.setAppBarTitle
-import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
-import com.hfad.petlogger.events.EventRepository
-import com.hfad.petlogger.events.usecases.GetAllEventsFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.events.usecases.GetMoreOfAllEventsUseCase
-import com.hfad.petlogger.events.usecases.GetMoreOfSearchedEventsUseCase
-import com.hfad.petlogger.events.usecases.GetSearchedEventsFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.notes.usecases.GetAllNotesFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.notes.usecases.GetMoreOfAllNotesUseCase
-import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesUseCase
-import com.hfad.petlogger.notes.usecases.GetSearchedNotesFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.pets.usecases.GetAllPetsFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.pets.usecases.GetMoreOfAllPetsUseCase
-import com.hfad.petlogger.pets.usecases.GetMoreOfSearchedPetsUseCase
-import com.hfad.petlogger.pets.usecases.GetSearchedPetsFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.tags.usecases.GetAllTagsFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.tags.usecases.GetSearchedTagsFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.tags.usecases.GetSearchedTagsUseCase
+import com.hfad.petlogger.tags.domain.TagRepository
+import com.hfad.petlogger.tags.domain.usecases.GetAllTagsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.tags.domain.usecases.GetAllTagsUseCase
+import com.hfad.petlogger.tags.domain.usecases.GetSearchedTagsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.tags.domain.usecases.GetSearchedTagsUseCase
+import com.hfad.petlogger.tags.domain.usecases.GetTagsOfPhotoUseCase
 
 class EditPhotoFragment : Fragment() {
 
@@ -147,8 +146,6 @@ class EditPhotoFragment : Fragment() {
         binding.noteMultiSelectionViewModel = noteSelectionViewModel
         binding.tagMultiSelectionViewModel = tagMultiSelectionViewModel
 
-        setAppBarTitle(getString(R.string.editing_photo_details))
-
         binding.viewPager.offscreenPageLimit = 4
         binding.viewPager.adapter = EditPhotoViewPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
         mediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
@@ -162,20 +159,7 @@ class EditPhotoFragment : Fragment() {
         }
         mediator?.attach()
 
-        binding.submitButton.setOnClickListener{
-            editPhotoViewModel.submit(
-                petsToAdd = petSelectorViewModel.getPetsToAdd(),
-                petsToRemove = petSelectorViewModel.getPetsToRemove(),
-                eventsToAdd = eventSelectionViewModel.getEventsToAdd(),
-                eventsToRemove = eventSelectionViewModel.getEventsToRemove(),
-                notesToAdd = noteSelectionViewModel.getNotesToAdd(),
-                notesToRemove = noteSelectionViewModel.getNotesToRemove(),
-                tagsToAdd = tagMultiSelectionViewModel.getTagsToAdd(),
-                tagsToRemove = tagMultiSelectionViewModel.getTagsToRemove()
-            )
-        }
-
-        val confirmAction = ConfirmActionUseCase(
+        val confirmDelete = ConfirmActionUseCase(
             dialogTitle = resources.getString(R.string.confirm_photo_deletion_title),
             dialogMessage = resources.getString(R.string.confirm_photo_deletion_message),
             onPositiveButtonClick = { dialog, which ->
@@ -183,11 +167,29 @@ class EditPhotoFragment : Fragment() {
                 editPhotoViewModel.deletePhoto() },
             context = requireContext()
         )
-        binding.deleteButton.setOnClickListener{
-            confirmAction()
+        binding.editPhotoTopAppBar.setOnMenuItemClickListener { menuItem ->
+            when(menuItem.itemId) {
+                R.id.delete -> {
+                    confirmDelete()
+                    true
+                }
+                R.id.submit -> {
+                    editPhotoViewModel.submit(
+                        petsToAdd = petSelectorViewModel.getPetsToAdd(),
+                        petsToRemove = petSelectorViewModel.getPetsToRemove(),
+                        eventsToAdd = eventSelectionViewModel.getEventsToAdd(),
+                        eventsToRemove = eventSelectionViewModel.getEventsToRemove(),
+                        notesToAdd = noteSelectionViewModel.getNotesToAdd(),
+                        notesToRemove = noteSelectionViewModel.getNotesToRemove(),
+                        tagsToAdd = tagMultiSelectionViewModel.getTagsToAdd(),
+                        tagsToRemove = tagMultiSelectionViewModel.getTagsToRemove()
+                    )
+                    true
+                }
+                else -> false
+            }
         }
-
-        binding.backButton.setOnClickListener{
+        binding.editPhotoTopAppBar.setNavigationOnClickListener {
             findNavController().popBackStack()
         }
 

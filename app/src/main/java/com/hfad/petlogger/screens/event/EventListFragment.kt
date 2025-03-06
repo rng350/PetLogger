@@ -1,25 +1,23 @@
 package com.hfad.petlogger.screens.event
 
 import RecyclerViewPaginator
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.common.PetLoggerDatabase
-import com.hfad.petlogger.R
-import com.hfad.petlogger.databinding.FragmentEventListBinding
 import com.hfad.petlogger.common.navigateSafe
-import com.hfad.petlogger.events.usecases.GetMoreOfAllEventsUseCase
-import com.hfad.petlogger.events.EventRepository
-import com.hfad.petlogger.photos.MediaRepository
-import com.hfad.petlogger.common.setAppBarTitle
-import com.hfad.petlogger.events.usecases.GetMoreOfSearchedEventsUseCase
+import com.hfad.petlogger.databinding.FragmentEventListBinding
+import com.hfad.petlogger.events.domain.EventRepository
+import com.hfad.petlogger.events.domain.usecases.GetMoreOfAllEventsUseCase
+import com.hfad.petlogger.events.domain.usecases.GetMoreOfSearchedEventsUseCase
+import com.hfad.petlogger.photos.domain.MediaRepository
 import com.hfad.petlogger.screens.sections.recyclerviews.SetupAssociatedEventsDisplayUseCase
 
 class EventListFragment : Fragment() {
@@ -35,7 +33,6 @@ class EventListFragment : Fragment() {
         _binding = FragmentEventListBinding.inflate(inflater, container, false)
         val view = binding.root
         binding.lifecycleOwner = viewLifecycleOwner
-        setAppBarTitle(getString(R.string.event_list_header))
 
         val application = requireNotNull(this.activity).application
         val database = PetLoggerDatabase.getInstance(application)
@@ -73,6 +70,14 @@ class EventListFragment : Fragment() {
                 return true
             }
         })
+
+        if (findNavController().previousBackStackEntry == null) {
+            binding.eventListTopAppBar.navigationIcon = null
+        } else {
+            binding.eventListTopAppBar.setNavigationOnClickListener {
+                findNavController().popBackStack()
+            }
+        }
 
         binding.addEventButton.setOnClickListener {
             this.findNavController().navigateSafe(EventListFragmentDirections.actionEventListFragmentToNewEventFragment())

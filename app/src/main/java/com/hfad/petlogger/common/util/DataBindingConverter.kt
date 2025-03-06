@@ -2,7 +2,6 @@ package com.hfad.petlogger.common.util
 
 import android.widget.EditText
 import androidx.databinding.InverseMethod
-import com.google.android.material.textfield.TextInputEditText
 
 object DataBindingConverter {
     @InverseMethod("stringToInt")

@@ -5,11 +5,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.hfad.petlogger.R
-import com.hfad.petlogger.databinding.ItemSelectedWeightBinding
-import com.hfad.petlogger.weights.WeightWithPetName
 import com.hfad.petlogger.common.recyclerviews.DataItemBindingInterface
 import com.hfad.petlogger.common.recyclerviews.GenericRecyclerViewAdapter
 import com.hfad.petlogger.common.selectiontracker.MultiSelectionTracker
+import com.hfad.petlogger.databinding.ItemSelectedWeightBinding
+import com.hfad.petlogger.weights.data.WeightWithPetName
 
 class SetupWeightMultiPickerSelectionDisplayUseCase(private val selection: LiveData<List<WeightWithPetName>>,
                                                     private val selectionTracker: MultiSelectionTracker<WeightWithPetName>,

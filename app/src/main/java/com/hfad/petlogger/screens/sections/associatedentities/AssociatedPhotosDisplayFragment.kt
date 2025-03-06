@@ -2,17 +2,16 @@ package com.hfad.petlogger.screens.sections.associatedentities
 
 import RecyclerViewPaginator
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.hfad.petlogger.databinding.FragmentFullGalleryBinding
 import com.hfad.petlogger.screens.photo.FullGalleryViewModel
 import com.hfad.petlogger.screens.sections.recyclerviews.SetupAssociatedPhotosDisplayUseCase
-import com.hfad.petlogger.screens.sections.recyclerviews.decorators.PhotoItemSpacingDecoration
 
 class AssociatedPhotosDisplayFragment : Fragment() {
     private var _binding: FragmentFullGalleryBinding? = null
@@ -27,6 +26,8 @@ class AssociatedPhotosDisplayFragment : Fragment() {
         val view = binding.root
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = galleryViewModel
+
+        binding.mediaListTopAppBarLayout.visibility = View.GONE
 
         SetupAssociatedPhotosDisplayUseCase(
             galleryViewModel.photos,

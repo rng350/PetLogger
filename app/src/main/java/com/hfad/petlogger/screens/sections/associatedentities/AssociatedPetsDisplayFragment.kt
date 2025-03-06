@@ -27,6 +27,8 @@ class AssociatedPetsDisplayFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = petListViewModel
 
+        binding.petListTopAppBarLayout.visibility = View.GONE
+
         SetupAssociatedPetsDisplayUseCase(
             petListViewModel.pets,
             petListViewModel.petNavigator,

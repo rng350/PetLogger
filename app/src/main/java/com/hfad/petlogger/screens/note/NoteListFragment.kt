@@ -2,23 +2,21 @@ package com.hfad.petlogger.screens.note
 
 import RecyclerViewPaginator
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.common.PetLoggerDatabase
-import com.hfad.petlogger.R
-import com.hfad.petlogger.databinding.FragmentNoteListBinding
 import com.hfad.petlogger.common.navigateSafe
-import com.hfad.petlogger.photos.MediaRepository
-import com.hfad.petlogger.notes.NoteRepository
-import com.hfad.petlogger.common.setAppBarTitle
-import com.hfad.petlogger.notes.usecases.GetMoreOfAllNotesUseCase
-import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesUseCase
+import com.hfad.petlogger.databinding.FragmentNoteListBinding
+import com.hfad.petlogger.notes.domain.NoteRepository
+import com.hfad.petlogger.notes.domain.usecases.GetMoreOfAllNotesUseCase
+import com.hfad.petlogger.notes.domain.usecases.GetMoreOfSearchedNotesUseCase
+import com.hfad.petlogger.photos.domain.MediaRepository
 import com.hfad.petlogger.screens.sections.recyclerviews.SetupShortenedNotesListDisplayUseCase
 
 class NoteListFragment : Fragment() {
@@ -35,8 +33,6 @@ class NoteListFragment : Fragment() {
         _binding = FragmentNoteListBinding.inflate(inflater, container, false)
         val view = binding.root
         binding.lifecycleOwner = viewLifecycleOwner
-
-        setAppBarTitle(getString(R.string.note_list_header))
 
         val application = requireNotNull(this.activity).application
         val database = PetLoggerDatabase.getInstance(application)
@@ -65,6 +61,14 @@ class NoteListFragment : Fragment() {
             isLoading = {viewModel.isLoading()},
             onLast = {viewModel.onLastPage()}
         )
+
+        if (findNavController().previousBackStackEntry == null) {
+            binding.noteListTopAppBar.navigationIcon = null
+        } else {
+            binding.noteListTopAppBar.setNavigationOnClickListener {
+                findNavController().popBackStack()
+            }
+        }
 
         viewModel.noteNavigator.navigateTo.observe(viewLifecycleOwner) {
             it?.let {

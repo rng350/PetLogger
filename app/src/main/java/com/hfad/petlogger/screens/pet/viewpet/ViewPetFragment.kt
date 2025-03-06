@@ -1,14 +1,13 @@
 package com.hfad.petlogger.screens.pet.viewpet
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import com.hfad.petlogger.databinding.FragmentViewPetBinding
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -17,35 +16,35 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.tabs.TabLayoutMediator
-import com.hfad.petlogger.common.PetLoggerDatabase
 import com.hfad.petlogger.R
-import com.hfad.petlogger.databinding.FragmentViewPetDetailsBinding
+import com.hfad.petlogger.common.PetLoggerDatabase
 import com.hfad.petlogger.common.navigateSafe
-import com.hfad.petlogger.tags.usecases.GetAllTagsOfPetAlphabeticalOrderUseCase
-import com.hfad.petlogger.events.usecases.GetMoreEventsOfPetUseCase
-import com.hfad.petlogger.notes.usecases.GetMoreNotesOfPetUseCase
-import com.hfad.petlogger.photos.usecases.GetMorePhotosOfPetUseCase
-import com.hfad.petlogger.weights.usecases.GetMoreWeightsOfPetUseCase
-import com.hfad.petlogger.photos.MediaRepository
-import com.hfad.petlogger.pets.PetRepository
+import com.hfad.petlogger.databinding.FragmentViewPetBinding
+import com.hfad.petlogger.databinding.FragmentViewPetDetailsBinding
+import com.hfad.petlogger.events.domain.usecases.BuildEventSearchQueryUseCase
+import com.hfad.petlogger.events.domain.usecases.GetMoreEventsOfPetUseCase
+import com.hfad.petlogger.events.domain.usecases.GetMoreOfSearchedEventsUseCase
+import com.hfad.petlogger.notes.domain.usecases.BuildNoteSearchQueryUseCase
+import com.hfad.petlogger.notes.domain.usecases.GetMoreNotesOfPetUseCase
+import com.hfad.petlogger.notes.domain.usecases.GetMoreOfSearchedNotesUseCase
+import com.hfad.petlogger.pets.domain.PetRepository
+import com.hfad.petlogger.pets.domain.usecases.GetPetDetailsForDisplayUseCase
+import com.hfad.petlogger.photos.domain.MediaRepository
+import com.hfad.petlogger.photos.domain.usecases.BuildPhotoSearchQueryUseCase
+import com.hfad.petlogger.photos.domain.usecases.GetMoreOfSearchedPhotosUseCase
+import com.hfad.petlogger.photos.domain.usecases.GetMorePhotosOfPetUseCase
+import com.hfad.petlogger.screens.event.EventListViewModel
+import com.hfad.petlogger.screens.note.NoteListViewModel
+import com.hfad.petlogger.screens.photo.FullGalleryViewModel
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedEventsDisplayFragment
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedNotesDisplayFragment
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPetWeightsDisplayFragment
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPetWeightsDisplayViewModel
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPhotosDisplayFragment
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedTagsDisplayViewModel
-import com.hfad.petlogger.common.setAppBarTitle
-import com.hfad.petlogger.events.usecases.BuildEventSearchQueryUseCase
-import com.hfad.petlogger.events.usecases.GetMoreOfSearchedEventsUseCase
-import com.hfad.petlogger.notes.usecases.BuildNoteSearchQueryUseCase
-import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesUseCase
-import com.hfad.petlogger.pets.usecases.GetPetDetailsForDisplayUseCase
-import com.hfad.petlogger.photos.usecases.BuildPhotoSearchQueryUseCase
-import com.hfad.petlogger.photos.usecases.GetMoreOfSearchedPhotosUseCase
-import com.hfad.petlogger.screens.event.EventListViewModel
-import com.hfad.petlogger.screens.note.NoteListViewModel
-import com.hfad.petlogger.screens.photo.FullGalleryViewModel
-import com.hfad.petlogger.weights.usecases.GetSearchedWeightsOfPetForDisplayUseCase
+import com.hfad.petlogger.tags.domain.usecases.GetAllTagsOfPetAlphabeticalOrderUseCase
+import com.hfad.petlogger.weights.domain.usecases.GetMoreWeightsOfPetUseCase
+import com.hfad.petlogger.weights.domain.usecases.GetSearchedWeightsOfPetForDisplayUseCase
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -113,19 +112,35 @@ class ViewPetFragment : Fragment() {
                         is ViewPetViewModel.Status.Loaded -> {
                             when (status.result) {
                                 GetPetDetailsForDisplayUseCase.Result.Failure -> {
-                                    setAppBarTitle(getString(R.string.pet_not_found))
+                                    binding.viewPetTopAppBar.title = getString(R.string.pet_not_found)
+                                    binding.viewPetTopAppBar.subtitle = null
                                 }
                                 is GetPetDetailsForDisplayUseCase.Result.Success -> {
-                                    val fetchedPetName = status.result.fetchedPet.petName
-                                    setAppBarTitle(fetchedPetName, getString(R.string.viewing_details))
+                                    binding.viewPetTopAppBar.title = status.result.fetchedPet.petName
+                                    binding.viewPetTopAppBar.subtitle = getString(R.string.viewing_pet)
                                 }
                             }
                         }
                         ViewPetViewModel.Status.Loading -> {
-                            setAppBarTitle(getString(R.string.loading_pet))
+                            binding.viewPetTopAppBar.title = getString(R.string.loading_pet)
+                            binding.viewPetTopAppBar.subtitle = null
                         }
                     }
                 }
+            }
+        }
+
+        binding.viewPetTopAppBar.setNavigationOnClickListener {
+            findNavController().popBackStack()
+        }
+
+        binding.viewPetTopAppBar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.edit -> {
+                    findNavController().navigateSafe(ViewPetFragmentDirections.actionViewPetFragmentToEditPetFragment(petId))
+                    true
+                }
+                else -> false
             }
         }
 
@@ -183,13 +198,6 @@ class ViewPetFragment : Fragment() {
                 findNavController().navigateSafe(ViewPetFragmentDirections.actionViewPetFragmentToNewPhotoFragment(petId=petId))
                 photoListViewModel.newPhotoNavigator.onNavigatedToNewEntityScreen()
             }
-        }
-
-        binding.editPetButton.setOnClickListener {
-            findNavController().navigateSafe(ViewPetFragmentDirections.actionViewPetFragmentToEditPetFragment(petId))
-        }
-        binding.backButton.setOnClickListener {
-            findNavController().popBackStack()
         }
 
         binding.viewPager.offscreenPageLimit = 5
@@ -277,7 +285,6 @@ class PetDetailsFragment(): Fragment() {
                             }
                         }
                         ViewPetViewModel.Status.Loading -> {
-                            setAppBarTitle(getString(R.string.loading_pet))
                             binding.loadingFailedLayout.visibility = View.GONE
                             binding.petDetailsLayout.visibility = View.GONE
                             binding.loadingScreenLayout.visibility = View.VISIBLE

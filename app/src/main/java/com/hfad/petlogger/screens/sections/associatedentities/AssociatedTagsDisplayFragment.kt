@@ -1,10 +1,10 @@
 package com.hfad.petlogger.screens.sections.associatedentities
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.android.flexbox.FlexDirection
@@ -28,10 +28,12 @@ class AssociatedTagsDisplayFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
         binding.associatedTagsDisplayViewModel = associatedTagsDisplayViewModel
 
-        binding.tagsList.layoutManager = FlexboxLayoutManager(requireContext()).apply {
+        binding.tagsList.layoutManager = FlexboxLayoutManager(
+            requireContext()
+        ).apply {
             flexDirection = FlexDirection.ROW
             flexWrap = FlexWrap.WRAP
-            justifyContent = JustifyContent.FLEX_START
+            justifyContent = JustifyContent.CENTER
         }
 
         SetupAssociatedTagsDisplayUseCase(

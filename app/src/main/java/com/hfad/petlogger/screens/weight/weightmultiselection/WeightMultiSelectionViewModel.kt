@@ -1,12 +1,8 @@
 package com.hfad.petlogger.screens.weight.weightmultiselection
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
-import com.hfad.petlogger.weights.Weight
-import com.hfad.petlogger.weights.WeightWithPetName
+import com.hfad.petlogger.weights.data.WeightWithPetName
 import com.hfad.petlogger.common.usecases.GetItemsUseCase
-import com.hfad.petlogger.common.selectiontracker.MultiSelectionTracker
 import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
 
 class WeightMultiSelectionViewModel(

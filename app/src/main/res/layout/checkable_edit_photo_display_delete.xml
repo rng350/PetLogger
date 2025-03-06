@@ -7,7 +7,7 @@
             type="com.hfad.petlogger.common.CheckableItem" />
         <variable
             name="photo_item"
-            type="com.hfad.petlogger.photos.Photo" />
+            type="com.hfad.petlogger.photos.data.Photo" />
     </data>
 
     <com.google.android.material.card.MaterialCardView

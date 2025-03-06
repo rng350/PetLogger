@@ -1,47 +1,46 @@
 package com.hfad.petlogger.screens.pet.newpet
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
-import com.hfad.petlogger.common.DatePicker
-import com.hfad.petlogger.screens.note.notemultiselection.NoteMultiSelectionDisplayFragment
-import com.hfad.petlogger.screens.note.notemultiselection.NoteMultiSelectionViewModel
-import com.hfad.petlogger.common.PetLoggerDatabase
 import com.hfad.petlogger.R
-import com.hfad.petlogger.screens.tag.tagmultiselection.TagMultiSelectionViewModel
+import com.hfad.petlogger.common.PetLoggerDatabase
+import com.hfad.petlogger.common.datetimeselection.DatePicker
+import com.hfad.petlogger.common.navigateSafe
 import com.hfad.petlogger.databinding.FragmentNewPetBinding
 import com.hfad.petlogger.databinding.FragmentNewPetDetailsBinding
-import com.hfad.petlogger.common.navigateSafe
-import com.hfad.petlogger.tags.usecases.GetAllTagsUseCase
-import com.hfad.petlogger.photos.MediaRepository
-import com.hfad.petlogger.notes.NoteRepository
-import com.hfad.petlogger.pets.PetRepository
-import com.hfad.petlogger.tags.TagRepository
+import com.hfad.petlogger.notes.domain.NoteRepository
+import com.hfad.petlogger.notes.domain.usecases.GetAllNotesFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.notes.domain.usecases.GetMoreOfAllNotesUseCase
+import com.hfad.petlogger.notes.domain.usecases.GetMoreOfSearchedNotesUseCase
+import com.hfad.petlogger.notes.domain.usecases.GetSearchedNotesFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.pets.domain.PetRepository
+import com.hfad.petlogger.photos.domain.MediaRepository
+import com.hfad.petlogger.screens.note.notemultiselection.NoteMultiSelectionDisplayFragment
+import com.hfad.petlogger.screens.note.notemultiselection.NoteMultiSelectionViewModel
 import com.hfad.petlogger.screens.photo.mediaselection.MediaSelectionFragment
 import com.hfad.petlogger.screens.photo.mediaselection.MediaSelectionViewModel
 import com.hfad.petlogger.screens.photo.mediaselection.MediaSingleSelectionViewModel
-import com.hfad.petlogger.common.setAppBarTitle
-import com.hfad.petlogger.notes.usecases.GetAllNotesFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.notes.usecases.GetMoreOfAllNotesUseCase
-import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesUseCase
-import com.hfad.petlogger.notes.usecases.GetSearchedNotesFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.tags.usecases.GetAllTagsFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.tags.usecases.GetSearchedTagsFromCurrentSelectionUseCaseFactory
-import com.hfad.petlogger.tags.usecases.GetSearchedTagsUseCase
+import com.hfad.petlogger.screens.tag.tagmultiselection.TagMultiSelectionViewModel
+import com.hfad.petlogger.tags.domain.TagRepository
+import com.hfad.petlogger.tags.domain.usecases.GetAllTagsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.tags.domain.usecases.GetAllTagsUseCase
+import com.hfad.petlogger.tags.domain.usecases.GetSearchedTagsFromCurrentSelectionUseCaseFactory
+import com.hfad.petlogger.tags.domain.usecases.GetSearchedTagsUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -117,8 +116,6 @@ class NewPetFragment : Fragment() {
         ).get(TagMultiSelectionViewModel::class.java)
         binding.tagMultiSelectionViewModel = tagMultiSelectionViewModel
 
-        setAppBarTitle(getString(R.string.new_pet_header))
-
         binding.viewPager.offscreenPageLimit = 3
         binding.viewPager.adapter = NewPetViewPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
         mediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
@@ -131,23 +128,24 @@ class NewPetFragment : Fragment() {
         }
         mediator?.attach()
 
-        binding.submit.setOnClickListener {
-            if (newPetViewModel.petName.isNotEmpty()) {
-                newPetViewModel.addPet(
-                    petProfilePhoto = profilePicSelectionViewModel.currentPhoto.value,
-                    petPhotos = photoMultiSelectionViewModel.getPhotosToAdd(),
-                    notes = noteMultiSelectionViewModel.getNotesToAdd(),
-                    tags = tagMultiSelectionViewModel.getTagsToAdd()
-                )
-            } else Toast.makeText(requireContext(), R.string.no_pet_name_given, Toast.LENGTH_LONG).show()
-        }
-
-        binding.back.setOnClickListener {
+        binding.newPetTopAppBar.setNavigationOnClickListener {
             findNavController().popBackStack()
         }
-
-        binding.clear.setOnClickListener{
-            resetAll()
+        binding.newPetTopAppBar.setOnMenuItemClickListener { menuItem ->
+            when(menuItem.itemId) {
+                R.id.submit -> {
+                    if (newPetViewModel.petName.isNotEmpty()) {
+                        newPetViewModel.addPet(
+                            petProfilePhoto = profilePicSelectionViewModel.currentPhoto.value,
+                            petPhotos = photoMultiSelectionViewModel.getPhotosToAdd(),
+                            notes = noteMultiSelectionViewModel.getNotesToAdd(),
+                            tags = tagMultiSelectionViewModel.getTagsToAdd()
+                        )
+                    } else Toast.makeText(requireContext(), R.string.no_pet_name_given, Toast.LENGTH_LONG).show()
+                    true
+                }
+                else -> false
+            }
         }
 
         newPetViewModel.goToViewPet.observe(viewLifecycleOwner) {petId ->

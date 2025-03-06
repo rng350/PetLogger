@@ -4,11 +4,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.hfad.petlogger.common.SelectableDateTime
-import com.hfad.petlogger.notes.Note
-import com.hfad.petlogger.tags.Tag
-import com.hfad.petlogger.weights.Weight
-import com.hfad.petlogger.weights.WeightRepository
+import com.hfad.petlogger.common.datetimeselection.SelectableDateTime
+import com.hfad.petlogger.notes.data.Note
+import com.hfad.petlogger.tags.data.Tag
+import com.hfad.petlogger.weights.data.Weight
+import com.hfad.petlogger.weights.domain.WeightRepository
 import com.hfad.petlogger.common.util.MeasuringUnitConverter
 import kotlinx.coroutines.launch
 
@@ -19,7 +19,8 @@ class NewWeightViewModel(
     var weightAmt: MutableLiveData<Int> = MutableLiveData<Int>()
     var details: MutableLiveData<String> = MutableLiveData<String>()
     private val unitConverter = MeasuringUnitConverter()
-    private var _unitType: String? = null
+    private var _unitType: String = "grams"
+    val unitType: String get() = _unitType
     val goToViewWeight = MutableLiveData<Long>()
 
     fun submitWeight(
@@ -27,7 +28,7 @@ class NewWeightViewModel(
         notes: List<Note> = listOf<Note>(),
         tags: List<Tag> = listOf<Tag>()
     ) {
-        if (weightAmt.value != null && _unitType != null) {
+        if (weightAmt.value != null) {
             val weightDateTime = weightDateTime.selectedDateTime
             val convertedWeightAmt = when(_unitType) {
                 "grams" -> { weightAmt.value!! }

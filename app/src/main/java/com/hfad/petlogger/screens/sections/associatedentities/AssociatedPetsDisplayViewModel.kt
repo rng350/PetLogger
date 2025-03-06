@@ -3,9 +3,9 @@ package com.hfad.petlogger.screens.sections.associatedentities
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.hfad.petlogger.pets.PetWithProfilePic
 import com.hfad.petlogger.common.usecases.GetItemsUseCase
 import com.hfad.petlogger.common.util.Navigator
+import com.hfad.petlogger.pets.data.PetWithProfilePic
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

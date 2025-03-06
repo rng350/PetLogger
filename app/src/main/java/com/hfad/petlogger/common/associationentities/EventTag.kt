@@ -3,8 +3,8 @@ package com.hfad.petlogger.common.associationentities
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
-import com.hfad.petlogger.events.Event
-import com.hfad.petlogger.tags.Tag
+import com.hfad.petlogger.events.data.Event
+import com.hfad.petlogger.tags.data.Tag
 
 @Entity(
     tableName = "event_tag_table",

@@ -5,11 +5,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.hfad.petlogger.R
-import com.hfad.petlogger.databinding.NoteShortItemBinding
-import com.hfad.petlogger.notes.Note
 import com.hfad.petlogger.common.recyclerviews.DataItemBindingInterface
 import com.hfad.petlogger.common.recyclerviews.GenericRecyclerViewAdapter
 import com.hfad.petlogger.common.selectiontracker.MultiSelectionTracker
+import com.hfad.petlogger.databinding.NoteShortItemBinding
+import com.hfad.petlogger.notes.data.Note
 
 class SetupNoteMultiPickerSelectionDisplayUseCase(private val selection: LiveData<List<Note>>,
                                                   private val selectionTracker: MultiSelectionTracker<Note>,

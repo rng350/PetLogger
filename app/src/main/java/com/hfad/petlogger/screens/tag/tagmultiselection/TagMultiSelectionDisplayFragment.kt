@@ -1,11 +1,11 @@
 package com.hfad.petlogger.screens.tag.tagmultiselection
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexWrap
@@ -48,7 +48,7 @@ class TagMultiSelectionDisplayFragment : Fragment() {
         binding.tagList.layoutManager = FlexboxLayoutManager(requireContext()).apply {
             flexDirection = FlexDirection.ROW
             flexWrap = FlexWrap.WRAP
-            justifyContent = JustifyContent.FLEX_START
+            justifyContent = JustifyContent.CENTER
         }
 
         SetupTagMultiPickerSelectionDisplayUseCase(

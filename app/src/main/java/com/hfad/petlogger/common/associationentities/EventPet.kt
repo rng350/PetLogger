@@ -4,8 +4,8 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
-import com.hfad.petlogger.events.Event
-import com.hfad.petlogger.pets.Pet
+import com.hfad.petlogger.events.data.Event
+import com.hfad.petlogger.pets.data.Pet
 
 @Entity(tableName = "event_pet_table",
     primaryKeys = ["event_id", "pet_id"],

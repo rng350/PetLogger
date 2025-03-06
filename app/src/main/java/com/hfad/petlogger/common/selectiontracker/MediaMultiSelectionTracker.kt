@@ -1,13 +1,7 @@
 package com.hfad.petlogger.common.selectiontracker
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.hfad.petlogger.common.CheckableItem
-import com.hfad.petlogger.common.usecases.GetMultipleInitialItemsUseCase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class MediaMultiSelectionTracker<T>(
     private val checkItemIsInToAddList: CheckItemIsInSelectionUseCase<T>,

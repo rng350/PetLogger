@@ -7,7 +7,7 @@ import com.hfad.petlogger.common.usecases.GetItemsUseCase
 import com.hfad.petlogger.common.usecases.GetSearchedItemsUseCase
 import com.hfad.petlogger.common.util.Navigator
 import com.hfad.petlogger.common.util.NewEntityNavigator
-import com.hfad.petlogger.weights.PetWeightForDisplay
+import com.hfad.petlogger.weights.data.PetWeightForDisplay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

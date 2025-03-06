@@ -12,15 +12,12 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.hfad.petlogger.common.PetLoggerDatabase
-import com.hfad.petlogger.R
 import com.hfad.petlogger.databinding.FragmentFullGalleryBinding
 import com.hfad.petlogger.common.navigateSafe
-import com.hfad.petlogger.photos.usecases.GetMoreOfAllPhotosUseCase
-import com.hfad.petlogger.photos.MediaRepository
-import com.hfad.petlogger.common.setAppBarTitle
-import com.hfad.petlogger.photos.usecases.GetMoreOfSearchedPhotosUseCase
+import com.hfad.petlogger.photos.domain.usecases.GetMoreOfAllPhotosUseCase
+import com.hfad.petlogger.photos.domain.MediaRepository
+import com.hfad.petlogger.photos.domain.usecases.GetMoreOfSearchedPhotosUseCase
 import com.hfad.petlogger.screens.sections.recyclerviews.SetupAssociatedPhotosDisplayUseCase
-import com.hfad.petlogger.screens.sections.recyclerviews.decorators.PhotoItemSpacingDecoration
 
 class FullGalleryFragment : Fragment() {
     private var _binding: FragmentFullGalleryBinding? = null
@@ -44,8 +41,6 @@ class FullGalleryFragment : Fragment() {
             FullGalleryViewModel::class.java)
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
-
-        setAppBarTitle(getString(R.string.media_gallery_header))
 
         SetupAssociatedPhotosDisplayUseCase(
             photos = viewModel.photos,
@@ -76,6 +71,14 @@ class FullGalleryFragment : Fragment() {
                 return true
             }
         })
+
+        if (findNavController().previousBackStackEntry == null) {
+            binding.mediaListTopAppBar.navigationIcon = null
+        } else {
+            binding.mediaListTopAppBar.setNavigationOnClickListener {
+                findNavController().popBackStack()
+            }
+        }
 
         binding.addPhotoButton.setOnClickListener {
             this.findNavController().navigateSafe(FullGalleryFragmentDirections.actionFullGalleryFragmentToNewPhotoFragment())

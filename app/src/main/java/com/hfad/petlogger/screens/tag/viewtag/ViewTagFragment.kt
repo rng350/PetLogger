@@ -1,36 +1,33 @@
 package com.hfad.petlogger.screens.tag.viewtag
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
-import androidx.lifecycle.get
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
-import com.hfad.petlogger.common.PetLoggerDatabase
 import com.hfad.petlogger.R
-import com.hfad.petlogger.databinding.FragmentViewTagBinding
+import com.hfad.petlogger.common.PetLoggerDatabase
 import com.hfad.petlogger.common.navigateSafe
-import com.hfad.petlogger.tags.TagRepository
-import com.hfad.petlogger.common.setAppBarTitle
-import com.hfad.petlogger.events.usecases.BuildEventSearchQueryUseCase
-import com.hfad.petlogger.events.usecases.GetMoreEventsOfTagUseCase
-import com.hfad.petlogger.events.usecases.GetMoreOfSearchedEventsUseCase
-import com.hfad.petlogger.notes.usecases.BuildNoteSearchQueryUseCase
-import com.hfad.petlogger.notes.usecases.GetMoreNotesOfTagUseCase
-import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesUseCase
-import com.hfad.petlogger.pets.usecases.BuildPetSearchQueryUseCase
-import com.hfad.petlogger.pets.usecases.GetMoreOfSearchedPetsUseCase
-import com.hfad.petlogger.pets.usecases.GetMorePetsOfTagUseCase
-import com.hfad.petlogger.photos.usecases.BuildPhotoSearchQueryUseCase
-import com.hfad.petlogger.photos.usecases.GetMoreOfSearchedPhotosUseCase
-import com.hfad.petlogger.photos.usecases.GetMorePhotosOfTagUseCase
+import com.hfad.petlogger.databinding.FragmentViewTagBinding
+import com.hfad.petlogger.events.domain.usecases.BuildEventSearchQueryUseCase
+import com.hfad.petlogger.events.domain.usecases.GetMoreEventsOfTagUseCase
+import com.hfad.petlogger.events.domain.usecases.GetMoreOfSearchedEventsUseCase
+import com.hfad.petlogger.notes.domain.usecases.BuildNoteSearchQueryUseCase
+import com.hfad.petlogger.notes.domain.usecases.GetMoreNotesOfTagUseCase
+import com.hfad.petlogger.notes.domain.usecases.GetMoreOfSearchedNotesUseCase
+import com.hfad.petlogger.pets.domain.usecases.BuildPetSearchQueryUseCase
+import com.hfad.petlogger.pets.domain.usecases.GetMoreOfSearchedPetsUseCase
+import com.hfad.petlogger.pets.domain.usecases.GetMorePetsOfTagUseCase
+import com.hfad.petlogger.photos.domain.usecases.BuildPhotoSearchQueryUseCase
+import com.hfad.petlogger.photos.domain.usecases.GetMoreOfSearchedPhotosUseCase
+import com.hfad.petlogger.photos.domain.usecases.GetMorePhotosOfTagUseCase
 import com.hfad.petlogger.screens.event.EventListViewModel
 import com.hfad.petlogger.screens.note.NoteListViewModel
 import com.hfad.petlogger.screens.pet.PetListViewModel
@@ -41,9 +38,10 @@ import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPetsDisp
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPhotosDisplayFragment
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedWeightsForGeneralDisplayFragment
 import com.hfad.petlogger.screens.weight.MonitoringListViewModel
-import com.hfad.petlogger.weights.usecases.BuildWeightSearchQueryUseCase
-import com.hfad.petlogger.weights.usecases.GetMoreWeightsOfTagUseCase
-import com.hfad.petlogger.weights.usecases.GetSearchedWeightsForGeneralDisplayUseCase
+import com.hfad.petlogger.tags.domain.TagRepository
+import com.hfad.petlogger.weights.domain.usecases.BuildWeightSearchQueryUseCase
+import com.hfad.petlogger.weights.domain.usecases.GetMoreWeightsOfTagUseCase
+import com.hfad.petlogger.weights.domain.usecases.GetSearchedWeightsForGeneralDisplayUseCase
 
 class ViewTagFragment : Fragment() {
     private var _binding: FragmentViewTagBinding? = null
@@ -64,17 +62,8 @@ class ViewTagFragment : Fragment() {
         val viewTagViewModel = ViewModelProvider(this,
             ViewTagViewModel.provideFactory(tagRepository, tagId)
         ).get(ViewTagViewModel::class.java)
+
         binding.viewTagViewModel = viewTagViewModel
-
-        viewTagViewModel.tag.observe(viewLifecycleOwner, Observer {
-            it?.let {
-                setAppBarTitle(
-                    title=it.tagName,
-                    subtitle = getString(R.string.viewing_tagged_content)
-                )
-            }
-        })
-
         binding.viewPager.offscreenPageLimit = 5
         binding.viewPager.adapter = ViewTagViewPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
         mediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
@@ -113,6 +102,14 @@ class ViewTagFragment : Fragment() {
         val getSearchedPhotosOfTag = GetMoreOfSearchedPhotosUseCase(database.photoDao, photosAmt = 10, pickFrom = BuildPhotoSearchQueryUseCase.Pick.FromTag(tagId))
         val photoListViewModel = ViewModelProvider(this, FullGalleryViewModel.provideFactory(getPhotosOfTag, getSearchedPhotosOfTag)).get(FullGalleryViewModel::class.java)
         binding.photoListViewModel = photoListViewModel
+
+        if (findNavController().previousBackStackEntry == null) {
+            binding.viewTagTopAppBar.navigationIcon = null
+        } else {
+            binding.viewTagTopAppBar.setNavigationOnClickListener {
+                findNavController().popBackStack()
+            }
+        }
 
         petListViewModel.petNavigator.navigateTo.observe(viewLifecycleOwner, Observer {
             it?.let {

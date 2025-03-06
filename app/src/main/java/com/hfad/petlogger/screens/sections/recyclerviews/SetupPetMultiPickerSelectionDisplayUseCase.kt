@@ -12,7 +12,7 @@ import com.hfad.petlogger.common.recyclerviews.DataItemBindingInterface
 import com.hfad.petlogger.common.recyclerviews.GenericRecyclerViewAdapter
 import com.hfad.petlogger.common.selectiontracker.MultiSelectionTracker
 import com.hfad.petlogger.databinding.PetItemCellBinding
-import com.hfad.petlogger.pets.PetWithProfilePic
+import com.hfad.petlogger.pets.data.PetWithProfilePic
 
 class SetupPetMultiPickerSelectionDisplayUseCase(private val selection: LiveData<List<PetWithProfilePic>>,
                                                  private val selectionTracker: MultiSelectionTracker<PetWithProfilePic>,

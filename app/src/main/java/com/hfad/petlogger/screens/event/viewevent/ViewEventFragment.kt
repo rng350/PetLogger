@@ -1,40 +1,38 @@
 package com.hfad.petlogger.screens.event.viewevent
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
-import com.hfad.petlogger.common.PetLoggerDatabase
 import com.hfad.petlogger.R
+import com.hfad.petlogger.common.PetLoggerDatabase
+import com.hfad.petlogger.common.navigateSafe
 import com.hfad.petlogger.databinding.FragmentViewEventBinding
 import com.hfad.petlogger.databinding.FragmentViewEventDetailsBinding
-import com.hfad.petlogger.common.navigateSafe
-import com.hfad.petlogger.tags.usecases.GetAllTagsOfEventAlphabeticalOrderUseCase
-import com.hfad.petlogger.notes.usecases.GetMoreNotesOfEventUseCase
-import com.hfad.petlogger.pets.usecases.GetMorePetsOfEventUseCase
-import com.hfad.petlogger.photos.usecases.GetMorePhotosOfEventUseCase
-import com.hfad.petlogger.events.EventRepository
-import com.hfad.petlogger.photos.MediaRepository
+import com.hfad.petlogger.events.domain.EventRepository
+import com.hfad.petlogger.notes.domain.usecases.BuildNoteSearchQueryUseCase
+import com.hfad.petlogger.notes.domain.usecases.GetMoreNotesOfEventUseCase
+import com.hfad.petlogger.notes.domain.usecases.GetMoreOfSearchedNotesUseCase
+import com.hfad.petlogger.pets.domain.usecases.GetMorePetsOfEventUseCase
+import com.hfad.petlogger.photos.domain.MediaRepository
+import com.hfad.petlogger.photos.domain.usecases.BuildPhotoSearchQueryUseCase
+import com.hfad.petlogger.photos.domain.usecases.GetMoreOfSearchedPhotosUseCase
+import com.hfad.petlogger.photos.domain.usecases.GetMorePhotosOfEventUseCase
+import com.hfad.petlogger.screens.note.NoteListViewModel
+import com.hfad.petlogger.screens.photo.FullGalleryViewModel
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedNotesDisplayFragment
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPetsDisplayViewModel
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedPhotosDisplayFragment
 import com.hfad.petlogger.screens.sections.associatedentities.AssociatedTagsDisplayViewModel
-import com.hfad.petlogger.common.setAppBarTitle
-import com.hfad.petlogger.notes.usecases.BuildNoteSearchQueryUseCase
-import com.hfad.petlogger.notes.usecases.GetMoreOfSearchedNotesUseCase
-import com.hfad.petlogger.photos.usecases.BuildPhotoSearchQueryUseCase
-import com.hfad.petlogger.photos.usecases.GetMoreOfSearchedPhotosUseCase
-import com.hfad.petlogger.screens.note.NoteListViewModel
-import com.hfad.petlogger.screens.photo.FullGalleryViewModel
+import com.hfad.petlogger.tags.domain.usecases.GetAllTagsOfEventAlphabeticalOrderUseCase
 
 class ViewEventFragment : Fragment() {
     private var _binding: FragmentViewEventBinding? = null
@@ -99,12 +97,6 @@ class ViewEventFragment : Fragment() {
         }
         mediator?.attach()
 
-        viewEventViewModel.event.observe(viewLifecycleOwner, Observer {
-            it?.let {
-                setAppBarTitle(title = it.title, subtitle = getString(R.string.viewing_event_details))
-            }
-        })
-
         associatedPetsDisplayViewModel.navigator.navigateTo.observe(viewLifecycleOwner) {
             it?.let {
                 associatedPetsDisplayViewModel.navigator.onNavigated()
@@ -143,12 +135,17 @@ class ViewEventFragment : Fragment() {
             }
         }
 
-        binding.editEventButton.setOnClickListener {
-            this.findNavController().navigateSafe(ViewEventFragmentDirections.actionViewEventFragmentToEditEventFragment(eventId))
-        }
-
-        binding.backButton.setOnClickListener {
+        binding.viewEventTopAppBar.setNavigationOnClickListener {
             this.findNavController().popBackStack()
+        }
+        binding.viewEventTopAppBar.setOnMenuItemClickListener { menuItem ->
+            when(menuItem.itemId) {
+                R.id.edit -> {
+                    findNavController().navigateSafe(ViewEventFragmentDirections.actionViewEventFragmentToEditEventFragment(eventId))
+                    true
+                }
+                else -> false
+            }
         }
 
         return view

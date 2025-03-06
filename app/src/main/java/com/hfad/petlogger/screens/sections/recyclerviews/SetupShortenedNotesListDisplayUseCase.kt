@@ -6,11 +6,11 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
 import com.hfad.petlogger.R
-import com.hfad.petlogger.databinding.NoteShortItemBinding
-import com.hfad.petlogger.notes.Note
 import com.hfad.petlogger.common.recyclerviews.DataItemBindingInterface
 import com.hfad.petlogger.common.recyclerviews.GenericRecyclerViewAdapter
 import com.hfad.petlogger.common.util.Navigator
+import com.hfad.petlogger.databinding.NoteShortItemBinding
+import com.hfad.petlogger.notes.data.Note
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

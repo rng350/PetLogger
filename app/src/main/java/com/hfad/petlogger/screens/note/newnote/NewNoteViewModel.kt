@@ -5,11 +5,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.hfad.petlogger.notes.Note
-import com.hfad.petlogger.photos.Photo
-import com.hfad.petlogger.tags.Tag
-import com.hfad.petlogger.weights.Weight
-import com.hfad.petlogger.notes.NoteRepository
+import com.hfad.petlogger.notes.data.Note
+import com.hfad.petlogger.notes.domain.NoteRepository
+import com.hfad.petlogger.photos.data.Photo
+import com.hfad.petlogger.tags.data.Tag
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 

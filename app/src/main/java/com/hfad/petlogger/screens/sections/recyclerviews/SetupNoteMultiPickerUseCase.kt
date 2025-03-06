@@ -6,7 +6,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.hfad.petlogger.common.CheckableItem
 import com.hfad.petlogger.databinding.CheckableNoteShortItemBinding
-import com.hfad.petlogger.notes.Note
+import com.hfad.petlogger.notes.data.Note
 import com.hfad.petlogger.common.selectiontracker.MultiSelectionTracker
 import com.hfad.petlogger.R
 import com.hfad.petlogger.common.recyclerviews.DataItemBindingInterface

@@ -6,7 +6,7 @@
     <data>
         <variable
             name="pet"
-            type="com.hfad.petlogger.pets.PetWithProfilePic" />
+            type="com.hfad.petlogger.pets.data.PetWithProfilePic" />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

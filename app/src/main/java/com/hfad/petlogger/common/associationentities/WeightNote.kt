@@ -3,8 +3,8 @@ package com.hfad.petlogger.common.associationentities
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
-import com.hfad.petlogger.notes.Note
-import com.hfad.petlogger.weights.Weight
+import com.hfad.petlogger.notes.data.Note
+import com.hfad.petlogger.weights.data.Weight
 
 @Entity(
     tableName = "weight_note_table",

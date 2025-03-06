@@ -8,7 +8,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
 import com.hfad.petlogger.R
 import com.hfad.petlogger.databinding.ItemTagBinding
-import com.hfad.petlogger.tags.Tag
+import com.hfad.petlogger.tags.data.Tag
 import com.hfad.petlogger.common.recyclerviews.DataItemBindingInterface
 import com.hfad.petlogger.common.recyclerviews.GenericRecyclerViewAdapter
 import com.hfad.petlogger.common.util.Navigator

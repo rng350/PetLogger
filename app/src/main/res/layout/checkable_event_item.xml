@@ -9,7 +9,7 @@
             type="com.hfad.petlogger.common.CheckableItem" />
         <variable
             name="event"
-            type="com.hfad.petlogger.events.EventForList" />
+            type="com.hfad.petlogger.events.data.EventForList" />
     </data>
 
     <com.google.android.material.card.MaterialCardView

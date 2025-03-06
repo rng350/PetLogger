@@ -23,50 +23,85 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:padding="4dp"
             android:orientation="vertical">
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/weightQtyTextField"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/weight">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/weightQtyInput"
-                    android:layout_width="match_parent"
+                android:baselineAligned="false"
+                android:orientation="horizontal">
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/weightQtyTextField"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="@={DataBindingConverter.intToStringMaterial(viewModel.weight.weightGrams)}"
-                    android:inputType="number"/>
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_marginEnd="2dp"
+                    android:layout_weight="1"
+                    android:hint="@string/weight">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/weightQtyInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@={DataBindingConverter.intToStringMaterial(viewModel.weight.weightGrams)}"
+                        android:inputType="number"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/weightDateLayout"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:theme="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                    android:id="@+id/weightUnitTextField"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="2dp"
+                    android:hint="@string/unit">
+                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                        android:id="@+id/weightUnitDropDownList"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:maxLines="1"
+                        android:inputType="none"/>
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/date">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/weightDate"
-                    android:layout_width="match_parent"
+                android:baselineAligned="false"
+                android:orientation="horizontal">
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/weightDateLayout"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:drawableEnd="@drawable/baseline_edit_24"
-                    android:text="@{viewModel.weightDateTime.dateDisplay}"
-                    android:focusable="true"
-                    android:clickable="true"
-                    android:inputType="date"/>
-            </com.google.android.material.textfield.TextInputLayout>
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/weightTimeLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/time_header">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/weightTime"
-                    android:layout_width="match_parent"
+                    android:layout_marginEnd="2dp"
+                    android:layout_weight="1"
+                    android:hint="@string/date">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/weightDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableEnd="@drawable/baseline_edit_24"
+                        android:text="@{viewModel.weightDateTime.dateDisplay}"
+                        android:focusable="true"
+                        android:clickable="true"
+                        android:inputType="date"/>
+                </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/weightTimeLayout"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:drawableEnd="@drawable/baseline_edit_24"
-                    android:text="@{viewModel.weightDateTime.timeDisplay}"
-                    android:focusable="true"
-                    android:clickable="true"
-                    android:inputType="time"/>
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_marginStart="2dp"
+                    android:layout_weight="1"
+                    android:hint="@string/time_header">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/weightTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableEnd="@drawable/baseline_edit_24"
+                        android:text="@{viewModel.weightDateTime.timeDisplay}"
+                        android:focusable="true"
+                        android:clickable="true"
+                        android:inputType="time"/>
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
 
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/tag_selection_fragment_container_view"

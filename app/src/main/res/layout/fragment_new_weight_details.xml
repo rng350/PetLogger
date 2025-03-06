@@ -24,6 +24,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:padding="4dp"
             android:orientation="vertical">
             <LinearLayout
                 android:layout_width="match_parent"
@@ -35,6 +36,7 @@
                     android:id="@+id/weightQtyTextField"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="2dp"
                     android:layout_weight="1"
                     android:hint="@string/amount">
                     <com.google.android.material.textfield.TextInputEditText
@@ -52,6 +54,7 @@
                     android:id="@+id/weightUnitTextField"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
+                    android:layout_marginStart="2dp"
                     android:layout_weight="1"
                     android:hint="@string/unit">
                     <com.google.android.material.textfield.MaterialAutoCompleteTextView
@@ -71,6 +74,7 @@
                     android:id="@+id/date_field_header"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="2dp"
                     android:layout_weight="1"
                     android:hint="@string/date"
                     app:endIconDrawable="@drawable/baseline_edit_24">
@@ -88,6 +92,7 @@
                     android:id="@+id/time_field_header"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="2dp"
                     android:layout_weight="1"
                     android:hint="@string/time_header">
                     <com.google.android.material.textfield.TextInputEditText

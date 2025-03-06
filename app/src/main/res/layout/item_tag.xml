@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
         <variable
             name="tag"
-            type="com.hfad.petlogger.tags.Tag" />
+            type="com.hfad.petlogger.tags.data.Tag" />
     </data>
     <com.google.android.material.chip.Chip
         android:id="@+id/tag_chip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@{tag.tagName}"/>
+        android:text="@{tag.tagName}"
+        android:textAlignment="center"
+        android:layout_margin="2dp"
+        app:ensureMinTouchTargetSize="false"/>
 </layout>

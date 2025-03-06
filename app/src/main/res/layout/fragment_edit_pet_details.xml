@@ -20,6 +20,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:padding="4dp"
             android:orientation="vertical">
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/pet_profile_pic_selection_fragment_container_view"
@@ -51,6 +52,7 @@
                     android:id="@+id/petSpecies"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="2dp"
                     android:hint="@string/pet_species_header"
                     android:layout_weight="1">
 
@@ -65,6 +67,7 @@
                     android:id="@+id/petBreed"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="2dp"
                     android:hint="@string/pet_breed_header"
                     android:layout_weight="1">
 
