@@ -72,35 +72,35 @@ class MediaSelectionFragment : Fragment() {
         })
 
         viewModel.toKeepButtonChecked.observe(viewLifecycleOwner) { isToggled ->
-            val bottomIconRes = if (isToggled) R.drawable.visibility_on_24px else R.drawable.visibility_off_24px
-            val bottomIcon = ContextCompat.getDrawable(requireContext(), bottomIconRes)
+            val eyeIconRes = if (isToggled) R.drawable.visibility_on_24px else R.drawable.visibility_off_24px
+            val eyeIcon = ContextCompat.getDrawable(requireContext(), eyeIconRes)
             binding.toKeepButton.setCompoundDrawablesWithIntrinsicBounds(
+                eyeIcon,
                 null,
-                ContextCompat.getDrawable(requireContext(), R.drawable.selection_to_keep),
                 null,
-                bottomIcon
+                null
             )
         }
 
         viewModel.toRemoveButtonChecked.observe(viewLifecycleOwner) { isToggled ->
-            val bottomIconRes = if (isToggled) R.drawable.visibility_on_24px else R.drawable.visibility_off_24px
-            val bottomIcon = ContextCompat.getDrawable(requireContext(), bottomIconRes)
+            val eyeIconRes = if (isToggled) R.drawable.visibility_on_24px else R.drawable.visibility_off_24px
+            val eyeIcon = ContextCompat.getDrawable(requireContext(), eyeIconRes)
             binding.toRemoveButton.setCompoundDrawablesWithIntrinsicBounds(
+                eyeIcon,
                 null,
-                ContextCompat.getDrawable(requireContext(), R.drawable.selection_to_remove),
                 null,
-                bottomIcon
+                null
             )
         }
 
         viewModel.toAddButtonChecked.observe(viewLifecycleOwner) { isToggled ->
-            val bottomIconRes = if (isToggled) R.drawable.visibility_on_24px else R.drawable.visibility_off_24px
-            val bottomIcon = ContextCompat.getDrawable(requireContext(), bottomIconRes)
+            val eyeIconRes = if (isToggled) R.drawable.visibility_on_24px else R.drawable.visibility_off_24px
+            val eyeIcon = ContextCompat.getDrawable(requireContext(), eyeIconRes)
             binding.toAddButton.setCompoundDrawablesWithIntrinsicBounds(
+                eyeIcon,
                 null,
-                ContextCompat.getDrawable(requireContext(), R.drawable.selection_to_add),
                 null,
-                bottomIcon
+                null
             )
         }
 

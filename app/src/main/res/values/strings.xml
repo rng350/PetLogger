@@ -154,9 +154,9 @@
     <string name="search_weights">Search Weights</string>
     <string name="search_photos">Search Photos</string>
     <string name="search_pets">Search Pets</string>
-    <string name="keeping">Keeping</string>
-    <string name="removing">Removing</string>
-    <string name="adding">Adding</string>
+    <string name="keeping">Keep</string>
+    <string name="removing">Remove</string>
+    <string name="adding">Add</string>
     <string name="loading_pet">Loading Pet</string>
     <string name="failed_to_load">Failed to load</string>
     <string name="pet_date_of_passing_header">Date of Passing</string>

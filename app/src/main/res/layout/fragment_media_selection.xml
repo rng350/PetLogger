@@ -20,31 +20,29 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:queryHint="@string/search_photos"/>
-        <LinearLayout
+        <com.google.android.flexbox.FlexboxLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            app:flexDirection="row"
+            app:flexWrap="nowrap"
+            app:justifyContent="space_around">
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/to_keep_button"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:text="@string/keeping"
                 android:clickable="true"
                 android:focusable="true"
                 android:checkable="true"
                 android:checked="@{viewModel.toKeepButtonChecked}"
-                android:drawableTop="@drawable/selection_to_keep"
-                android:drawableBottom="@drawable/visibility_on_24px"
+                android:drawableStart="@drawable/selection_to_keep"
                 app:iconGravity="start"/>
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/to_add_button"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:text="@string/adding"
-                android:drawableTop="@drawable/selection_to_add"
-                android:drawableBottom="@drawable/visibility_on_24px"
+                android:drawableStart="@drawable/selection_to_add"
                 android:clickable="true"
                 android:focusable="true"
                 android:checkable="true"
@@ -52,18 +50,16 @@
                 app:iconGravity="start" />
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/to_remove_button"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:text="@string/removing"
-                android:drawableTop="@drawable/selection_to_remove"
-                android:drawableBottom="@drawable/visibility_on_24px"
+                android:drawableStart="@drawable/selection_to_remove"
                 android:clickable="true"
                 android:focusable="true"
                 android:checkable="true"
                 android:checked="@{viewModel.toRemoveButtonChecked}"
                 app:iconGravity="start" />
-        </LinearLayout>
+        </com.google.android.flexbox.FlexboxLayout>
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/photo_list"
             android:layout_width="match_parent"
