@@ -3,6 +3,10 @@ PetLogger is a native Android application for monitoring your pets' health.
 
 Although this remains a work-in-progress, enough has been done for it to achieve its primary purpose.
 
+
+![pet list screenshot](images/screenshot_1.jpg?raw=true) ![pet profile screenshot](images/screenshot_2.jpg?raw=true)
+
+
 ## **Requirements**
 Note: Your device needs to have at least Android 5.0 installed in order to run the app.
 
