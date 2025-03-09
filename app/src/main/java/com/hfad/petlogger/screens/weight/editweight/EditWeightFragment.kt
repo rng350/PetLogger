@@ -48,6 +48,10 @@ import com.hfad.petlogger.tags.domain.usecases.GetAllTagsFromCurrentSelectionUse
 import com.hfad.petlogger.tags.domain.usecases.GetSearchedTagsFromCurrentSelectionUseCaseFactory
 import com.hfad.petlogger.tags.domain.usecases.GetSearchedTagsUseCase
 import com.hfad.petlogger.weights.domain.usecases.GetSingleWeightUseCase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class EditWeightFragment : Fragment() {
     private var _binding: FragmentEditWeightBinding? = null
@@ -228,14 +232,32 @@ class EditWeightDetailsFragment() : Fragment() {
         binding.tagMultiSelectionViewModel = tagMultiSelectionViewModel
 
         binding.weightDate.setOnClickListener{
-            DatePicker.generate(editWeightViewModel.weightDateTime).show(parentFragmentManager, "DATEPICKER")
+            binding.weightDate.isEnabled = false
+            CoroutineScope(Dispatchers.Main.immediate).launch {
+                DatePicker
+                    .generate(editWeightViewModel.weightDateTime)
+                    .show(parentFragmentManager, "DATEPICKER")
+                delay(200)
+                binding.weightDate.isEnabled = true
+            }
         }
 
         binding.weightTime.setOnClickListener{
-            TimePicker.generate(editWeightViewModel.weightDateTime, requireContext())
-                .show(parentFragmentManager, "TIMEPICKER")
+            binding.weightTime.isEnabled = false
+            CoroutineScope(Dispatchers.Main.immediate).launch {
+                TimePicker.generate(editWeightViewModel.weightDateTime, requireContext())
+                    .show(parentFragmentManager, "TIMEPICKER")
+                delay(200)
+                binding.weightTime.isEnabled = true
+            }
         }
         return view
+    }
+
+    override fun onStop() {
+        super.onStop()
+        binding.weightDate.isEnabled = true
+        binding.weightTime.isEnabled = true
     }
 
     override fun onResume() {

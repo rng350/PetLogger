@@ -293,7 +293,7 @@ class MediaRepository(
     // TODO: Implement the following check
     // 1. check that there's enough space
     // 2a. if so, try to save files
-    // 2b. if not, create a toaster saying there's not enough space
+    // 2b. if not, create a toast saying there's not enough space
     private suspend fun saveToLocalStorage(photo: Photo): Photo? = withContext(Dispatchers.IO) {
         try {
             val inputStream = context.contentResolver.openInputStream(photo.contentUri) ?: return@withContext null
@@ -310,7 +310,7 @@ class MediaRepository(
 
             if (bitmap == null) return@withContext null
 
-            val tempFile = File(context.cacheDir, "temp_image")
+            val tempFile = File(context.cacheDir, "temp_${photo.filename}_${UUID.randomUUID()}")
             context.contentResolver.openInputStream(photo.contentUri)?.use { input ->
                 tempFile.outputStream().use { output -> input.copyTo(output) }
             }

@@ -201,8 +201,7 @@ class NewWeightDetailsFragment() : Fragment() {
 
         binding.dateFieldText.setOnClickListener { button ->
             button.isEnabled = false
-            val coroutineScope = CoroutineScope(Dispatchers.Main.immediate)
-            coroutineScope.launch {
+            CoroutineScope(Dispatchers.Main.immediate).launch {
                 DatePicker.generate(newWeightViewModel.weightDateTime).show(parentFragmentManager, "DATE_PICKER")
                 delay(200)
                 button.isEnabled = true
@@ -211,8 +210,7 @@ class NewWeightDetailsFragment() : Fragment() {
 
         binding.timeFieldText.setOnClickListener { button ->
             button.isEnabled = false
-            val coroutineScope = CoroutineScope(Dispatchers.Main.immediate)
-            coroutineScope.launch {
+            CoroutineScope(Dispatchers.Main.immediate).launch {
                 TimePicker.generate(newWeightViewModel.weightDateTime, requireContext())
                     .show(parentFragmentManager, "TIME_PICKER")
                 delay(200)

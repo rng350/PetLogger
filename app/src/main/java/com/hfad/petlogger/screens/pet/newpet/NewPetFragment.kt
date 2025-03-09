@@ -222,11 +222,11 @@ class NewPetDetailsFragment() : Fragment() {
                     newPetViewModel.petStatus.collectLatest {
                         when (it) {
                             NewPetViewModel.PetStatus.Active -> {
-                                binding.petDateOfPassingLinearLayout.visibility = View.GONE
+                                binding.petDateOfPassingLayout.visibility = View.GONE
                                 binding.petStatusDropDown.setText("Active", false)
                             }
                             NewPetViewModel.PetStatus.PassedAway -> {
-                                binding.petDateOfPassingLinearLayout.visibility = View.VISIBLE
+                                binding.petDateOfPassingLayout.visibility = View.VISIBLE
                                 binding.petStatusDropDown.setText("Passed Away", false)
                             }
                         }
@@ -235,25 +235,23 @@ class NewPetDetailsFragment() : Fragment() {
             }
         }
 
-        binding.addPetBirthDateButton.isEnabled = true
-        binding.addPetBirthDateButton.setOnClickListener {
-            binding.addPetBirthDateButton.isEnabled = false
+        binding.petBirthDateDisplay.setOnClickListener {
+            binding.petBirthDateDisplay.isEnabled = false
             CoroutineScope(Dispatchers.Main.immediate).launch {
                 DatePicker.generate(newPetViewModel.petDOB)
                     .show(parentFragmentManager, "DATE_PICKER")
                 delay(200)
-                binding.addPetBirthDateButton.isEnabled = true
+                binding.petBirthDateDisplay.isEnabled = true
             }
         }
 
-        binding.addPetDateOfPassingButton.isEnabled = true
-        binding.addPetDateOfPassingButton.setOnClickListener {
-            binding.addPetDateOfPassingButton.isEnabled = false
+        binding.petDateOfPassingDisplay.setOnClickListener {
+            binding.petDateOfPassingDisplay.isEnabled = false
             CoroutineScope(Dispatchers.Main.immediate).launch {
                 DatePicker.generate(newPetViewModel.petDateOfPassing)
                     .show(parentFragmentManager, "DATE_PICKER")
                 delay(200)
-                binding.addPetDateOfPassingButton.isEnabled = true
+                binding.petDateOfPassingDisplay.isEnabled = true
             }
         }
         return view
@@ -261,8 +259,8 @@ class NewPetDetailsFragment() : Fragment() {
 
     override fun onStop() {
         super.onStop()
-        binding.addPetBirthDateButton.isEnabled = true
-        binding.addPetDateOfPassingButton.isEnabled = true
+        binding.petBirthDateDisplay.isEnabled = true
+        binding.petDateOfPassingDisplay.isEnabled = true
     }
 
     override fun onResume() {

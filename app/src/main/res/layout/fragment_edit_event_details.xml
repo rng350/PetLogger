@@ -45,7 +45,7 @@
                     android:layout_height="wrap_content"
                     android:drawableEnd="@drawable/baseline_edit_24"
                     android:text="@{viewModel.eventDateDisplay}"
-                    android:focusable="true"
+                    android:focusable="false"
                     android:clickable="true"
                     android:inputType="date"/>
             </com.google.android.material.textfield.TextInputLayout>
@@ -61,9 +61,9 @@
                     android:layout_height="wrap_content"
                     android:drawableEnd="@drawable/baseline_edit_24"
                     android:text="@{viewModel.eventTimeDisplay}"
-                    android:focusable="true"
+                    android:focusable="false"
                     android:clickable="true"
-                    android:inputType="date"/>
+                    android:inputType="time"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout

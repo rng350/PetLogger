@@ -102,33 +102,21 @@
                     android:text="@string/pet_sex_other" />
             </RadioGroup>
 
-            <LinearLayout
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/petBirthDateLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/petBirthDateLayout"
-                    android:layout_width="0dp"
+                android:hint="@string/pet_birthdate">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/petBirthDateDisplay"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="@string/pet_birthdate">
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/petBirthDateDisplay"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:clickable="true"
-                        android:enabled="false"
-                        android:focusable="true"
-                        android:inputType="text"
-                        android:text="@{newPetViewModel.petDOB.dateDisplay}" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/addPetBirthDateButton"
-                    android:layout_width="50dp"
-                    android:layout_height="match_parent"
-                    app:icon="@drawable/baseline_edit_24" />
-            </LinearLayout>
+                    android:text="@{newPetViewModel.petDOB.dateDisplay}"
+                    android:drawableEnd="@drawable/baseline_edit_24"
+                    android:clickable="true"
+                    android:focusable="false"
+                    android:inputType="date"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:theme="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
@@ -144,34 +132,22 @@
                     android:inputType="none"/>
             </com.google.android.material.textfield.TextInputLayout>
 
-            <LinearLayout
-                android:id="@+id/petDateOfPassingLinearLayout"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/petDateOfPassingLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:hint="@string/pet_date_of_passing_header"
                 android:visibility="gone">
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/petDateOfPassingLayout"
-                    android:layout_width="0dp"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/petDateOfPassingDisplay"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="@string/pet_date_of_passing_header">
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/petDateOfPassingDisplay"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:clickable="true"
-                        android:enabled="false"
-                        android:focusable="true"
-                        android:inputType="text"
-                        android:text="@{newPetViewModel.petDateOfPassing.dateDisplay}" />
-                </com.google.android.material.textfield.TextInputLayout>
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/addPetDateOfPassingButton"
-                    android:layout_width="50dp"
-                    android:layout_height="match_parent"
-                    app:icon="@drawable/baseline_edit_24" />
-            </LinearLayout>
+                    android:text="@{newPetViewModel.petDateOfPassing.dateDisplay}"
+                    android:clickable="true"
+                    android:focusable="false"
+                    android:inputType="date"
+                    android:drawableEnd="@drawable/baseline_edit_24" />
+            </com.google.android.material.textfield.TextInputLayout>
 
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/tag_selection_fragment_container_view"

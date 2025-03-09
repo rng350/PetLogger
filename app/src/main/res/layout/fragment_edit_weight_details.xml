@@ -80,8 +80,8 @@
                         android:layout_height="wrap_content"
                         android:drawableEnd="@drawable/baseline_edit_24"
                         android:text="@{viewModel.weightDateTime.dateDisplay}"
-                        android:focusable="true"
                         android:clickable="true"
+                        android:focusable="false"
                         android:inputType="date"/>
                 </com.google.android.material.textfield.TextInputLayout>
                 <com.google.android.material.textfield.TextInputLayout
@@ -97,8 +97,8 @@
                         android:layout_height="wrap_content"
                         android:drawableEnd="@drawable/baseline_edit_24"
                         android:text="@{viewModel.weightDateTime.timeDisplay}"
-                        android:focusable="true"
                         android:clickable="true"
+                        android:focusable="false"
                         android:inputType="time"/>
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>

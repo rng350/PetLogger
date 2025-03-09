@@ -65,6 +65,9 @@ import com.hfad.petlogger.tags.domain.usecases.GetTagsOfPetUseCase
 import com.hfad.petlogger.weights.data.PetWeightForSelection
 import com.hfad.petlogger.weights.domain.usecases.GetAllWeightsOfPetForSelectionUseCase
 import com.hfad.petlogger.weights.domain.usecases.GetSearchedPetWeightsForSelectionUseCase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -314,11 +317,11 @@ class EditPetDetailsFragment : Fragment() {
                     editPetViewModel.petStatus.collectLatest {
                         when (it) {
                             EditPetViewModel.PetStatus.Active -> {
-                                binding.petDateOfPassingLinearLayout.visibility = View.GONE
+                                binding.petDateOfPassingLayout.visibility = View.GONE
                                 binding.petStatusDropDown.setText("Active", false)
                             }
                             EditPetViewModel.PetStatus.PassedAway -> {
-                                binding.petDateOfPassingLinearLayout.visibility = View.VISIBLE
+                                binding.petDateOfPassingLayout.visibility = View.VISIBLE
                                 binding.petStatusDropDown.setText("Passed Away", false)
                             }
                         }
@@ -336,15 +339,35 @@ class EditPetDetailsFragment : Fragment() {
             }
         }
 
-        binding.addPetBirthDateButton.setOnClickListener {
-            DatePicker.generate(editPetViewModel.newPetDOB).show(parentFragmentManager, "DATE_OF_BIRTH_PICKER")
+        binding.petBirthDateDisplay.setOnClickListener {
+            binding.petBirthDateDisplay.isEnabled = false
+            CoroutineScope(Dispatchers.Main.immediate).launch {
+                DatePicker
+                    .generate(editPetViewModel.newPetDOB)
+                    .show(parentFragmentManager, "DATE_OF_BIRTH_PICKER")
+                delay(200)
+                binding.petBirthDateDisplay.isEnabled = true
+            }
         }
 
-        binding.addPetDateOfPassingButton.setOnClickListener {
-            DatePicker.generate(editPetViewModel.newPetDateOfPassing).show(parentFragmentManager, "DATE_OF_PASSING_PICKER")
+        binding.petDateOfPassingDisplay.setOnClickListener {
+            binding.petDateOfPassingDisplay.isEnabled = false
+            CoroutineScope(Dispatchers.Main.immediate).launch {
+                DatePicker
+                    .generate(editPetViewModel.newPetDateOfPassing)
+                    .show(parentFragmentManager, "DATE_OF_PASSING_PICKER")
+                delay(200)
+                binding.petDateOfPassingDisplay.isEnabled = true
+            }
         }
 
         return view
+    }
+
+    override fun onStop() {
+        super.onStop()
+        binding.petBirthDateDisplay.isEnabled = true
+        binding.petDateOfPassingDisplay.isEnabled = true
     }
 
     override fun onResume() {
